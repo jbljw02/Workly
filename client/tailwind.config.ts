@@ -9,9 +9,12 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        lightGray: 'rgb(242,242,242)',
-        mainFont: '#444444',
-      }
+        contentFont: '#444444',
+      },
+      fontSize: {
+        '15px': '15px',
+        '13px': '13px',
+      },
     },
   },
   plugins: [],
