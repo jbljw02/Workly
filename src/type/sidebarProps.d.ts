@@ -1,5 +1,5 @@
 export type SidebarItemProps = {
     Icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
-    IconWidth: string,
+    IconWidth: string;
     label: string;
 }
