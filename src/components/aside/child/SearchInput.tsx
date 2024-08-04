@@ -1,13 +1,17 @@
-import SearchIcon from '../../../../public/svgs/search.svg'
+import SearchIcon from '../../../../public/svgs/search.svg';
 
-export default function SearchInput() {
+export default function SearchInput({ isCollapsed }: { isCollapsed: boolean }) {
     return (
-        <div className='flex items-center mb-1 bg-neutral-100 p-1 pt-2 pb-2 pl-2 rounded text-sm'>
+        <div className={`flex items-center h-10 bg-neutral-100 p-1 pl-2 rounded text-sm whitespace-nowrap overflow-hidden ${isCollapsed ? 'cursor-pointer' : ''}`}>
             <SearchIcon width="19px" />
-            <input
-                className='bg-neutral-100 ml-1 border-none outline-none'
-                placeholder='검색'
-                readOnly />
+            {
+                !isCollapsed && (
+                    <input
+                        className='bg-neutral-100 ml-1 border-none outline-none'
+                        placeholder='검색'
+                        readOnly />
+                )
+            }
         </div>
     )
 }

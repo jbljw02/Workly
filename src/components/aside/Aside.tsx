@@ -4,9 +4,9 @@ import { useState, useRef } from "react";
 import SidebarItem from "./child/SidebarItem";
 import SearchInput from "./child/SearchInput";
 import TrashIcon from '../../../public/svgs/trash.svg';
-import DocumentWrite from '../../../public/svgs/document.svg';
-import TaskWrite from '../../../public/svgs/task.svg';
-import ScheduleWrite from '../../../public/svgs/schedule.svg';
+import DocumentWrite from '../../../public/svgs/write/document.svg';
+import TaskWrite from '../../../public/svgs/write/task.svg';
+import ScheduleWrite from '../../../public/svgs/write/schedule.svg';
 import HomeIcon from '../../../public/svgs/home.svg';
 import DocumentIcon from '../../../public/svgs/document.svg';
 import TaskIcon from '../../../public/svgs/task.svg';
@@ -14,76 +14,100 @@ import ScheduleIcon from '../../../public/svgs/schedule.svg';
 import PlusIcon from '../../../public/svgs/plus.svg';
 import ProjectIcon from '../../../public/svgs/project.svg';
 import SettingIcon from '../../../public/svgs/setting.svg';
-
-const expandedWidth = 240; // 넓은 상태의 너비(px)
-const collapsedWidth = 70; // 좁은 상태의 너비(px)
-const toggleWidthThreshold = 150; // 너비 변경을 위한 임계값
+import FolderIcon from '../../../public/svgs/folder.svg';
 
 export default function Home() {
-    const [sidebarWidth, setSidebarWidth] = useState(expandedWidth); // 초기 폭
+    const expandedWidth = 240; // 넓은 상태의 너비
+    const collapsedWidth = 70; // 좁은 상태의 너비
+    const toggleWidthThreshold = 150; // 너비 변경을 위한 임계값
+
+    const [sidebarWidth, setSidebarWidth] = useState(expandedWidth); // 사이드바의 현재 너비
     const sidebarRef = useRef<HTMLDivElement | null>(null);
 
-    const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+    const isCollapsed = sidebarWidth === collapsedWidth; // 사이드바가 축소 상태인지 여부
+
+    // 리사이저 핸들을 클릭했을 때 발생
+    const clickResizer = (e: React.MouseEvent<HTMLDivElement>) => {
         e.preventDefault();
-        document.addEventListener("mousemove", handleMouseMove);
-        document.addEventListener("mouseup", handleMouseUp);
+        document.addEventListener("mousemove", adjustSidebarWidth);
+        document.addEventListener("mouseup", removeResizerEventListener);
     };
 
-    const handleMouseMove = (e: MouseEvent) => {
+    // 마우스를 이동할 때마다 사이드바의 너비 조정
+    const adjustSidebarWidth = (e: MouseEvent) => {
+        // 사이드바의 현재 위치와 크기를 가져옴 
         const sidebarBoundary = sidebarRef.current?.getBoundingClientRect();
-        const mousePosition = e.clientX;
+        const mousePosition = e.clientX; // 현재 마우스 커서의 X 좌표
 
         if (sidebarBoundary) {
+            // 마우스 커서가 임계값보다 왼쪽에 위치할 시 사이드바 축소
             if (mousePosition < toggleWidthThreshold) {
                 setSidebarWidth(collapsedWidth);
-            } else {
+            }
+            else {
                 setSidebarWidth(expandedWidth);
             }
         }
     };
 
-    const handleMouseUp = () => {
-        document.removeEventListener("mousemove", handleMouseMove);
-        document.removeEventListener("mouseup", handleMouseUp);
+    // 마우스를 리사이저 핸들에서 놓을 시 이벤트 리스너 제거
+    const removeResizerEventListener = () => {
+        document.removeEventListener("mousemove", adjustSidebarWidth);
+        document.removeEventListener("mouseup", removeResizerEventListener);
     };
 
-    const isCollapsed = sidebarWidth === collapsedWidth;
+    // 마우스가 리사이저에 들어왔을 때 사이드바의 border width 변경
+    const mouserEnterToResizer = () => {
+        if (sidebarRef.current) {
+            sidebarRef.current.style.borderRightWidth = "2px"; 
+        }
+    };
+
+    // 마우스가 리사이저에서 나갔을 때
+    const mouseLeaveFromResizer = () => {
+        if (sidebarRef.current) {
+            sidebarRef.current.style.borderRightWidth = "";
+        }
+    };
 
     return (
         <aside
             ref={sidebarRef}
-            className="relative border-r border-gray-300 p-4 pt-7 flex flex-col transition-all duration-300 ease-in-out"
-            style={{ width: `${sidebarWidth}px` }}>
+            className={`relative border-r border-gray-300 p-4 pt-7 flex flex-col transition-width duration-300 ease-in-out`}
+            style={{ width: `${sidebarWidth}px`, transitionProperty: 'width' }}>
             <div
-                className="resizer absolute top-0 right-0 bottom-0 w-2 cursor-col-resize"
-                onMouseDown={handleMouseDown}
-            ></div>
+                className="resizer absolute top-0 right-[-5px] bottom-0 w-3 cursor-col-resize"
+                onMouseDown={clickResizer}
+                onMouseEnter={mouserEnterToResizer}
+                onMouseLeave={mouseLeaveFromResizer}></div>
             {/* 검색창 및 작업 추가 영역 */}
-            <SearchInput />
+            <SearchInput isCollapsed={isCollapsed} />
             <div className="border-b border-b-neutral-300 mb-5 mt-2 pb-3">
                 <SidebarItem Icon={DocumentWrite} IconWidth="20" label="문서 작성" isCollapsed={isCollapsed} />
                 <SidebarItem Icon={TaskWrite} IconWidth="20" label="작업 추가" isCollapsed={isCollapsed} />
                 <SidebarItem Icon={ScheduleWrite} IconWidth="22" label="일정 추가" isCollapsed={isCollapsed} />
             </div>
             {/* 메뉴를 모아놓은 영역 */}
-            <div className="mb-6">
+            <div className="mb-2">
                 <SidebarItem Icon={HomeIcon} IconWidth="19" label="홈" isCollapsed={isCollapsed} />
                 <SidebarItem Icon={DocumentIcon} IconWidth="18" label="문서" isCollapsed={isCollapsed} />
                 <SidebarItem Icon={TaskIcon} IconWidth="18" label="작업" isCollapsed={isCollapsed} />
                 <SidebarItem Icon={ScheduleIcon} IconWidth="18" label="일정" isCollapsed={isCollapsed} />
             </div>
             {/* 폴더를 추가하고 보여주는 영역 */}
-            {
-                !isCollapsed ?
-                    <div className="mb-5">
-                        <div className="text-sm font-semibold ml-2">폴더</div>
-                        <div className="flex items-center pl-2 pt-2 pb-2 mt-1 rounded text-neutral-400 hover:bg-neutral-100 cursor-pointer">
-                            <PlusIcon width="14" />
-                            <span className="text-13px ml-2">새 폴더</span>
-                        </div>
-                    </div> :
-                    null
-            }
+            <div className="mb-2">
+                <div>
+                    <SidebarItem Icon={FolderIcon} IconWidth="18" label="폴더" isCollapsed={isCollapsed} />
+                    {
+                        !isCollapsed ?
+                            <div className="flex items-center pl-2 pt-1 pb-2 rounded text-neutral-400 hover:bg-neutral-100 cursor-pointer">
+                                <PlusIcon width="14" />
+                                <span className="text-13px ml-2 whitespace-nowrap overflow-hidden">새 폴더</span>
+                            </div> :
+                            null
+                    }
+                </div>
+            </div>
             {/* 휴지통 */}
             <SidebarItem Icon={TrashIcon} IconWidth="17" label="휴지통" isCollapsed={isCollapsed} />
             {/* 프로젝트 설정 div를 최하단에 위치하도록 여백 공간을 모두 차지 */}
@@ -93,6 +117,6 @@ export default function Home() {
                 <SidebarItem Icon={ProjectIcon} IconWidth="20" label="내 프로젝트" isCollapsed={isCollapsed} />
                 <SidebarItem Icon={SettingIcon} IconWidth="20" label="프로젝트 설정" isCollapsed={isCollapsed} />
             </div>
-        </aside>
+        </aside >
     );
 }
