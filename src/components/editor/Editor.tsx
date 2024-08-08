@@ -16,6 +16,7 @@ import Link from '@tiptap/extension-link'
 import React from 'react'
 import MenuBar from './MenuBar'
 import Heading from '@tiptap/extension-heading'
+import { FontSize } from '../../../lib/fontSize'
 
 export default function Editor() {
   const editor = useEditor({
@@ -45,6 +46,7 @@ export default function Editor() {
       Heading.configure({
         levels: [1, 2, 3],
       }),
+      FontSize,
     ],
     content: `
     <h3 class="text-center">
@@ -82,7 +84,7 @@ export default function Editor() {
   return (
     <div className="m-4 border rounded-lg shadow-md">
       <MenuBar editor={editor} />
-      <EditorContent editor={editor} className="p-4 z-30" />
+      <EditorContent editor={editor} className="p-4" />
     </div>
   )
 }

@@ -1,4 +1,4 @@
-import { SidebarItemProps } from "@/type/sidebarProps";
+import { SidebarItemProps } from "@/types/sidebarProps";
 
 export default function SidebarItem({ Icon, IconWidth, label, isCollapsed }: SidebarItemProps) {
     return (

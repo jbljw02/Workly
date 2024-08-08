@@ -26,9 +26,11 @@ import AlignCenterIcon from '../../../public/svgs/editor-header/align-center.svg
 import FontColorIcon from '../../../public/svgs/editor-header/font-color.svg'
 import ImageIcon from '../../../public/svgs/editor-header/image.svg'
 import LinkIcon from '../../../public/svgs/editor-header/link.svg'
+import CodeIcon from '../../../public/svgs/editor-header/code.svg'
+import { FontSize } from '../../../lib/fontSize'
 
 export default function MenuBar({ editor }: { editor: any }) {
-    const [fontSize, setFontSize] = useState(16);
+    const [fontSize, setFontSize] = useState<string>('16px');
     const [alignDropdownOpen, setAlignDropdownOpen] = useState(false)
 
     if (!editor) {
@@ -36,23 +38,29 @@ export default function MenuBar({ editor }: { editor: any }) {
     }
 
     const increaseFontSize = () => {
-        const newSize = fontSize + 1
-        setFontSize(newSize)
-        editor.chain().focus().setFontSize(newSize).run()
+        const newSize = parseInt(fontSize, 10) + 1
+        setFontSize(`${newSize}px`)
+        editor.chain().focus().setFontSize(`${newSize}px`).run()
     }
 
     const decreaseFontSize = () => {
-        const newSize = fontSize - 1
-        setFontSize(newSize)
-        editor.chain().focus().setFontSize(newSize).run()
+        const newSize = parseInt(fontSize, 10) - 1
+        setFontSize(`${newSize}px`)
+        editor.chain().focus().setFontSize(`${newSize}px`).run()
     }
 
+
     const fontSizeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const newSize = parseInt(event.target.value, 10)
-        if (isNaN(newSize)) return
-        setFontSize(newSize)
-        editor.chain().focus().setFontSize(newSize).run()
+        const value = event.target.value
+        setFontSize(value)
+        if (value.startsWith('h')) {
+            const level = parseInt(value.replace('h', ''))
+            editor.chain().focus().toggleHeading({ level }).run()
+        } else {
+            editor.chain().focus().setFontSize(value).run()
+        }
     }
+
 
     const toggleAlignDropdown = () => {
         setAlignDropdownOpen(!alignDropdownOpen)
@@ -84,8 +92,7 @@ export default function MenuBar({ editor }: { editor: any }) {
                     }
                 }}
                 className="p-2 bg-white border border-gray-300"
-                defaultValue="16"
-            >
+                defaultValue="16">
                 <option value="16">Paragraph</option>
                 <option value="h1">Heading 1</option>
                 <option value="h2">Heading 2</option>
@@ -94,7 +101,7 @@ export default function MenuBar({ editor }: { editor: any }) {
             <div className="flex items-center gap-1">
                 <button onClick={decreaseFontSize} className="p-2 bg-white border border-gray-300">-</button>
                 <input
-                    type="number"
+                    type="text"
                     value={fontSize}
                     onChange={fontSizeChange}
                     className="w-12 p-2 text-center bg-white border border-gray-300"
@@ -149,7 +156,7 @@ export default function MenuBar({ editor }: { editor: any }) {
                     <AlignLeftIcon width="19" />
                 </button>
                 {alignDropdownOpen && (
-                    <div className="absolute top-10 left-0 bg-white border border-gray-300 shadow-lg z-50 flex flex-col w-24">
+                    <div className="absolute top-10 left-0 bg-white border border-gray-300 shadow-lg flex flex-col w-24">
                         <button onClick={() => setAlignment('left')} className="p-2 hover:bg-gray-200">
                             <AlignLeftIcon width="19" />
                         </button>
@@ -167,6 +174,9 @@ export default function MenuBar({ editor }: { editor: any }) {
             </button>
             <button className="p-2">
                 <ImageIcon width="22" />
+            </button>
+            <button className="p-2">
+                <CodeIcon width="22" />
             </button>
         </div>
     )
