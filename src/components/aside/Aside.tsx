@@ -1,4 +1,4 @@
-"use client"; // 클라이언트 컴포넌트로 선언
+"use client";
 
 import { useState, useRef } from "react";
 import SidebarItem from "./child/SidebarItem";

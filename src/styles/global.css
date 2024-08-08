@@ -3,5 +3,29 @@
 @tailwind utilities;
 
 body {
-    font-family: 'Inter', system-ui, sans-serif;
-  }
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+h1 {
+  font-size: 30px;
+  margin: .67em 0
+}
+
+h2 {
+  font-size: 24px;
+  margin: .75em 0
+}
+
+h3 {
+  font-size: 20px;
+  margin: .83em 0
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bolder
+}
