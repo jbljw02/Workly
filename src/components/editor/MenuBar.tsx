@@ -13,7 +13,7 @@ import TableCell from '@tiptap/extension-table-cell'
 import TableHeader from '@tiptap/extension-table-header'
 import TableRow from '@tiptap/extension-table-row'
 import Image from '@tiptap/extension-image'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import BoldIcon from '../../../public/svgs/editor-header/bold.svg'
 import ItalicIcon from '../../../public/svgs/editor-header/italic.svg'
 import UnderlineIcon from '../../../public/svgs/editor-header/underline.svg'
@@ -28,156 +28,217 @@ import ImageIcon from '../../../public/svgs/editor-header/image.svg'
 import LinkIcon from '../../../public/svgs/editor-header/link.svg'
 import CodeIcon from '../../../public/svgs/editor-header/code.svg'
 import { FontSize } from '../../../lib/fontSize'
+import ToolbarButton from './ToolbarButton'
 
 export default function MenuBar({ editor }: { editor: any }) {
-    const [fontSize, setFontSize] = useState<string>('16px');
-    const [alignDropdownOpen, setAlignDropdownOpen] = useState(false)
+    const [fontSize, setFontSize] = useState<number>(16);
+    const [headingLevel, setHeadingLevel] = useState<string>('16');
+    const [alignDropdownOpen, setAlignDropdownOpen] = useState(false);
+    const [isBold, setIsBold] = useState<boolean>(false);
+    const [isItalic, setIsItalic] = useState<boolean>(false);
+    const [isUnderline, setIsUnderline] = useState<boolean>(false);
+    const [isHighlight, setIsHighlight] = useState<boolean>(false);
 
-    if (!editor) {
-        return null
-    }
+    useEffect(() => {
+        // 에디터가 초기화 되지 않았을 시
+        if (!editor) return;
 
-    const increaseFontSize = () => {
-        const newSize = parseInt(fontSize, 10) + 1
-        setFontSize(`${newSize}px`)
-        editor.chain().focus().setFontSize(`${newSize}px`).run()
-    }
+        // 에디터 내의 현재 상황에 따라 메뉴바를 업데이트
+        const updateMenuBar = () => {
+            // textStyle에서 현재 폰트 사이즈를 가져와서 할당
+            const textStyleAttributes = editor.getAttributes('textStyle') || {};
+            const currentFontSize = textStyleAttributes.fontSize;
 
-    const decreaseFontSize = () => {
-        const newSize = parseInt(fontSize, 10) - 1
-        setFontSize(`${newSize}px`)
-        editor.chain().focus().setFontSize(`${newSize}px`).run()
-    }
+            // heading 요소의 레벨을 확인(h1,h2,h3...)
+            const currentHeading = editor.getAttributes('heading').level;
 
+            if (currentHeading) {
+                setHeadingLevel(`h${currentHeading}`);
+            } else {
+                setHeadingLevel('16'); // 기본값 설정
+            }
 
-    const fontSizeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const value = event.target.value
-        setFontSize(value)
+            if (currentFontSize) {
+                setFontSize(parseInt(currentFontSize.replace('px', ''), 10));
+            }
+            else if (currentHeading) {
+                // heading에 대해 기본 폰트 사이즈 설정
+                switch (currentHeading) {
+                    case 1:
+                        setFontSize(30); // h1 기본 크기
+                        break;
+                    case 2:
+                        setFontSize(24); // h2 기본 크기
+                        break;
+                    case 3:
+                        setFontSize(20); // h3 기본 크기
+                        break;
+                    default:
+                        setFontSize(16); // 기본값
+                }
+            }
+            else {
+                setFontSize(16); // 기본값 설정
+            }
+
+            // 현재 폰트가 볼드 되어있거나 헤딩이 적용되어 있다면 true
+            setIsBold(editor.isActive('bold') || !!currentHeading);
+            // 나머지 상태 업데이트
+            setIsItalic(editor.isActive('italic'));
+            setIsUnderline(editor.isActive('underline'));
+            setIsHighlight(editor.isActive('highlight'));
+        };
+
+        // selectionUpdate: 에디터 내에서 '텍스트 선택'이 변경될 때마다 트리거
+        // transaction: 에디터에서 일어나는 '모든 변경사항'에 대해 트리거
+        editor.on('selectionUpdate', updateMenuBar);
+        editor.on('transaction', updateMenuBar);
+
+        return () => {
+            editor.off('selectionUpdate', updateMenuBar);
+            editor.off('transaction', updateMenuBar);
+        }
+    }, [editor]);
+
+    const changeHeading = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        const value = event.target.value;
+        // h 태그일시에
         if (value.startsWith('h')) {
-            const level = parseInt(value.replace('h', ''))
-            editor.chain().focus().toggleHeading({ level }).run()
-        } else {
-            editor.chain().focus().setFontSize(value).run()
+            const level = parseInt(value.replace('h', ''));
+            editor.chain().focus().toggleHeading({ level }).run();
+        }
+        // 일반 텍스트일 때
+        else {
+            // 헤딩을 p 태그로 변경
+            editor.chain().focus().setParagraph().run();
+            // textStyle 마크를 제거하여 스타일 초기화
+            editor.chain().focus().unsetMark('textStyle').run();
+            // 기본 폰트 크기 적용
+            // const fontSize = `${value}px`;
+            editor.chain().focus().setFontSize('16px').run();
         }
     }
 
+    // 폰트 크기 조절
+    const increaseFontSize = () => {
+        const newSize = fontSize + 1;
+        setFontSize(newSize);
+        editor.chain().focus().setFontSize(`${newSize}px`).run();
+    }
+    const decreaseFontSize = () => {
+        const newSize = fontSize - 1;
+        setFontSize(newSize);
+        editor.chain().focus().setFontSize(`${newSize}px`).run();
+    }
+    const fontSizeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const value = event.target.value;
+        const newSize = parseInt(value, 10);
+        setFontSize(newSize);
+        editor.chain().focus().setFontSize(`${newSize}px`).run();
+    }
 
+    // 정렬 드롭다운 컨트롤
     const toggleAlignDropdown = () => {
-        setAlignDropdownOpen(!alignDropdownOpen)
+        setAlignDropdownOpen(!alignDropdownOpen);
     }
-
     const setAlignment = (alignment: string) => {
-        editor.chain().focus().setTextAlign(alignment).run()
-        setAlignDropdownOpen(false)
+        editor.chain().focus().setTextAlign(alignment).run();
+        setAlignDropdownOpen(false);
     }
-
 
     const addLink = () => {
-        const url = window.prompt('Enter URL')
+        const url = window.prompt('Enter URL');
         if (url) {
-            editor.chain().focus().setLink({ href: url }).run()
+            editor.chain().focus().setLink({ href: url }).run();
         }
     }
 
     return (
-        <div className="flex gap-2 p-2 bg-gray-100 border-b border-gray-300 items-center">
+        <div className="flex gap-2 p-2 items-center border-b">
             <select
-                onChange={(event) => {
-                    const value = event.target.value
-                    if (value.startsWith('h')) {
-                        const level = parseInt(value.replace('h', ''))
-                        editor.chain().focus().toggleHeading({ level }).run()
-                    } else {
-                        editor.chain().focus().setFontSize(value).run()
-                    }
-                }}
+                onChange={changeHeading}
                 className="p-2 bg-white border border-gray-300"
-                defaultValue="16">
-                <option value="16">Paragraph</option>
-                <option value="h1">Heading 1</option>
-                <option value="h2">Heading 2</option>
-                <option value="h3">Heading 3</option>
+                value={headingLevel}>
+                <option value="16">일반 텍스트</option>
+                <option value="h1">제목 1(대)</option>
+                <option value="h2">제목 2(중)</option>
+                <option value="h3">제목 3(소)</option>
             </select>
             <div className="flex items-center gap-1">
                 <button onClick={decreaseFontSize} className="p-2 bg-white border border-gray-300">-</button>
                 <input
-                    type="text"
+                    type="number"
                     value={fontSize}
                     onChange={fontSizeChange}
-                    className="w-12 p-2 text-center bg-white border border-gray-300"
-                />
+                    className="w-12 p-2 text-center bg-white border border-gray-300" />
                 <button onClick={increaseFontSize} className="p-2 bg-white border border-gray-300">+</button>
             </div>
-            <button
+            <ToolbarButton
                 onClick={() => editor.chain().focus().toggleBold().run()}
-                className={`p-2 ${editor.isActive('bold') ? 'bg-gray-300' : ''}`}
-            >
-                <BoldIcon width="25" />
-            </button>
-            <button
+                isActive={isBold}
+                Icon={BoldIcon}
+                iconWidth={25} />
+            <ToolbarButton
                 onClick={() => editor.chain().focus().toggleItalic().run()}
-                className={`p-2 ${editor.isActive('italic') ? 'bg-gray-300' : ''}`}
-            >
-                <ItalicIcon width="15" />
-            </button>
-            <button
+                isActive={isItalic}
+                Icon={ItalicIcon}
+                iconWidth={15} />
+            <ToolbarButton
                 onClick={() => editor.chain().focus().toggleUnderline().run()}
-                className={`p-2 ${editor.isActive('underline') ? 'bg-gray-300' : ''}`}
-            >
-                <UnderlineIcon width="15" />
-            </button>
-            <button
+                isActive={isUnderline}
+                Icon={UnderlineIcon}
+                iconWidth={15} />
+            <ToolbarButton
                 onClick={() => editor.chain().focus().setColor('#958DF1').run()}
-                className={`p-2 ${editor.isActive('textStyle', { color: '#958DF1' }) ? 'bg-gray-300' : ''}`}
-            >
-                <FontColorIcon width="18" />
-            </button>
-            <button
+                isActive={editor && editor.isActive('textStyle', { color: '#958DF1' })}
+                Icon={FontColorIcon}
+                iconWidth={18} />
+            <ToolbarButton
                 onClick={() => editor.chain().focus().toggleHighlight().run()}
-                className={`p-2 ${editor && editor.isActive('highlight') ? 'bg-gray-300' : ''}`}
-                disabled={!editor}
-            >
-                <HighlightIcon width="11" />
-            </button>
-            <button
+                isActive={isHighlight}
+                Icon={HighlightIcon}
+                iconWidth={11} />
+            <ToolbarButton
                 onClick={() => editor.chain().focus().toggleBulletList().run()}
-                className={`p-2 ${editor.isActive('bulletList') ? 'bg-gray-300' : ''}`}
-            >
-                <UlIcon width="22" />
-            </button>
-            <button
+                isActive={editor && editor.isActive('bulletList')}
+                Icon={UlIcon}
+                iconWidth={22} />
+            <ToolbarButton
                 onClick={() => editor.chain().focus().toggleOrderedList().run()}
-                className={`p-2 ${editor.isActive('orderedList') ? 'bg-gray-300' : ''}`}
-            >
-                <OlIcon width="22" />
-            </button>
+                isActive={editor && editor.isActive('orderedList')}
+                Icon={OlIcon}
+                iconWidth={22} />
             <div className="relative">
-                <button onClick={toggleAlignDropdown} className="p-2 bg-white border border-gray-300 flex items-center">
-                    <AlignLeftIcon width="19" />
-                </button>
-                {alignDropdownOpen && (
-                    <div className="absolute top-10 left-0 bg-white border border-gray-300 shadow-lg flex flex-col w-24">
-                        <button onClick={() => setAlignment('left')} className="p-2 hover:bg-gray-200">
-                            <AlignLeftIcon width="19" />
-                        </button>
-                        <button onClick={() => setAlignment('center')} className="p-2 hover:bg-gray-200">
-                            <AlignCenterIcon width="19" />
-                        </button>
-                        <button onClick={() => setAlignment('right')} className="p-2 hover:bg-gray-200">
-                            <AlignRightIcon width="19" />
-                        </button>
-                    </div>
-                )}
+                <ToolbarButton
+                    onClick={toggleAlignDropdown}
+                    Icon={AlignLeftIcon}
+                    iconWidth={19} />
+                {
+                    alignDropdownOpen && (
+                        <div className="absolute top-10 left-0 bg-white border border-gray-300 shadow-lg flex flex-col w-24 z-50">
+                            <button onClick={() => setAlignment('left')} className="p-2 hover:bg-gray-200">
+                                <AlignLeftIcon width="19" />
+                            </button>
+                            <button onClick={() => setAlignment('center')} className="p-2 hover:bg-gray-200">
+                                <AlignCenterIcon width="19" />
+                            </button>
+                            <button onClick={() => setAlignment('right')} className="p-2 hover:bg-gray-200">
+                                <AlignRightIcon width="19" />
+                            </button>
+                        </div>
+                    )
+                }
             </div>
-            <button onClick={addLink} className="p-2">
-                <LinkIcon width="22" />
-            </button>
-            <button className="p-2">
-                <ImageIcon width="22" />
-            </button>
-            <button className="p-2">
-                <CodeIcon width="22" />
-            </button>
+            <ToolbarButton
+                onClick={addLink}
+                Icon={LinkIcon}
+                iconWidth={22} />
+            <ToolbarButton
+                Icon={ImageIcon}
+                iconWidth={22} />
+            <ToolbarButton
+                Icon={CodeIcon}
+                iconWidth={22} />
         </div>
     )
 }

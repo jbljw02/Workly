@@ -82,7 +82,7 @@ export default function Editor() {
   })
 
   return (
-    <div className="m-4 border rounded-lg shadow-md">
+    <div className="m-4 rounded-lg w-full">
       <MenuBar editor={editor} />
       <EditorContent editor={editor} className="p-4" />
     </div>
