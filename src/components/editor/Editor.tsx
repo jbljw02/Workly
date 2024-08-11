@@ -14,7 +14,7 @@ import TableRow from '@tiptap/extension-table-row'
 import Image from '@tiptap/extension-image'
 import Link from '@tiptap/extension-link'
 import React from 'react'
-import MenuBar from './MenuBar'
+import MenuBar from './child/MenuBar'
 import Heading from '@tiptap/extension-heading'
 import { FontSize } from '../../../lib/fontSize'
 
@@ -82,8 +82,11 @@ export default function Editor() {
   })
 
   return (
-    <div className="m-4 rounded-lg w-full">
-      <MenuBar editor={editor} />
+    <div className="rounded-lg w-full">
+      {
+        editor &&
+        <MenuBar editor={editor} />
+      }
       <EditorContent editor={editor} className="p-4" />
     </div>
   )

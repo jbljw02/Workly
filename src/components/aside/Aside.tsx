@@ -59,27 +59,41 @@ export default function Home() {
     // 마우스가 리사이저에 들어왔을 때 사이드바의 border width 변경
     const mouserEnterToResizer = () => {
         if (sidebarRef.current) {
-            sidebarRef.current.style.borderRightWidth = "2px"; 
+            sidebarRef.current.style.setProperty('--resizer-border-width', '2px');
         }
     };
 
     // 마우스가 리사이저에서 나갔을 때
     const mouseLeaveFromResizer = () => {
         if (sidebarRef.current) {
-            sidebarRef.current.style.borderRightWidth = "";
+            sidebarRef.current.style.setProperty('--resizer-border-width', '1px');
         }
     };
 
     return (
         <aside
             ref={sidebarRef}
-            className={`relative border-r border-gray-300 p-4 pt-7 flex flex-col transition-width duration-300 ease-in-out`}
-            style={{ width: `${sidebarWidth}px`, transitionProperty: 'width' }}>
+            className={`relative p-4 pt-7 flex flex-col transition-width duration-300 ease-in-out`}
+            style={{
+                width: `${sidebarWidth}px`,
+                transitionProperty: 'width',
+                boxSizing: 'border-box',
+                position: 'relative'
+            }}>
+            {/* aside의 너비를 변경시키는 리사이저 */}
             <div
-                className="resizer absolute top-0 right-[-5px] bottom-0 w-3 cursor-col-resize"
+                className="resizer absolute top-0 right-[-5px] bottom-0 w-2 cursor-col-resize z-50"
                 onMouseDown={clickResizer}
                 onMouseEnter={mouserEnterToResizer}
                 onMouseLeave={mouseLeaveFromResizer}></div>
+            {/* aside의 우측에서 border에 커서를 올렸을 때 border의 크기가 넓어지는 것처럼 출력 */}
+            <div
+                className="absolute top-0 right-0 bottom-0"
+                style={{
+                    width: 'var(--resizer-border-width, 1px)',
+                    backgroundColor: '#D1D5DB',
+                    transition: 'width 0.2s ease',
+                }}></div>
             {/* 검색창 및 작업 추가 영역 */}
             <SearchInput isCollapsed={isCollapsed} />
             <div className="border-b border-b-neutral-300 mb-5 mt-2 pb-3">
