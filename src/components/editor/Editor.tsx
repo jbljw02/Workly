@@ -17,6 +17,7 @@ import React from 'react'
 import MenuBar from './child/MenuBar'
 import Heading from '@tiptap/extension-heading'
 import { FontSize } from '../../../lib/fontSize'
+import { FontFamily } from '../../../lib/fontFamily'
 
 export default function Editor() {
   const editor = useEditor({
@@ -47,6 +48,7 @@ export default function Editor() {
         levels: [1, 2, 3],
       }),
       FontSize,
+      FontFamily,
     ],
     content: `
     <h3 class="text-center">

@@ -1,17 +1,29 @@
 import { Level } from "@tiptap/extension-heading";
 import { Editor } from "@tiptap/react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import TriangleDownIcon from '../../../../public/svgs/editor-header/triangle-down.svg'
 import TriangleRightIcon from '../../../../public/svgs/editor-header/triangle-right.svg'
+import TriangleUpIcon from '../../../../public/svgs/editor-header/triangle-up.svg'
+import { useClickOutside } from "@/components/hooks/useClickOutside";
 
 type Options = {
     value: string;
     label: string;
 }
 
-export default function HeadingDropdown({ editor }: { editor: Editor }) {
+export default function HeadingDropdown({ editor, headingLevel }: { editor: Editor, headingLevel: string }) {
     const [isOpen, setIsOpen] = useState(false);
-    const [selectedValue, setSelectedValue] = useState<string>('16');
+    const dropdownRef = useRef<HTMLDivElement>(null);
+
+    const options: Options[] = [
+        { value: '16', label: '일반 텍스트' },
+        { value: 'h1', label: '제목 1' },
+        { value: 'h2', label: '제목 2' },
+        { value: 'h3', label: '제목 3' },
+    ];
+
+    // 현재 선택된 옵션의 label을 찾기
+    const selectedLabel = options.find(option => option.value === headingLevel)?.label || '선택되지 않음';
 
     const changeHeading = (option: Options) => {
         // h 태그일시에
@@ -26,49 +38,45 @@ export default function HeadingDropdown({ editor }: { editor: Editor }) {
             // textStyle 마크를 제거하여 스타일 초기화
             editor.chain().focus().unsetMark('textStyle').run();
             // 기본 폰트 크기 적용
-            // const fontSize = `${value}px`;
             (editor.chain() as any).setFontSize('16px').run();
         }
-        setSelectedValue(option.value);
         setIsOpen(false);
     }
 
-    const options: Options[] = [
-        { value: '16', label: '일반 텍스트' },
-        { value: 'h1', label: '제목 1' },
-        { value: 'h2', label: '제목 2' },
-        { value: 'h3', label: '제목 3' },
-    ];
+    useClickOutside(dropdownRef, () => setIsOpen(false));
 
     return (
-        <div className="relative">
+        <div className="relative" ref={dropdownRef}>
             <div
                 onClick={() => setIsOpen(!isOpen)}
-                className="flex flex-row items-center hover:bg-gray-100 rounded p-2">
+                onMouseDown={(e) => e.preventDefault()} // 드래그 상태을 유지
+                className="flex flex-row items-center hover:bg-gray-100 rounded p-2 cursor-pointer">
                 <div
-                    className="rounded-md cursor-pointer text-sm pr-2">
+                    className="rounded-md text-sm pr-2">
                     {/* 현재 선택된 옵션을 출력 */}
-                    {
-                        options.find(option => option.value === selectedValue)?.label
-                    }
+                    {selectedLabel}
                 </div>
-                <TriangleDownIcon width="14" />
+                {
+                    isOpen ?
+                        <TriangleUpIcon width="14" /> :
+                        <TriangleDownIcon width="14" />
+                }
             </div>
             {
                 isOpen && (
-                    <div className="absolute left-0 right-0 bg-white border border-gray-200 rounded-sm mt-1 shadow-lg z-10 w-32 text-sm cursor-pointer">
+                    <div className="absolute left-0 right-0 bg-white border border-gray-200 rounded-sm mt-1 shadow-lg z-10 w-36 text-sm cursor-pointer">
                         {
                             options.map(option => (
                                 <div
                                     key={option.value}
                                     onClick={() => changeHeading(option)}
                                     className={`flex flex-row justify-between p-2 hover:bg-gray-100 pt-3 pb-3
-                                        ${option.value === selectedValue ? 'bg-gray-100' : ''}
+                                        ${option.value === headingLevel ? 'bg-gray-100' : ''}
                                         ${option.value === 'h1' ? 'text-2xl leading-none' : ''} 
                                         ${option.value === 'h2' ? 'text-xl leading-none' : ''} 
                                         ${option.value === 'h3' ? 'text-lg leading-none' : ''} 
-                                        ${option.value === '16' ? 'text-base leading-none' : ''}`}>
-                                    <div>{option.label}</div>
+                                        ${option.value === '16' ? 'text-sm leading-none' : ''}`}>
+                                    <div className="pl-1">{option.label}</div>
                                     <TriangleRightIcon width="17" />
                                 </div>
                             ))

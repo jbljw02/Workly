@@ -3,6 +3,8 @@ import AlignLeftIcon from '../../../../public/svgs/editor-header/align-left.svg'
 import AlignRightIcon from '../../../../public/svgs/editor-header/align-right.svg'
 import AlignCenterIcon from '../../../../public/svgs/editor-header/align-center.svg'
 import { Editor } from '@tiptap/react'
+import { useRef } from "react";
+import { useClickOutside } from "@/components/hooks/useClickOutside";
 
 type AlignDropdown = {
     editor: Editor;
@@ -10,14 +12,20 @@ type AlignDropdown = {
 }
 
 export default function AlignDropdown({ editor, setAlignDropdownOpen }: AlignDropdown) {
+    const dropdownRef = useRef<HTMLDivElement>(null);
+
     // 정렬 드롭다운 컨트롤
     const setAlignment = (alignment: string) => {
         editor.chain().focus().setTextAlign(alignment).run();
         setAlignDropdownOpen(false);
     }
 
+    useClickOutside(dropdownRef, () => setAlignDropdownOpen(false));
+
     return (
-        <div className="flex flex-row absolute top-10 left-0 bg-white border rounded-sm border-gray-200 shadow-lg z-50">
+        <div
+            ref={dropdownRef}
+            className="flex flex-row absolute top-10 left-0 bg-white border rounded-sm border-gray-200 shadow-lg z-50">
             <ToolbarButton
                 onClick={() => setAlignment('left')}
                 isActive={editor.isActive({ textAlign: 'left' })}

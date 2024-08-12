@@ -1,6 +1,5 @@
 'use client'
 
-import { Level } from '@tiptap/extension-heading'
 import React, { useEffect, useState } from 'react'
 import BoldIcon from '../../../../public/svgs/editor-header/bold.svg'
 import ItalicIcon from '../../../../public/svgs/editor-header/italic.svg'
@@ -18,6 +17,7 @@ import AlignDropdown from './AlignDropdown'
 import { Editor } from '@tiptap/react'
 import HeadingDropdown from './HeadingDropdown'
 import FontSizeCal from './FontSizeCal'
+import FontDropdwon from './FontDropdown'
 
 export default function MenuBar({ editor }: { editor: Editor }) {
     const [fontSize, setFontSize] = useState<number>(16);
@@ -27,6 +27,7 @@ export default function MenuBar({ editor }: { editor: Editor }) {
     const [isItalic, setIsItalic] = useState<boolean>(false);
     const [isUnderline, setIsUnderline] = useState<boolean>(false);
     const [isHighlight, setIsHighlight] = useState<boolean>(false);
+    const [selectedFont, setSelectedFont] = useState<string>('Arial');
 
     useEffect(() => {
         // 에디터가 초기화 되지 않았을 시
@@ -87,7 +88,7 @@ export default function MenuBar({ editor }: { editor: Editor }) {
             editor.off('selectionUpdate', updateMenuBar);
             editor.off('transaction', updateMenuBar);
         }
-    }, [editor]);
+    }, [editor, selectedFont, setSelectedFont]);
 
     const addLink = () => {
         const url = window.prompt('Enter URL');
@@ -99,7 +100,11 @@ export default function MenuBar({ editor }: { editor: Editor }) {
     return (
         <div className="flex gap-1.5 p-2 items-center border-b">
             {/* 헤딩을 조절하는 드롭다운 */}
-            <HeadingDropdown editor={editor && editor} />
+            <HeadingDropdown
+                editor={editor && editor}
+                headingLevel={headingLevel} />
+            <FontDropdwon
+                editor={editor && editor} />
             {/* 폰트 사이즈를 조절하는  */}
             <FontSizeCal
                 editor={editor}

@@ -29,7 +29,7 @@ export default function FontSizeCal({ editor, fontSize, setFontSize }: FontSizeC
     }
 
     return (
-        <div className="flex items-center">
+        <div className="flex items-center gap-1">
             <ToolbarButton
                 onClick={decreaseFontSize}
                 Icon={MinusIcon}
