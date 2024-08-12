@@ -1,5 +1,6 @@
 import Aside from '@/components/aside/Aside'
 import Editor from '@/components/editor/Editor'
+import { Provider } from 'react-redux'
 
 export default function Home() {
   return (

@@ -18,6 +18,8 @@ import { Editor } from '@tiptap/react'
 import HeadingDropdown from './HeadingDropdown'
 import FontSizeCal from './FontSizeCal'
 import FontDropdwon from './FontDropdown'
+import LineIcon from '../../../../public/svgs/editor-header/line.svg'
+import BarDivider from './BarDivider'
 
 export default function MenuBar({ editor }: { editor: Editor }) {
     const [fontSize, setFontSize] = useState<number>(16);
@@ -98,18 +100,21 @@ export default function MenuBar({ editor }: { editor: Editor }) {
     }
 
     return (
-        <div className="flex gap-1.5 p-2 items-center border-b">
+        <div className="flex items-center gap-1.5 px-2 py-1 border-b">
             {/* 헤딩을 조절하는 드롭다운 */}
             <HeadingDropdown
                 editor={editor && editor}
                 headingLevel={headingLevel} />
-            <FontDropdwon
-                editor={editor && editor} />
-            {/* 폰트 사이즈를 조절하는  */}
+            <BarDivider />
+            {/* 폰트를 변경하는 드롭다운 */}
+            <FontDropdwon editor={editor && editor} />
+            <BarDivider />
+            {/* 폰트 사이즈를 조절하는 영역 */}
             <FontSizeCal
                 editor={editor}
                 fontSize={fontSize}
                 setFontSize={setFontSize} />
+            <BarDivider />
             <ToolbarButton
                 onClick={() => editor.chain().focus().toggleBold().run()}
                 isActive={isBold}
@@ -135,6 +140,7 @@ export default function MenuBar({ editor }: { editor: Editor }) {
                 isActive={isHighlight}
                 Icon={HighlightIcon}
                 iconWidth={11} />
+            <BarDivider />
             <ToolbarButton
                 onClick={() => editor.chain().focus().toggleBulletList().run()}
                 isActive={editor && editor.isActive('bulletList')}
@@ -159,6 +165,7 @@ export default function MenuBar({ editor }: { editor: Editor }) {
                     )
                 }
             </div>
+            <BarDivider />
             <ToolbarButton
                 onClick={addLink}
                 Icon={LinkIcon}

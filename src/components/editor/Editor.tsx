@@ -13,13 +13,19 @@ import TableHeader from '@tiptap/extension-table-header'
 import TableRow from '@tiptap/extension-table-row'
 import Image from '@tiptap/extension-image'
 import Link from '@tiptap/extension-link'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import MenuBar from './child/MenuBar'
 import Heading from '@tiptap/extension-heading'
 import { FontSize } from '../../../lib/fontSize'
 import { FontFamily } from '../../../lib/fontFamily'
+import { useDispatch, useSelector } from 'react-redux'
+import { RootState } from '@/redux/store'
+import { decreaseEditorScale, increaseEditorScale, setEditorScale } from '@/redux/features/scaleSlice'
+import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 
 export default function Editor() {
+  const dispatch = useAppDispatch();
+
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -83,13 +89,36 @@ export default function Editor() {
     },
   })
 
+  const editorScale = useAppSelector(state => state.editorScale);
+
+  const handleKeyPress = (event: KeyboardEvent) => {
+    if (event.metaKey || event.ctrlKey) {
+      if (event.key === '=') {
+        event.preventDefault(); // 기본 확대 동작 방지
+        dispatch(increaseEditorScale()); // 확대
+      }
+      if (event.key === '-') {
+        event.preventDefault(); // 기본 축소 동작 방지
+        dispatch(decreaseEditorScale()); // 축소
+      }
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyPress);
+    return () => {
+      window.removeEventListener('keydown', handleKeyPress);
+    };
+  }, []);
+
   return (
     <div className="rounded-lg w-full">
       {
         editor &&
         <MenuBar editor={editor} />
       }
-      <EditorContent editor={editor} className="p-4" />
+      <EditorContent editor={editor} className="transform origin-top-left transition-transform duration-100"
+        style={{ transform: `scale(${editorScale})`, width: '100%', height: '100%' }} />
     </div>
   )
 }
