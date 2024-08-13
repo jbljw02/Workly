@@ -90,7 +90,7 @@ export default function Editor() {
   })
 
   const editorScale = useAppSelector(state => state.editorScale);
-
+  
   const handleKeyPress = (event: KeyboardEvent) => {
     if (event.metaKey || event.ctrlKey) {
       if (event.key === '=') {

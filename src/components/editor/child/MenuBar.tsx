@@ -20,6 +20,7 @@ import FontSizeCal from './FontSizeCal'
 import FontDropdwon from './FontDropdown'
 import LineIcon from '../../../../public/svgs/editor-header/line.svg'
 import BarDivider from './BarDivider'
+import RatioDropdown from './RatioDropdown'
 
 export default function MenuBar({ editor }: { editor: Editor }) {
     const [fontSize, setFontSize] = useState<number>(16);
@@ -101,6 +102,7 @@ export default function MenuBar({ editor }: { editor: Editor }) {
 
     return (
         <div className="flex items-center gap-1.5 px-2 py-1 border-b">
+            <RatioDropdown />
             {/* 헤딩을 조절하는 드롭다운 */}
             <HeadingDropdown
                 editor={editor && editor}

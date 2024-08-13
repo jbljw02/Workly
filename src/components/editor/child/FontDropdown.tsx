@@ -116,7 +116,8 @@ export default function FontDropdown({ editor }: { editor: Editor }) {
                             ))
                         }
                     </div>
-                )}
+                )
+            }
         </div>
     );
 }

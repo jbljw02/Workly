@@ -8,10 +8,12 @@ export const editorScaleSlice = createSlice({
             return action.payload;
         },
         increaseEditorScale: (state) => {
-            return state + 0.1;
+            // 최대값을 2로 제한
+            return Math.min(state + 0.25, 2);
         },
         decreaseEditorScale: (state) => {
-            return state - 0.1;
+            // 최소값을 0.5로 제한
+            return Math.max(state - 0.25, 0.5);
         },
     },
 })
