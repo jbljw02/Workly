@@ -12,16 +12,25 @@ import TableCell from '@tiptap/extension-table-cell'
 import TableHeader from '@tiptap/extension-table-header'
 import TableRow from '@tiptap/extension-table-row'
 import Image from '@tiptap/extension-image'
+import ListItem from '@tiptap/extension-list-item'
+import OrderedList from '@tiptap/extension-ordered-list'
 import Link from '@tiptap/extension-link'
+import CodeBlock from '@tiptap/extension-code-block'
 import React, { useEffect, useState } from 'react'
 import MenuBar from './child/MenuBar'
 import Heading from '@tiptap/extension-heading'
+import BulletList from '@tiptap/extension-bullet-list'
 import { FontSize } from '../../../lib/fontSize'
 import { FontFamily } from '../../../lib/fontFamily'
-import { useDispatch, useSelector } from 'react-redux'
-import { RootState } from '@/redux/store'
 import { decreaseEditorScale, increaseEditorScale, setEditorScale } from '@/redux/features/scaleSlice'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
+import Document from '@tiptap/extension-document'
+import '@/styles/editor.css';
+import Dropcursor from '@tiptap/extension-dropcursor'
+import ImageResize from 'tiptap-extension-resize-image'
+import { ResizableImage } from 'tiptap-extension-resizable-image';
+import 'tiptap-extension-resizable-image/styles.css';
+import { ImageClickMenu } from './child/ImageClickMenu'
 
 export default function Editor() {
   const dispatch = useAppDispatch();
@@ -35,13 +44,17 @@ export default function Editor() {
         },
         orderedList: {
           keepMarks: true,
-          keepAttributes: false,
+          keepAttributes: true,
         },
       }),
+      Document,
       Underline,
       Highlight,
       TextStyle,
       Color,
+      BulletList,
+      OrderedList,
+      ListItem,
       TextAlign.configure({
         types: ['heading', 'paragraph'],
       }),
@@ -55,6 +68,22 @@ export default function Editor() {
       }),
       FontSize,
       FontFamily,
+      CodeBlock,
+      Link.configure({
+        openOnClick: true,
+        autolink: true,
+        defaultProtocol: 'https',
+      }),
+      Dropcursor,
+      Image,
+      // ResizableImage.configure({
+      //   defaultWidth: 600,
+      //   defaultHeight: 600,
+      // }),
+      ImageClickMenu.configure({
+        defaultWidth: 600,
+        defaultHeight: 600,
+      })
     ],
     content: `
     <h3 class="text-center">
@@ -82,6 +111,9 @@ export default function Editor() {
       (devs, they wanna, wanna have fun, devs wanna have)
     </p>
   `,
+    onUpdate: ({ editor }) => {
+      // console.log(editor.getHTML());
+    },
     editorProps: {
       attributes: {
         class: 'prose prose-sm sm:prose lg:prose-lg xl:prose-xl m-4 focus:outline-none',
@@ -90,7 +122,7 @@ export default function Editor() {
   })
 
   const editorScale = useAppSelector(state => state.editorScale);
-  
+
   const handleKeyPress = (event: KeyboardEvent) => {
     if (event.metaKey || event.ctrlKey) {
       if (event.key === '=') {
@@ -118,7 +150,7 @@ export default function Editor() {
         <MenuBar editor={editor} />
       }
       <EditorContent editor={editor} className="transform origin-top-left transition-transform duration-100"
-        style={{ transform: `scale(${editorScale})`, width: '100%', height: '100%' }} />
+        style={{ transform: `scale(${editorScale})` }} />
     </div>
   )
 }

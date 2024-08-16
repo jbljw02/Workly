@@ -6,27 +6,6 @@ body {
   font-family: 'Inter', system-ui, sans-serif;
 }
 
-h1 {
-  font-size: 30px;
-  margin: .67em 0
-}
-
-h2 {
-  font-size: 24px;
-  margin: .75em 0
-}
-
-h3 {
-  font-size: 20px;
-  margin: .83em 0
-}
-
-h1,
-h2,
-h3 {
-  font-weight: bolder
-}
-
 /* Chrome, Safari, Edge.. */
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {

@@ -1,8 +1,8 @@
 import { useClickOutside } from "@/components/hooks/useClickOutside";
 import { useRef, useState } from "react";
-import TriangleDownIcon from '../../../../public/svgs/editor-header/triangle-down.svg'
-import TriangleRightIcon from '../../../../public/svgs/editor-header/triangle-right.svg'
-import TriangleUpIcon from '../../../../public/svgs/editor-header/triangle-up.svg'
+import TriangleDownIcon from '../../../../public/svgs/editor/triangle-down.svg'
+import TriangleRightIcon from '../../../../public/svgs/editor/triangle-right.svg'
+import TriangleUpIcon from '../../../../public/svgs/editor/triangle-up.svg'
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { setEditorScale } from "@/redux/features/scaleSlice";
 

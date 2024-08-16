@@ -1,0 +1,81 @@
+pre {
+    background: #2d2b29;
+    border-radius: 0.5rem;
+    color: #ffffff;
+    font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+    margin: 1rem 0;
+    padding: 0.75rem 1rem;
+
+    code {
+        background: none;
+        font-size: 14px;
+        padding: 0;
+    }
+}
+
+ul,
+ol {
+    padding: 0 1rem;
+    margin: 0.6rem 1rem 0.6rem 0.4rem;
+
+    li p {
+        margin-top: 0.25em;
+        margin-bottom: 0.25em;
+    }
+}
+
+ul {
+    list-style-type: disc;
+}
+
+ol {
+    list-style-type: decimal;
+}
+
+ol li::marker {
+    font-size: inherit;
+    font-family: inherit;
+    color: inherit;
+}
+
+h1 {
+    font-size: 30px;
+    margin: .67em 0
+}
+
+h2 {
+    font-size: 24px;
+    margin: .75em 0
+}
+
+h3 {
+    font-size: 20px;
+    margin: .83em 0
+}
+
+h1,
+h2,
+h3 {
+    font-weight: bolder
+}
+
+hr {
+    margin: 1rem 0;
+}
+
+.image-resizer-n,
+.image-resizer-e,
+.image-resizer-s,
+.image-resizer-w {
+    visibility: hidden;
+}
+
+.image-component {
+    margin: 1rem 0rem;
+    align-items: flex-start;
+}
+
+.node-imageComponent {
+    display: block;
+    width: 100%;
+}
