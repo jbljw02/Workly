@@ -30,7 +30,7 @@ import Dropcursor from '@tiptap/extension-dropcursor'
 import ImageResize from 'tiptap-extension-resize-image'
 import { ResizableImage } from 'tiptap-extension-resizable-image';
 import 'tiptap-extension-resizable-image/styles.css';
-import { ImageClickMenu } from './child/ImageClickMenu'
+import ImageClickMenu from './child/ImageClickMenu'
 
 export default function Editor() {
   const dispatch = useAppDispatch();
@@ -75,7 +75,6 @@ export default function Editor() {
         defaultProtocol: 'https',
       }),
       Dropcursor,
-      Image,
       // ResizableImage.configure({
       //   defaultWidth: 600,
       //   defaultHeight: 600,

@@ -72,10 +72,9 @@ hr {
 
 .image-component {
     margin: 1rem 0rem;
-    align-items: flex-start;
 }
 
 .node-imageComponent {
-    display: block;
+    display: flex;
     width: 100%;
 }

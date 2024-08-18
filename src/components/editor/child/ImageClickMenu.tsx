@@ -14,15 +14,18 @@ import { useClickOutside } from '@/components/hooks/useClickOutside';
 import HoverTooltip from './HoverTooltip';
 
 const NodeView = (props: ResizableImageNodeViewRendererProps) => {
-  const editor = props.editor;
-
   const [showMenu, setShowMenu] = useState(false);
-  const [alignment, setAlignmentState] = useState<'left' | 'center' | 'right'>('left');
+  const [alignment, setAlignmentState] = useState<'flex-start' | 'center' | 'flex-end'>('flex-start');
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const setAlignment = (textAlign: 'left' | 'center' | 'right') => {
-    editor.chain().focus().setTextAlign(textAlign).run();
-    setAlignmentState(textAlign);
+  const setAlignment = (justifyContent: 'flex-start' | 'center' | 'flex-end') => {
+    // 이미지의 최상위 요소인 .node-imageComponent를 찾음
+    const imgContainer = dropdownRef.current?.closest('.node-imageComponent') as HTMLElement;
+
+    if (imgContainer) {
+      imgContainer.style.justifyContent = justifyContent;
+      setAlignmentState(justifyContent);
+    }
   };
 
   const imageClick = () => {
@@ -37,16 +40,16 @@ const NodeView = (props: ResizableImageNodeViewRendererProps) => {
       className="relative image-component"
       data-drag-handle>
       <div className="inline-flex flex-col items-center relative">
-        <div onClick={imageClick} className="cursor-pointer">
+        <div onClick={imageClick} className="flex cursor-pointer">
           <ResizableImageComponent {...props} />
         </div>
         {
           showMenu && (
-            <div className='flex flex-row items-center absolute bottom-[-55px] border left-[-5px] rounded-md p-1 shadow-md'>
+            <div className='flex flex-row items-center absolute bottom-[-55px] left-[-5px] rounded-md p-1 z-[9999] bg-white shadow-[0px_4px_10px_rgba(0,0,0,0.25)]'>
               <HoverTooltip label="좌측 정렬">
                 <ToolbarButton
-                  onClick={() => setAlignment('left')}
-                  isActive={alignment === 'left'}
+                  onClick={() => setAlignment('flex-start')}
+                  isActive={alignment === 'flex-start'}
                   Icon={AlignLeftIcon}
                   iconWidth={19} />
               </HoverTooltip>
@@ -59,8 +62,8 @@ const NodeView = (props: ResizableImageNodeViewRendererProps) => {
               </HoverTooltip>
               <HoverTooltip label='우측 정렬'>
                 <ToolbarButton
-                  onClick={() => setAlignment('right')}
-                  isActive={alignment === 'right'}
+                  onClick={() => setAlignment('flex-end')}
+                  isActive={alignment === 'flex-end'}
                   Icon={AlignRightIcon}
                   iconWidth={19} />
               </HoverTooltip>
@@ -93,8 +96,10 @@ const NodeView = (props: ResizableImageNodeViewRendererProps) => {
   );
 };
 
-export const ImageClickMenu = ResizableImage.extend({
+const ImageClickMenu = ResizableImage.extend({
   addNodeView() {
     return ReactNodeViewRenderer(NodeView);
   },
 });
+
+export default ImageClickMenu;
