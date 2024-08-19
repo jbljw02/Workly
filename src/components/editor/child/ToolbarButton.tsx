@@ -17,7 +17,7 @@ export default function ToolbarButton({ onClick, isActive, Icon, iconWidth, isFo
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
-                transition: 'background-color 0.1s ease',
+                transition: 'background-color 0.1s ease'
             }}>
             <Icon width={iconWidth} height="auto" />
         </button>

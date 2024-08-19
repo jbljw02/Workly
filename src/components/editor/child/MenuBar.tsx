@@ -22,7 +22,6 @@ import BarDivider from './BarDivider'
 import RatioDropdown from './RatioDropdown'
 import HoverTooltip from './HoverTooltip'
 import LineIcon from '../../../../public/svgs/editor/horizontal-rule.svg'
-import ImageCropper from './ImageCropper'
 
 export default function MenuBar({ editor }: { editor: Editor }) {
     const [fontSize, setFontSize] = useState<number>(16);
@@ -34,7 +33,6 @@ export default function MenuBar({ editor }: { editor: Editor }) {
     const [isHighlight, setIsHighlight] = useState<boolean>(false);
     const [selectedFont, setSelectedFont] = useState<string>('Arial');
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
-    const [showCropper, setShowCropper] = useState(false);
 
     useEffect(() => {
         // 에디터가 초기화 되지 않았을 시
@@ -114,7 +112,6 @@ export default function MenuBar({ editor }: { editor: Editor }) {
             reader.onload = (readerEvent) => {
                 const src = readerEvent.target?.result as string; // setImage 메소드에 사용하기 위해 string으로 캐스팅
                 if (src) {
-                    // editor.chain().focus().setImage({ src }).run();
                     // 크기를 조정할 수 있는 이미지를 생성
                     editor.commands.setResizableImage({
                         src: src,
@@ -126,7 +123,7 @@ export default function MenuBar({ editor }: { editor: Editor }) {
                     setSelectedImage(src);
                 }
             };
-            reader.readAsDataURL(file); // FileReader가 파일을 읽고, 결과를 Base64 형식의 URL로 반환하도록 요청
+            reader.readAsDataURL(file); // FileReader가 파일을 읽고, 결과를 base64 형식의 URL로 반환하도록 요청
         }
     };
 
@@ -139,26 +136,8 @@ export default function MenuBar({ editor }: { editor: Editor }) {
         inputElement.click();
     };
 
-    const handleCropComplete = (croppedSrc: string) => {
-        console.log("Cropped Image URL:", croppedSrc);
-        // 크롭이 완료된 이미지를 에디터에 다시 삽입하는 로직을 여기에 추가
-        setShowCropper(false); // 크로퍼를 닫음
-    };
-
-
-
     return (
         <div className="flex items-center gap-1.5 px-2 py-1 border-b">
-            {
-                selectedImage && (
-                    <button onClick={() => setShowCropper(true)}>이미지 크롭</button>
-                )
-            }
-            {
-                showCropper && selectedImage && (
-                    <ImageCropper src={selectedImage} onComplete={handleCropComplete} />
-                )
-            }
             <HoverTooltip label='화면 비율'>
                 {/* 화면의 스케일(확대 비율)을 조절하는 드롭다운 */}
                 <RatioDropdown />

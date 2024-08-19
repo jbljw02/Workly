@@ -1,94 +1,186 @@
 import { NodeViewWrapper, ReactNodeViewRenderer } from '@tiptap/react';
 import { ResizableImage, ResizableImageComponent, ResizableImageNodeViewRendererProps } from 'tiptap-extension-resizable-image';
-import { useRef, useState } from 'react';
-import ToolbarButton from './ToolbarButton';
-import BarDivider from './BarDivider';
-import AlignLeftIcon from '../../../../public/svgs/editor/align-left.svg';
-import AlignCenterIcon from '../../../../public/svgs/editor/align-center.svg';
-import AlignRightIcon from '../../../../public/svgs/editor/align-right.svg';
-import CropIcon from '../../../../public/svgs/editor/crop.svg';
-import TrashIcon from '../../../../public/svgs/trash.svg';
-import FullIcon from '../../../../public/svgs/editor/full-screen.svg';
-import CaptionIcon from '../../../../public/svgs/editor/comment.svg';
+import { useEffect, useRef, useState } from 'react';
+import { PixelCrop } from 'react-image-crop';
+import 'react-image-crop/dist/ReactCrop.css';
 import { useClickOutside } from '@/components/hooks/useClickOutside';
-import HoverTooltip from './HoverTooltip';
+import ImageMenuBar from './ImageMenuBar';
+import ImageCropper from './ImageCropper';
+import ImageCropBar from './ImageCropBar';
 
-const NodeView = (props: ResizableImageNodeViewRendererProps) => {
-  const [showMenu, setShowMenu] = useState(false);
-  const [alignment, setAlignmentState] = useState<'flex-start' | 'center' | 'flex-end'>('flex-start');
-  const dropdownRef = useRef<HTMLDivElement>(null);
+const NodeView = (resizableImgProps: ResizableImageNodeViewRendererProps) => {
+  const editor = resizableImgProps.editor;
 
-  const setAlignment = (justifyContent: 'flex-start' | 'center' | 'flex-end') => {
-    // 이미지의 최상위 요소인 .node-imageComponent를 찾음
-    const imgContainer = dropdownRef.current?.closest('.node-imageComponent') as HTMLElement;
+  const [showMenu, setShowMenu] = useState(false); // 이미지 메뉴바를 보여줄지
+  const [alignment, setAlignment] = useState<'flex-start' | 'center' | 'flex-end'>('flex-start');
 
-    if (imgContainer) {
-      imgContainer.style.justifyContent = justifyContent;
-      setAlignmentState(justifyContent);
+  const [crop, setCrop] = useState<PixelCrop>(
+    {
+      unit: 'px',
+      width: 0,
+      height: 0,
+      x: 0,
+      y: 0
+    }
+  );
+  const [cropMode, setCropMode] = useState(false);
+  const [imageDimension, setImageDimension] = useState({ width: 600, height: 600 }); // ReactCrop 컴포넌트의 너비와 높이
+
+  const nodeViewRef = useRef<HTMLDivElement>(null);
+  const imgRef = useRef<HTMLImageElement>(null);
+
+  // 자르기 시작
+  const cropStart = () => {
+    setShowMenu(false);
+    setCropMode(true);
+  };
+
+  // 자르기 취소
+  const cropCancel = () => {
+    setShowMenu(true);
+    setCropMode(false);
+  }
+
+  // 자르기 적용
+  const cropApply = () => {
+    if (imgRef.current && crop.width && crop.height) {
+      // canvas: 이미지 자르기 및 처리 작업에 사용
+      const canvas = document.createElement('canvas');
+
+      // 자르기 작업은 원본 이미지 기준으로 해야 하며, 이미지의 표시 크기가 원본과 다를 수 있음.
+      // 이미지의 현재, 원본 크기의 비율을 구함
+      // 이미지의 원본 너비 / 현재 DOM에서 보여지는 이미지의 너비
+      const scaleX = imgRef.current.naturalWidth / imgRef.current.width;
+      const scaleY = imgRef.current.naturalHeight / imgRef.current.height;
+
+      // canvas의 크기를 원본 해상도로 설정하여 해상도 손실을 최소화
+      canvas.width = crop.width * scaleX;
+      canvas.height = crop.height * scaleY;
+
+      const ctx = canvas.getContext('2d');
+
+      // 자르기 영역에 해당하는 이미지를 그림
+      if (ctx) {
+        ctx.drawImage(
+          imgRef.current, // 이미지를 그릴 요소
+          crop.x * scaleX, // 자르기를 시작할 x 좌표
+          crop.y * scaleY, // 자르기를 시작할 y 좌표
+          crop.width * scaleX, // 원본 이미지에서 자를 너비
+          crop.height * scaleY, // 원본 이미지에서 자를 높이
+          0, // 이미지를 그리기 시작할 x 좌표
+          0, // 이미지를 그리기 시작할 y 좌표
+          canvas.width, // 캔버스에 그려질 이미지 너비
+          canvas.height, // 캔버스에 그려질 이미지 높이
+        );
+
+        // 자른 이미지를 base64 포맷으로 변환
+        const base64Image = canvas.toDataURL('image/jpeg', 1.0); // 1.0은 이미지의 품질을 최대화
+
+        // 기존 이미지를 삭제
+        editor.chain().focus().deleteSelection().run();
+
+        // 자른 이미지를 삽입
+        editor.commands.setResizableImage({
+          src: base64Image,
+          alt: '',
+          title: '',
+          width: crop.width,
+          height: crop.height,
+          className: 'resizable-img',
+          'data-keep-ratio': true,
+        });
+
+        setCropMode(false);
+      }
     }
   };
 
-  const imageClick = () => {
-    setShowMenu((prev) => !prev);
-  };
+  // 요소 바깥을 클릭하면 이미지 메뉴바를 닫고, 자르기 작업 취소
+  useClickOutside(nodeViewRef, () => {
+    if (cropMode) {
+      setCropMode(false);
+    } else {
+      setShowMenu(false);
+    }
+  });
 
-  useClickOutside(dropdownRef, () => setShowMenu(false));
+  // ESC를 누르면 자르기 작업 취소
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setCropMode(false);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [cropMode]);
+
+  // 이미지의 크기 변화를 감지하여 Crop 요소들의 값을 업데이트
+  useEffect(() => {
+    if (nodeViewRef.current) {
+      // DOM의 크기 변화를 감지. entries는 크기 변화를 감지한 모든 DOM을 뜻함.
+      const resizeObserver = new ResizeObserver((entries) => {
+        const { width, height } = entries[0].contentRect;
+        setImageDimension({
+          width: width,
+          height: height,
+        });
+        setCrop((prevCrop) => ({
+          ...prevCrop,
+          width: width,
+          height: height,
+        }));
+      });
+
+      resizeObserver.observe(nodeViewRef.current);
+
+      return () => {
+        resizeObserver.disconnect();
+      };
+    }
+  }, []);
+
 
   return (
     <NodeViewWrapper
-      ref={dropdownRef}
-      className="relative image-component"
-      data-drag-handle>
-      <div className="inline-flex flex-col items-center relative">
-        <div onClick={imageClick} className="flex cursor-pointer">
-          <ResizableImageComponent {...props} />
-        </div>
+      ref={nodeViewRef}
+      as="figure"
+      className="relative image-component flex"
+      data-drag-handle
+      style={{ justifyContent: alignment }}>
+      <div className="inline-flex flex-col items-center relative node-imageComponent">
         {
-          showMenu && (
-            <div className='flex flex-row items-center absolute bottom-[-55px] left-[-5px] rounded-md p-1 z-[9999] bg-white shadow-[0px_4px_10px_rgba(0,0,0,0.25)]'>
-              <HoverTooltip label="좌측 정렬">
-                <ToolbarButton
-                  onClick={() => setAlignment('flex-start')}
-                  isActive={alignment === 'flex-start'}
-                  Icon={AlignLeftIcon}
-                  iconWidth={19} />
-              </HoverTooltip>
-              <HoverTooltip label="중앙 정렬">
-                <ToolbarButton
-                  onClick={() => setAlignment('center')}
-                  isActive={alignment === 'center'}
-                  Icon={AlignCenterIcon}
-                  iconWidth={19} />
-              </HoverTooltip>
-              <HoverTooltip label='우측 정렬'>
-                <ToolbarButton
-                  onClick={() => setAlignment('flex-end')}
-                  isActive={alignment === 'flex-end'}
-                  Icon={AlignRightIcon}
-                  iconWidth={19} />
-              </HoverTooltip>
-              <BarDivider />
-              <HoverTooltip label='자르기'>
-                <ToolbarButton
-                  Icon={CropIcon}
-                  iconWidth={17} />
-              </HoverTooltip>
-              <HoverTooltip label='삭제'>
-                <ToolbarButton
-                  Icon={TrashIcon}
-                  iconWidth={14} />
-              </HoverTooltip>
-              <HoverTooltip label='펼치기'>
-                <ToolbarButton
-                  Icon={FullIcon}
-                  iconWidth={21} />
-              </HoverTooltip>
-              <HoverTooltip label='설명 추가'>
-                <ToolbarButton
-                  Icon={CaptionIcon}
-                  iconWidth={25} />
-              </HoverTooltip>
-            </div>
+          cropMode ? (
+            <ImageCropper
+              crop={crop}
+              setCrop={setCrop}
+              imageDimension={imageDimension}
+              imgRef={imgRef}
+              resizableImgProps={resizableImgProps} />
+          ) :
+            (
+              <div onClick={() => setShowMenu(true)} className="flex cursor-pointer">
+                <ResizableImageComponent {...resizableImgProps} />
+              </div>
+            )
+        }
+        {
+          (showMenu && !cropMode) && (
+            <ImageMenuBar
+              nodeViewRef={nodeViewRef}
+              cropStart={cropStart}
+              resizableImgProps={resizableImgProps} />
+          )
+        }
+        {
+          cropMode && (
+            <ImageCropBar
+              cropApply={cropApply}
+              cropCancel={cropCancel} />
           )
         }
       </div>
