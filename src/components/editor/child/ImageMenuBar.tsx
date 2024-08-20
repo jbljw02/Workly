@@ -10,6 +10,10 @@ import TrashIcon from '../../../../public/svgs/trash.svg';
 import FullIcon from '../../../../public/svgs/editor/full-screen.svg';
 import CaptionIcon from '../../../../public/svgs/editor/comment.svg';
 import { ResizableImageNodeViewRendererProps } from "tiptap-extension-resizable-image";
+import ImageFullModal from "@/components/modal/ImageFullModal";
+import CloseIcon from '../../../../public/svgs/editor/close.svg';
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { setOpenFullModal } from "@/redux/features/editorImageSlice";
 
 type ImageMenuBarProps = {
     nodeViewRef: RefObject<HTMLDivElement>;
@@ -18,8 +22,11 @@ type ImageMenuBarProps = {
 }
 
 export default function ImageMenuBar({ nodeViewRef, cropStart, resizableImgProps }: ImageMenuBarProps) {
+    const dispatch = useAppDispatch();
+
     const editor = resizableImgProps.editor;
-    
+
+    const openFullModal = useAppSelector(state => state.openFullModal);
     const [alignment, setAlignment] = useState<'flex-start' | 'center' | 'flex-end'>('flex-start');
 
     const alignmentSetUp = (justifyContent: 'flex-start' | 'center' | 'flex-end') => {
@@ -73,8 +80,16 @@ export default function ImageMenuBar({ nodeViewRef, cropStart, resizableImgProps
             <HoverTooltip label='펼치기'>
                 <ToolbarButton
                     Icon={FullIcon}
-                    iconWidth={21} />
+                    iconWidth={21}
+                    onClick={() => dispatch(setOpenFullModal(true))} />
             </HoverTooltip>
+            {
+                openFullModal &&
+                <ImageFullModal
+                    isModalOpen={openFullModal}
+                    setIsModalOpen={() => dispatch(setOpenFullModal(false))}
+                    src={resizableImgProps.node.attrs.src} />
+            }
             <HoverTooltip label='설명 추가'>
                 <ToolbarButton
                     Icon={CaptionIcon}

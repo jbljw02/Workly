@@ -7,24 +7,31 @@ import { useClickOutside } from '@/components/hooks/useClickOutside';
 import ImageMenuBar from './ImageMenuBar';
 import ImageCropper from './ImageCropper';
 import ImageCropBar from './ImageCropBar';
+import { useAppDispatch, useAppSelector } from '@/redux/hooks';
+import { setCrop, setImageDimension } from '@/redux/features/editorImageSlice';
 
 const NodeView = (resizableImgProps: ResizableImageNodeViewRendererProps) => {
+  const dispatch = useAppDispatch();
+
   const editor = resizableImgProps.editor;
 
   const [showMenu, setShowMenu] = useState(false); // 이미지 메뉴바를 보여줄지
   const [alignment, setAlignment] = useState<'flex-start' | 'center' | 'flex-end'>('flex-start');
 
-  const [crop, setCrop] = useState<PixelCrop>(
-    {
-      unit: 'px',
-      width: 0,
-      height: 0,
-      x: 0,
-      y: 0
-    }
-  );
+  // const [crop, setCrop] = useState<PixelCrop>(
+  //   {
+  //     unit: 'px',
+  //     width: 0,
+  //     height: 0,
+  //     x: 0,
+  //     y: 0
+  //   }
+  // );
+  const crop = useAppSelector(state => state.crop);
   const [cropMode, setCropMode] = useState(false);
-  const [imageDimension, setImageDimension] = useState({ width: 600, height: 600 }); // ReactCrop 컴포넌트의 너비와 높이
+  // const [imageDimension, setImageDimension] = useState({ width: 600, height: 600 }); // ReactCrop 컴포넌트의 너비와 높이
+  const imageDimension = useAppSelector(state => state.imageDimension);
+  const openFullModal = useAppSelector(state => state.openFullModal);
 
   const nodeViewRef = useRef<HTMLDivElement>(null);
   const imgRef = useRef<HTMLImageElement>(null);
@@ -97,10 +104,12 @@ const NodeView = (resizableImgProps: ResizableImageNodeViewRendererProps) => {
 
   // 요소 바깥을 클릭하면 이미지 메뉴바를 닫고, 자르기 작업 취소
   useClickOutside(nodeViewRef, () => {
-    if (cropMode) {
-      setCropMode(false);
-    } else {
-      setShowMenu(false);
+    if (!openFullModal) {
+      if (cropMode) {
+        setCropMode(false);
+      } else {
+        setShowMenu(false);
+      }
     }
   });
 
@@ -125,12 +134,12 @@ const NodeView = (resizableImgProps: ResizableImageNodeViewRendererProps) => {
       // DOM의 크기 변화를 감지. entries는 크기 변화를 감지한 모든 DOM을 뜻함.
       const resizeObserver = new ResizeObserver((entries) => {
         const { width, height } = entries[0].contentRect;
-        setImageDimension({
+        dispatch(setImageDimension({
           width: width,
           height: height,
-        });
-        setCrop((prevCrop) => ({
-          ...prevCrop,
+        }));
+        dispatch(setCrop({
+          ...crop,
           width: width,
           height: height,
         }));
@@ -156,14 +165,13 @@ const NodeView = (resizableImgProps: ResizableImageNodeViewRendererProps) => {
         {
           cropMode ? (
             <ImageCropper
-              crop={crop}
-              setCrop={setCrop}
-              imageDimension={imageDimension}
               imgRef={imgRef}
               resizableImgProps={resizableImgProps} />
           ) :
             (
-              <div onClick={() => setShowMenu(true)} className="flex cursor-pointer">
+              <div
+                onClick={() => setShowMenu(true)}
+                className="flex cursor-pointer">
                 <ResizableImageComponent {...resizableImgProps} />
               </div>
             )

@@ -1,6 +1,7 @@
 import { UnknownAction, combineReducers, configureStore } from '@reduxjs/toolkit';
-import scaleReducers from './features/scaleSlice';
 import { HYDRATE, createWrapper } from "next-redux-wrapper";
+import scaleReducers from './features/scaleSlice';
+import editorImageReducers from './features/editorImageSlice';
 
 // export type RootState = {
 //     editorScale: number,
@@ -8,6 +9,9 @@ import { HYDRATE, createWrapper } from "next-redux-wrapper";
 
 const combinedReducer = combineReducers({
     editorScale: scaleReducers.editorScale,
+    imageDimension: editorImageReducers.imageDimension,
+    crop: editorImageReducers.crop,
+    openFullModal: editorImageReducers.openFullModal,
 })
 
 // 전체 리듀서를 관리
