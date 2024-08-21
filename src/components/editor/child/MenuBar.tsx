@@ -22,6 +22,7 @@ import BarDivider from './BarDivider'
 import RatioDropdown from './RatioDropdown'
 import HoverTooltip from './HoverTooltip'
 import LineIcon from '../../../../public/svgs/editor/horizontal-rule.svg'
+import FileSearchIcon from '../../../../public/svgs/editor/file-search.svg'
 
 export default function MenuBar({ editor }: { editor: Editor }) {
     const [fontSize, setFontSize] = useState<number>(16);
@@ -235,16 +236,22 @@ export default function MenuBar({ editor }: { editor: Editor }) {
                     iconWidth={18} />
             </HoverTooltip>
             <BarDivider />
-            <HoverTooltip label='링크 삽입'>
-                <ToolbarButton
-                    onClick={addLink}
-                    Icon={LinkIcon}
-                    iconWidth={20} />
-            </HoverTooltip>
             <HoverTooltip label='이미지 삽입'>
                 <ToolbarButton
                     onClick={addImage}
                     Icon={ImageIcon}
+                    iconWidth={20} />
+            </HoverTooltip>
+            <HoverTooltip label='파일 삽입'>
+                <ToolbarButton
+                    onClick={addImage}
+                    Icon={FileSearchIcon}
+                    iconWidth={20} />
+            </HoverTooltip>
+            <HoverTooltip label='링크 삽입'>
+                <ToolbarButton
+                    onClick={addLink}
+                    Icon={LinkIcon}
                     iconWidth={20} />
             </HoverTooltip>
             <HoverTooltip label='코드 삽입'>

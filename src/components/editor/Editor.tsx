@@ -16,7 +16,7 @@ import ListItem from '@tiptap/extension-list-item'
 import OrderedList from '@tiptap/extension-ordered-list'
 import Link from '@tiptap/extension-link'
 import CodeBlock from '@tiptap/extension-code-block'
-import React, { useEffect, useState } from 'react'
+import React, { CSSProperties, useEffect, useState } from 'react'
 import MenuBar from './child/MenuBar'
 import Heading from '@tiptap/extension-heading'
 import BulletList from '@tiptap/extension-bullet-list'
@@ -30,7 +30,10 @@ import Dropcursor from '@tiptap/extension-dropcursor'
 import ImageResize from 'tiptap-extension-resize-image'
 import { ResizableImage } from 'tiptap-extension-resizable-image';
 import 'tiptap-extension-resizable-image/styles.css';
-import ImageClickMenu from './child/ImageClickMenu'
+import ImageNodeView from './child/image/ImageNodeView'
+import FileHandler from '@tiptap-pro/extension-file-handler'
+import FileNode from '../../../lib/fileNode'
+import FileInfoIcon from '../../../public/svgs/editor/file-info.svg';
 
 export default function Editor() {
   const dispatch = useAppDispatch();
@@ -75,14 +78,95 @@ export default function Editor() {
         defaultProtocol: 'https',
       }),
       Dropcursor,
-      // ResizableImage.configure({
-      //   defaultWidth: 600,
-      //   defaultHeight: 600,
-      // }),
-      ImageClickMenu.configure({
+      ImageNodeView.configure({
         defaultWidth: 600,
         defaultHeight: 600,
-      })
+        // async onUpload(file: File) {
+        //   const src = URL.createObjectURL(file);
+        //   return {
+        //     src,
+        //     'data-keep-ratio': true,
+        //   };
+        // },
+      }),
+      FileNode,
+      FileHandler.configure({
+        onDrop: (currentEditor, files, pos) => {
+          files.forEach(file => {
+            const fileReader = new FileReader();
+
+            fileReader.onload = () => {
+              const src = fileReader.result as string;
+              const blobUrl = URL.createObjectURL(file);
+
+              // 이미지 파일일 경우
+              if (file.type.startsWith('image/')) {
+                currentEditor.commands.setResizableImage({
+                  src: src,
+                  alt: '',
+                  title: '',
+                  className: 'resizable-img',
+                  'data-keep-ratio': true,
+                });
+              }
+              else {
+                // 이미지가 아닌 일반 파일일 경우
+                currentEditor.chain().insertContentAt(pos, {
+                  type: 'file',
+                  attrs: {
+                    href: blobUrl,
+                    title: file.name,
+                    mimeType: file.type,
+                    size: file.size,
+                  },
+                }).focus().run();
+              }
+            };
+
+            fileReader.readAsDataURL(file);
+          });
+        },
+        onPaste: (currentEditor, files, htmlContent) => {
+          files.forEach(file => {
+            const fileReader = new FileReader();
+
+            fileReader.onload = () => {
+              const src = fileReader.result as string;
+
+              if (htmlContent) {
+                console.log(htmlContent);
+                return false;
+              }
+
+              // 이미지 파일일 경우
+              if (file.type.startsWith('image/')) {
+                currentEditor.chain().insertContentAt(currentEditor.state.selection.anchor, {
+                  type: 'image',
+                  attrs: {
+                    src: src,
+                    alt: '',
+                    title: '',
+                    className: 'resizable-img',
+                    'data-keep-ratio': true,
+                  },
+                }).focus().run();
+              }
+              else {
+                // 이미지가 아닌 일반 파일일 경우
+                currentEditor.chain().insertContentAt(currentEditor.state.selection.anchor, {
+                  type: 'file',
+                  attrs: {
+                    href: src,
+                    title: file.name,
+                  },
+                }).focus().run();
+              }
+            };
+
+            fileReader.readAsDataURL(file);
+          });
+        },
+      }),
     ],
     content: `
     <h3 class="text-center">

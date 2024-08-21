@@ -1,7 +1,6 @@
 import { NodeViewWrapper, ReactNodeViewRenderer } from '@tiptap/react';
 import { ResizableImage, ResizableImageComponent, ResizableImageNodeViewRendererProps } from 'tiptap-extension-resizable-image';
 import { useEffect, useRef, useState } from 'react';
-import { PixelCrop } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
 import { useClickOutside } from '@/components/hooks/useClickOutside';
 import ImageMenuBar from './ImageMenuBar';
@@ -18,19 +17,9 @@ const NodeView = (resizableImgProps: ResizableImageNodeViewRendererProps) => {
   const [showMenu, setShowMenu] = useState(false); // 이미지 메뉴바를 보여줄지
   const [alignment, setAlignment] = useState<'flex-start' | 'center' | 'flex-end'>('flex-start');
 
-  // const [crop, setCrop] = useState<PixelCrop>(
-  //   {
-  //     unit: 'px',
-  //     width: 0,
-  //     height: 0,
-  //     x: 0,
-  //     y: 0
-  //   }
-  // );
   const crop = useAppSelector(state => state.crop);
   const [cropMode, setCropMode] = useState(false);
-  // const [imageDimension, setImageDimension] = useState({ width: 600, height: 600 }); // ReactCrop 컴포넌트의 너비와 높이
-  const imageDimension = useAppSelector(state => state.imageDimension);
+
   const openFullModal = useAppSelector(state => state.openFullModal);
 
   const nodeViewRef = useRef<HTMLDivElement>(null);
@@ -196,10 +185,10 @@ const NodeView = (resizableImgProps: ResizableImageNodeViewRendererProps) => {
   );
 };
 
-const ImageClickMenu = ResizableImage.extend({
+const ImageNodeView = ResizableImage.extend({
   addNodeView() {
     return ReactNodeViewRenderer(NodeView);
   },
 });
 
-export default ImageClickMenu;
+export default ImageNodeView;

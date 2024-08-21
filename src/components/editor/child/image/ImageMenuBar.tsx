@@ -1,17 +1,16 @@
 import { RefObject, useRef, useState } from "react";
-import BarDivider from "./BarDivider";
-import HoverTooltip from "./HoverTooltip";
-import ToolbarButton from "./ToolbarButton";
-import AlignLeftIcon from '../../../../public/svgs/editor/align-left.svg';
-import AlignCenterIcon from '../../../../public/svgs/editor/align-center.svg';
-import AlignRightIcon from '../../../../public/svgs/editor/align-right.svg';
-import CropIcon from '../../../../public/svgs/editor/crop.svg';
-import TrashIcon from '../../../../public/svgs/trash.svg';
-import FullIcon from '../../../../public/svgs/editor/full-screen.svg';
-import CaptionIcon from '../../../../public/svgs/editor/comment.svg';
+import BarDivider from "../BarDivider";
+import HoverTooltip from "../HoverTooltip";
+import ToolbarButton from "../ToolbarButton";
+import AlignLeftIcon from '../../../../../public/svgs/editor/align-left.svg';
+import AlignCenterIcon from '../../../../../public/svgs/editor/align-center.svg';
+import AlignRightIcon from '../../../../../public/svgs/editor/align-right.svg';
+import CropIcon from '../../../../../public/svgs/editor/crop.svg';
+import TrashIcon from '../../../../../public/svgs/trash.svg';
+import FullIcon from '../../../../../public/svgs/editor/full-screen.svg';
+import CaptionIcon from '../../../../../public/svgs/editor/comment.svg';
 import { ResizableImageNodeViewRendererProps } from "tiptap-extension-resizable-image";
-import ImageFullModal from "@/components/modal/ImageFullModal";
-import CloseIcon from '../../../../public/svgs/editor/close.svg';
+import FileFullModal from "@/components/modal/FileFullModal";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { setOpenFullModal } from "@/redux/features/editorImageSlice";
 
@@ -85,10 +84,20 @@ export default function ImageMenuBar({ nodeViewRef, cropStart, resizableImgProps
             </HoverTooltip>
             {
                 openFullModal &&
-                <ImageFullModal
+                <FileFullModal
                     isModalOpen={openFullModal}
-                    setIsModalOpen={() => dispatch(setOpenFullModal(false))}
-                    src={resizableImgProps.node.attrs.src} />
+                    setIsModalOpen={() => dispatch(setOpenFullModal(false))}>
+                    <img
+                        className='border-none rounded-sm'
+                        src={resizableImgProps.node.attrs.src}
+                        style={{
+                            maxWidth: '100%',
+                            maxHeight: '100%',
+                            width: 'auto',
+                            height: 'auto',
+                            objectFit: 'contain',
+                        }} />
+                </FileFullModal>
             }
             <HoverTooltip label='설명 추가'>
                 <ToolbarButton
