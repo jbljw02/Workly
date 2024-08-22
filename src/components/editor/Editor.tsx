@@ -25,15 +25,13 @@ import { FontFamily } from '../../../lib/fontFamily'
 import { decreaseEditorScale, increaseEditorScale, setEditorScale } from '@/redux/features/scaleSlice'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import Document from '@tiptap/extension-document'
-import '@/styles/editor.css';
 import Dropcursor from '@tiptap/extension-dropcursor'
-import ImageResize from 'tiptap-extension-resize-image'
-import { ResizableImage } from 'tiptap-extension-resizable-image';
 import 'tiptap-extension-resizable-image/styles.css';
 import ImageNodeView from './child/image/ImageNodeView'
 import FileHandler from '@tiptap-pro/extension-file-handler'
 import FileNode from '../../../lib/fileNode'
-import FileInfoIcon from '../../../public/svgs/editor/file-info.svg';
+import { v4 as uuidv4 } from 'uuid';
+import '@/styles/editor.css';
 
 export default function Editor() {
   const dispatch = useAppDispatch();
@@ -61,10 +59,6 @@ export default function Editor() {
       TextAlign.configure({
         types: ['heading', 'paragraph'],
       }),
-      Table,
-      TableRow,
-      TableHeader,
-      TableCell,
       Image,
       Heading.configure({
         levels: [1, 2, 3],
@@ -81,13 +75,6 @@ export default function Editor() {
       ImageNodeView.configure({
         defaultWidth: 600,
         defaultHeight: 600,
-        // async onUpload(file: File) {
-        //   const src = URL.createObjectURL(file);
-        //   return {
-        //     src,
-        //     'data-keep-ratio': true,
-        //   };
-        // },
       }),
       FileNode,
       FileHandler.configure({
@@ -98,13 +85,14 @@ export default function Editor() {
             fileReader.onload = () => {
               const src = fileReader.result as string;
               const blobUrl = URL.createObjectURL(file);
+              const fileId = uuidv4(); // 파일의 고유 ID 생성
 
               // 이미지 파일일 경우
               if (file.type.startsWith('image/')) {
                 currentEditor.commands.setResizableImage({
                   src: src,
                   alt: '',
-                  title: '',
+                  title: file.name,
                   className: 'resizable-img',
                   'data-keep-ratio': true,
                 });
@@ -114,6 +102,7 @@ export default function Editor() {
                 currentEditor.chain().insertContentAt(pos, {
                   type: 'file',
                   attrs: {
+                    id: fileId,
                     href: blobUrl,
                     title: file.name,
                     mimeType: file.type,
@@ -206,7 +195,7 @@ export default function Editor() {
 
   const editorScale = useAppSelector(state => state.editorScale);
 
-  const handleKeyPress = (event: KeyboardEvent) => {
+  const keyPress = (event: KeyboardEvent) => {
     if (event.metaKey || event.ctrlKey) {
       if (event.key === '=') {
         event.preventDefault(); // 기본 확대 동작 방지
@@ -220,9 +209,9 @@ export default function Editor() {
   };
 
   useEffect(() => {
-    window.addEventListener('keydown', handleKeyPress);
+    window.addEventListener('keydown', keyPress);
     return () => {
-      window.removeEventListener('keydown', handleKeyPress);
+      window.removeEventListener('keydown', keyPress);
     };
   }, []);
 

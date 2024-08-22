@@ -73,7 +73,7 @@ export default function ImageMenuBar({ nodeViewRef, cropStart, resizableImgProps
             <HoverTooltip label='삭제'>
                 <ToolbarButton
                     Icon={TrashIcon}
-                    iconWidth={14}
+                    iconWidth={19}
                     onClick={deleteImage} />
             </HoverTooltip>
             <HoverTooltip label='펼치기'>
@@ -86,7 +86,9 @@ export default function ImageMenuBar({ nodeViewRef, cropStart, resizableImgProps
                 openFullModal &&
                 <FileFullModal
                     isModalOpen={openFullModal}
-                    setIsModalOpen={() => dispatch(setOpenFullModal(false))}>
+                    setIsModalOpen={() => dispatch(setOpenFullModal(false))}
+                    href={resizableImgProps.node.attrs.src}
+                    download={resizableImgProps.node.attrs.title || ''}>
                     <img
                         className='border-none rounded-sm'
                         src={resizableImgProps.node.attrs.src}

@@ -1,48 +1,95 @@
 import React, { useEffect, useState } from 'react';
-import { NodeViewWrapper } from '@tiptap/react';
+import { Editor, NodeViewWrapper } from '@tiptap/react';
 import FileInfoIcon from '../../../../../public/svgs/editor/file-info.svg';
 import FileFullModal from '@/components/modal/FileFullModal';
 import FileBlockIcon from '../../../../../public/svgs/editor/file-block.svg';
 import MenuIcon from '../../../../../public/svgs/editor/menu.svg';
+import FileMenu from './FileMenu';
+import { useAppDispatch, useAppSelector } from '@/redux/hooks';
+import { FileNode, setFileNode } from '@/redux/features/fileSlice';
 
-export default function FileNodeView({ node }) {
-    const { href, title, mimeType, size } = node.attrs;
+interface FileNodeProps {
+    attrs: FileNode;
+}
+
+type FileNodeViewProps = {
+    editor: Editor;
+    node: FileNodeProps;
+}
+
+export default function FileNodeView({ editor, node }: FileNodeViewProps) {
+    const dispatch = useAppDispatch();
+
+    const { id, href, title, mimeType, size } = node.attrs;
+
+    const fileNode = useAppSelector(state => state.fileNode);
+
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [menuOpen, setMenuOpen] = useState(false);
 
-    const formatSize = (size) => {
-        console.log("아: ", size);
+    const formatSize = (size: number) => {
         if (size < 1024) return `${size} B`;
         else if (size < 1024 * 1024) return `${(size / 1024).toFixed(2)} KB`;
         else if (size < 1024 * 1024 * 1024) return `${(size / (1024 * 1024)).toFixed(2)} MB`;
         else return `${(size / (1024 * 1024 * 1024)).toFixed(2)} GB`;
     };
 
-    const fileClick = (e) => {
-        e.preventDefault();
-        setIsModalOpen(true);  // 모든 파일에 대해 모달을 띄우도록 설정
+    const fileClick = () => {
+        dispatch(setFileNode({
+            id: id,
+            href: href,
+            title: title,
+            mimeType: mimeType,
+            size: size,
+        }));
+        setIsModalOpen(true);
     };
+
+    const fileMenuClick = (e: React.MouseEvent) => {
+        e.stopPropagation();
+
+        dispatch(setFileNode({
+            id: id,
+            href: href,
+            title: title,
+            mimeType: mimeType,
+            size: size,
+        }));
+        setMenuOpen(true);
+    }
 
     return (
         <>
-            <NodeViewWrapper className="file-component">
-                <a
-                    className='inline-flex flex-row items-center justify-center rounded-md w-auto mt-2 mb-2 p-2 bg-gray-50 hover:bg-gray-100 cursor-pointer duration-100'
+            <NodeViewWrapper>
+                <div
                     onClick={fileClick}
-                    rel="noopener noreferrer">
+                    className={`relative inline-flex flex-row items-center justify-center w-auto rounded-md p-2 mt-2 mb-2 hover:bg-gray-100 cursor-pointer duration-100 ${menuOpen ? 'bg-gray-100' : 'bg-gray-50'}`}>
                     <FileInfoIcon width="26" />
                     <div className='flex justify-between items-center mt-0.5'>
                         <div className='ml-1'>{title}</div>
                         <div className='ml-3 text-sm text-neutral-500'>{formatSize(size)}</div>
-                        <div className='ml-4 -mr-0.5 hover:bg-gray-200 p-1 rounded-sm'>
+                        <div
+                            onClick={fileMenuClick}
+                            className={`ml-4 -mr-0.5 hover:bg-gray-200 p-1 rounded-sm ${menuOpen ? 'bg-gray-200' : ''}`}>
                             <MenuIcon width="18" />
                         </div>
                     </div>
-                </a>
+                    {
+                        menuOpen && (
+                            <FileMenu
+                                editor={editor}
+                                setMenuOpen={setMenuOpen} />
+                        )
+                    }
+                </div>
             </NodeViewWrapper>
             <FileFullModal
                 isModalOpen={isModalOpen}
-                setIsModalOpen={setIsModalOpen}>
+                setIsModalOpen={setIsModalOpen}
+                href={fileNode.href}
+                download={fileNode.title}>
                 {
+                    // 파일 형식이 PDF일 경우 PDF 뷰어를 통해 보여주고, 다른 형식일 경우 대체 화면 출력
                     mimeType === 'application/pdf' ? (
                         <iframe
                             className='absolute w-full h-full max-w-[90vw] max-h-[90vh] rounded-md'

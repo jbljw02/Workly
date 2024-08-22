@@ -9,15 +9,23 @@ const FileNode = Node.create({
 
     addAttributes() {
         return {
+            // 파일의 고유 아이디
+            id: {
+                default: null,
+            },
+            // 파일의 경로
             href: {
                 default: null,
             },
+            // 파일명
             title: {
                 default: null,
             },
+            // 파일의 형식
             mimeType: {
                 default: null,
             },
+            // 파일의 크기
             size: {
                 default: null,
             },

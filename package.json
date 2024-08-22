@@ -50,7 +50,8 @@
     "react-resizable": "^3.0.5",
     "tiptap-extension-resizable-image": "^1.0.3",
     "tiptap-extension-resize-image": "^1.1.8",
-    "tiptap-imagresize": "^1.1.0"
+    "tiptap-imagresize": "^1.1.0",
+    "uuid": "^10.0.0"
   },
   "devDependencies": {
     "@types/node": "^20",
@@ -58,6 +59,7 @@
     "@types/react-dom": "^18",
     "@types/react-modal": "^3.16.3",
     "@types/react-resizable": "^3.0.8",
+    "@types/uuid": "^10.0.0",
     "autoprefixer": "^10.4.19",
     "eslint": "^8",
     "eslint-config-next": "14.2.5",

@@ -123,7 +123,7 @@ export default function Home() {
                 </div>
             </div>
             {/* 휴지통 */}
-            <SidebarItem Icon={TrashIcon} IconWidth="17" label="휴지통" isCollapsed={isCollapsed} />
+            <SidebarItem Icon={TrashIcon} IconWidth="21" label="휴지통" isCollapsed={isCollapsed} />
             {/* 프로젝트 설정 div를 최하단에 위치하도록 여백 공간을 모두 차지 */}
             <div className="flex-grow"></div>
             {/* 최하단 프로젝트 관련 메뉴 */}

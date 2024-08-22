@@ -6,15 +6,16 @@ import DownloadIcon from '../../../public/svgs/editor/download.svg'
 import CloseIcon from '../../../public/svgs/editor/close.svg'
 
 interface FileFullModal extends ModalProps {
-    children?: ReactNode;
+    children: ReactNode;
+    href: string;
+    download: string;
 }
 
-export default function FileFullModal({ isModalOpen, setIsModalOpen, children }: FileFullModal) {
+export default function FileFullModal({ isModalOpen, setIsModalOpen, children, href, download }: FileFullModal) {
     const modalRef = useRef<HTMLDivElement>(null);
-    const downloadRef = useRef<HTMLButtonElement>(null);
-
+    const downloadRef = useRef<HTMLAnchorElement>(null);
+    
     useClickOutside(modalRef, () => setIsModalOpen(false), downloadRef);
-
     return (
         <Modal
             isOpen={isModalOpen}
@@ -39,11 +40,13 @@ export default function FileFullModal({ isModalOpen, setIsModalOpen, children }:
             }}>
             {/* 모달 헤더 */}
             <div className="absolute top-0 flex flex-row items-center justify-end w-full p-3 text-zinc-50">
-                <button
+                <a
+                    className='flex items-center justify-center w-8 h-8 p-1 mr-1 rounded-md hover:bg-zinc-50 hover:text-black duration-150'
                     ref={downloadRef}
-                    className='flex items-center justify-center w-8 h-8 p-1 mr-1 rounded-md hover:bg-zinc-50 hover:text-black duration-150'>
-                    <DownloadIcon class="pl-1" width="25" />
-                </button>
+                    href={href}
+                    download={download}>
+                    <DownloadIcon width="20" />
+                </a>
                 <button
                     className='flex items-center justify-center w-8 h-8 mr-1 p-1 rounded-md hover:bg-zinc-50 hover:text-black duration-150'
                     onClick={() => setIsModalOpen(false)}>
