@@ -7,12 +7,13 @@ import MenuIcon from '../../../../../public/svgs/editor/menu.svg';
 import FileMenu from './FileMenu';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { FileNode, setFileNode } from '@/redux/features/fileSlice';
+import FileEditInput from './FileEditInput';
 
 interface FileNodeProps {
     attrs: FileNode;
 }
 
-type FileNodeViewProps = {
+export type FileNodeViewProps = {
     editor: Editor;
     node: FileNodeProps;
 }
@@ -26,7 +27,9 @@ export default function FileNodeView({ editor, node }: FileNodeViewProps) {
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [menuOpen, setMenuOpen] = useState(false);
+    const [isEditing, setIsEditing] = useState(false); // 파일명을 수정중인지
 
+    // 파일 사이즈에 따라 형식 조정
     const formatSize = (size: number) => {
         if (size < 1024) return `${size} B`;
         else if (size < 1024 * 1024) return `${(size / 1024).toFixed(2)} KB`;
@@ -66,7 +69,14 @@ export default function FileNodeView({ editor, node }: FileNodeViewProps) {
                     className={`relative inline-flex flex-row items-center justify-center w-auto rounded-md p-2 mt-2 mb-2 hover:bg-gray-100 cursor-pointer duration-100 ${menuOpen ? 'bg-gray-100' : 'bg-gray-50'}`}>
                     <FileInfoIcon width="26" />
                     <div className='flex justify-between items-center mt-0.5'>
-                        <div className='ml-1'>{title}</div>
+                        {
+                            isEditing ?
+                                <FileEditInput
+                                    editor={editor}
+                                    node={node}
+                                    setIsEditing={setIsEditing} /> :
+                                <div className='ml-1'>{title}</div>
+                        }
                         <div className='ml-3 text-sm text-neutral-500'>{formatSize(size)}</div>
                         <div
                             onClick={fileMenuClick}
@@ -78,7 +88,8 @@ export default function FileNodeView({ editor, node }: FileNodeViewProps) {
                         menuOpen && (
                             <FileMenu
                                 editor={editor}
-                                setMenuOpen={setMenuOpen} />
+                                setMenuOpen={setMenuOpen}
+                                setIsEditing={setIsEditing} />
                         )
                     }
                 </div>

@@ -1,21 +1,22 @@
 import { useClickOutside } from "@/components/hooks/useClickOutside";
-import { useRef } from "react"
+import { useRef, useState } from "react"
 import EditIcon from '../../../../../public/svgs/editor/edit.svg'
 import LinkCopyIcon from '../../../../../public/svgs/editor/link.svg'
 import DownloadIcon from '../../../../../public/svgs/editor/download.svg'
 import CopyIcon from '../../../../../public/svgs/editor/copy.svg';
 import DeleteIcon from '../../../../../public/svgs/trash.svg';
 import { Editor } from "@tiptap/react";
-import { useAppSelector } from "@/redux/hooks";
-import { FileNode } from "@/redux/features/fileSlice";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { FileNode, setFileNode } from "@/redux/features/fileSlice";
 import { v4 as uuidv4 } from 'uuid';
+import FileEditInput from "./FileEditInput";
 
 type MenuItemProps = {
     Icon: React.ElementType;
     IconWidth: string;
     label: string;
     setMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
-    onClick?: (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => void;
+    onClick?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
     href?: string;
     download?: string;
 }
@@ -27,40 +28,54 @@ const MenuItem = ({ Icon,
     onClick,
     href,
     download }: MenuItemProps) => {
-    const anchorClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
-        e.stopPropagation(); // 이벤트 전파 중단
+    const itemClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+        e.stopPropagation();
         if (onClick) {
             onClick(e);
         }
         setMenuOpen(false);
     };
     return (
-        <a
-            href={href}
-            download={download}
+        <div
             className="flex flex-row items-center w-full py-1 pl-3 pr-10 hover:bg-gray-100 cursor-pointer"
-            onClick={anchorClick}>
+            onClick={itemClick}>
             <Icon width={IconWidth} />
             <div className="ml-2">{label}</div>
-        </a>
+        </div>
     );
 }
 
 type FileMenuProps = {
     editor: Editor;
     setMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
+    setIsEditing: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function FileMenu({ editor, setMenuOpen }: FileMenuProps) {
+export default function FileMenu({ editor, setMenuOpen, setIsEditing }: FileMenuProps) {
     const menuRef = useRef<HTMLDivElement>(null);
     const fileNode = useAppSelector(state => state.fileNode);
 
     useClickOutside(menuRef, () => setMenuOpen(false));
 
+    // 파일명 변경
+    const editFileName = () => {
+        setIsEditing(true);
+    }
+
     // 파일 링크를 클립보드에 복사
     const copyLink = (href: string) => {
         navigator.clipboard.writeText(href);
     };
+
+    // 파일 다운로드
+    const downloadFile = (href: string, download: string) => {
+        if (href && download) {
+            const link = document.createElement('a');
+            link.href = href;
+            link.download = download;
+            link.click();
+        }
+    }
 
     // 파일을 복제
     const duplicateFile = (editor: Editor, fileNode: FileNode) => {
@@ -72,7 +87,6 @@ export default function FileMenu({ editor, setMenuOpen }: FileMenuProps) {
         const newFileNode = {
             ...fileNode,
             id: uuidv4(), // 새로운 고유 ID 생성
-            title: `${fileNode.title} (복사본)` // 제목에 "(복사본)" 추가
         };
 
         // 복제할 파일 노드 삽입
@@ -116,6 +130,7 @@ export default function FileMenu({ editor, setMenuOpen }: FileMenuProps) {
                     Icon={EditIcon}
                     IconWidth="16"
                     setMenuOpen={setMenuOpen}
+                    onClick={editFileName}
                     label="파일명 변경" />
                 <MenuItem
                     Icon={LinkCopyIcon}
@@ -128,6 +143,7 @@ export default function FileMenu({ editor, setMenuOpen }: FileMenuProps) {
                     IconWidth="16"
                     setMenuOpen={setMenuOpen}
                     label="다운로드"
+                    onClick={() => downloadFile(fileNode.href, fileNode.title)}
                     href={fileNode.href}
                     download={fileNode.title} />
                 <div className="w-full border-t border-gray-200 my-1.5"></div>
