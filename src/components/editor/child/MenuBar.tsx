@@ -23,6 +23,7 @@ import RatioDropdown from './RatioDropdown'
 import HoverTooltip from './HoverTooltip'
 import LineIcon from '../../../../public/svgs/editor/horizontal-rule.svg'
 import FileSearchIcon from '../../../../public/svgs/editor/file-search.svg'
+import { v4 as uuidv4 } from 'uuid';
 
 export default function MenuBar({ editor }: { editor: Editor }) {
     const [fontSize, setFontSize] = useState<number>(16);
@@ -104,35 +105,58 @@ export default function MenuBar({ editor }: { editor: Editor }) {
     }
 
     // 선택된 파일을 에디터에 이미지로 삽입
-    const addImageFromFile = (event: Event) => {
+    const addFile = (event: Event, mimeType: string) => {
         const target = event.target as HTMLInputElement;
-        const file = target.files?.[0];
-        if (file) {
-            const reader = new FileReader(); // 파일을 읽기 위힌 FileReader 객체 생성
-            reader.onload = (readerEvent) => {
-                const src = readerEvent.target?.result as string; // setImage 메소드에 사용하기 위해 string으로 캐스팅
-                if (src) {
-                    // 크기를 조정할 수 있는 이미지를 생성
-                    editor.commands.setResizableImage({
-                        src: src,
-                        alt: '',
-                        title: '',
-                        className: 'resizable-img',
-                        'data-keep-ratio': true,
-                    });
-                    setSelectedImage(src);
-                }
-            };
-            reader.readAsDataURL(file); // FileReader가 파일을 읽고, 결과를 base64 형식의 URL로 반환하도록 요청
+        const files = target.files;
+        if (files) {
+            Array.from(files).forEach(file => {
+                const fileReader = new FileReader();
+
+                fileReader.onload = () => {
+                    const src = fileReader.result as string;
+                    const blobUrl = URL.createObjectURL(file);
+                    const fileId = uuidv4(); // 파일의 고유 ID 생성
+
+                    // 이미지 파일일 경우
+                    if (file.type.startsWith('image/')) {
+                        editor.commands.setResizableImage({
+                            src: src,
+                            alt: '',
+                            title: file.name,
+                            className: 'resizable-img',
+                            'data-keep-ratio': true,
+                        });
+                        setSelectedImage(src);
+                    }
+                    else {
+                        // 이미지가 아닌 일반 파일일 경우
+                        const pos = editor.state.selection.anchor; // 현재 커서 위치
+                        editor.chain().insertContentAt(pos, {
+                            type: 'file',
+                            attrs: {
+                                id: fileId,
+                                href: blobUrl,
+                                title: file.name,
+                                mimeType: file.type,
+                                size: file.size,
+                            },
+                        }).focus().run();
+                    }
+                };
+
+                fileReader.readAsDataURL(file);
+            });
         }
     };
 
     // 파일 탐색기를 염
-    const addImage = () => {
+    const openFileExplorer = (mimeType: string) => {
         const inputElement = document.createElement('input');
         inputElement.type = 'file'; // 파일 탐색기를 열어 파일을 선택할 수 있도록
-        inputElement.accept = 'image/*'; // 이미지 파일만 선택할 수 있도록 제한
-        inputElement.onchange = (event) => addImageFromFile(event); // 파일을 선택한 후 함수 호출
+        if (mimeType === 'image') {
+            inputElement.accept = 'image/*'; // 이미지 파일만 선택할 수 있도록 제한
+        }
+        inputElement.onchange = (event) => addFile(event, mimeType); // 파일을 선택한 후 함수 호출
         inputElement.click();
     };
 
@@ -237,13 +261,13 @@ export default function MenuBar({ editor }: { editor: Editor }) {
             <BarDivider />
             <HoverTooltip label='이미지 삽입'>
                 <ToolbarButton
-                    onClick={addImage}
+                    onClick={() => openFileExplorer('image')}
                     Icon={ImageIcon}
                     iconWidth={20} />
             </HoverTooltip>
             <HoverTooltip label='파일 삽입'>
                 <ToolbarButton
-                    onClick={addImage}
+                    onClick={() => openFileExplorer('file')}
                     Icon={FileSearchIcon}
                     iconWidth={20} />
             </HoverTooltip>

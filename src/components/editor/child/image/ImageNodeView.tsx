@@ -142,7 +142,6 @@ const NodeView = (resizableImgProps: ResizableImageNodeViewRendererProps) => {
     }
   }, []);
 
-
   return (
     <NodeViewWrapper
       ref={nodeViewRef}

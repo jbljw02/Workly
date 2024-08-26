@@ -115,46 +115,6 @@ export default function Editor() {
             fileReader.readAsDataURL(file);
           });
         },
-        onPaste: (currentEditor, files, htmlContent) => {
-          files.forEach(file => {
-            const fileReader = new FileReader();
-
-            fileReader.onload = () => {
-              const src = fileReader.result as string;
-
-              if (htmlContent) {
-                console.log(htmlContent);
-                return false;
-              }
-
-              // 이미지 파일일 경우
-              if (file.type.startsWith('image/')) {
-                currentEditor.chain().insertContentAt(currentEditor.state.selection.anchor, {
-                  type: 'image',
-                  attrs: {
-                    src: src,
-                    alt: '',
-                    title: '',
-                    className: 'resizable-img',
-                    'data-keep-ratio': true,
-                  },
-                }).focus().run();
-              }
-              else {
-                // 이미지가 아닌 일반 파일일 경우
-                currentEditor.chain().insertContentAt(currentEditor.state.selection.anchor, {
-                  type: 'file',
-                  attrs: {
-                    href: src,
-                    title: file.name,
-                  },
-                }).focus().run();
-              }
-            };
-
-            fileReader.readAsDataURL(file);
-          });
-        },
       }),
     ],
     content: `

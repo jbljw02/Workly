@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Editor, NodeViewWrapper } from '@tiptap/react';
 import FileInfoIcon from '../../../../../public/svgs/editor/file-info.svg';
 import FileFullModal from '@/components/modal/FileFullModal';
@@ -28,6 +28,9 @@ export default function FileNodeView({ editor, node }: FileNodeViewProps) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [menuOpen, setMenuOpen] = useState(false);
     const [isEditing, setIsEditing] = useState(false); // 파일명을 수정중인지
+    const [nodePos, setNodePos] = useState<number | null>(null); // 노드의 위치를 상태로 관리
+
+    const fileRef = useRef<HTMLDivElement | null>(null);
 
     // 파일 사이즈에 따라 형식 조정
     const formatSize = (size: number) => {
@@ -61,11 +64,40 @@ export default function FileNodeView({ editor, node }: FileNodeViewProps) {
         setMenuOpen(true);
     }
 
+    // 파일 드래그 시작
+    const handleDragStart = () => {
+        // 선택된 노드의 위치 정수 값 포지션을 반환
+        const nodePos = editor.view.state.selection.$anchor.pos;
+        editor.commands.setNodeSelection(nodePos); // 지정된 위치에 있는 노드를 선택 상태로 전환
+    };
+
+    // 파일 드래그 종료
+    const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+        e.preventDefault();
+
+        // 마우스 커서의 X,Y 좌표를 가져옴
+        const dropPosition = editor.view.posAtCoords({ left: e.clientX, top: e.clientY });
+
+        if (dropPosition) {
+            const transaction = editor.state.tr;
+
+            // 현재 위치에서 노드를 삭제하고 드롭된 위치로 삽입
+            transaction.deleteRange(editor.state.selection.from, editor.state.selection.to);
+            transaction.insert(dropPosition.pos, editor.schema.nodes.file.create(node.attrs));
+
+            editor.view.dispatch(transaction);
+        }
+    };
+
     return (
         <>
-            <NodeViewWrapper>
+            <NodeViewWrapper
+                onDragStart={handleDragStart}
+                onDragEnd={handleDrop}
+                draggable="true">
                 <div
                     onClick={fileClick}
+                    ref={fileRef}
                     className={`relative inline-flex flex-row items-center justify-center w-auto rounded-md p-2 mt-2 mb-2 hover:bg-gray-100 cursor-pointer duration-100 ${menuOpen ? 'bg-gray-100' : 'bg-gray-50'}`}>
                     <FileInfoIcon width="26" />
                     <div className='flex justify-between items-center mt-0.5'>
