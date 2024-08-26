@@ -24,6 +24,7 @@ import HoverTooltip from './HoverTooltip'
 import LineIcon from '../../../../public/svgs/editor/horizontal-rule.svg'
 import FileSearchIcon from '../../../../public/svgs/editor/file-search.svg'
 import { v4 as uuidv4 } from 'uuid';
+import AddLinkSection, { selectionPosition } from './link/AddLinkSection'
 
 export default function MenuBar({ editor }: { editor: Editor }) {
     const [fontSize, setFontSize] = useState<number>(16);
@@ -35,6 +36,9 @@ export default function MenuBar({ editor }: { editor: Editor }) {
     const [isHighlight, setIsHighlight] = useState<boolean>(false);
     const [selectedFont, setSelectedFont] = useState<string>('Arial');
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
+
+    const [addingLink, setAddingLink] = useState<boolean>(false);
+    const [selectionPos, setSelectionPos] = useState<selectionPosition>({ top: 0, left: 0 });
 
     useEffect(() => {
         // 에디터가 초기화 되지 않았을 시
@@ -97,12 +101,12 @@ export default function MenuBar({ editor }: { editor: Editor }) {
         }
     }, [editor, selectedFont, setSelectedFont]);
 
-    const addLink = () => {
-        const url = window.prompt('Enter URL');
-        if (url) {
-            editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run()
-        }
-    }
+    // const addLink = () => {
+    //     const url = window.prompt('Enter URL');
+    //     if (url) {
+    //         editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run()
+    //     }
+    // }
 
     // 선택된 파일을 에디터에 이미지로 삽입
     const addFile = (event: Event, mimeType: string) => {
@@ -149,7 +153,7 @@ export default function MenuBar({ editor }: { editor: Editor }) {
         }
     };
 
-    // 파일 탐색기를 염
+    // 파일 탐색기를 열기
     const openFileExplorer = (mimeType: string) => {
         const inputElement = document.createElement('input');
         inputElement.type = 'file'; // 파일 탐색기를 열어 파일을 선택할 수 있도록
@@ -159,6 +163,19 @@ export default function MenuBar({ editor }: { editor: Editor }) {
         inputElement.onchange = (event) => addFile(event, mimeType); // 파일을 선택한 후 함수 호출
         inputElement.click();
     };
+
+    // 선택된 텍스트의 위치를 찾고 링크를 추가하는 컴포넌트를 열기
+    const addLink = () => {
+        const selection = window.getSelection(); // 선택한 텍스트에 대한 객체 반환
+        // selection이 존재하는지, 선택된 텍스트 영역이 하나 이상 있는지
+        if (selection && selection.rangeCount > 0) {
+            const range = selection.getRangeAt(0); // 선택된 텍스트 중 첫번째 객체를 반환(텍스트의 시작점)
+            const rect = range.getBoundingClientRect();
+            setSelectionPos({ top: rect.bottom, left: rect.left });
+            setAddingLink(true);
+        }
+
+    }
 
     return (
         <div className="flex items-center gap-1.5 px-2 py-1 border-b">
@@ -277,9 +294,19 @@ export default function MenuBar({ editor }: { editor: Editor }) {
                     Icon={LinkIcon}
                     iconWidth={20} />
             </HoverTooltip>
+            {
+                // 링크를 추가하는 영역 열기
+                addingLink &&
+                <AddLinkSection
+                    editor={editor}
+                    position={selectionPos}
+                    setAddingLink={setAddingLink} />
+            }
             <HoverTooltip label='코드 삽입'>
                 <ToolbarButton
-                    onClick={() => editor.chain().focus().setCodeBlock().run()}
+                    onClick={() => {
+                        editor.chain().focus().insertContent('<pre><code></code></pre>').run();
+                    }}
                     Icon={CodeIcon}
                     iconWidth={20} />
             </HoverTooltip>

@@ -17,17 +17,13 @@ type MenuItemProps = {
     label: string;
     setMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
     onClick?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
-    href?: string;
-    download?: string;
 }
 
 const MenuItem = ({ Icon,
     IconWidth,
     label,
     setMenuOpen,
-    onClick,
-    href,
-    download }: MenuItemProps) => {
+    onClick }: MenuItemProps) => {
     const itemClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         e.stopPropagation();
         if (onClick) {
@@ -143,9 +139,7 @@ export default function FileMenu({ editor, setMenuOpen, setIsEditing }: FileMenu
                     IconWidth="16"
                     setMenuOpen={setMenuOpen}
                     label="다운로드"
-                    onClick={() => downloadFile(fileNode.href, fileNode.title)}
-                    href={fileNode.href}
-                    download={fileNode.title} />
+                    onClick={() => downloadFile(fileNode.href, fileNode.title)} />
                 <div className="w-full border-t border-gray-200 my-1.5"></div>
                 <MenuItem
                     Icon={CopyIcon}

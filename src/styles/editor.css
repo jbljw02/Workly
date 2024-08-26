@@ -5,6 +5,7 @@ pre {
     font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
     margin: 1rem 0;
     padding: 0.75rem 1rem;
+    width: 600px;
 
     code {
         background: none;
@@ -77,4 +78,16 @@ hr {
 .node-imageComponent {
     display: flex;
     width: 100%;
+}
+
+/* 링크를 걸어놓은 텍스트의 스타일 */
+.ProseMirror a {
+    text-decoration: underline;
+    color: blue;
+    text-decoration-color: blue;
+    cursor: pointer;
+}
+
+.ProseMirror a:hover {
+    text-decoration: underline;
 }

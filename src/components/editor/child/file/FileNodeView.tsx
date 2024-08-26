@@ -65,14 +65,14 @@ export default function FileNodeView({ editor, node }: FileNodeViewProps) {
     }
 
     // 파일 드래그 시작
-    const handleDragStart = () => {
+    const dragStart = () => {
         // 선택된 노드의 위치 정수 값 포지션을 반환
         const nodePos = editor.view.state.selection.$anchor.pos;
         editor.commands.setNodeSelection(nodePos); // 지정된 위치에 있는 노드를 선택 상태로 전환
     };
 
     // 파일 드래그 종료
-    const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    const drapComplete = (e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault();
 
         // 마우스 커서의 X,Y 좌표를 가져옴
@@ -92,8 +92,8 @@ export default function FileNodeView({ editor, node }: FileNodeViewProps) {
     return (
         <>
             <NodeViewWrapper
-                onDragStart={handleDragStart}
-                onDragEnd={handleDrop}
+                onDragStart={dragStart}
+                onDragEnd={drapComplete}
                 draggable="true">
                 <div
                     onClick={fileClick}
@@ -102,6 +102,7 @@ export default function FileNodeView({ editor, node }: FileNodeViewProps) {
                     <FileInfoIcon width="26" />
                     <div className='flex justify-between items-center mt-0.5'>
                         {
+                            // 파일명을 현재 수정중인지에 따라서 분기
                             isEditing ?
                                 <FileEditInput
                                     editor={editor}
@@ -117,6 +118,7 @@ export default function FileNodeView({ editor, node }: FileNodeViewProps) {
                         </div>
                     </div>
                     {
+                        // 파일의 메뉴바를 펼치고 있는지
                         menuOpen && (
                             <FileMenu
                                 editor={editor}
