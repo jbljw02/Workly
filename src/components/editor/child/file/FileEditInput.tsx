@@ -4,6 +4,7 @@ import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { Editor } from "@tiptap/react";
 import { useEffect, useRef, useState } from "react";
 import { FileNodeViewProps } from "./FileNodeView";
+import InputControlSpan from "@/components/input/InputControlSpan";
 
 interface FileEditInput extends FileNodeViewProps {
     setIsEditing: React.Dispatch<React.SetStateAction<boolean>>;
@@ -104,11 +105,9 @@ export default function FileEditInput({ editor, node, setIsEditing }: FileEditIn
                 onChange={fileTitleChange}
                 onKeyDown={completeEdit}
                 className="bg-transparent border-none outline-none box-border" />
-            <span
+            <InputControlSpan
                 ref={spanRef}
-                className="invisible absolute whitespace-nowrap">
-                {fileTitle}
-            </span>
+                label={fileTitle} />
             {
                 fileMimeType &&
                 <span>{fileMimeType}</span>

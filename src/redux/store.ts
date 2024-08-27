@@ -3,6 +3,7 @@ import { HYDRATE, createWrapper } from "next-redux-wrapper";
 import scaleReducers from './features/scaleSlice';
 import editorImageReducers from './features/editorImageSlice';
 import fileReducers from './features/fileSlice';
+import linkReducers from './features/linkSlice';
 
 const combinedReducer = combineReducers({
     editorScale: scaleReducers.editorScale,
@@ -10,6 +11,7 @@ const combinedReducer = combineReducers({
     crop: editorImageReducers.crop,
     openFullModal: editorImageReducers.openFullModal,
     fileNode: fileReducers.fileNode,
+    linkTooltip: linkReducers.linkTooltip,
 })
 
 // 전체 리듀서를 관리

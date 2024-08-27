@@ -31,7 +31,9 @@ import ImageNodeView from './child/image/ImageNodeView'
 import FileHandler from '@tiptap-pro/extension-file-handler'
 import FileNode from '../../../lib/fileNode'
 import { v4 as uuidv4 } from 'uuid';
+import LinkNode from '../../../lib/linkNode'
 import '@/styles/editor.css';
+import { LinkTooltip, setLinkTooltip } from '@/redux/features/linkSlice'
 
 export default function Editor() {
   const dispatch = useAppDispatch();
@@ -115,6 +117,9 @@ export default function Editor() {
             fileReader.readAsDataURL(file);
           });
         },
+      }),
+      LinkNode.configure({
+        setLinkTooltip: (payload: LinkTooltip) => dispatch(setLinkTooltip(payload)),
       }),
     ],
     content: `

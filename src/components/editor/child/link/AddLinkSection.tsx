@@ -1,7 +1,7 @@
 import { Editor } from "@tiptap/react";
 import WorldIcon from '../../../../../public/svgs/editor/world.svg';
 import FolderIcon from '../../../../../public/svgs/folder.svg';
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useClickOutside } from "@/components/hooks/useClickOutside";
 
 export type selectionPosition = {
@@ -35,6 +35,14 @@ function FolderItem({ onClick, label }: FolderItem) {
 export default function AddLinkSection({ editor, position, setAddingLink }: AddLinkSection) {
     const [link, setLink] = useState<string>('');
     const containerRef = useRef<HTMLDivElement>(null);
+    const inputRef = useRef<HTMLInputElement>(null);
+
+    // 컴포넌트가 열리면 input으로 포커스
+    useEffect(() => {
+        if (inputRef.current) {
+            inputRef.current.focus();
+        }
+    }, []);
 
     const linkChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setLink(e.target.value);
@@ -47,6 +55,7 @@ export default function AddLinkSection({ editor, position, setAddingLink }: AddL
             let href = inputElement.value.trim();
 
             // 상대 경로로 인식하지 않도록 프로토콜을 추가
+            // 예를 들어, naver.com으로 입력할 시에 WorkHub/naver.com으로 리다이렉션 되지 않도록
             if (!/^https?:\/\//i.test(href)) {
                 href = `https://${href}`;
             }
@@ -76,6 +85,7 @@ export default function AddLinkSection({ editor, position, setAddingLink }: AddL
                     <WorldIcon width="14" />
                 </div>
                 <input
+                    ref={inputRef}
                     type="text"
                     className="bg-transparent border-none outline-none box-border w-full"
                     value={link}

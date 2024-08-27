@@ -25,6 +25,8 @@ import LineIcon from '../../../../public/svgs/editor/horizontal-rule.svg'
 import FileSearchIcon from '../../../../public/svgs/editor/file-search.svg'
 import { v4 as uuidv4 } from 'uuid';
 import AddLinkSection, { selectionPosition } from './link/AddLinkSection'
+import { useAppSelector } from '@/redux/hooks'
+import LinkTooltip from './link/LinkTooltip'
 
 export default function MenuBar({ editor }: { editor: Editor }) {
     const [fontSize, setFontSize] = useState<number>(16);
@@ -37,6 +39,7 @@ export default function MenuBar({ editor }: { editor: Editor }) {
     const [selectedFont, setSelectedFont] = useState<string>('Arial');
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
+    const linkTooltip = useAppSelector(state => state.linkTooltip)
     const [addingLink, setAddingLink] = useState<boolean>(false);
     const [selectionPos, setSelectionPos] = useState<selectionPosition>({ top: 0, left: 0 });
 
@@ -101,13 +104,6 @@ export default function MenuBar({ editor }: { editor: Editor }) {
         }
     }, [editor, selectedFont, setSelectedFont]);
 
-    // const addLink = () => {
-    //     const url = window.prompt('Enter URL');
-    //     if (url) {
-    //         editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run()
-    //     }
-    // }
-
     // 선택된 파일을 에디터에 이미지로 삽입
     const addFile = (event: Event, mimeType: string) => {
         const target = event.target as HTMLInputElement;
@@ -152,6 +148,8 @@ export default function MenuBar({ editor }: { editor: Editor }) {
             });
         }
     };
+
+    console.log("툴팁: ", linkTooltip);
 
     // 파일 탐색기를 열기
     const openFileExplorer = (mimeType: string) => {
@@ -301,6 +299,10 @@ export default function MenuBar({ editor }: { editor: Editor }) {
                     editor={editor}
                     position={selectionPos}
                     setAddingLink={setAddingLink} />
+            }
+            {
+                linkTooltip.visible &&
+                <LinkTooltip />
             }
             <HoverTooltip label='코드 삽입'>
                 <ToolbarButton

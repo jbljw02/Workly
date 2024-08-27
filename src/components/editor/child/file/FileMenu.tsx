@@ -9,7 +9,6 @@ import { Editor } from "@tiptap/react";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { FileNode, setFileNode } from "@/redux/features/fileSlice";
 import { v4 as uuidv4 } from 'uuid';
-import FileEditInput from "./FileEditInput";
 
 type MenuItemProps = {
     Icon: React.ElementType;
