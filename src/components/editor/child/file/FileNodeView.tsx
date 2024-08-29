@@ -28,7 +28,6 @@ export default function FileNodeView({ editor, node }: FileNodeViewProps) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [menuOpen, setMenuOpen] = useState(false);
     const [isEditing, setIsEditing] = useState(false); // 파일명을 수정중인지
-    const [nodePos, setNodePos] = useState<number | null>(null); // 노드의 위치를 상태로 관리
 
     const fileRef = useRef<HTMLDivElement | null>(null);
 

@@ -2,48 +2,60 @@ import { Plugin, PluginKey } from 'prosemirror-state';
 import { Extension } from '@tiptap/core';
 import { LinkTooltip } from '@/redux/features/linkSlice';
 
-// 링크 위에 마우스를 올렸을 때의 동작을 제어하는 플러그인
-const LinkHoverPlugin = (setLinkTooltip: (payload: LinkTooltip) => void) => {
+const LinkHoverPlugin = (setLinkTooltip: (payload: Partial<LinkTooltip>) => void) => {
     return new Plugin({
         key: new PluginKey('linkHover'),
-        props: {
-            handleDOMEvents: {
-                mouseover(view, event) {
-                    const target = event.target as HTMLElement;
-                    // 마우스가 올라간 태그가 링크일 시
-                    if (target.nodeName === 'A') {
-                        // 태그의 href와 위치를 찾음
-                        const href = target.getAttribute('href') || '';
-                        const rect = target.getBoundingClientRect();
+        view() {
+            const mouseMove = (event: MouseEvent) => {
+                 // 현재 마우스가 있는 곳(a 태그가 될 수도, 다른 태그가 될 수도)
+                const target = event.target as HTMLElement;
+                let href = '';
+                let visible = false;
+                let position = { top: 0, left: 0 };
 
-                        // linkTooltip의 상태를 업데이트
-                        setLinkTooltip({
-                            href: href,
-                            position: {
-                                top: rect.top + window.scrollY,
-                                left: rect.left + window.scrollX,
-                            },
-                            visible: true,
-                        });
-                    }
+                // 타겟이 a태그일 경우
+                if (target.nodeName === 'A') {
+                    href = target.getAttribute('href') || ''; // 링크 URL을 할당
+                    // 태그의 위치를 구해서 position에 할당
+                    const rect = target.getBoundingClientRect();
+                    position = {
+                        top: rect.top + window.scrollY,
+                        left: rect.left + window.scrollX,
+                    };
+                    visible = true; // 툴팁이 보이도록 
+                }
 
-                    return false;
-                },
-                // mouseout(view, event) {
-                //     const target = event.target as HTMLElement;
+                // 툴팁의 정보를 가져옴
+                const tooltipElement = document.querySelector('.link-tooltip');
+                console.log("타겟: ", target);
+                console.log("툴팁: ", tooltipElement);
 
-                //     if (target.nodeName === 'A') {
-                //         setLinkTooltip({
-                //             href: '',
-                //             position: { top: 0, left: 0 },
-                //             visible: false,
-                //         });
-                //     }
+                // 툴팁 요소가 타겟을 포함하고 있지 않으며, a 태그가 존재하지 않을 때 툴팁 닫기
+                if (tooltipElement &&
+                    !tooltipElement.contains(event.target as Node) &&
+                    !target.closest('a')) {
+                    setLinkTooltip({
+                        visible: false,
+                    });
+                }
+                // 툴팁 혹은 링크 위에 마우스가 올라갔을 때
+                else if (visible) {
+                    setLinkTooltip({
+                        href,
+                        position,
+                        visible: true,
+                    });
+                }
+            };
 
-                //     return false;
-                // },
-            },
-        },
+            document.addEventListener('mousemove', mouseMove);
+
+            return {
+                destroy() {
+                    document.removeEventListener('mousemove', mouseMove);
+                }
+            };
+        }
     });
 };
 
@@ -51,7 +63,7 @@ const LinkNode = Extension.create({
     name: 'LinkNode',
 
     addProseMirrorPlugins() {
-        const setLinkTooltip = this.options.setLinkTooltip as (payload: LinkTooltip) => void;
+        const setLinkTooltip = this.options.setLinkTooltip as (payload: Partial<LinkTooltip>) => void;
 
         return [
             LinkHoverPlugin(setLinkTooltip),

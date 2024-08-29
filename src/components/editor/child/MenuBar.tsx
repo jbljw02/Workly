@@ -149,8 +149,6 @@ export default function MenuBar({ editor }: { editor: Editor }) {
         }
     };
 
-    console.log("툴팁: ", linkTooltip);
-
     // 파일 탐색기를 열기
     const openFileExplorer = (mimeType: string) => {
         const inputElement = document.createElement('input');
@@ -300,10 +298,7 @@ export default function MenuBar({ editor }: { editor: Editor }) {
                     position={selectionPos}
                     setAddingLink={setAddingLink} />
             }
-            {
-                linkTooltip.visible &&
-                <LinkTooltip />
-            }
+            <LinkTooltip />
             <HoverTooltip label='코드 삽입'>
                 <ToolbarButton
                     onClick={() => {

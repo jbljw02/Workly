@@ -16,8 +16,8 @@ export const linkTooltipSlice = createSlice({
     name: 'linkTooltip',
     initialState: linkTooltipState,
     reducers: {
-        setLinkTooltip: (state, action: PayloadAction<LinkTooltip>) => {
-            return action.payload;
+        setLinkTooltip: (state, action: PayloadAction<Partial<LinkTooltip>>) => {
+            return { ...state, ...action.payload };
         },
     },
 })
