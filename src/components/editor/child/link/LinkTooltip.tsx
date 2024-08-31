@@ -7,8 +7,11 @@ import DeleteIcon from '../../../../../public/svgs/trash.svg';
 import { useEffect, useRef } from 'react';
 import InputControlSpan from '@/components/input/InputControlSpan';
 import HoverTooltip from '../HoverTooltip';
+import { Editor } from '@tiptap/react';
 
-export default function LinkTooltip() {
+export default function LinkTooltip({ editor }: { editor: Editor }) {
+    const dispatch = useAppDispatch();
+
     const linkTooltip = useAppSelector(state => state.linkTooltip);
     const editorScale = useAppSelector(state => state.editorScale);
 
@@ -32,6 +35,30 @@ export default function LinkTooltip() {
             tooltipRef.current.style.left = `${rect.left + window.scrollX}px`;
         }
     }, [linkTooltip]);
+
+    // 링크 삭제 함수
+    const deleteLink = (editor: Editor) => {
+        const { state, } = editor;
+        const { tr } = state;
+        const { from, to } = state.selection; // 텍스트 범위의 시작과 끝
+
+        const linkMark = state.schema.marks.link;
+
+        if (linkMark) {
+            state.doc.nodesBetween(from, to, (node, pos) => {
+                // 각 노드에서 링크 마크를 찾음
+                const marks = node.marks.filter(mark => mark.type === linkMark);
+                if (marks.length > 0) {
+                    tr.removeMark(pos, pos + node.nodeSize, linkMark);
+                }
+            });
+
+            editor.view.dispatch(tr);
+
+            // 링크 툴팁 숨김 처리
+            dispatch(setLinkTooltip({ href: '', position: { top: 0, left: 0 }, visible: false }));
+        }
+    };
 
     return (
         <div
@@ -64,7 +91,9 @@ export default function LinkTooltip() {
                     </div>
                     <div className='hover:bg-neutral-100 p-1 rounded-sm cursor-pointer'>
                         <HoverTooltip label="삭제">
-                            <DeleteIcon width="15" />
+                            <div onClick={() => deleteLink(editor)}>
+                                <DeleteIcon width="15" />
+                            </div>
                         </HoverTooltip>
                     </div>
                 </div>

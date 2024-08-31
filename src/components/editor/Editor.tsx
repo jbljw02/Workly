@@ -34,6 +34,7 @@ import { v4 as uuidv4 } from 'uuid';
 import LinkNode from '../../../lib/linkNode'
 import '@/styles/editor.css';
 import { LinkTooltip, setLinkTooltip } from '@/redux/features/linkSlice'
+import Focus from '@tiptap/extension-focus'
 
 export default function Editor() {
   const dispatch = useAppDispatch();
@@ -52,7 +53,12 @@ export default function Editor() {
       }),
       Document,
       Underline,
-      Highlight,
+      Highlight.configure({
+        multicolor: true,
+        HTMLAttributes: {
+          class: 'highlight',
+        },
+      }),
       TextStyle,
       Color,
       BulletList,

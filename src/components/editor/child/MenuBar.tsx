@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import BoldIcon from '../../../../public/svgs/editor/bold.svg'
 import ItalicIcon from '../../../../public/svgs/editor/italic.svg'
 import UnderlineIcon from '../../../../public/svgs/editor/underline.svg'
@@ -25,10 +25,14 @@ import LineIcon from '../../../../public/svgs/editor/horizontal-rule.svg'
 import FileSearchIcon from '../../../../public/svgs/editor/file-search.svg'
 import { v4 as uuidv4 } from 'uuid';
 import AddLinkSection, { selectionPosition } from './link/AddLinkSection'
-import { useAppSelector } from '@/redux/hooks'
+import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import LinkTooltip from './link/LinkTooltip'
+import NoticeModal from '@/components/modal/NoticeModal'
+import { setTextSelection } from '@/redux/features/selectionSlice'
 
 export default function MenuBar({ editor }: { editor: Editor }) {
+    const dispatch = useAppDispatch();
+
     const [fontSize, setFontSize] = useState<number>(16);
     const [headingLevel, setHeadingLevel] = useState<string>('16');
     const [alignDropdownOpen, setAlignDropdownOpen] = useState(false);
@@ -42,6 +46,8 @@ export default function MenuBar({ editor }: { editor: Editor }) {
     const linkTooltip = useAppSelector(state => state.linkTooltip)
     const [addingLink, setAddingLink] = useState<boolean>(false);
     const [selectionPos, setSelectionPos] = useState<selectionPosition>({ top: 0, left: 0 });
+    const [linkNoticeModal, setLinkNoticeModal] = useState<boolean>(false);
+
 
     useEffect(() => {
         // 에디터가 초기화 되지 않았을 시
@@ -162,16 +168,16 @@ export default function MenuBar({ editor }: { editor: Editor }) {
 
     // 선택된 텍스트의 위치를 찾고 링크를 추가하는 컴포넌트를 열기
     const addLink = () => {
-        const selection = window.getSelection(); // 선택한 텍스트에 대한 객체 반환
-        // selection이 존재하는지, 선택된 텍스트 영역이 하나 이상 있는지
+        const selection = window.getSelection();
         if (selection && selection.rangeCount > 0) {
-            const range = selection.getRangeAt(0); // 선택된 텍스트 중 첫번째 객체를 반환(텍스트의 시작점)
+            const range = selection.getRangeAt(0);
+            
+            // 링크 추가 UI 표시 및 input에 포커스
             const rect = range.getBoundingClientRect();
             setSelectionPos({ top: rect.bottom, left: rect.left });
             setAddingLink(true);
         }
-
-    }
+    };
 
     return (
         <div className="flex items-center gap-1.5 px-2 py-1 border-b">
@@ -298,7 +304,8 @@ export default function MenuBar({ editor }: { editor: Editor }) {
                     position={selectionPos}
                     setAddingLink={setAddingLink} />
             }
-            <LinkTooltip />
+            {/* 링크에 hover를 했을 시 보여지는 툴팁 */}
+            <LinkTooltip editor={editor} />
             <HoverTooltip label='코드 삽입'>
                 <ToolbarButton
                     onClick={() => {

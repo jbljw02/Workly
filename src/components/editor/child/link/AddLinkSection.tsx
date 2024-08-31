@@ -37,12 +37,26 @@ export default function AddLinkSection({ editor, position, setAddingLink }: AddL
     const containerRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
 
-    // 컴포넌트가 열리면 input으로 포커스
+    // 컴포넌트가 열리면 input으로 포커스하고 드래그된 텍스트를 표시
     useEffect(() => {
+        const selection = window.getSelection();
+        if (selection && selection.rangeCount > 0) {
+            const range = selection.getRangeAt(0);
+
+            editor.chain().toggleHighlight({ color: '#F1F1F1' }).run()
+        }
+
         if (inputRef.current) {
             inputRef.current.focus();
         }
+
+        return () => {
+            // 컴포넌트가 닫힐 때 하이라이트 제거
+            editor.commands.unsetMark('highlight');
+        };
     }, []);
+
+
 
     const linkChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setLink(e.target.value);
@@ -91,7 +105,8 @@ export default function AddLinkSection({ editor, position, setAddingLink }: AddL
                     value={link}
                     onChange={linkChange}
                     onKeyDown={inputKeyEvent}
-                    placeholder="링크 붙여넣기 또는 이동할 문서 검색" />
+                    placeholder="링크 붙여넣기 또는 이동할 문서 검색"
+                    autoFocus />
             </div>
             {/* 폴더들을 정렬해주는 영역 */}
             <div className="ml-1 mt-4 w-full text-[13px]">

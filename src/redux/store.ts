@@ -4,6 +4,7 @@ import scaleReducers from './features/scaleSlice';
 import editorImageReducers from './features/editorImageSlice';
 import fileReducers from './features/fileSlice';
 import linkReducers from './features/linkSlice';
+import selectionReducers from './features/selectionSlice'
 
 const combinedReducer = combineReducers({
     editorScale: scaleReducers.editorScale,
@@ -12,6 +13,7 @@ const combinedReducer = combineReducers({
     openFullModal: editorImageReducers.openFullModal,
     fileNode: fileReducers.fileNode,
     linkTooltip: linkReducers.linkTooltip,
+    textSelection: selectionReducers.textSelection,
 })
 
 // 전체 리듀서를 관리

@@ -91,3 +91,7 @@ hr {
 .ProseMirror a:hover {
     text-decoration: underline;
 }
+
+.highlight {
+    padding: 2.5px 0;
+}

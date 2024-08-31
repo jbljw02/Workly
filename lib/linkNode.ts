@@ -27,8 +27,6 @@ const LinkHoverPlugin = (setLinkTooltip: (payload: Partial<LinkTooltip>) => void
 
                 // 툴팁의 정보를 가져옴
                 const tooltipElement = document.querySelector('.link-tooltip');
-                console.log("타겟: ", target);
-                console.log("툴팁: ", tooltipElement);
 
                 // 툴팁 요소가 타겟을 포함하고 있지 않으며, a 태그가 존재하지 않을 때 툴팁 닫기
                 if (tooltipElement &&
