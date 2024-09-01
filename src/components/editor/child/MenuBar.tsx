@@ -24,7 +24,7 @@ import HoverTooltip from './HoverTooltip'
 import LineIcon from '../../../../public/svgs/editor/horizontal-rule.svg'
 import FileSearchIcon from '../../../../public/svgs/editor/file-search.svg'
 import { v4 as uuidv4 } from 'uuid';
-import AddLinkSection, { selectionPosition } from './link/AddLinkSection'
+import AddLinkSection, { SelectionPosition } from './link/AddLinkSection'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import LinkTooltip from './link/LinkTooltip'
 import NoticeModal from '@/components/modal/NoticeModal'
@@ -45,7 +45,7 @@ export default function MenuBar({ editor }: { editor: Editor }) {
 
     const linkTooltip = useAppSelector(state => state.linkTooltip)
     const [addingLink, setAddingLink] = useState<boolean>(false);
-    const [selectionPos, setSelectionPos] = useState<selectionPosition>({ top: 0, left: 0 });
+    const [selectionPos, setSelectionPos] = useState<SelectionPosition>({ top: 0, left: 0 });
     const [linkNoticeModal, setLinkNoticeModal] = useState<boolean>(false);
 
 
@@ -171,9 +171,8 @@ export default function MenuBar({ editor }: { editor: Editor }) {
         const selection = window.getSelection();
         if (selection && selection.rangeCount > 0) {
             const range = selection.getRangeAt(0);
-            
-            // 링크 추가 UI 표시 및 input에 포커스
             const rect = range.getBoundingClientRect();
+            
             setSelectionPos({ top: rect.bottom, left: rect.left });
             setAddingLink(true);
         }

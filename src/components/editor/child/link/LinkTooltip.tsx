@@ -4,100 +4,63 @@ import WorldIcon from '../../../../../public/svgs/editor/world.svg';
 import MenuIcon from '../../../../../public/svgs/editor/menu.svg';
 import EditIcon from '../../../../../public/svgs/editor/pencil-edit.svg';
 import DeleteIcon from '../../../../../public/svgs/trash.svg';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import InputControlSpan from '@/components/input/InputControlSpan';
 import HoverTooltip from '../HoverTooltip';
 import { Editor } from '@tiptap/react';
+import { LinkAttributes } from '../../../../../lib/linkNode';
+import LinkEditSection from './LinkEditSection';
+import { SelectionPosition } from './AddLinkSection';
+import { useClickOutside } from '@/components/hooks/useClickOutside';
+import deleteLink from '@/components/hooks/deleteLink';
+import IconButton from '@/components/button/IconButton';
+import LinkHoverSection from './LinkHoverSection';
 
 export default function LinkTooltip({ editor }: { editor: Editor }) {
-    const dispatch = useAppDispatch();
-
     const linkTooltip = useAppSelector(state => state.linkTooltip);
     const editorScale = useAppSelector(state => state.editorScale);
 
     const tooltipRef = useRef<HTMLDivElement>(null);
-    const inputRef = useRef<HTMLInputElement>(null);
-    const spanRef = useRef<HTMLSpanElement>(null);
-
-    // span을 이용해 요소의 크기를 구하여 input의 width 요소에 맞춤
-    useEffect(() => {
-        if (spanRef.current && inputRef.current) {
-            inputRef.current.style.width = `${spanRef.current.offsetWidth}px`;
-        }
-    }, [linkTooltip]);
+    const [tooltipPos, setTooltipPos] = useState<SelectionPosition>({ top: 0, left: 0 });
+    const [isEditing, setIsEditing] = useState(false);
+    const [newLink, setNewLink] = useState('');
 
     // 툴팁이 항상 a 태그 바로 아래에 위치하도록 설정
     useEffect(() => {
-        const aTag = document.querySelector(`a[href="${linkTooltip.href}"]`);
+        const aTag = document.querySelector(`a[id="${linkTooltip.id}"]`);
         if (aTag && tooltipRef.current) {
             const rect = aTag.getBoundingClientRect();
-            tooltipRef.current.style.top = `${rect.bottom + window.scrollY}px`;
-            tooltipRef.current.style.left = `${rect.left + window.scrollX}px`;
+            const bottomVal = rect.bottom + window.scrollY;
+            const leftVal = rect.left + window.scrollX;
+
+            tooltipRef.current.style.top = `${bottomVal}px`;
+            tooltipRef.current.style.left = `${leftVal}px`;
+
+            setTooltipPos({ top: bottomVal, left: leftVal });
         }
     }, [linkTooltip]);
-
-    // 링크 삭제 함수
-    const deleteLink = (editor: Editor) => {
-        const { state, } = editor;
-        const { tr } = state;
-        const { from, to } = state.selection; // 텍스트 범위의 시작과 끝
-
-        const linkMark = state.schema.marks.link;
-
-        if (linkMark) {
-            state.doc.nodesBetween(from, to, (node, pos) => {
-                // 각 노드에서 링크 마크를 찾음
-                const marks = node.marks.filter(mark => mark.type === linkMark);
-                if (marks.length > 0) {
-                    tr.removeMark(pos, pos + node.nodeSize, linkMark);
-                }
-            });
-
-            editor.view.dispatch(tr);
-
-            // 링크 툴팁 숨김 처리
-            dispatch(setLinkTooltip({ href: '', position: { top: 0, left: 0 }, visible: false }));
-        }
-    };
 
     return (
         <div
             ref={tooltipRef}
-            className={`absolute z-50 link-tooltip transform transition-opacity ease-in-out duration-300
-                ${linkTooltip.visible ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+            className={`absolute z-20 transform link-tooltip`}
             style={{
                 transform: `scale(${editorScale})`, // 에디터의 scale 값을 동일하게 적용
                 transformOrigin: 'top left', // 원점 설정
             }}>
-            <div className='relative flex flex-row items-center mt-2 px-2 py-1.5 bg-white rounded-md shadow-[0px_4px_10px_rgba(0,0,0,0.25)]'>
-                {/* 링크를 보여주는 input */}
-                <div className='flex flex-row'>
-                    <WorldIcon width="12.5" />
-                    <input
-                        ref={inputRef}
-                        className="bg-transparent border-none outline-none box-border text-sm ml-2 text-ellipsis max-w-[150px]"
-                        value={linkTooltip.href}
-                        readOnly />
-                    <InputControlSpan
-                        ref={spanRef}
-                        label={linkTooltip.href} />
-                </div>
-                {/* 편집 및 삭제 아이콘 */}
-                <div className='flex flex-row items-center ml-1'>
-                    <div className='hover:bg-neutral-100 p-1 rounded-sm cursor-pointer'>
-                        <HoverTooltip label="편집">
-                            <EditIcon width="12.5" />
-                        </HoverTooltip>
-                    </div>
-                    <div className='hover:bg-neutral-100 p-1 rounded-sm cursor-pointer'>
-                        <HoverTooltip label="삭제">
-                            <div onClick={() => deleteLink(editor)}>
-                                <DeleteIcon width="15" />
-                            </div>
-                        </HoverTooltip>
-                    </div>
-                </div>
-            </div>
+            {
+                isEditing ? (
+                    // 링크와 제목을 수정하는 툴팁
+                    <LinkEditSection
+                        editor={editor}
+                        isEditing={isEditing}
+                        setIsEditing={setIsEditing} />
+                ) :
+                    // a태그에 마우스를 올렸을 때 링크의 정보를 보이는 툴팁
+                    <LinkHoverSection
+                        editor={editor}
+                        setIsEditing={setIsEditing} />
+            }
         </div>
     );
 }

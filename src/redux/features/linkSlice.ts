@@ -1,13 +1,17 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export type LinkTooltip = {
+    id: string,
     href: string,
+    text: string,
     position: { top: number, left: number },
     visible: boolean,
 }
 
 const linkTooltipState = {
+    id: '',
     href: '',
+    text: '',
     position: { top: 0, left: 0 },
     visible: false,
 }

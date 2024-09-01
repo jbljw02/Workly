@@ -3,15 +3,17 @@ import WorldIcon from '../../../../../public/svgs/editor/world.svg';
 import FolderIcon from '../../../../../public/svgs/folder.svg';
 import { useEffect, useRef, useState } from "react";
 import { useClickOutside } from "@/components/hooks/useClickOutside";
+import { v4 as uuidv4 } from 'uuid';
+import { LinkAttributes } from "../../../../../lib/linkNode";
 
-export type selectionPosition = {
+export type SelectionPosition = {
     top: number;
     left: number;
 }
 
-type AddLinkSection = {
+export type AddLinkSectionProps = {
     editor: Editor;
-    position: selectionPosition;
+    position: SelectionPosition;
     setAddingLink: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
@@ -32,22 +34,15 @@ function FolderItem({ onClick, label }: FolderItem) {
     );
 }
 
-export default function AddLinkSection({ editor, position, setAddingLink }: AddLinkSection) {
+export default function AddLinkSection({ editor, position, setAddingLink }: AddLinkSectionProps) {
     const [link, setLink] = useState<string>('');
     const containerRef = useRef<HTMLDivElement>(null);
-    const inputRef = useRef<HTMLInputElement>(null);
 
     // 컴포넌트가 열리면 input으로 포커스하고 드래그된 텍스트를 표시
     useEffect(() => {
         const selection = window.getSelection();
         if (selection && selection.rangeCount > 0) {
-            const range = selection.getRangeAt(0);
-
-            editor.chain().toggleHighlight({ color: '#F1F1F1' }).run()
-        }
-
-        if (inputRef.current) {
-            inputRef.current.focus();
+            editor.chain().toggleHighlight({ color: '#F3F3F3' }).run()
         }
 
         return () => {
@@ -55,8 +50,6 @@ export default function AddLinkSection({ editor, position, setAddingLink }: AddL
             editor.commands.unsetMark('highlight');
         };
     }, []);
-
-
 
     const linkChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setLink(e.target.value);
@@ -74,7 +67,8 @@ export default function AddLinkSection({ editor, position, setAddingLink }: AddL
                 href = `https://${href}`;
             }
 
-            editor.chain().focus().extendMarkRange('link').setLink({ href }).run();
+            const id = uuidv4(); // 각 a태그를 구분할 고유값
+            editor.chain().focus().extendMarkRange('link').setLink({ href, id } as LinkAttributes).run();
             setAddingLink(false);
         }
         // ESC를 누르면 창 닫음
@@ -88,7 +82,7 @@ export default function AddLinkSection({ editor, position, setAddingLink }: AddL
     return (
         <div
             ref={containerRef}
-            className="absolute flex flex-col bg-white text-sm rounded-md p-3 z-10 shadow-[0px_4px_10px_rgba(0,0,0,0.25)]"
+            className="absolute flex flex-col bg-white text-sm rounded-md p-3 border border-neutral-300 z-10 shadow-[0px_4px_10px_rgba(0,0,0,0.25)]"
             style={{
                 top: position.top + window.scrollY + 8, // 스크롤된 양까지 계산
                 left: position.left
@@ -99,7 +93,6 @@ export default function AddLinkSection({ editor, position, setAddingLink }: AddL
                     <WorldIcon width="14" />
                 </div>
                 <input
-                    ref={inputRef}
                     type="text"
                     className="bg-transparent border-none outline-none box-border w-full"
                     value={link}

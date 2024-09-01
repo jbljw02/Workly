@@ -31,14 +31,16 @@ import ImageNodeView from './child/image/ImageNodeView'
 import FileHandler from '@tiptap-pro/extension-file-handler'
 import FileNode from '../../../lib/fileNode'
 import { v4 as uuidv4 } from 'uuid';
-import LinkNode from '../../../lib/linkNode'
 import '@/styles/editor.css';
 import { LinkTooltip, setLinkTooltip } from '@/redux/features/linkSlice'
 import Focus from '@tiptap/extension-focus'
+import LinkNode from '../../../lib/linkNode';
 
 export default function Editor() {
   const dispatch = useAppDispatch();
 
+  const linkTooltip = useAppSelector(state => state.linkTooltip);
+  
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -74,10 +76,12 @@ export default function Editor() {
       FontSize,
       FontFamily,
       CodeBlock,
-      Link.configure({
+      LinkNode.configure({
         openOnClick: true,
         autolink: true,
         defaultProtocol: 'https',
+        setLinkTooltip: (payload: LinkTooltip) => dispatch(setLinkTooltip(payload)),
+        linkTooltip: linkTooltip,
       }),
       Dropcursor,
       ImageNodeView.configure({
@@ -123,9 +127,6 @@ export default function Editor() {
             fileReader.readAsDataURL(file);
           });
         },
-      }),
-      LinkNode.configure({
-        setLinkTooltip: (payload: LinkTooltip) => dispatch(setLinkTooltip(payload)),
       }),
     ],
     content: `
