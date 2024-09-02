@@ -25,9 +25,10 @@ export default function RatioDropdown() {
     useClickOutside(dropdownRef, () => setIsOpen(false));
 
     return (
-        <div className="relative" ref={dropdownRef}>
+        <div className="relative z-50" ref={dropdownRef}>
             <div
-                onClick={() => setIsOpen(!isOpen)}
+                onClick={() => setIsOpen(!isOpen)
+                }
                 onMouseDown={(e) => e.preventDefault()} // 드래그 상태을 유지
                 className="flex flex-row items-center hover:bg-gray-100 rounded p-2 cursor-pointer">
                 {/* 현재 선택된 옵션을 출력 */}
@@ -41,6 +42,7 @@ export default function RatioDropdown() {
                 }
             </div>
             {
+                // 선택 가능한 확대 비율 나열
                 isOpen && (
                     <div className="absolute left-0 right-0 w-16 items-center justify-center bg-white border border-gray-200 rounded-sm mt-1 shadow-lg z-10 text-sm cursor-pointer">
                         {
