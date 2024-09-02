@@ -75,7 +75,7 @@ const linkNode = Mark.create({
 
         return [
             linkClickPlugin,
-            LinkHoverPlugin(setLinkTooltip, linkTooltip),
+            LinkHoverPlugin(setLinkTooltip),
         ];
     },
 });

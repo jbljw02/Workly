@@ -45,7 +45,14 @@ export default function LinkEditSection({ editor, isEditing, setIsEditing }: Lin
                 tr.replaceWith(linkStart, linkEnd, state.schema.text(newText));
 
                 // 대체된 텍스트 기준으로 링크 마크를 재설정
-                tr.addMark(linkStart, linkStart + newText.length, state.schema.marks.link.create({ href }));
+                tr.addMark(
+                    linkStart,
+                    linkStart + newText.length,
+                    state.schema.marks.link.create({
+                        href,
+                        id: linkTooltip.id,
+                    })
+                );
 
                 editorDispatch(tr);
 

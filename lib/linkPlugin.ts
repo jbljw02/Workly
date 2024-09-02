@@ -3,20 +3,20 @@ import { Extension } from '@tiptap/core';
 import { LinkTooltip } from '@/redux/features/linkSlice';
 
 // 링크 위에 마우스를 올렸을 때
-export const LinkHoverPlugin = (setLinkTooltip: (payload: Partial<LinkTooltip>) => void, linkTooltip: LinkTooltip) => {
+export const LinkHoverPlugin = (setLinkTooltip: (payload: Partial<LinkTooltip>) => void) => {
     return new Plugin({
         key: new PluginKey('linkHover'),
         view() {
             const mouseMove = (event: MouseEvent) => {
                 // 현재 마우스가 있는 곳(a 태그가 될 수도, 다른 태그가 될 수도)
                 const target = event.target as HTMLElement;
-
-                let id = target.id || linkTooltip.id; 
+                
+                let id = target.id || ''; 
                 let href = target.getAttribute('href') || ''; 
                 let text = target.textContent || '';
                 let visible = false;
                 let position = { top: 0, left: 0 };
-
+                
                 // 타겟이 a태그일 경우
                 if (target.nodeName === 'A') {
                     id = target.getAttribute('id') || '';
