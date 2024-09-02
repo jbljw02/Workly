@@ -7,7 +7,6 @@ import { LinkAttributes } from "../../../../../lib/linkNode";
 import { useClickOutside } from "@/components/hooks/useClickOutside";
 import SaveIcon from '../../../../../public/svgs/editor/save.svg'
 import DeleteIcon from '../../../../../public/svgs/trash.svg'
-import CloseIcon from '../../../../../public/svgs/editor/close.svg'
 import deleteLink from "@/components/hooks/deleteLink";
 import { AppDispatch } from "@/redux/store";
 import IconButton from "@/components/button/IconButton";

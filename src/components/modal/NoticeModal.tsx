@@ -1,7 +1,7 @@
 import { ModalProps } from '@/types/modalProps';
 import Modal from 'react-modal';
 
-interface NoticeModal extends ModalProps {
+export interface NoticeModal extends ModalProps {
     label: string | React.ReactNode;
 }
 

@@ -167,6 +167,7 @@ export default function Editor() {
 
   const editorScale = useAppSelector(state => state.editorScale);
 
+  const [linkNoticeModal, setLinkNoticeModal] = useState<boolean>(true);
 
   const keyPress = (event: KeyboardEvent) => {
     if (event.metaKey || event.ctrlKey) {

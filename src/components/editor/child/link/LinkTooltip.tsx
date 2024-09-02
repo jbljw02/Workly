@@ -23,7 +23,6 @@ export default function LinkTooltip({ editor }: { editor: Editor }) {
     const tooltipRef = useRef<HTMLDivElement>(null);
     const [tooltipPos, setTooltipPos] = useState<SelectionPosition>({ top: 0, left: 0 });
     const [isEditing, setIsEditing] = useState(false);
-    const [newLink, setNewLink] = useState('');
 
     // 툴팁이 항상 a 태그 바로 아래에 위치하도록 설정
     useEffect(() => {

@@ -29,6 +29,7 @@ import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import LinkTooltip from './link/LinkTooltip'
 import NoticeModal from '@/components/modal/NoticeModal'
 import { setTextSelection } from '@/redux/features/selectionSlice'
+import TooltipNotice from '@/components/modal/TooltipNotice'
 
 export default function MenuBar({ editor }: { editor: Editor }) {
     const dispatch = useAppDispatch();
@@ -169,12 +170,17 @@ export default function MenuBar({ editor }: { editor: Editor }) {
     // 선택된 텍스트의 위치를 찾고 링크를 추가하는 컴포넌트를 열기
     const addLink = () => {
         const selection = window.getSelection();
-        if (selection && selection.rangeCount > 0) {
+        if (selection &&
+            selection.rangeCount > 0
+            && selection.toString().trim() !== "") {
             const range = selection.getRangeAt(0);
             const rect = range.getBoundingClientRect();
-            
+
             setSelectionPos({ top: rect.bottom, left: rect.left });
             setAddingLink(true);
+        }
+        else {
+            setLinkNoticeModal(true);
         }
     };
 
@@ -302,6 +308,13 @@ export default function MenuBar({ editor }: { editor: Editor }) {
                     editor={editor}
                     position={selectionPos}
                     setAddingLink={setAddingLink} />
+            }
+            {
+                linkNoticeModal &&
+                <TooltipNotice
+                    isModalOpen={linkNoticeModal}
+                    setIsModalOpen={setLinkNoticeModal}
+                    label="링크를 연결한 영역을 드래그해주세요" />
             }
             {/* 링크에 hover를 했을 시 보여지는 툴팁 */}
             <LinkTooltip editor={editor} />
