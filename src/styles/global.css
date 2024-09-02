@@ -50,3 +50,13 @@ input[type="number"] {
     opacity: 1;
   }
 }
+
+.flexbox-fix:nth-child(3) div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.flexbox-fix:nth-child(3) div input {
+  text-align: center;
+}

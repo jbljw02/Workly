@@ -17,7 +17,7 @@ export default function RootLayout({
   }
 
   return (
-    <html lang="en" className="h-full text-contentFont">
+    <html lang="en" className="h-full text-[#444444]">
       <head>
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet" />
       </head>

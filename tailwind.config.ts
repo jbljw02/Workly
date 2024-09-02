@@ -8,13 +8,6 @@ const config: Config = {
   ],
   theme: {
     extend: {
-      colors: {
-        contentFont: '#444444',
-      },
-      fontSize: {
-        '15px': '15px',
-        '13px': '13px',
-      },
     },
   },
   plugins: [],

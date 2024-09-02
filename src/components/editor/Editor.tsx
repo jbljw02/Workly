@@ -39,8 +39,6 @@ import LinkNode from '../../../lib/linkNode';
 export default function Editor() {
   const dispatch = useAppDispatch();
 
-  const linkTooltip = useAppSelector(state => state.linkTooltip);
-  
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -80,8 +78,7 @@ export default function Editor() {
         openOnClick: true,
         autolink: true,
         defaultProtocol: 'https',
-        setLinkTooltip: (payload: LinkTooltip) => dispatch(setLinkTooltip(payload)),
-        linkTooltip: linkTooltip,
+        setLinkTooltip: (payload: LinkTooltip) => dispatch(setLinkTooltip(payload))
       }),
       Dropcursor,
       ImageNodeView.configure({
@@ -155,9 +152,6 @@ export default function Editor() {
       (devs, they wanna, wanna have fun, devs wanna have)
     </p>
   `,
-    onUpdate: ({ editor }) => {
-      // console.log(editor.getHTML());
-    },
     editorProps: {
       attributes: {
         class: 'prose prose-sm sm:prose lg:prose-lg xl:prose-xl m-4 focus:outline-none',
@@ -165,9 +159,8 @@ export default function Editor() {
     },
   })
 
+  const openColorPicker = useAppSelector(state => state.openColorPicker);
   const editorScale = useAppSelector(state => state.editorScale);
-
-  const [linkNoticeModal, setLinkNoticeModal] = useState<boolean>(true);
 
   const keyPress = (event: KeyboardEvent) => {
     if (event.metaKey || event.ctrlKey) {
@@ -195,8 +188,13 @@ export default function Editor() {
         editor &&
         <MenuBar editor={editor} />
       }
-      <EditorContent editor={editor} className="transform origin-top-left transition-transform duration-100"
-        style={{ transform: `scale(${editorScale})` }} />
+      <EditorContent
+        editor={editor}
+        className="transform origin-top-left transition-transform duration-100"
+        style={{
+          transform: `scale(${editorScale})`,
+          pointerEvents: openColorPicker && 'none' // ColorPicker를 연 상태라면 editor는 상호작용 X
+        }} />
     </div>
   )
 }

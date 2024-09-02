@@ -30,6 +30,8 @@ import LinkTooltip from './link/LinkTooltip'
 import NoticeModal from '@/components/modal/NoticeModal'
 import { setTextSelection } from '@/redux/features/selectionSlice'
 import TooltipNotice from '@/components/modal/TooltipNotice'
+import ColorPicker from './ColorPicker'
+import { setTextColor } from '@/redux/features/textColorSlice'
 
 export default function MenuBar({ editor }: { editor: Editor }) {
     const dispatch = useAppDispatch();
@@ -44,11 +46,11 @@ export default function MenuBar({ editor }: { editor: Editor }) {
     const [selectedFont, setSelectedFont] = useState<string>('Arial');
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
-    const linkTooltip = useAppSelector(state => state.linkTooltip)
     const [addingLink, setAddingLink] = useState<boolean>(false);
     const [selectionPos, setSelectionPos] = useState<SelectionPosition>({ top: 0, left: 0 });
     const [linkNoticeModal, setLinkNoticeModal] = useState<boolean>(false);
 
+    const textColor = useAppSelector(state => state.textColor);
 
     useEffect(() => {
         // 에디터가 초기화 되지 않았을 시
@@ -231,13 +233,8 @@ export default function MenuBar({ editor }: { editor: Editor }) {
                     Icon={UnderlineIcon}
                     iconWidth={14} />
             </HoverTooltip>
-            <HoverTooltip label='글자 색상'>
-                <ToolbarButton
-                    onClick={() => editor.chain().focus().setColor('#958DF1').run()}
-                    isActive={editor && editor.isActive('textStyle', { color: '#958DF1' })}
-                    Icon={FontColorIcon}
-                    iconWidth={17} />
-            </HoverTooltip>
+            {/* 글씨의 색상을 변경할 수 있는 버튼과 컬러 선택자 */}
+            <ColorPicker editor={editor} />
             <HoverTooltip label='강조'>
                 <ToolbarButton
                     onClick={() => editor.chain().focus().toggleHighlight().run()}
@@ -310,11 +307,12 @@ export default function MenuBar({ editor }: { editor: Editor }) {
                     setAddingLink={setAddingLink} />
             }
             {
+                // 아무 영역도 드래그하지 않고 링크를 클릭했을 때
                 linkNoticeModal &&
                 <TooltipNotice
                     isModalOpen={linkNoticeModal}
                     setIsModalOpen={setLinkNoticeModal}
-                    label="링크를 연결한 영역을 드래그해주세요" />
+                    label="링크를 연결할 영역을 드래그해주세요" />
             }
             {/* 링크에 hover를 했을 시 보여지는 툴팁 */}
             <LinkTooltip editor={editor} />

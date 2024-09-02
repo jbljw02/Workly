@@ -4,6 +4,7 @@
         <path
             d="M15.246 14H8.754l-1.6 4H5l6-15h2l6 15h-2.154l-1.6-4zm-.8-2L12 5.885 9.554 12h4.892zM3 20h18v2H3v-2z" />
         <path
-            d="M3 20h18v3H3v-3z" />
+            fill="currentColor"
+            d="M2.9 20.2h18.2v2.8H2.9z" />
     </g>
 </svg>

@@ -43,6 +43,7 @@
     "next-redux-wrapper": "^8.1.0",
     "pdfjs-dist": "^4.5.136",
     "react": "^18",
+    "react-color": "^2.19.3",
     "react-dom": "^18",
     "react-image-crop": "^11.0.6",
     "react-modal": "^3.16.1",
@@ -57,6 +58,7 @@
   "devDependencies": {
     "@types/node": "^20",
     "@types/react": "^18",
+    "@types/react-color": "^3.0.12",
     "@types/react-dom": "^18",
     "@types/react-modal": "^3.16.3",
     "@types/react-resizable": "^3.0.8",
