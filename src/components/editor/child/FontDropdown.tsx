@@ -5,6 +5,7 @@ import TriangleRightIcon from '../../../../public/svgs/editor/triangle-right.svg
 import TriangleUpIcon from '../../../../public/svgs/editor/triangle-up.svg'
 import { Roboto, Noto_Sans_KR, Open_Sans, Nanum_Gothic } from "@next/font/google";
 import { useClickOutside } from "@/components/hooks/useClickOutside";
+import HoverTooltip from "./HoverTooltip";
 
 type Font = {
     name: string;
@@ -86,19 +87,21 @@ export default function FontDropdown({ editor }: { editor: Editor }) {
 
     return (
         <div className="relative" ref={dropdownRef}>
-            <div
-                onClick={() => setIsOpen(!isOpen)}
-                onMouseDown={(e) => e.preventDefault()} // 드래그 상태를 유지
-                className="flex flex-row items-center hover:bg-gray-100 rounded p-2 cursor-pointer">
-                <div className="rounded-md text-sm pr-2">
-                    {selectedFont}
+            <HoverTooltip label='글꼴'>
+                <div
+                    onClick={() => setIsOpen(!isOpen)}
+                    onMouseDown={(e) => e.preventDefault()} // 드래그 상태를 유지
+                    className="flex flex-row items-center hover:bg-gray-100 rounded p-2 cursor-pointer">
+                    <div className="rounded-md text-sm pr-2">
+                        {selectedFont}
+                    </div>
+                    {
+                        isOpen ?
+                            <TriangleUpIcon width="14" /> :
+                            <TriangleDownIcon width="14" />
+                    }
                 </div>
-                {
-                    isOpen ?
-                        <TriangleUpIcon width="14" /> :
-                        <TriangleDownIcon width="14" />
-                }
-            </div>
+            </HoverTooltip>
             {
                 isOpen && (
                     <div className="absolute left-0 right-0 bg-white border border-gray-200 rounded-sm mt-1 shadow-lg z-10 w-40 text-sm cursor-pointer">

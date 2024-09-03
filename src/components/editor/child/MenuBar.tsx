@@ -188,21 +188,15 @@ export default function MenuBar({ editor }: { editor: Editor }) {
 
     return (
         <div className="flex items-center gap-1.5 px-2 py-1 border-b">
-            <HoverTooltip label='화면 비율'>
-                {/* 화면의 스케일(확대 비율)을 조절하는 드롭다운 */}
-                <RatioDropdown />
-            </HoverTooltip>
+            {/* 화면의 스케일(확대 비율)을 조절하는 드롭다운 */}
+            <RatioDropdown />
             {/* 헤딩을 조절하는 드롭다운 */}
-            <HoverTooltip label='스타일'>
-                <HeadingDropdown
-                    editor={editor && editor}
-                    headingLevel={headingLevel} />
-            </HoverTooltip>
+            <HeadingDropdown
+                editor={editor && editor}
+                headingLevel={headingLevel} />
             <BarDivider />
-            <HoverTooltip label='글꼴'>
-                {/* 폰트를 변경하는 드롭다운 */}
-                <FontDropdwon editor={editor && editor} />
-            </HoverTooltip>
+            {/* 폰트를 변경하는 드롭다운 */}
+            <FontDropdwon editor={editor && editor} />
             <BarDivider />
             <HoverTooltip label='글꼴 크기'>
                 {/* 폰트 사이즈를 조절하는 영역 */}

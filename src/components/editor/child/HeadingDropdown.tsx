@@ -5,6 +5,7 @@ import TriangleDownIcon from '../../../../public/svgs/editor/triangle-down.svg'
 import TriangleRightIcon from '../../../../public/svgs/editor/triangle-right.svg'
 import TriangleUpIcon from '../../../../public/svgs/editor/triangle-up.svg'
 import { useClickOutside } from "@/components/hooks/useClickOutside";
+import HoverTooltip from "./HoverTooltip";
 
 type Option = {
     value: string;
@@ -47,20 +48,22 @@ export default function HeadingDropdown({ editor, headingLevel }: { editor: Edit
 
     return (
         <div className="relative" ref={dropdownRef}>
-            <div
-                onClick={() => setIsOpen(!isOpen)}
-                onMouseDown={(e) => e.preventDefault()} // 드래그 상태을 유지
-                className="flex flex-row items-center hover:bg-gray-100 rounded p-2 cursor-pointer">
-                {/* 현재 선택된 옵션을 출력 */}
-                <div className="rounded-md text-sm pr-2">
-                    {selectedLabel}
+            <HoverTooltip label='스타일'>
+                <div
+                    onClick={() => setIsOpen(!isOpen)}
+                    onMouseDown={(e) => e.preventDefault()} // 드래그 상태을 유지
+                    className="flex flex-row items-center hover:bg-gray-100 rounded p-2 cursor-pointer">
+                    {/* 현재 선택된 옵션을 출력 */}
+                    <div className="rounded-md text-sm pr-2">
+                        {selectedLabel}
+                    </div>
+                    {
+                        isOpen ?
+                            <TriangleUpIcon width="14" /> :
+                            <TriangleDownIcon width="14" />
+                    }
                 </div>
-                {
-                    isOpen ?
-                        <TriangleUpIcon width="14" /> :
-                        <TriangleDownIcon width="14" />
-                }
-            </div>
+            </HoverTooltip>
             {
                 isOpen && (
                     <div className="absolute left-0 right-0 bg-white border border-gray-200 rounded-sm mt-1 shadow-lg z-10 w-36 text-sm cursor-pointer">

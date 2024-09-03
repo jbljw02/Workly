@@ -5,6 +5,7 @@ import TriangleRightIcon from '../../../../public/svgs/editor/triangle-right.svg
 import TriangleUpIcon from '../../../../public/svgs/editor/triangle-up.svg'
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { setEditorScale } from "@/redux/features/scaleSlice";
+import HoverTooltip from "./HoverTooltip";
 
 export default function RatioDropdown() {
     const dispatch = useAppDispatch();
@@ -26,21 +27,23 @@ export default function RatioDropdown() {
 
     return (
         <div className="relative z-50" ref={dropdownRef}>
-            <div
-                onClick={() => setIsOpen(!isOpen)
-                }
-                onMouseDown={(e) => e.preventDefault()} // 드래그 상태을 유지
-                className="flex flex-row items-center hover:bg-gray-100 rounded p-2 cursor-pointer">
-                {/* 현재 선택된 옵션을 출력 */}
-                <div className="rounded-md text-sm pr-2">
-                    {editorScale * 100}%
+            <HoverTooltip label="화면 비율">
+                <div
+                    onClick={() => setIsOpen(!isOpen)
+                    }
+                    onMouseDown={(e) => e.preventDefault()} // 드래그 상태을 유지
+                    className="flex flex-row items-center justify-center hover:bg-gray-100 rounded p-2 cursor-pointer">
+                    {/* 현재 선택된 옵션을 출력 */}
+                    <div className="rounded-md text-sm pr-2">
+                        {editorScale * 100}%
+                    </div>
+                    {
+                        isOpen ?
+                            <TriangleUpIcon width="14" /> :
+                            <TriangleDownIcon width="14" />
+                    }
                 </div>
-                {
-                    isOpen ?
-                        <TriangleUpIcon width="14" /> :
-                        <TriangleDownIcon width="14" />
-                }
-            </div>
+            </HoverTooltip>
             {
                 // 선택 가능한 확대 비율 나열
                 isOpen && (
