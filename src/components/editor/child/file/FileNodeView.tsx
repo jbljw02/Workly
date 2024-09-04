@@ -3,7 +3,7 @@ import { Editor, NodeViewWrapper } from '@tiptap/react';
 import FileInfoIcon from '../../../../../public/svgs/editor/file-info.svg';
 import FileFullModal from '@/components/modal/FileFullModal';
 import FileBlockIcon from '../../../../../public/svgs/editor/file-block.svg';
-import MenuIcon from '../../../../../public/svgs/editor/menu.svg';
+import MenuIcon from '../../../../../public/svgs/editor/menu-horizontal.svg';
 import FileMenu from './FileMenu';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { FileNode, setFileNode } from '@/redux/features/fileSlice';

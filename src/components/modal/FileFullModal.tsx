@@ -2,8 +2,8 @@ import Modal from 'react-modal';
 import { ModalProps } from '@/types/modalProps';
 import { useRef, ReactNode } from 'react';
 import { useClickOutside } from '../hooks/useClickOutside';
-import DownloadIcon from '../../../public/svgs/editor/download.svg'
-import CloseIcon from '../../../public/svgs/editor/close.svg'
+import DownloadIcon from '../../../public/svgs/editor/download.svg';
+import CloseIcon from '../../../public/svgs/editor/close.svg';
 
 interface FileFullModal extends ModalProps {
     children: ReactNode;
@@ -13,9 +13,19 @@ interface FileFullModal extends ModalProps {
 
 export default function FileFullModal({ isModalOpen, setIsModalOpen, children, href, download }: FileFullModal) {
     const modalRef = useRef<HTMLDivElement>(null);
-    const downloadRef = useRef<HTMLAnchorElement>(null);
-    
+    const downloadRef = useRef<HTMLDivElement>(null);
+
     useClickOutside(modalRef, () => setIsModalOpen(false), downloadRef);
+
+    const handleDownload = () => {
+        const link = document.createElement('a');
+        link.href = href;
+        link.download = download;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
     return (
         <Modal
             isOpen={isModalOpen}
@@ -40,13 +50,12 @@ export default function FileFullModal({ isModalOpen, setIsModalOpen, children, h
             }}>
             {/* 모달 헤더 */}
             <div className="absolute top-0 flex flex-row items-center justify-end w-full p-3 text-zinc-50">
-                <a
-                    className='flex items-center justify-center w-8 h-8 p-1 mr-1 rounded-md hover:bg-zinc-50 hover:text-black duration-150'
+                <div
+                    className='flex items-center justify-center w-8 h-8 p-1 mr-1 rounded-md hover:bg-zinc-50 hover:text-black duration-150 cursor-pointer'
                     ref={downloadRef}
-                    href={href}
-                    download={download}>
+                    onClick={handleDownload}>
                     <DownloadIcon width="20" />
-                </a>
+                </div>
                 <button
                     className='flex items-center justify-center w-8 h-8 mr-1 p-1 rounded-md hover:bg-zinc-50 hover:text-black duration-150'
                     onClick={() => setIsModalOpen(false)}>

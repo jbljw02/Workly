@@ -25,14 +25,6 @@ export default function ColorPicker({ editor }: ColorPickerProps) {
         editor.chain().focus().setColor(color.hex).run();
     };
 
-    // 클릭한 곳의 텍스트 컬러를 가져와서 dispatch
-    useEffect(() => {
-        if (editor) {
-            const color = editor.getAttributes('textStyle').color || '#444444';
-            dispatch(setTextColor(color));
-        }
-    }, [editor]);
-
     useClickOutside(pickerRef, () => dispatch(setOpenColorPicker(false)));
 
     return (

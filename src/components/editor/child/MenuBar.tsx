@@ -50,8 +50,6 @@ export default function MenuBar({ editor }: { editor: Editor }) {
     const [selectionPos, setSelectionPos] = useState<SelectionPosition>({ top: 0, left: 0 });
     const [linkNoticeModal, setLinkNoticeModal] = useState<boolean>(false);
 
-    const textColor = useAppSelector(state => state.textColor);
-
     useEffect(() => {
         // 에디터가 초기화 되지 않았을 시
         if (!editor) return;
@@ -93,6 +91,10 @@ export default function MenuBar({ editor }: { editor: Editor }) {
             else {
                 setFontSize(16); // 기본값 설정
             }
+
+            // 현재 선택된 영역의 폰트 색상을 찾아서 설정
+            const color = editor.getAttributes('textStyle').color || '#444444';
+            dispatch(setTextColor(color));
 
             // 현재 폰트가 볼드 되어있거나 헤딩이 적용되어 있다면 true
             setIsBold(editor.isActive('bold') || !!currentHeading);
@@ -190,6 +192,7 @@ export default function MenuBar({ editor }: { editor: Editor }) {
         <div className="flex items-center gap-1.5 px-2 py-1 border-b">
             {/* 화면의 스케일(확대 비율)을 조절하는 드롭다운 */}
             <RatioDropdown />
+            <BarDivider />
             {/* 헤딩을 조절하는 드롭다운 */}
             <HeadingDropdown
                 editor={editor && editor}

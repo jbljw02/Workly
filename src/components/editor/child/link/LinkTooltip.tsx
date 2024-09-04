@@ -1,14 +1,6 @@
 import { useAppSelector, useAppDispatch } from '@/redux/hooks';
-import { setLinkTooltip } from '@/redux/features/linkSlice';
-import WorldIcon from '../../../../../public/svgs/editor/world.svg';
-import MenuIcon from '../../../../../public/svgs/editor/menu.svg';
-import EditIcon from '../../../../../public/svgs/editor/pencil-edit.svg';
-import DeleteIcon from '../../../../../public/svgs/trash.svg';
 import { useEffect, useRef, useState } from 'react';
-import InputControlSpan from '@/components/input/InputControlSpan';
-import HoverTooltip from '../HoverTooltip';
 import { Editor } from '@tiptap/react';
-import { LinkAttributes } from '../../../../../lib/linkNode';
 import LinkEditSection from './LinkEditSection';
 import { SelectionPosition } from './AddLinkSection';
 import { useClickOutside } from '@/components/hooks/useClickOutside';

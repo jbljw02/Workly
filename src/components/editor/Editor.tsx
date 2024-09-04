@@ -35,6 +35,7 @@ import '@/styles/editor.css';
 import { LinkTooltip, setLinkTooltip } from '@/redux/features/linkSlice'
 import Focus from '@tiptap/extension-focus'
 import LinkNode from '../../../lib/linkNode';
+import EditorHeader from './child/EditorHeader'
 
 export default function Editor() {
   const dispatch = useAppDispatch();
@@ -184,6 +185,7 @@ export default function Editor() {
 
   return (
     <div className="rounded-lg w-full">
+      <EditorHeader />
       {
         editor &&
         <MenuBar editor={editor} />
