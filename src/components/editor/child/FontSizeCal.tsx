@@ -29,22 +29,24 @@ export default function FontSizeCal({ editor, fontSize, setFontSize }: FontSizeC
     }
 
     return (
-        <div className="flex items-center gap-1">
-            <ToolbarButton
-                onClick={decreaseFontSize}
-                Icon={MinusIcon}
-                iconWidth={20}
-                isFont={true} />
+        <div className="flex items-center">
+            <div className="-ml-2 mr-1">
+                <ToolbarButton
+                    onClick={decreaseFontSize}
+                    Icon={MinusIcon}
+                    iconWidth={20} />
+            </div>
             <input
                 type="number"
                 value={fontSize}
                 onChange={fontSizeChange}
                 className="w-8 p-0.5 text-center border rounded-sm border-gray-300 text-sm" />
-            <ToolbarButton
-                onClick={increaseFontSize}
-                Icon={PlusIcon}
-                iconWidth={11}
-                isFont={true} />
+            <div className="ml-1 -mr-2">
+                <ToolbarButton
+                    onClick={increaseFontSize}
+                    Icon={PlusIcon}
+                    iconWidth={11} />
+            </div>
         </div>
     )
 }

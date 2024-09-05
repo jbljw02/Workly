@@ -18,7 +18,6 @@ import { Editor, useCurrentEditor } from '@tiptap/react'
 import HeadingDropdown from './HeadingDropdown'
 import FontSizeCal from './FontSizeCal'
 import FontDropdwon from './FontDropdown'
-import BarDivider from './BarDivider'
 import RatioDropdown from './RatioDropdown'
 import HoverTooltip from './HoverTooltip'
 import LineIcon from '../../../../public/svgs/editor/horizontal-rule.svg'
@@ -32,6 +31,7 @@ import { setTextSelection } from '@/redux/features/selectionSlice'
 import TooltipNotice from '@/components/modal/TooltipNotice'
 import ColorPicker from './ColorPicker'
 import { setTextColor } from '@/redux/features/textColorSlice'
+import VerticalDivider from './divider/VerticalDivider'
 
 export default function MenuBar({ editor }: { editor: Editor }) {
     const dispatch = useAppDispatch();
@@ -192,15 +192,15 @@ export default function MenuBar({ editor }: { editor: Editor }) {
         <div className="flex items-center gap-1.5 px-2 py-1 border-b">
             {/* 화면의 스케일(확대 비율)을 조절하는 드롭다운 */}
             <RatioDropdown />
-            <BarDivider />
+            <VerticalDivider />
             {/* 헤딩을 조절하는 드롭다운 */}
             <HeadingDropdown
                 editor={editor && editor}
                 headingLevel={headingLevel} />
-            <BarDivider />
+            <VerticalDivider />
             {/* 폰트를 변경하는 드롭다운 */}
             <FontDropdwon editor={editor && editor} />
-            <BarDivider />
+            <VerticalDivider />
             <HoverTooltip label='글꼴 크기'>
                 {/* 폰트 사이즈를 조절하는 영역 */}
                 <FontSizeCal
@@ -208,7 +208,7 @@ export default function MenuBar({ editor }: { editor: Editor }) {
                     fontSize={fontSize}
                     setFontSize={setFontSize} />
             </HoverTooltip>
-            <BarDivider />
+            <VerticalDivider />
             <HoverTooltip label='굵게'>
                 <ToolbarButton
                     onClick={() => editor.chain().focus().toggleBold().run()}
@@ -239,7 +239,7 @@ export default function MenuBar({ editor }: { editor: Editor }) {
                     Icon={HighlightIcon}
                     iconWidth={11} />
             </HoverTooltip>
-            <BarDivider />
+            <VerticalDivider />
             <HoverTooltip label='순서 없는 리스트'>
                 <ToolbarButton
                     onClick={() => editor.chain().focus().toggleBulletList().run()}
@@ -276,7 +276,7 @@ export default function MenuBar({ editor }: { editor: Editor }) {
                     Icon={LineIcon}
                     iconWidth={18} />
             </HoverTooltip>
-            <BarDivider />
+            <VerticalDivider />
             <HoverTooltip label='이미지 삽입'>
                 <ToolbarButton
                     onClick={() => openFileExplorer('image')}

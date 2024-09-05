@@ -3,11 +3,18 @@ import { Editor, NodeViewWrapper } from '@tiptap/react';
 import FileInfoIcon from '../../../../../public/svgs/editor/file-info.svg';
 import FileFullModal from '@/components/modal/FileFullModal';
 import FileBlockIcon from '../../../../../public/svgs/editor/file-block.svg';
-import MenuIcon from '../../../../../public/svgs/editor/menu-horizontal.svg';
-import FileMenu from './FileMenu';
+import MenuIcon from '../../../../../public/svgs/editor/menu-vertical.svg';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { FileNode, setFileNode } from '@/redux/features/fileSlice';
 import FileEditInput from './FileEditInput';
+import EditIcon from '../../../../../public/svgs/editor/edit.svg'
+import LinkCopyIcon from '../../../../../public/svgs/editor/link.svg'
+import DownloadIcon from '../../../../../public/svgs/editor/download.svg'
+import CopyIcon from '../../../../../public/svgs/editor/copy.svg'
+import DeleteIcon from '../../../../../public/svgs/trash.svg'
+import MenuList from '../MenuList';
+import { v4 as uuidv4 } from 'uuid';
+import { MenuItemProps } from '../MenuItem';
 
 interface FileNodeProps {
     attrs: FileNode;
@@ -26,7 +33,7 @@ export default function FileNodeView({ editor, node }: FileNodeViewProps) {
     const fileNode = useAppSelector(state => state.fileNode);
 
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [menuOpen, setMenuOpen] = useState(false);
+    const [menuListOpen, setMenuListOpen] = useState(false);
     const [isEditing, setIsEditing] = useState(false); // 파일명을 수정중인지
 
     const fileRef = useRef<HTMLDivElement | null>(null);
@@ -60,7 +67,7 @@ export default function FileNodeView({ editor, node }: FileNodeViewProps) {
             mimeType: mimeType,
             size: size,
         }));
-        setMenuOpen(true);
+        setMenuListOpen(true);
     }
 
     // 파일 드래그 시작
@@ -88,6 +95,102 @@ export default function FileNodeView({ editor, node }: FileNodeViewProps) {
         }
     };
 
+    // 파일명 변경
+    const editFileName = () => {
+        setIsEditing(true);
+    }
+
+    // 파일 링크를 클립보드에 복사
+    const copyLink = (href: string) => {
+        navigator.clipboard.writeText(href);
+    };
+
+    // 파일 다운로드
+    const downloadFile = (href: string, download: string) => {
+        if (href && download) {
+            const link = document.createElement('a');
+            link.href = href;
+            link.download = download;
+            link.click();
+        }
+    }
+
+    // 파일을 복제
+    const duplicateFile = (editor: Editor, fileNode: FileNode) => {
+        const { state, dispatch } = editor.view;
+        const { tr } = state;
+        const position = state.selection.anchor; // 현재 커서 위치
+
+        // 복제할 파일의 새로운 고유 ID 생성
+        const newFileNode = {
+            ...fileNode,
+            id: uuidv4(), // 새로운 고유 ID 생성
+        };
+
+        // 복제할 파일 노드 삽입
+        tr.insert(position, state.schema.nodes.file.create(newFileNode));
+        dispatch(tr); // 트랜잭션을 적용
+    };
+
+    // 현재 선택된 파일을 삭제
+    const deleteFile = (editor: Editor, id: string) => {
+        // editor.view === EditorView 객체
+        // state: 현재 에디터의 상태
+        // dispatch: 트랜잭션을 적용해 에디터의 상태를 업데이트
+        const { state, dispatch } = editor.view;
+        const tr = state.tr; // 트랜잭션을 현재 상태에서 생성
+        let isFound = false; // 해당 노드를 찾았는지 여부
+
+        // 문서의 모든 노드를 순회(node: 각 노드, pos: 각 노드의 위치)
+        state.doc.descendants((node, pos) => {
+            if (node.type.name === 'file' && node.attrs.id === id) {
+                // 일치하는 노드를 찾으면 트랜잭션에 해당 노드를 삭제하도록 함
+                tr.delete(pos, pos + node.nodeSize);
+                isFound = true;
+                return false; // 노드를 찾으면 탐색 중지
+            }
+            return true; // 현재 노드가 삭제할 대상이 아닌 경우 계속 탐색
+        });
+
+        if (isFound) {
+            dispatch(tr); // 트랜잭션을 적용
+        }
+    };
+
+    const menuItems: MenuItemProps[] = [
+        {
+            Icon: EditIcon,
+            IconWidth: "16",
+            label: "파일명 변경",
+            onClick: () => editFileName(),
+        },
+        {
+            Icon: LinkCopyIcon,
+            IconWidth: "16",
+            label: "링크 복사",
+            onClick: () => copyLink(fileNode.href),
+        },
+        {
+            Icon: DownloadIcon,
+            IconWidth: "16",
+            label: "다운로드",
+            onClick: () => downloadFile(fileNode.href, fileNode.title),
+        },
+        {
+            Icon: CopyIcon,
+            IconWidth: "14",
+            label: "복제",
+            onClick: () => duplicateFile(editor, fileNode),
+            horizonLine: true,
+        },
+        {
+            Icon: DeleteIcon,
+            IconWidth: "17",
+            label: "삭제",
+            onClick: () => deleteFile(editor, fileNode.id),
+        }
+    ];
+
     return (
         <>
             <NodeViewWrapper
@@ -97,7 +200,7 @@ export default function FileNodeView({ editor, node }: FileNodeViewProps) {
                 <div
                     onClick={fileClick}
                     ref={fileRef}
-                    className={`relative inline-flex flex-row items-center justify-center w-auto rounded-md p-2 mt-2 mb-2 hover:bg-gray-100 cursor-pointer duration-100 ${menuOpen ? 'bg-gray-100' : 'bg-gray-50'}`}>
+                    className={`relative inline-flex flex-row items-center justify-center w-auto rounded-md p-2 mt-2 mb-2 hover:bg-gray-100 cursor-pointer duration-100 ${menuListOpen ? 'bg-gray-100' : 'bg-gray-50'}`}>
                     <FileInfoIcon width="26" />
                     <div className='flex justify-between items-center mt-0.5'>
                         {
@@ -112,17 +215,17 @@ export default function FileNodeView({ editor, node }: FileNodeViewProps) {
                         <div className='ml-3 text-sm text-neutral-500'>{formatSize(size)}</div>
                         <div
                             onClick={fileMenuClick}
-                            className={`ml-4 -mr-0.5 hover:bg-gray-200 p-1 rounded-sm ${menuOpen ? 'bg-gray-200' : ''}`}>
+                            className={`ml-4 -mr-0.5 hover:bg-gray-200 p-1 rounded-sm ${menuListOpen ? 'bg-gray-200' : ''}`}>
                             <MenuIcon width="18" />
                         </div>
                     </div>
                     {
                         // 파일의 메뉴바를 펼치고 있는지
-                        menuOpen && (
-                            <FileMenu
-                                editor={editor}
-                                setMenuOpen={setMenuOpen}
-                                setIsEditing={setIsEditing} />
+                        menuListOpen && (
+                            <MenuList
+                                menuList={menuItems}
+                                setListOpen={setMenuListOpen}
+                                listPositon={{ top: 12, right: 0 }} />
                         )
                     }
                 </div>

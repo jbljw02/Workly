@@ -1,5 +1,5 @@
 import { RefObject, useRef, useState } from "react";
-import BarDivider from "../BarDivider";
+import BarDivider from "../divider/VerticalDivider";
 import HoverTooltip from "../HoverTooltip";
 import ToolbarButton from "../ToolbarButton";
 import AlignLeftIcon from '../../../../../public/svgs/editor/align-left.svg';

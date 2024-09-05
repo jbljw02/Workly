@@ -15,6 +15,7 @@ import PlusIcon from '../../../public/svgs/plus.svg';
 import ProjectIcon from '../../../public/svgs/project.svg';
 import SettingIcon from '../../../public/svgs/setting.svg';
 import FolderIcon from '../../../public/svgs/folder.svg';
+import HoverTooltip from "../editor/child/HoverTooltip";
 
 export default function Home() {
     const expandedWidth = 240; // 넓은 상태의 너비
@@ -85,7 +86,7 @@ export default function Home() {
                 className="resizer absolute top-0 right-[-5px] bottom-0 w-2 cursor-col-resize z-50"
                 onMouseDown={clickResizer}
                 onMouseEnter={mouserEnterToResizer}
-                onMouseLeave={mouseLeaveFromResizer}></div>
+                onMouseLeave={mouseLeaveFromResizer} />
             {/* aside의 우측에서 border에 커서를 올렸을 때 border의 크기가 넓어지는 것처럼 출력 */}
             <div
                 className="absolute top-0 right-0 bottom-0"
@@ -93,7 +94,7 @@ export default function Home() {
                     width: 'var(--resizer-border-width, 1px)',
                     backgroundColor: '#D1D5DB',
                     transition: 'width 0.2s ease',
-                }}></div>
+                }} />
             {/* 검색창 및 작업 추가 영역 */}
             <SearchInput isCollapsed={isCollapsed} />
             <div className="border-b border-b-neutral-300 mb-5 mt-2 pb-3">
