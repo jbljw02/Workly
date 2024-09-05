@@ -47,12 +47,14 @@ export default function HeadingDropdown({ editor, headingLevel }: { editor: Edit
     useClickOutside(dropdownRef, () => setIsOpen(false));
 
     return (
-        <div className="relative" ref={dropdownRef}>
+        <div
+            className="relative w-28"
+            ref={dropdownRef}>
             <HoverTooltip label='스타일'>
                 <div
                     onClick={() => setIsOpen(!isOpen)}
                     onMouseDown={(e) => e.preventDefault()} // 드래그 상태을 유지
-                    className="flex flex-row items-center hover:bg-gray-100 rounded p-2 cursor-pointer">
+                    className="flex flex-row items-center justify-between hover:bg-gray-100 rounded-sm px-2 py-1 cursor-pointer">
                     {/* 현재 선택된 옵션을 출력 */}
                     <div className="rounded-md text-sm pr-2">
                         {selectedLabel}
@@ -66,13 +68,13 @@ export default function HeadingDropdown({ editor, headingLevel }: { editor: Edit
             </HoverTooltip>
             {
                 isOpen && (
-                    <div className="absolute left-0 right-0 bg-white border border-gray-200 rounded-sm mt-1 shadow-lg z-10 w-36 text-sm cursor-pointer">
+                    <div className="absolute -left-1 right-0 bg-white border border-gray-200 rounded-sm mt-1 shadow-lg z-10 w-36 text-sm cursor-pointer">
                         {
                             options.map(option => (
                                 <div
                                     key={option.value}
                                     onClick={() => changeHeading(option)}
-                                    className={`flex flex-row justify-between p-2 hover:bg-gray-100 pt-3 pb-3
+                                    className={`flex flex-row justify-between px-2 py-3 hover:bg-gray-100 
                                         ${option.value === headingLevel ? 'bg-gray-100' : ''}
                                         ${option.value === 'h1' ? 'text-2xl leading-none' : ''} 
                                         ${option.value === 'h2' ? 'text-xl leading-none' : ''} 

@@ -86,25 +86,27 @@ export default function FontDropdown({ editor }: { editor: Editor }) {
     useClickOutside(dropdownRef, () => setIsOpen(false));
 
     return (
-        <div className="relative" ref={dropdownRef}>
+        <div
+            className="relative w-24"
+            ref={dropdownRef}>
             <HoverTooltip label='글꼴'>
                 <div
                     onClick={() => setIsOpen(!isOpen)}
                     onMouseDown={(e) => e.preventDefault()} // 드래그 상태를 유지
-                    className="flex flex-row items-center hover:bg-gray-100 rounded p-2 cursor-pointer">
-                    <div className="rounded-md text-sm pr-2">
+                    className="flex flex-row items-center justify-between hover:bg-gray-100 rounded-sm px-2 py-1 cursor-pointer">
+                    <div className="rounded-md whitespace-nowrap overflow-hidden text-ellipsis text-sm pr-2">
                         {selectedFont}
                     </div>
                     {
                         isOpen ?
-                            <TriangleUpIcon width="14" /> :
-                            <TriangleDownIcon width="14" />
+                            <TriangleUpIcon width="14" className="flex-shrink-0" /> :
+                            <TriangleDownIcon width="14" className="flex-shrink-0" />
                     }
                 </div>
             </HoverTooltip>
             {
                 isOpen && (
-                    <div className="absolute left-0 right-0 bg-white border border-gray-200 rounded-sm mt-1 shadow-lg z-10 w-40 text-sm cursor-pointer">
+                    <div className="absolute -left-1 right-0 bg-white border border-gray-200 rounded-sm mt-1 shadow-lg z-10 w-40 text-sm cursor-pointer">
                         {
                             fonts.map((font, index) => (
                                 <div

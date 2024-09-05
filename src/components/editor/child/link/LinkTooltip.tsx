@@ -31,10 +31,15 @@ export default function LinkTooltip({ editor }: { editor: Editor }) {
         }
     }, [linkTooltip]);
 
+    // linkTooltip이 없으면 아무것도 렌더링하지 않음
+    if (!linkTooltip.id) {
+        return null;
+    }
+
     return (
         <div
             ref={tooltipRef}
-            className={`absolute z-20 transform link-tooltip`}
+            className={`absolute z-10 transform link-tooltip`}
             style={{
                 transform: `scale(${editorScale})`, // 에디터의 scale 값을 동일하게 적용
                 transformOrigin: 'top left', // 원점 설정

@@ -45,6 +45,7 @@ export default function FileFullModal({ isModalOpen, setIsModalOpen, children, h
                     width: '100vw',
                     height: '100vh',
                     padding: 0,
+                    zIndex: 1000,
                     inset: 0, // 모달을 화면 전체에 꽉 채우도록
                 },
             }}>

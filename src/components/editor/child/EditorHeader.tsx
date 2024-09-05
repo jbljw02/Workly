@@ -10,9 +10,11 @@ import LinkCopyIcon from '../../../../public/svgs/editor/link.svg'
 import DownloadIcon from '../../../../public/svgs/editor/download.svg'
 import CopyIcon from '../../../../public/svgs/editor/copy.svg'
 import DeleteIcon from '../../../../public/svgs/trash.svg'
-import MoveIcon from '../../../../public/svgs/move-folder.svg'
+import MoveIcon from '../../../../public/svgs/editor/move-folder.svg'
 import MenuList from './MenuList'
 import { MenuItemProps } from './MenuItem'
+import LockIcon from '../../../../public/svgs/editor/lock.svg'
+import IconButton from '@/components/button/IconButton'
 
 export default function EditorHeader() {
     const [menuListOpen, setMenuListOpen] = useState(false);
@@ -58,25 +60,25 @@ export default function EditorHeader() {
     ];
 
     return (
-        <div className='flex flex-row justify-between pl-3 pr-5 py-2 border-b'>
-            <div className='flex flex-row items-center'>
-                <div className='flex items-center p-2 mr-1 border rounded-md'>
-                    <PaperIcon width="25" />
+        <div className='flex flex-row justify-between pl-3 pr-5 py-3'>
+            {/* 헤더 좌측 영역 */}
+            <div className='flex flex-row items-center gap-2'>
+                <div className='flex items-center p-1 mr-0.5 border rounded-md'>
+                    <PaperIcon width="20" />
                 </div>
-                <div className='flex flex-col ml-2'>
-                    <div className='flex flex-row'>
-                        <div className='text-base'>미국 여행</div>
-                    </div>
-                    <div className='flex flex-row text-xs text-neutral-400 hover:underline cursor-pointer select-none'>
-                        북아메리카 여행
-                    </div>
+                <div className='flex flex-row items-center gap-1'>
+                    <div className='text-sm rounded-sm hover:underline cursor-pointer'>북아메리카 여행</div>
+                    <div className='text-sm font-light mx-1'>{'/'}</div>
+                    <div className='text-sm font-bold'>미국 여행</div>
                 </div>
             </div>
-            <div className='flex flex-row items-center space-x-2'>
-                {/* <div className='text-sm'>공유</div> */}
-                <HoverTooltip label='공유 및 접근 권한 부여'>
+            {/* 헤더 우측 영역 */}
+            <div className='flex flex-row items-center gap-1'>
+                <div className='text-sm text-neutral-400 mr-1'>30분 전 편집</div>
+                <button className='text-sm px-1.5 py-1 rounded-sm hover:bg-gray-100 cursor-pointer'>공유</button>
+                <HoverTooltip label="나에게만 공개">
                     <ToolbarButton
-                        Icon={ShareIcon}
+                        Icon={LockIcon}
                         iconWidth={20} />
                 </HoverTooltip>
                 <HoverTooltip label="옵션">

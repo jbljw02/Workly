@@ -4,9 +4,7 @@ export default function SidebarItem({ Icon, IconWidth, label, isCollapsed }: Sid
     return (
         <div
             className="flex items-center pl-2 w-full h-10 rounded cursor-pointer hover:bg-gray-100">
-            <div className={`w-${IconWidth} h-${IconWidth}`}>
-                <Icon width={IconWidth} height={IconWidth} />
-            </div>
+            <Icon width={IconWidth} height={IconWidth} />
             {/* 사이드바가 확장된 경우에만 텍스트 표시 */}
             {
                 !isCollapsed && (

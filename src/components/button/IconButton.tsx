@@ -14,7 +14,7 @@ export default function IconButton({ onClick, icon, label }: IconButtonProps) {
             {icon}
             {
                 label &&
-                <div className="ml-1">{label}</div>
+                <div className="ml-1 text-sm">{label}</div>
             }
         </button>
     );

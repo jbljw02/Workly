@@ -41,71 +41,75 @@ export default function ImageMenuBar({ nodeViewRef, cropStart, resizableImgProps
     }
 
     return (
-        <div className='flex flex-row items-center absolute bottom-[-55px] left-[-5px] rounded-md p-1 z-[9999] bg-white shadow-[0px_4px_10px_rgba(0,0,0,0.25)]'>
-            <HoverTooltip label="좌측 정렬">
-                <ToolbarButton
-                    onClick={() => alignmentSetUp('flex-start')}
-                    isActive={alignment === 'flex-start'}
-                    Icon={AlignLeftIcon}
-                    iconWidth={19} />
-            </HoverTooltip>
-            <HoverTooltip label="중앙 정렬">
-                <ToolbarButton
-                    onClick={() => alignmentSetUp('center')}
-                    isActive={alignment === 'center'}
-                    Icon={AlignCenterIcon}
-                    iconWidth={19} />
-            </HoverTooltip>
-            <HoverTooltip label='우측 정렬'>
-                <ToolbarButton
-                    onClick={() => alignmentSetUp('flex-end')}
-                    isActive={alignment === 'flex-end'}
-                    Icon={AlignRightIcon}
-                    iconWidth={19} />
-            </HoverTooltip>
+        <div className='flex flex-row items-center absolute bottom-[-48px] left-[-5px] font-normal rounded-md p-1 z-[9999] bg-white shadow-[0px_4px_10px_rgba(0,0,0,0.25)]'>
+            <div className="flex flex-row items-center gap-0.5">
+                <HoverTooltip label="좌측 정렬">
+                    <ToolbarButton
+                        onClick={() => alignmentSetUp('flex-start')}
+                        isActive={alignment === 'flex-start'}
+                        Icon={AlignLeftIcon}
+                        iconWidth={19} />
+                </HoverTooltip>
+                <HoverTooltip label="중앙 정렬">
+                    <ToolbarButton
+                        onClick={() => alignmentSetUp('center')}
+                        isActive={alignment === 'center'}
+                        Icon={AlignCenterIcon}
+                        iconWidth={19} />
+                </HoverTooltip>
+                <HoverTooltip label='우측 정렬'>
+                    <ToolbarButton
+                        onClick={() => alignmentSetUp('flex-end')}
+                        isActive={alignment === 'flex-end'}
+                        Icon={AlignRightIcon}
+                        iconWidth={19} />
+                </HoverTooltip>
+            </div>
             <BarDivider />
-            <HoverTooltip label='자르기'>
-                <ToolbarButton
-                    Icon={CropIcon}
-                    iconWidth={17}
-                    onClick={cropStart} />
-            </HoverTooltip>
-            <HoverTooltip label='삭제'>
-                <ToolbarButton
-                    Icon={TrashIcon}
-                    iconWidth={19}
-                    onClick={deleteImage} />
-            </HoverTooltip>
-            <HoverTooltip label='펼치기'>
-                <ToolbarButton
-                    Icon={FullIcon}
-                    iconWidth={21}
-                    onClick={() => dispatch(setOpenFullModal(true))} />
-            </HoverTooltip>
-            {
-                openFullModal &&
-                <FileFullModal
-                    isModalOpen={openFullModal}
-                    setIsModalOpen={() => dispatch(setOpenFullModal(false))}
-                    href={resizableImgProps.node.attrs.src}
-                    download={resizableImgProps.node.attrs.title || ''}>
-                    <img
-                        className='border-none rounded-sm'
-                        src={resizableImgProps.node.attrs.src}
-                        style={{
-                            maxWidth: '100%',
-                            maxHeight: '100%',
-                            width: 'auto',
-                            height: 'auto',
-                            objectFit: 'contain',
-                        }} />
-                </FileFullModal>
-            }
-            <HoverTooltip label='설명 추가'>
-                <ToolbarButton
-                    Icon={CaptionIcon}
-                    iconWidth={25} />
-            </HoverTooltip>
+            <div className="flex flex-row items-center gap-0.5">
+                <HoverTooltip label='자르기'>
+                    <ToolbarButton
+                        Icon={CropIcon}
+                        iconWidth={17}
+                        onClick={cropStart} />
+                </HoverTooltip>
+                <HoverTooltip label='삭제'>
+                    <ToolbarButton
+                        Icon={TrashIcon}
+                        iconWidth={19}
+                        onClick={deleteImage} />
+                </HoverTooltip>
+                <HoverTooltip label='펼치기'>
+                    <ToolbarButton
+                        Icon={FullIcon}
+                        iconWidth={21}
+                        onClick={() => dispatch(setOpenFullModal(true))} />
+                </HoverTooltip>
+                {
+                    openFullModal &&
+                    <FileFullModal
+                        isModalOpen={openFullModal}
+                        setIsModalOpen={() => dispatch(setOpenFullModal(false))}
+                        href={resizableImgProps.node.attrs.src}
+                        download={resizableImgProps.node.attrs.title || ''}>
+                        <img
+                            className='border-none rounded-sm'
+                            src={resizableImgProps.node.attrs.src}
+                            style={{
+                                maxWidth: '100%',
+                                maxHeight: '100%',
+                                width: 'auto',
+                                height: 'auto',
+                                objectFit: 'contain',
+                            }} />
+                    </FileFullModal>
+                }
+                <HoverTooltip label='설명 추가'>
+                    <ToolbarButton
+                        Icon={CaptionIcon}
+                        iconWidth={25} />
+                </HoverTooltip>
+            </div>
         </div>
     )
 }

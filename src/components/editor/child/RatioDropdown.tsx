@@ -26,15 +26,16 @@ export default function RatioDropdown() {
     useClickOutside(dropdownRef, () => setIsOpen(false));
 
     return (
-        <div className="relative z-50" ref={dropdownRef}>
+        <div
+            className="relative w-20"
+            ref={dropdownRef}>
             <HoverTooltip label="화면 비율">
                 <div
-                    onClick={() => setIsOpen(!isOpen)
-                    }
-                    onMouseDown={(e) => e.preventDefault()} // 드래그 상태을 유지
-                    className="flex flex-row items-center justify-center hover:bg-gray-100 rounded p-2 cursor-pointer">
+                    onClick={() => setIsOpen(!isOpen)}
+                    onMouseDown={(e) => e.preventDefault()} // 드래그 상태를 유지
+                    className="flex flex-row items-center justify-between hover:bg-gray-100 rounded-sm px-2 py-1 cursor-pointer">
                     {/* 현재 선택된 옵션을 출력 */}
-                    <div className="rounded-md text-sm pr-2">
+                    <div className="rounded-md text-sm">
                         {editorScale * 100}%
                     </div>
                     {
@@ -47,13 +48,13 @@ export default function RatioDropdown() {
             {
                 // 선택 가능한 확대 비율 나열
                 isOpen && (
-                    <div className="absolute left-0 right-0 w-16 items-center justify-center bg-white border border-gray-200 rounded-sm mt-1 shadow-lg z-10 text-sm cursor-pointer">
+                    <div className="absolute -left-1 right-0 items-center bg-white border border-gray-200 rounded-sm mt-1 z-20 shadow-lg text-sm cursor-pointer">
                         {
                             scales.map((scale, index) => (
                                 <div
                                     key={index}
                                     onClick={() => changeScale(scale)}
-                                    className={`flex flex-row justify-center hover:bg-gray-100 pt-2.5 pb-2.5
+                                    className={`flex flex-row justify-start hover:bg-gray-100 py-2.5 pl-2
                                         ${scale === editorScale * 100 ? 'bg-gray-100' : ''}`}>
                                     <div className="pl-1">{scale}%</div>
                                 </div>

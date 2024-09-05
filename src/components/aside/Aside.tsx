@@ -16,6 +16,8 @@ import ProjectIcon from '../../../public/svgs/project.svg';
 import SettingIcon from '../../../public/svgs/setting.svg';
 import FolderIcon from '../../../public/svgs/folder.svg';
 import HoverTooltip from "../editor/child/HoverTooltip";
+import HelpIcon from '../../../public/svgs/help.svg';
+import InviteIcon from '../../../public/svgs/add-person.svg';
 
 export default function Home() {
     const expandedWidth = 240; // 넓은 상태의 너비
@@ -129,8 +131,7 @@ export default function Home() {
             <div className="flex-grow"></div>
             {/* 최하단 프로젝트 관련 메뉴 */}
             <div className="text-sm">
-                <SidebarItem Icon={ProjectIcon} IconWidth="20" label="내 프로젝트" isCollapsed={isCollapsed} />
-                <SidebarItem Icon={SettingIcon} IconWidth="20" label="프로젝트 설정" isCollapsed={isCollapsed} />
+                <SidebarItem Icon={InviteIcon} IconWidth="20" label="멤버 추가" isCollapsed={isCollapsed} />
             </div>
         </aside >
     );

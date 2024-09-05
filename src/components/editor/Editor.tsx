@@ -68,7 +68,6 @@ export default function Editor() {
       TextAlign.configure({
         types: ['heading', 'paragraph'],
       }),
-      Image,
       Heading.configure({
         levels: [1, 2, 3],
       }),
@@ -85,6 +84,7 @@ export default function Editor() {
       ImageNodeView.configure({
         defaultWidth: 600,
         defaultHeight: 600,
+        allowBase64: true,
       }),
       FileNode,
       FileHandler.configure({
@@ -159,6 +159,8 @@ export default function Editor() {
       },
     },
   })
+
+  console.log(editor?.getJSON());
 
   const openColorPicker = useAppSelector(state => state.openColorPicker);
   const editorScale = useAppSelector(state => state.editorScale);
