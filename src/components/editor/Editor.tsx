@@ -27,7 +27,6 @@ import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import Document from '@tiptap/extension-document'
 import Dropcursor from '@tiptap/extension-dropcursor'
 import 'tiptap-extension-resizable-image/styles.css';
-import ImageNodeView from './child/image/ImageNodeView'
 import FileHandler from '@tiptap-pro/extension-file-handler'
 import FileNode from '../../../lib/fileNode'
 import { v4 as uuidv4 } from 'uuid';
@@ -36,6 +35,8 @@ import { LinkTooltip, setLinkTooltip } from '@/redux/features/linkSlice'
 import Focus from '@tiptap/extension-focus'
 import LinkNode from '../../../lib/linkNode';
 import EditorHeader from './child/EditorHeader'
+import ImageNodeView from './child/image/ImageNodeView'
+import ImageNode from '../../../lib/ImageNode'
 
 export default function Editor() {
   const dispatch = useAppDispatch();
@@ -45,7 +46,7 @@ export default function Editor() {
       StarterKit.configure({
         bulletList: {
           keepMarks: true,
-          keepAttributes: false,
+          keepAttributes: true,
         },
         orderedList: {
           keepMarks: true,
@@ -84,7 +85,6 @@ export default function Editor() {
       ImageNodeView.configure({
         defaultWidth: 600,
         defaultHeight: 600,
-        allowBase64: true,
       }),
       FileNode,
       FileHandler.configure({
@@ -95,6 +95,7 @@ export default function Editor() {
             fileReader.onload = () => {
               const src = fileReader.result as string;
               const blobUrl = URL.createObjectURL(file);
+
               const fileId = uuidv4(); // 파일의 고유 ID 생성
 
               // 이미지 파일일 경우
@@ -159,8 +160,6 @@ export default function Editor() {
       },
     },
   })
-
-  console.log(editor?.getJSON());
 
   const openColorPicker = useAppSelector(state => state.openColorPicker);
   const editorScale = useAppSelector(state => state.editorScale);

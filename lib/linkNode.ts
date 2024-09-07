@@ -11,7 +11,7 @@ export interface LinkAttributes {
     class?: string | null;
 }
 
-const linkNode = Mark.create({
+const LinkNode = Mark.create({
     name: 'link',
 
     addOptions() {
@@ -71,7 +71,6 @@ const linkNode = Mark.create({
 
     addProseMirrorPlugins() {
         const setLinkTooltip = this.options.setLinkTooltip as (payload: Partial<LinkTooltip>) => void;
-        const linkTooltip = this.options.linkTooltip;
 
         return [
             linkClickPlugin,
@@ -80,4 +79,4 @@ const linkNode = Mark.create({
     },
 });
 
-export default linkNode;
+export default LinkNode;

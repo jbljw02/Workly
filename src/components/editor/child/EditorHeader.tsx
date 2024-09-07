@@ -75,7 +75,9 @@ export default function EditorHeader() {
             {/* 헤더 우측 영역 */}
             <div className='flex flex-row items-center gap-1'>
                 <div className='text-sm text-neutral-400 mr-1'>30분 전 편집</div>
-                <button className='text-sm px-1.5 py-1 rounded-sm hover:bg-gray-100 cursor-pointer'>공유</button>
+                <HoverTooltip label='문서를 공유하거나 게시'>
+                    <button className='text-sm px-1.5 py-1 rounded-sm hover:bg-gray-100 cursor-pointer'>공유</button>
+                </HoverTooltip>
                 <HoverTooltip label="나에게만 공개">
                     <ToolbarButton
                         Icon={LockIcon}
@@ -92,7 +94,7 @@ export default function EditorHeader() {
                     <MenuList
                         menuList={menuItems}
                         setListOpen={setMenuListOpen}
-                        listPositon={{ top: 12, right: 4 }} />
+                        listPositon={{ top: '46px', right: '18px' }} />
                 }
             </div>
         </div>

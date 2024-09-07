@@ -30,7 +30,7 @@ export default function TooltipNotice({ isModalOpen, setIsModalOpen, label }: No
     return (
         <div
             ref={tooltipRef}
-            className={`${animation} fixed bottom-8 right-7 w-80 flex items-center p-4 rounded-lg text-yellow-900 bg-yellow-100 border border-yellow-200`}>
+            className={`${animation} fixed bottom-7 right-7 w-80 flex items-center p-4 rounded-lg text-yellow-900 bg-yellow-100 border border-yellow-200`}>
             <CautionIcon width="20" className="mr-3" />
             <div className="flex-grow text-sm font-medium">{label}</div>
             <button onClick={closeTooltip}>

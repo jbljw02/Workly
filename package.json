@@ -13,6 +13,7 @@
     "@next/font": "^14.2.5",
     "@reduxjs/toolkit": "^2.2.7",
     "@svgr/webpack": "^8.1.0",
+    "@tiptap-pro/extension-drag-handle-react": "^2.11.2",
     "@tiptap-pro/extension-file-handler": "^2.10.11",
     "@tiptap/extension-bullet-list": "^2.5.9",
     "@tiptap/extension-code-block": "^2.5.9",
@@ -43,6 +44,7 @@
     "next-redux-wrapper": "^8.1.0",
     "pdfjs-dist": "^4.5.136",
     "react": "^18",
+    "react-beautiful-dnd": "^13.1.1",
     "react-color": "^2.19.3",
     "react-dom": "^18",
     "react-image-crop": "^11.0.6",
@@ -58,6 +60,7 @@
   "devDependencies": {
     "@types/node": "^20",
     "@types/react": "^18",
+    "@types/react-beautiful-dnd": "^13.1.8",
     "@types/react-color": "^3.0.12",
     "@types/react-dom": "^18",
     "@types/react-modal": "^3.16.3",

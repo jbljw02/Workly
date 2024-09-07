@@ -225,7 +225,7 @@ export default function FileNodeView({ editor, node }: FileNodeViewProps) {
                             <MenuList
                                 menuList={menuItems}
                                 setListOpen={setMenuListOpen}
-                                listPositon={{ top: 12, right: 0 }} />
+                                listPositon={{ top: '50px', right: '0px' }} />
                         )
                     }
                 </div>

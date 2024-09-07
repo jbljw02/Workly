@@ -1,5 +1,6 @@
 import { NodeViewWrapper, ReactNodeViewRenderer } from '@tiptap/react';
 import { ResizableImage, ResizableImageComponent, ResizableImageNodeViewRendererProps } from 'tiptap-extension-resizable-image';
+import { Plugin, PluginKey } from 'prosemirror-state'; // ProseMirror 플러그인을 가져옴
 import { useEffect, useRef, useState } from 'react';
 import 'react-image-crop/dist/ReactCrop.css';
 import { useClickOutside } from '@/components/hooks/useClickOutside';
@@ -11,7 +12,6 @@ import { setCrop, setImageDimension } from '@/redux/features/editorImageSlice';
 
 const NodeView = (resizableImgProps: ResizableImageNodeViewRendererProps) => {
   const dispatch = useAppDispatch();
-
   const editor = resizableImgProps.editor;
 
   const [showMenu, setShowMenu] = useState(false); // 이미지 메뉴바를 보여줄지
@@ -35,47 +35,32 @@ const NodeView = (resizableImgProps: ResizableImageNodeViewRendererProps) => {
   const cropCancel = () => {
     setShowMenu(true);
     setCropMode(false);
-  }
+  };
 
   // 자르기 적용
   const cropApply = () => {
     if (imgRef.current && crop.width && crop.height) {
-      // canvas: 이미지 자르기 및 처리 작업에 사용
       const canvas = document.createElement('canvas');
-
-      // 자르기 작업은 원본 이미지 기준으로 해야 하며, 이미지의 표시 크기가 원본과 다를 수 있음.
-      // 이미지의 현재, 원본 크기의 비율을 구함
-      // 이미지의 원본 너비 / 현재 DOM에서 보여지는 이미지의 너비
       const scaleX = imgRef.current.naturalWidth / imgRef.current.width;
       const scaleY = imgRef.current.naturalHeight / imgRef.current.height;
-
-      // canvas의 크기를 원본 해상도로 설정하여 해상도 손실을 최소화
       canvas.width = crop.width * scaleX;
       canvas.height = crop.height * scaleY;
 
       const ctx = canvas.getContext('2d');
-
-      // 자르기 영역에 해당하는 이미지를 그림
       if (ctx) {
         ctx.drawImage(
-          imgRef.current, // 이미지를 그릴 요소
-          crop.x * scaleX, // 자르기를 시작할 x 좌표
-          crop.y * scaleY, // 자르기를 시작할 y 좌표
-          crop.width * scaleX, // 원본 이미지에서 자를 너비
-          crop.height * scaleY, // 원본 이미지에서 자를 높이
-          0, // 이미지를 그리기 시작할 x 좌표
-          0, // 이미지를 그리기 시작할 y 좌표
-          canvas.width, // 캔버스에 그려질 이미지 너비
-          canvas.height, // 캔버스에 그려질 이미지 높이
+          imgRef.current,
+          crop.x * scaleX,
+          crop.y * scaleY,
+          crop.width * scaleX,
+          crop.height * scaleY,
+          0,
+          0,
+          canvas.width,
+          canvas.height,
         );
-
-        // 자른 이미지를 base64 포맷으로 변환
-        const base64Image = canvas.toDataURL('image/jpeg', 1.0); // 1.0은 이미지의 품질을 최대화
-
-        // 기존 이미지를 삭제
+        const base64Image = canvas.toDataURL('image/jpeg', 1.0);
         editor.chain().focus().deleteSelection().run();
-
-        // 자른 이미지를 삽입
         editor.commands.setResizableImage({
           src: base64Image,
           alt: '',
@@ -85,7 +70,6 @@ const NodeView = (resizableImgProps: ResizableImageNodeViewRendererProps) => {
           className: 'resizable-img',
           'data-keep-ratio': true,
         });
-
         setCropMode(false);
       }
     }
@@ -120,7 +104,6 @@ const NodeView = (resizableImgProps: ResizableImageNodeViewRendererProps) => {
   // 이미지의 크기 변화를 감지하여 Crop 요소들의 값을 업데이트
   useEffect(() => {
     if (nodeViewRef.current) {
-      // DOM의 크기 변화를 감지. entries는 크기 변화를 감지한 모든 DOM을 뜻함.
       const resizeObserver = new ResizeObserver((entries) => {
         const { width, height } = entries[0].contentRect;
         dispatch(setImageDimension({
@@ -148,7 +131,8 @@ const NodeView = (resizableImgProps: ResizableImageNodeViewRendererProps) => {
       as="figure"
       className="relative image-component flex"
       data-drag-handle
-      style={{ justifyContent: alignment }}>
+      style={{ justifyContent: alignment }}
+      draggable={true}>
       <div className="inline-flex flex-col items-center relative node-imageComponent">
         {
           cropMode ? (

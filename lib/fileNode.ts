@@ -20,31 +20,32 @@ const FileNode = Node.create({
     },
 
     // ProseMirror 플러그인은 에디터의 동작을 확장하거나 변경하는 데에 사용됨
-    addProseMirrorPlugins() {
-        return [
-            new Plugin({
-                props: {
-                    handleDOMEvents: {
-                        dragstart(view, event) {
-                            const { state } = view;
-                            const { selection } = state;
+    // 이미지가 복사되는 현상 원인
+    // addProseMirrorPlugins() {
+    //     return [
+    //         new Plugin({
+    //             props: {
+    //                 handleDOMEvents: {
+    //                     dragstart(view, event) {
+    //                         const { state } = view;
+    //                         const { selection } = state;
 
-                            // 드래그 이벤트가 발생할 때 선택된 노드의 속성을 가져옴
-                            const node = state.doc.nodeAt(selection.from);
-                            if (node) {
-                                // 노드의 속성을 dataTransfer에 저장
-                                event.dataTransfer?.setData(
-                                    "application/x-prosemirror-node",
-                                    JSON.stringify(node.attrs)
-                                );
-                            }
-                            return true;
-                        },
-                    },
-                },
-            }),
-        ];
-    },
+    //                         // 드래그 이벤트가 발생할 때 선택된 노드의 속성을 가져옴
+    //                         const node = state.doc.nodeAt(selection.from);
+    //                         if (node) {
+    //                             // 노드의 속성을 dataTransfer에 저장
+    //                             event.dataTransfer?.setData(
+    //                                 "application/x-prosemirror-node",
+    //                                 JSON.stringify(node.attrs)
+    //                             );
+    //                         }
+    //                         return true;
+    //                     },
+    //                 },
+    //             },
+    //         }),
+    //     ];
+    // },
 
     addNodeView() {
         return ReactNodeViewRenderer(FileNodeView);
