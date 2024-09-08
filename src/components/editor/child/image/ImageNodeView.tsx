@@ -9,6 +9,7 @@ import ImageCropper from './ImageCropper';
 import ImageCropBar from './ImageCropBar';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { setCrop, setImageDimension } from '@/redux/features/editorImageSlice';
+import DragHandle from '@tiptap-pro/extension-drag-handle-react';
 
 const NodeView = (resizableImgProps: ResizableImageNodeViewRendererProps) => {
   const dispatch = useAppDispatch();
@@ -141,6 +142,7 @@ const NodeView = (resizableImgProps: ResizableImageNodeViewRendererProps) => {
               resizableImgProps={resizableImgProps} />
           ) :
             (
+
               <div
                 onClick={() => setShowMenu(true)}
                 className="flex cursor-pointer">

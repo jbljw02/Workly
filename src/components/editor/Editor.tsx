@@ -37,6 +37,9 @@ import LinkNode from '../../../lib/linkNode';
 import EditorHeader from './child/EditorHeader'
 import ImageNodeView from './child/image/ImageNodeView'
 import ImageNode from '../../../lib/ImageNode'
+import DragHandle from '@tiptap-pro/extension-drag-handle-react'
+import GlobalDragHandle from 'tiptap-extension-global-drag-handle'
+import MenuIcon from '../../../public/svgs/editor/menu-vertical.svg'
 
 export default function Editor() {
   const dispatch = useAppDispatch();
@@ -128,32 +131,21 @@ export default function Editor() {
         },
       }),
     ],
-    content: `
-    <h3 class="text-center">
+    content:
+      `
+    <h1>
       Devs Just Want to Have Fun by Cyndi Lauper
-    </h3>
-    <p class="text-center">
-      I come home in the morning light<br>
-      My mother says, <mark>“When you gonna live your life right?”</mark><br>
-      Oh mother dear we’re not the fortunate ones<br>
-      And devs, they wanna have fun<br>
-      Oh devs just want to have fun</p>
-    <p class="text-center">
-      The phone rings in the middle of the night<br>
-      My father yells, "What you gonna do with your life?"<br>
-      Oh daddy dear, you know you’re still number one<br>
-      But <s>girls</s>devs, they wanna have fun<br>
-      Oh devs just want to have
+    </h1>
+    <p>
+      I come home in the morning light
     </p>
-    <p class="text-center">
-      That’s all they really want<br>
-      Some fun<br>
-      When the working day is done<br>
-      Oh devs, they wanna have fun<br>
-      Oh devs just wanna have fun<br>
-      (devs, they wanna, wanna have fun, devs wanna have)
+    <p>
+      The phone rings in the middle of the night
     </p>
-  `,
+    <p>
+      That’s all they really want
+    </p>`
+    ,
     editorProps: {
       attributes: {
         class: 'prose prose-sm sm:prose lg:prose-lg xl:prose-xl m-4 focus:outline-none',
@@ -184,13 +176,21 @@ export default function Editor() {
     };
   }, []);
 
+  if (!editor) {
+    return null;
+  }
+
   return (
     <div className="rounded-lg w-full">
       <EditorHeader />
-      {
-        editor &&
-        <MenuBar editor={editor} />
-      }
+      <MenuBar editor={editor} />
+      <DragHandle
+        tippyOptions={{
+          placement: 'left',
+        }}
+        editor={editor}>
+        <MenuIcon width="17" />
+      </DragHandle>
       <EditorContent
         editor={editor}
         className="transform origin-top-left transition-transform duration-100"

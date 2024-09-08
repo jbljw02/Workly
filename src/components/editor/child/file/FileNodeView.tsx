@@ -196,6 +196,7 @@ export default function FileNodeView({ editor, node }: FileNodeViewProps) {
             <NodeViewWrapper
                 onDragStart={dragStart}
                 onDragEnd={drapComplete}
+                data-drag-handle
                 draggable="true">
                 <div
                     onClick={fileClick}

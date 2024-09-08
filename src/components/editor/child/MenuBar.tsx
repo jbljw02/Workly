@@ -189,7 +189,7 @@ export default function MenuBar({ editor }: { editor: Editor }) {
     };
 
     return (
-        <div className="flex items-center px-2 py-1 border-b border-t">
+        <div className="flex items-center px-2 py-1 border-b border-t w-full">
             {/* 화면의 스케일(확대 비율)을 조절하는 드롭다운 */}
             <RatioDropdown />
             <VerticalDivider />
