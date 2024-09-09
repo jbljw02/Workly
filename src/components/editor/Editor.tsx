@@ -1,6 +1,6 @@
 'use client'
 
-import { useEditor, EditorContent } from '@tiptap/react'
+import { useEditor, EditorContent, ReactNodeViewRenderer } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import Underline from '@tiptap/extension-underline'
 import Highlight from '@tiptap/extension-highlight'
@@ -22,7 +22,6 @@ import Heading from '@tiptap/extension-heading'
 import BulletList from '@tiptap/extension-bullet-list'
 import { FontSize } from '../../../lib/fontSize'
 import { FontFamily } from '../../../lib/fontFamily'
-import { decreaseEditorScale, increaseEditorScale, setEditorScale } from '@/redux/features/scaleSlice'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import Document from '@tiptap/extension-document'
 import Dropcursor from '@tiptap/extension-dropcursor'
@@ -32,14 +31,12 @@ import FileNode from '../../../lib/fileNode'
 import { v4 as uuidv4 } from 'uuid';
 import '@/styles/editor.css';
 import { LinkTooltip, setLinkTooltip } from '@/redux/features/linkSlice'
-import Focus from '@tiptap/extension-focus'
 import LinkNode from '../../../lib/linkNode';
 import EditorHeader from './child/EditorHeader'
 import ImageNodeView from './child/image/ImageNodeView'
-import ImageNode from '../../../lib/ImageNode'
 import DragHandle from '@tiptap-pro/extension-drag-handle-react'
-import GlobalDragHandle from 'tiptap-extension-global-drag-handle'
 import MenuIcon from '../../../public/svgs/editor/menu-vertical.svg'
+import MouseOverNode from '../../../lib/MouseOverNode'
 
 export default function Editor() {
   const dispatch = useAppDispatch();
@@ -130,6 +127,7 @@ export default function Editor() {
           });
         },
       }),
+      MouseOverNode,
     ],
     content:
       `
@@ -139,12 +137,14 @@ export default function Editor() {
     <p>
       I come home in the morning light
     </p>
+    <div class="custom-node">ddddd</div>
     <p>
       The phone rings in the middle of the night
     </p>
     <p>
       That’s all they really want
-    </p>`
+    </p>
+    `
     ,
     editorProps: {
       attributes: {
@@ -154,27 +154,6 @@ export default function Editor() {
   })
 
   const openColorPicker = useAppSelector(state => state.openColorPicker);
-  const editorScale = useAppSelector(state => state.editorScale);
-
-  const keyPress = (event: KeyboardEvent) => {
-    if (event.metaKey || event.ctrlKey) {
-      if (event.key === '=') {
-        event.preventDefault(); // 기본 확대 동작 방지
-        dispatch(increaseEditorScale()); // 확대
-      }
-      if (event.key === '-') {
-        event.preventDefault(); // 기본 축소 동작 방지
-        dispatch(decreaseEditorScale()); // 축소
-      }
-    }
-  };
-
-  useEffect(() => {
-    window.addEventListener('keydown', keyPress);
-    return () => {
-      window.removeEventListener('keydown', keyPress);
-    };
-  }, []);
 
   if (!editor) {
     return null;
@@ -195,9 +174,9 @@ export default function Editor() {
         editor={editor}
         className="transform origin-top-left transition-transform duration-100"
         style={{
-          transform: `scale(${editorScale})`,
-          pointerEvents: openColorPicker && 'none' // ColorPicker를 연 상태라면 editor는 상호작용 X
-        }} />
+          pointerEvents: openColorPicker && 'none',
+        }}
+      />
     </div>
   )
 }

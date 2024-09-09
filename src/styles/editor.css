@@ -1,3 +1,6 @@
+.ProseMirror h1:first-of-type {
+}
+
 /* 코드 라인 */
 pre {
     background: #2d2b29;
@@ -18,7 +21,7 @@ pre {
 /* 리스트 */
 ul,
 ol {
-    padding: 9.6px 32px 9.6px 22.4px;
+    padding: 10px 32px 10px 22.4px;
 
     li p {
         margin-top: 4px;
@@ -106,6 +109,7 @@ hr {
 
 /* 드래그 핸들 관련 */
 .ProseMirror {
+    position: relative;
     padding-top: 0px;
     padding-left: 20px;
 }
@@ -116,7 +120,6 @@ hr {
     align-items: center;
     border-radius: 5px;
     padding: 4px 2px;
-    margin-right: -5px;
     cursor: grab;
 }
 
