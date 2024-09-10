@@ -36,7 +36,7 @@ import EditorHeader from './child/EditorHeader'
 import ImageNodeView from './child/image/ImageNodeView'
 import DragHandle from '@tiptap-pro/extension-drag-handle-react'
 import MenuIcon from '../../../public/svgs/editor/menu-vertical.svg'
-import MouseOverNode from '../../../lib/MouseOverNode'
+import Placeholder from '@tiptap/extension-placeholder'
 
 export default function Editor() {
   const dispatch = useAppDispatch();
@@ -127,29 +127,49 @@ export default function Editor() {
           });
         },
       }),
-      MouseOverNode,
+      Placeholder.configure({
+        placeholder: ({ node, editor }) => {
+          // 첫 번째 heading 노드에 대한 placeholder
+          if (node.type.name === 'heading' && node.content.size === 0) {
+            return '제목을 입력해주세요';
+          }
+
+          // paragraph 노드에 대해서는 현재 선택된 노드만 placeholder 표시
+          const { from, to } = editor.state.selection;
+          const isSelected = from === to && editor.state.selection.$from.parent === node;
+
+          return node.type.name === 'paragraph' && isSelected ? "명령어를 사용하려면 '/' 키를 누르세요." : '';
+        },
+        showOnlyCurrent: false,
+      }),
+
     ],
-    content:
-      `
-    <h1>
-      Devs Just Want to Have Fun by Cyndi Lauper
-    </h1>
-    <p>
-      I come home in the morning light
-    </p>
-    <div class="custom-node">ddddd</div>
-    <p>
-      The phone rings in the middle of the night
-    </p>
-    <p>
-      That’s all they really want
-    </p>
-    `
-    ,
     editorProps: {
       attributes: {
         class: 'prose prose-sm sm:prose lg:prose-lg xl:prose-xl m-4 focus:outline-none',
       },
+    },
+    onUpdate({ editor }) {
+      const firstNode = editor.state.doc.firstChild;
+
+      // 첫 번째 노드가 paragraph로 바뀌지 않도록 heading으로 변경 처리
+      if (firstNode && firstNode.type.name === 'paragraph') {
+        editor.commands.setNode('heading', {
+          level: 1,
+          content: [{ type: 'text', text: '' }]
+        });
+      }
+    },
+    onCreate({ editor }) {
+      const firstNode = editor.state.doc.firstChild;
+
+      // 에디터가 생성될 때 첫번째 노드를 h1로 강제 변경
+      if (!firstNode || firstNode.type.name !== 'heading') {
+        editor.commands.setContent({
+          type: 'heading',
+          attrs: { level: 1 },
+        });
+      }
     },
   })
 
