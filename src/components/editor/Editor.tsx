@@ -147,7 +147,7 @@ export default function Editor() {
 
   const openColorPicker = useAppSelector(state => state.openColorPicker);
   const [editorTitle, setEditorTitle] = useState<string>('');
-  
+
   if (!editor) {
     return null;
   }
@@ -157,32 +157,32 @@ export default function Editor() {
     <div className="rounded-lg w-full">
       <EditorHeader />
       <MenuBar editor={editor} />
-      <div className='m-4 pl-5 h-full'>
+      <div className='m-4 h-full'>
         <input
           type="text"
           value={editorTitle}
           onChange={(e) => setEditorTitle(e.target.value)}
           placeholder="제목을 입력해주세요"
-          className="editor-title text-[40px] font-bold outline-none"
+          className="editor-title text-[40px] pl-5 font-bold outline-none"
           onKeyDown={(e) => {
             // Enter 키를 눌렀을 때 editor로 포커스를 이동
             if (e.key === 'Enter') {
-              editor.commands.focus(); // editor로 포커스 이동
+              editor.commands.focus();
             }
           }} />
+        <DragHandle
+          tippyOptions={{
+            placement: 'left',
+          }}
+          editor={editor}>
+          <MenuIcon width="17" />
+        </DragHandle>
         <EditorContent
           editor={editor}
           className="origin-top-left h-full"
           style={{
             pointerEvents: openColorPicker && 'none',
           }}>
-          <DragHandle
-            tippyOptions={{
-              placement: 'left',
-            }}
-            editor={editor}>
-            <MenuIcon width="17" />
-          </DragHandle>
         </EditorContent>
       </div>
     </div>
