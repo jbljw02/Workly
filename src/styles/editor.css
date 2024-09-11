@@ -105,12 +105,6 @@ hr {
 }
 
 /* 드래그 핸들 관련 */
-.ProseMirror {
-    position: relative;
-    padding-top: 0px;
-    padding-left: 20px;
-}
-
 .drag-handle {
     display: flex;
     justify-content: center;
@@ -124,25 +118,13 @@ hr {
     background-color: #f0f0f0;
 }
 
-/* 문서의 제목 */
-.ProseMirror h1:first-of-type {
-    font-size: 40px;
+.editor-title::placeholder {
+    color: #dcdcdc;
 }
 
-/* .tiptap h1.is-editor-empty:first-child::before {
-    color: #e1e1e0;
-    content: attr(data-placeholder);
-    float: left;
-    height: 0;
-    pointer-events: none;
-} */
-
-.tiptap h1.is-empty:first-child::before {
-    color: #e1e1e0;
-    content: attr(data-placeholder);
-    float: left;
-    height: 0;
-    pointer-events: none;
+.ProseMirror {
+    margin: 0px;
+    height: 100%;
 }
 
 .tiptap p.is-empty::before {

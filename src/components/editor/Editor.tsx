@@ -129,12 +129,7 @@ export default function Editor() {
       }),
       Placeholder.configure({
         placeholder: ({ node, editor }) => {
-          // 첫 번째 heading 노드에 대한 placeholder
-          if (node.type.name === 'heading' && node.content.size === 0) {
-            return '제목을 입력해주세요';
-          }
-
-          // paragraph 노드에 대해서는 현재 선택된 노드만 placeholder 표시
+          // 현재 선택된 paragraph 노드만 placeholder 표시
           const { from, to } = editor.state.selection;
           const isSelected = from === to && editor.state.selection.$from.parent === node;
 
@@ -142,61 +137,54 @@ export default function Editor() {
         },
         showOnlyCurrent: false,
       }),
-
     ],
     editorProps: {
       attributes: {
         class: 'prose prose-sm sm:prose lg:prose-lg xl:prose-xl m-4 focus:outline-none',
       },
     },
-    onUpdate({ editor }) {
-      const firstNode = editor.state.doc.firstChild;
-
-      // 첫 번째 노드가 paragraph로 바뀌지 않도록 heading으로 변경 처리
-      if (firstNode && firstNode.type.name === 'paragraph') {
-        editor.commands.setNode('heading', {
-          level: 1,
-          content: [{ type: 'text', text: '' }]
-        });
-      }
-    },
-    onCreate({ editor }) {
-      const firstNode = editor.state.doc.firstChild;
-
-      // 에디터가 생성될 때 첫번째 노드를 h1로 강제 변경
-      if (!firstNode || firstNode.type.name !== 'heading') {
-        editor.commands.setContent({
-          type: 'heading',
-          attrs: { level: 1 },
-        });
-      }
-    },
   })
 
   const openColorPicker = useAppSelector(state => state.openColorPicker);
-
+  const [editorTitle, setEditorTitle] = useState<string>('');
+  
   if (!editor) {
     return null;
   }
+
 
   return (
     <div className="rounded-lg w-full">
       <EditorHeader />
       <MenuBar editor={editor} />
-      <DragHandle
-        tippyOptions={{
-          placement: 'left',
-        }}
-        editor={editor}>
-        <MenuIcon width="17" />
-      </DragHandle>
-      <EditorContent
-        editor={editor}
-        className="transform origin-top-left transition-transform duration-100"
-        style={{
-          pointerEvents: openColorPicker && 'none',
-        }}
-      />
+      <div className='m-4 pl-5 h-full'>
+        <input
+          type="text"
+          value={editorTitle}
+          onChange={(e) => setEditorTitle(e.target.value)}
+          placeholder="제목을 입력해주세요"
+          className="editor-title text-[40px] font-bold outline-none"
+          onKeyDown={(e) => {
+            // Enter 키를 눌렀을 때 editor로 포커스를 이동
+            if (e.key === 'Enter') {
+              editor.commands.focus(); // editor로 포커스 이동
+            }
+          }} />
+        <EditorContent
+          editor={editor}
+          className="origin-top-left h-full"
+          style={{
+            pointerEvents: openColorPicker && 'none',
+          }}>
+          <DragHandle
+            tippyOptions={{
+              placement: 'left',
+            }}
+            editor={editor}>
+            <MenuIcon width="17" />
+          </DragHandle>
+        </EditorContent>
+      </div>
     </div>
   )
 }
