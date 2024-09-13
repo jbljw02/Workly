@@ -4,6 +4,7 @@ import '@/styles/global.css'
 import { makeStore, AppStore } from "@/redux/store";
 import { useRef } from "react";
 import { Provider } from "react-redux";
+import Aside from '@/components/aside/Aside';
 
 export default function RootLayout({
   children,
@@ -21,8 +22,11 @@ export default function RootLayout({
       <head>
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet" />
       </head>
-      <body>
-        <Provider store={storeRef.current}>{children}</Provider>
+      <body className="flex min-h-screen">
+        <Provider store={storeRef.current}>
+          <Aside />
+          {children}
+        </Provider>
       </body>
     </html>
   );

@@ -1,20 +1,14 @@
 'use client'
 
-import { useEditor, EditorContent, ReactNodeViewRenderer } from '@tiptap/react'
+import { useEditor, EditorContent, ReactNodeViewRenderer, JSONContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import Underline from '@tiptap/extension-underline'
 import Highlight from '@tiptap/extension-highlight'
 import TextAlign from '@tiptap/extension-text-align'
 import TextStyle from '@tiptap/extension-text-style'
 import Color from '@tiptap/extension-color'
-import Table from '@tiptap/extension-table'
-import TableCell from '@tiptap/extension-table-cell'
-import TableHeader from '@tiptap/extension-table-header'
-import TableRow from '@tiptap/extension-table-row'
-import Image from '@tiptap/extension-image'
 import ListItem from '@tiptap/extension-list-item'
 import OrderedList from '@tiptap/extension-ordered-list'
-import Link from '@tiptap/extension-link'
 import CodeBlock from '@tiptap/extension-code-block'
 import React, { CSSProperties, useEffect, useState } from 'react'
 import MenuBar from './child/MenuBar'
@@ -37,8 +31,9 @@ import ImageNodeView from './child/image/ImageNodeView'
 import DragHandle from '@tiptap-pro/extension-drag-handle-react'
 import MenuIcon from '../../../public/svgs/editor/menu-vertical.svg'
 import Placeholder from '@tiptap/extension-placeholder'
+import { DocumentProps, updateDocuments } from '@/redux/features/documentSlice'
 
-export default function Editor() {
+export default function Editor({ docId }: { docId: string }) {
   const dispatch = useAppDispatch();
 
   const editor = useEditor({
@@ -146,24 +141,61 @@ export default function Editor() {
   })
 
   const openColorPicker = useAppSelector(state => state.openColorPicker);
-  const [editorTitle, setEditorTitle] = useState<string>('');
+  
+  const documents = useAppSelector(state => state.documents);
+  const [docTitle, setDocTitle] = useState<string>('');
+  const [selectedDoc, setSelectedDoc] = useState<DocumentProps>({
+    id: '',
+    title: '',
+    docContent: null,
+    createdAt: '',
+    updatedAt: '',
+    author: {
+      email: '',
+      name: '',
+    },
+  });
+
+  useEffect(() => {
+    if (documents.length && docId) {
+      const selectedDoc = documents.find((doc: DocumentProps) => doc.id === docId);
+      setSelectedDoc(selectedDoc);
+    }
+  }, [documents, docId]);
+
+  useEffect(() => {
+    if (editor) {
+      // 에디터가 변경 될 때 선택된 문서의 내용을 변경
+      editor.on('update', () => {
+        setSelectedDoc(prevState => ({
+          ...prevState,
+          title: docTitle,
+          docContent: editor.getJSON(),
+          updatedAt: new Date().toISOString(),
+        }));
+      });
+    }
+
+    return () => {
+      editor?.off('update');
+    };
+  }, [editor, docTitle, dispatch]);
 
   if (!editor) {
     return null;
   }
 
-
   return (
-    <div className="rounded-lg w-full">
+    <div className="flex-grow h-full">
       <EditorHeader />
       <MenuBar editor={editor} />
       <div className='m-4 h-full'>
         <input
           type="text"
-          value={editorTitle}
-          onChange={(e) => setEditorTitle(e.target.value)}
+          value={docTitle}
+          onChange={(e) => setDocTitle(e.target.value)}
           placeholder="제목을 입력해주세요"
-          className="editor-title text-[40px] pl-5 font-bold outline-none"
+          className="editor-title text-[40px] pl-5 font-bold outline-none w-full"
           onKeyDown={(e) => {
             // Enter 키를 눌렀을 때 editor로 포커스를 이동
             if (e.key === 'Enter') {

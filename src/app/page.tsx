@@ -1,13 +1,7 @@
-import Aside from '@/components/aside/Aside'
-import Editor from '@/components/editor/Editor'
-import { Provider } from 'react-redux'
+import Home from '@/components/home/Home'
 
-export default function Home() {
+export default function Page() {
   return (
-    <div className="flex min-h-screen">
-      {/* 좌측 슬라이드바 */}
-      <Aside />
-      <Editor />
-    </div>
+    <Home />
   )
 }

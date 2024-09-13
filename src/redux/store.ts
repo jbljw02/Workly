@@ -6,6 +6,7 @@ import fileReducers from './features/fileSlice';
 import linkReducers from './features/linkSlice';
 import selectionReducers from './features/selectionSlice';
 import textColorReducers from './features/textColorSlice';
+import documentReducers from './features/documentSlice';
 
 const combinedReducer = combineReducers({
     editorScale: scaleReducers.editorScale,
@@ -17,6 +18,7 @@ const combinedReducer = combineReducers({
     textSelection: selectionReducers.textSelection,
     textColor: textColorReducers.textColor,
     openColorPicker: textColorReducers.openColorPicker,
+    documents: documentReducers.document,
 })
 
 // 전체 리듀서를 관리

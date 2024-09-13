@@ -3,4 +3,6 @@ export type SidebarItemProps = {
     IconWidth: string;
     label: string;
     isCollapsed?: boolean;
+    onClick?: () => void;
+    addClick?: () => void;
 }

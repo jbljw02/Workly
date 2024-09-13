@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { useState, useRef } from "react";
 import SidebarItem from "./child/SidebarItem";
@@ -18,8 +18,15 @@ import FolderIcon from '../../../public/svgs/folder.svg';
 import HoverTooltip from "../editor/child/HoverTooltip";
 import HelpIcon from '../../../public/svgs/help.svg';
 import InviteIcon from '../../../public/svgs/add-person.svg';
+import { v4 as uuidv4 } from 'uuid';
+import { useAppDispatch } from "@/redux/hooks";
+import { addDocuments, DocumentProps } from "@/redux/features/documentSlice";
+import { useRouter } from "next/navigation";
 
-export default function Home() {
+export default function Aside() {
+    const dispatch = useAppDispatch();
+    const router = useRouter();
+
     const expandedWidth = 240; // 넓은 상태의 너비
     const collapsedWidth = 70; // 좁은 상태의 너비
     const toggleWidthThreshold = 150; // 너비 변경을 위한 임계값
@@ -73,6 +80,25 @@ export default function Home() {
         }
     };
 
+    // 문서를 생성하고 작성할 수 있도록 Editor 페이지로 이동
+    const writeDocument = () => {
+        const newDocument: DocumentProps = {
+            id: uuidv4(),
+            title: '',
+            docContent: null,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+            author: {
+                email: 'jbljw02@naver.com',
+                name: '이진우',
+            },
+        };
+
+        dispatch(addDocuments(newDocument));
+
+        router.push(`/editor/${newDocument.id}`);
+    }
+
     return (
         <aside
             ref={sidebarRef}
@@ -99,15 +125,21 @@ export default function Home() {
                 }} />
             {/* 검색창 및 작업 추가 영역 */}
             <SearchInput isCollapsed={isCollapsed} />
-            <div className="border-b border-b-neutral-300 mb-5 mt-2 pb-3">
-                <SidebarItem Icon={DocumentWrite} IconWidth="20" label="문서 작성" isCollapsed={isCollapsed} />
-                <SidebarItem Icon={TaskWrite} IconWidth="20" label="작업 추가" isCollapsed={isCollapsed} />
-                <SidebarItem Icon={ScheduleWrite} IconWidth="22" label="일정 추가" isCollapsed={isCollapsed} />
-            </div>
             {/* 메뉴를 모아놓은 영역 */}
-            <div className="mb-2">
-                <SidebarItem Icon={HomeIcon} IconWidth="19" label="홈" isCollapsed={isCollapsed} />
-                <SidebarItem Icon={DocumentIcon} IconWidth="18" label="문서" isCollapsed={isCollapsed} />
+            <div className="border-b border-b-neutral-300 mb-5 mt-4 pb-6">
+                <SidebarItem
+                    Icon={HomeIcon}
+                    IconWidth="19"
+                    label="홈"
+                    isCollapsed={isCollapsed}
+                    onClick={() => router.push('/')} />
+                <SidebarItem
+                    Icon={DocumentIcon}
+                    IconWidth="18"
+                    label="문서"
+                    isCollapsed={isCollapsed}
+                    onClick={() => router.push('/document')}
+                    addClick={writeDocument} />
                 <SidebarItem Icon={TaskIcon} IconWidth="18" label="작업" isCollapsed={isCollapsed} />
                 <SidebarItem Icon={ScheduleIcon} IconWidth="18" label="일정" isCollapsed={isCollapsed} />
             </div>
@@ -127,12 +159,12 @@ export default function Home() {
             </div>
             {/* 휴지통 */}
             <SidebarItem Icon={TrashIcon} IconWidth="21" label="휴지통" isCollapsed={isCollapsed} />
-            {/* 프로젝트 설정 div를 최하단에 위치하도록 여백 공간을 모두 차지 */}
+            {/* 멤버 추가 div를 최하단에 위치하도록 여백 공간을 모두 차지 */}
             <div className="flex-grow"></div>
             {/* 최하단 프로젝트 관련 메뉴 */}
             <div className="text-sm">
                 <SidebarItem Icon={InviteIcon} IconWidth="20" label="멤버 추가" isCollapsed={isCollapsed} />
             </div>
-        </aside >
+        </aside>
     );
 }
