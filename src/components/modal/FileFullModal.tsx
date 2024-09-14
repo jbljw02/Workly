@@ -11,7 +11,12 @@ interface FileFullModal extends ModalProps {
     download: string;
 }
 
-export default function FileFullModal({ isModalOpen, setIsModalOpen, children, href, download }: FileFullModal) {
+export default function FileFullModal({
+    isModalOpen,
+    setIsModalOpen,
+    children,
+    href,
+    download }: FileFullModal) {
     const modalRef = useRef<HTMLDivElement>(null);
     const downloadRef = useRef<HTMLDivElement>(null);
 
@@ -33,7 +38,13 @@ export default function FileFullModal({ isModalOpen, setIsModalOpen, children, h
             shouldCloseOnEsc={true}
             style={{
                 overlay: {
+                    position: 'fixed', // 화면 전체를 덮도록 
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
                     backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    zIndex: 1000, 
                 },
                 content: {
                     display: 'flex',
@@ -45,7 +56,7 @@ export default function FileFullModal({ isModalOpen, setIsModalOpen, children, h
                     width: '100vw',
                     height: '100vh',
                     padding: 0,
-                    zIndex: 1000,
+                    zIndex: 1001,
                     inset: 0, // 모달을 화면 전체에 꽉 채우도록
                 },
             }}>
