@@ -4,7 +4,7 @@ import MenuIcon from '../../../../public/svgs/editor/menu-horizontal.svg'
 import ShareIcon from '../../../../public/svgs/editor/share-folder.svg'
 import HoverTooltip from './HoverTooltip'
 import ToolbarButton from './ToolbarButton'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import EditIcon from '../../../../public/svgs/editor/edit.svg'
 import LinkCopyIcon from '../../../../public/svgs/editor/link.svg'
 import DownloadIcon from '../../../../public/svgs/editor/download.svg'
@@ -15,8 +15,19 @@ import MenuList from './MenuList'
 import { MenuItemProps } from './MenuItem'
 import LockIcon from '../../../../public/svgs/editor/lock.svg'
 import IconButton from '@/components/button/IconButton'
+import formatTimeDiff from '@/utils/formatTimeDiff'
+import { DocumentProps } from '@/redux/features/documentSlice'
 
-export default function EditorHeader() {
+type EditorHeaderProps = {
+    selectedDoc: DocumentProps;
+    lastUpdatedTime: string;
+    setLastUpdatedTime: React.Dispatch<React.SetStateAction<string>>;
+}
+
+export default function EditorHeader({
+    selectedDoc,
+    lastUpdatedTime,
+    setLastUpdatedTime }: EditorHeaderProps) {
     const [menuListOpen, setMenuListOpen] = useState(false);
 
     const menuItems: MenuItemProps[] = [
@@ -59,6 +70,16 @@ export default function EditorHeader() {
         }
     ];
 
+    useEffect(() => {
+        // 1분마다 문서의 마지막 편집 시간이 언제인지 확인
+        const updatedTimeInterval = setInterval(() => {
+            const updatedTime = formatTimeDiff(selectedDoc.updatedAt);
+            setLastUpdatedTime(updatedTime);
+        }, 60000);
+
+        return () => clearInterval(updatedTimeInterval);
+    }, [selectedDoc.updatedAt]);
+
     return (
         <div className='flex flex-row justify-between pl-3 pr-5 py-3'>
             {/* 헤더 좌측 영역 */}
@@ -74,7 +95,7 @@ export default function EditorHeader() {
             </div>
             {/* 헤더 우측 영역 */}
             <div className='flex flex-row items-center gap-1'>
-                <div className='text-sm text-neutral-400 mr-1'>30분 전 편집</div>
+                <div className='text-sm text-neutral-400 mr-1'>{lastUpdatedTime}</div>
                 <HoverTooltip label='문서를 공유하거나 게시'>
                     <button className='text-sm px-1.5 py-1 rounded-sm hover:bg-gray-100 cursor-pointer'>공유</button>
                 </HoverTooltip>

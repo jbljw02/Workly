@@ -32,6 +32,7 @@ import DragHandle from '@tiptap-pro/extension-drag-handle-react'
 import MenuIcon from '../../../public/svgs/editor/menu-vertical.svg'
 import Placeholder from '@tiptap/extension-placeholder'
 import { DocumentProps, updateDocuments } from '@/redux/features/documentSlice'
+import formatTimeDiff from '@/utils/formatTimeDiff'
 
 export default function Editor({ docId }: { docId: string }) {
   const dispatch = useAppDispatch();
@@ -141,9 +142,10 @@ export default function Editor({ docId }: { docId: string }) {
   })
 
   const openColorPicker = useAppSelector(state => state.openColorPicker);
-  
+
   const documents = useAppSelector(state => state.documents);
-  const [docTitle, setDocTitle] = useState<string>('');
+  const [docTitle, setDocTitle] = useState<string>(''); // 문서 제목
+  // 문서들 중에 현재 편집 중인 문서를 선택
   const [selectedDoc, setSelectedDoc] = useState<DocumentProps>({
     id: '',
     title: '',
@@ -155,6 +157,8 @@ export default function Editor({ docId }: { docId: string }) {
       name: '',
     },
   });
+  // 문서의 마지막 편집 시간에 따른 출력값
+  const [lastUpdatedTime, setLastUpdatedTime] = useState<string>('현재 편집 중');
 
   useEffect(() => {
     if (documents.length && docId) {
@@ -164,15 +168,19 @@ export default function Editor({ docId }: { docId: string }) {
   }, [documents, docId]);
 
   useEffect(() => {
-    if (editor) {
-      // 에디터가 변경 될 때 선택된 문서의 내용을 변경
+    if (editor && selectedDoc) {
+      // 에디터 업데이트 발생 시 실행
       editor.on('update', () => {
-        setSelectedDoc(prevState => ({
-          ...prevState,
+        const updatedDoc = {
+          ...selectedDoc, // 현재 선택된 문서
           title: docTitle,
-          docContent: editor.getJSON(),
-          updatedAt: new Date().toISOString(),
-        }));
+          docContent: editor.getJSON(), // 에디터 내용 
+          updatedAt: new Date().toISOString(), // 업데이트 시간
+        };
+
+        dispatch(updateDocuments(updatedDoc));
+        setSelectedDoc(updatedDoc);
+        setLastUpdatedTime(formatTimeDiff(updatedDoc.updatedAt));
       });
     }
 
@@ -187,7 +195,10 @@ export default function Editor({ docId }: { docId: string }) {
 
   return (
     <div className="flex-grow h-full">
-      <EditorHeader />
+      <EditorHeader
+        selectedDoc={selectedDoc}
+        lastUpdatedTime={lastUpdatedTime}
+        setLastUpdatedTime={setLastUpdatedTime} />
       <MenuBar editor={editor} />
       <div className='m-4 h-full'>
         <input
