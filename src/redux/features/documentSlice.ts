@@ -15,7 +15,7 @@ export type DocumentProps = {
 const DocumentsState: DocumentProps[] = [];
 
 export const documentSlice = createSlice({
-    name: 'document',
+    name: 'documents',
     initialState: DocumentsState,
     reducers: {
         addDocuments: (state, action: PayloadAction<DocumentProps>) => {
@@ -39,7 +39,7 @@ export const { updateDocuments } = documentSlice.actions;
 export const { deleteDocuments } = documentSlice.actions;
 
 const reducers = {
-    document: documentSlice.reducer,
+    documents: documentSlice.reducer,
 }
 
 export default reducers;

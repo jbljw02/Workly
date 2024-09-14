@@ -6,7 +6,6 @@ export interface NoticeModal extends ModalProps {
 }
 
 export default function NoticeModal({ isModalOpen, setIsModalOpen, label }: NoticeModal) {
-
     return (
         <Modal
             isOpen={isModalOpen}

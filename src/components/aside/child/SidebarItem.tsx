@@ -11,7 +11,7 @@ export default function SidebarItem({
     return (
         <div
             onClick={onClick}
-            className="flex justify-between pl-2 pr-1.5 w-full h-10 rounded cursor-pointer hover:bg-gray-100 group">
+            className="flex justify-between pl-2.5 pr-1.5 w-full h-9 rounded cursor-pointer hover:bg-gray-100 group">
             <div className="flex flex-row items-center">
                 <Icon width={IconWidth} height={IconWidth} />
                 {/* 사이드바가 확장된 경우에만 텍스트 표시 */}
@@ -25,7 +25,7 @@ export default function SidebarItem({
             </div>
 
             {
-                addClick &&
+                (addClick && !isCollapsed) &&
                 <div
                     onClick={(e) => {
                         e.stopPropagation();  // 부모 요소로의 이벤트 전파 방지

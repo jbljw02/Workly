@@ -22,6 +22,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { useAppDispatch } from "@/redux/hooks";
 import { addDocuments, DocumentProps } from "@/redux/features/documentSlice";
 import { useRouter } from "next/navigation";
+import FolderSection from "./child/FolderSection";
 
 export default function Aside() {
     const dispatch = useAppDispatch();
@@ -126,45 +127,47 @@ export default function Aside() {
             {/* 검색창 및 작업 추가 영역 */}
             <SearchInput isCollapsed={isCollapsed} />
             {/* 메뉴를 모아놓은 영역 */}
-            <div className="border-b border-b-neutral-300 mb-5 mt-4 pb-6">
+            <div className="border-b border-b-neutral-300 mb-6 mt-4 pb-6">
                 <SidebarItem
                     Icon={HomeIcon}
-                    IconWidth="19"
+                    IconWidth="17"
                     label="홈"
                     isCollapsed={isCollapsed}
                     onClick={() => router.push('/')} />
                 <SidebarItem
                     Icon={DocumentIcon}
-                    IconWidth="18"
+                    IconWidth="17"
                     label="문서"
                     isCollapsed={isCollapsed}
                     onClick={() => router.push('/document')}
                     addClick={writeDocument} />
-                <SidebarItem Icon={TaskIcon} IconWidth="18" label="작업" isCollapsed={isCollapsed} />
-                <SidebarItem Icon={ScheduleIcon} IconWidth="18" label="일정" isCollapsed={isCollapsed} />
+                <SidebarItem
+                    Icon={TaskIcon}
+                    IconWidth="17"
+                    label="작업"
+                    isCollapsed={isCollapsed} />
+                <SidebarItem
+                    Icon={ScheduleIcon}
+                    IconWidth="17"
+                    label="일정"
+                    isCollapsed={isCollapsed} />
             </div>
             {/* 폴더를 추가하고 보여주는 영역 */}
-            <div className="mb-2">
-                <div>
-                    <SidebarItem Icon={FolderIcon} IconWidth="18" label="폴더" isCollapsed={isCollapsed} />
-                    {
-                        !isCollapsed ?
-                            <div className="flex items-center pl-2 pt-1 pb-2 rounded text-neutral-400 hover:bg-gray-100 cursor-pointer">
-                                <PlusIcon width="14" />
-                                <span className="text-[13px] ml-2 whitespace-nowrap overflow-hidden">새 폴더</span>
-                            </div> :
-                            null
-                    }
-                </div>
-            </div>
+            <FolderSection isCollapsed={isCollapsed} />
             {/* 휴지통 */}
-            <SidebarItem Icon={TrashIcon} IconWidth="21" label="휴지통" isCollapsed={isCollapsed} />
+            <SidebarItem
+                Icon={TrashIcon}
+                IconWidth="19"
+                label="휴지통"
+                isCollapsed={isCollapsed} />
             {/* 멤버 추가 div를 최하단에 위치하도록 여백 공간을 모두 차지 */}
-            <div className="flex-grow"></div>
-            {/* 최하단 프로젝트 관련 메뉴 */}
-            <div className="text-sm">
-                <SidebarItem Icon={InviteIcon} IconWidth="20" label="멤버 추가" isCollapsed={isCollapsed} />
-            </div>
+            <div className="flex-grow" />
+            {/* 최하단 멤버 추가 메뉴 */}
+            <SidebarItem
+                Icon={InviteIcon}
+                IconWidth="19"
+                label="멤버 추가"
+                isCollapsed={isCollapsed} />
         </aside>
     );
 }

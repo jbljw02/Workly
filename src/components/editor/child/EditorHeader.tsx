@@ -78,7 +78,7 @@ export default function EditorHeader({
         }, 60000);
 
         return () => clearInterval(updatedTimeInterval);
-    }, [selectedDoc.updatedAt]);
+    }, [selectedDoc?.updatedAt]);
 
     return (
         <div className='flex flex-row justify-between pl-3 pr-5 py-3'>
