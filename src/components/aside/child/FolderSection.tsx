@@ -4,8 +4,10 @@ import PlusIcon from '../../../../public/svgs/add-folder.svg';
 import { useState } from "react";
 import AddInputModal from "@/components/modal/AddInputModal";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { addFolders } from "@/redux/features/folderSlice";
+import { addFolders, Folder } from "@/redux/features/folderSlice";
 import { v4 as uuidv4 } from 'uuid';
+import { addDoc, collection } from "firebase/firestore";
+import fireStore from "../../../../firebase/firestore";
 
 type FolderSectionProps = {
     isCollapsed: boolean;
@@ -34,9 +36,7 @@ export default function FolderSection({ isCollapsed }: FolderSectionProps) {
 
     const folders = useAppSelector(state => state.folders);
 
-    console.log("폴더: ", folders);
-
-    const addNewFolder = () => {
+    const addNewFolder = async () => {
         dispatch(addFolders({
             id: uuidv4(),
             name: newFolderTitle,
@@ -46,7 +46,9 @@ export default function FolderSection({ isCollapsed }: FolderSectionProps) {
                 name: '이진우',
             },
             sharedWith: [],
-        }))
+        }));
+
+        setNewFolderTitle('');
     }
 
     return (
@@ -55,6 +57,13 @@ export default function FolderSection({ isCollapsed }: FolderSectionProps) {
             <div className="mb-3">
                 <div className="mb-1.5 ml-2 text-[13px] font-semibold">폴더</div>
                 <FolderItem folderName="이진우의 폴더" />
+                {
+                    folders.map((folder: Folder) => {
+                        return (
+                            <FolderItem folderName={folder.name} />
+                        )
+                    })
+                }
                 {/* 새 폴더를 추가하는 영역 */}
                 <div
                     onClick={() => setAddingFolder(true)}
