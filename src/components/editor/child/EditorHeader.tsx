@@ -88,7 +88,7 @@ export default function EditorHeader({
                     <PaperIcon width="20" />
                 </div>
                 <div className='flex flex-row items-center gap-1'>
-                    <div className='text-sm rounded-sm hover:underline cursor-pointer'>북아메리카 여행</div>
+                    <div className='text-sm rounded-sm hover:underline cursor-pointer'>이진우의 폴더</div>
                     <div className='text-sm font-light mx-1'>{'/'}</div>
                     <div className='text-sm font-bold'>미국 여행</div>
                 </div>

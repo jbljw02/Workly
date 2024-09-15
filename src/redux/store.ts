@@ -1,4 +1,4 @@
-import { UnknownAction, combineReducers, configureStore } from '@reduxjs/toolkit';
+import { AnyAction, UnknownAction, combineReducers, configureStore } from '@reduxjs/toolkit';
 import { HYDRATE, createWrapper } from "next-redux-wrapper";
 import scaleReducers from './features/scaleSlice';
 import editorImageReducers from './features/editorImageSlice';
@@ -23,13 +23,14 @@ const combinedReducer = combineReducers({
     folders: folderReducers.folders,
 })
 
-// 전체 리듀서를 관리
-const masterReducer = (state: any, action: UnknownAction) => {
+type CombinedState = ReturnType<typeof combinedReducer>;
+
+const masterReducer = (state: CombinedState | undefined, action: AnyAction) => {
     // 액션의 타입이 HYDRATE일 경우, 즉 서버 사이드 렌더링이 발생할 때
     if (action.type === HYDRATE) {
         const nextState = {
             ...state, // 현재 클라이언트의 상태를 그대로 가져옴
-            // ...action.payload, // 모든 state를 SSR에서 가져와서 클라이언트에 병합(SSR에서 설정해주지 않은 값은 초기값으로 세팅됨)
+            ...action.payload, // 모든 state를 SSR에서 가져와서 클라이언트에 병합(SSR에서 설정해주지 않은 값은 초기값으로 세팅됨)
         };
         return nextState;
     }
