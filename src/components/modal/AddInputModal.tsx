@@ -92,7 +92,9 @@ export default function AddInputModal({
                         type="button" // 취소 버튼은 폼 제출을 막기 위해 type="button"
                         className='px-3 py-1.5 border rounded border-gray-400 text-gray-500 
                         hover:border-gray-600 hover:text-[#444444] hover:bg-gray-100 transition-all duration-200'
-                        onClick={closeModal}>취소</button>
+                        onClick={closeModal}>
+                        취소
+                    </button>
                 </div>
             </form>
         </Modal>
