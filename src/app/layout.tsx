@@ -18,13 +18,13 @@ export default function RootLayout({
   }
 
   return (
-    <html lang="en" className="h-full text-[#444444]">
+    <html lang="en" className="w-full h-full text-[#444444]">
       <head>
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet" />
       </head>
       <body className="flex min-h-screen">
         <Provider store={storeRef.current}>
-          <Aside />
+          {/* <Aside /> */}
           {children}
         </Provider>
       </body>
