@@ -10,10 +10,14 @@ export default function Header() {
     return (
         <header className="flex flex-row items-center justify-between py-8 w-full h-auto">
             <div className="text-2xl font-semibold cursor-pointer">
-                <LogoIcon width="150" />
+                <LogoIcon
+                    onClick={() => router.push('/')}
+                    width="155" />
             </div>
             <div className="flex flex-row items-center gap-3">
-                <button className='rounded px-3 py-1.5 hover:bg-gray-100'>
+                <button
+                    onClick={() => router.push('/login')}
+                    className='rounded px-3 py-1.5 hover:bg-gray-100'>
                     로그인
                 </button>
                 <CommonButton
