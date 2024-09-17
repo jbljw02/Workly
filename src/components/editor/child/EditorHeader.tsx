@@ -17,18 +17,45 @@ import LockIcon from '../../../../public/svgs/editor/lock.svg'
 import IconButton from '@/components/button/IconButton'
 import formatTimeDiff from '@/utils/formatTimeDiff'
 import { DocumentProps } from '@/redux/features/documentSlice'
+import html2pdf from 'html2pdf.js';
+import { Editor } from '@tiptap/react'
 
 type EditorHeaderProps = {
+    editor: Editor,
     selectedDoc: DocumentProps;
     lastUpdatedTime: string;
     setLastUpdatedTime: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export default function EditorHeader({
+    editor,
     selectedDoc,
     lastUpdatedTime,
     setLastUpdatedTime }: EditorHeaderProps) {
     const [menuListOpen, setMenuListOpen] = useState(false);
+
+    // 에디터 내용을 PDF로 변환하고 다운로드하는 함수
+    const downloadPDF = () => {
+        // 에디터에서 HTML 가져오기
+        const htmlContent = editor.getHTML();
+
+        // 변환할 HTML을 담을 임시 요소 
+        const element = document.createElement('div');
+        element.innerHTML = htmlContent;
+
+        // PDF 옵션 설정 (선택 사항)
+        const options = {
+            margin: 1,
+            filename: selectedDoc.title || '제목 없는 문서',
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2 }, // 요소를 렌더링 할때의 해상도(기본 해상도의 두 배)
+            // 인치 단위, A4 크기로 다운로두, 세로 방향
+            jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+        };
+
+        // PDF 다운로드 실행
+        html2pdf().from(element).set(options).save();
+    };
 
     const menuItems: MenuItemProps[] = [
         {
@@ -53,7 +80,7 @@ export default function EditorHeader({
             Icon: DownloadIcon,
             IconWidth: "14",
             label: "다운로드",
-            onClick: () => console.log("A")
+            onClick: () => downloadPDF(),
         },
         {
             Icon: CopyIcon,

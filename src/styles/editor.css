@@ -18,12 +18,7 @@ pre {
 /* 리스트 */
 ul,
 ol {
-    padding: 10px 32px 10px 22.4px;
-
-    li p {
-        margin-top: 4px;
-        margin-bottom: 4px;
-    }
+    padding: 0px 32px 0px 22.4px;
 }
 
 ul {
@@ -40,29 +35,26 @@ ol li::marker {
     color: inherit;
 }
 
+h1, h2, h4, p {
+    padding: 4px 0px;
+}
+
 h1 {
     font-size: 30px;
-    margin: 10px 0;
 }
 
 h2 {
     font-size: 24px;
-    margin: 10px 0;
 }
 
 h3 {
     font-size: 20px;
-    margin: 10px 0;
-}
-
-p {
-    margin: 5px 0px;
 }
 
 h1,
 h2,
 h3 {
-    font-weight: bolder;
+    font-weight: 600;
 }
 
 hr {
