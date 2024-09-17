@@ -3,7 +3,6 @@ import MenuItem from "./MenuItem";
 import { MenuItemProps } from "./MenuItem";
 import { useClickOutside } from "@/components/hooks/useClickOutside";
 import HorizontalDivider from "./divider/HorizontalDivider";
-import CopyIcon from '../../../../public/svgs/editor/copy.svg'
 
 type MenuListProps = {
     menuList: MenuItemProps[];

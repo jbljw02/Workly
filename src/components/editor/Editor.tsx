@@ -196,6 +196,7 @@ export default function Editor({ docId }: { docId: string }) {
   return (
     <div className="flex-grow h-full">
       <EditorHeader
+        editor={editor}
         selectedDoc={selectedDoc}
         lastUpdatedTime={lastUpdatedTime}
         setLastUpdatedTime={setLastUpdatedTime} />
