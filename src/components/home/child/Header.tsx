@@ -27,6 +27,7 @@ export default function Header() {
                         textSize: 'text-base',
                         textColor: 'text-white',
                         bgColor: 'bg-black',
+                        hover: 'hover:scale-105'
                     }}
                     label="Workly 시작하기"
                     onClick={() => router.push('/signup')} />

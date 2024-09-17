@@ -15,7 +15,7 @@ export default function MenuList({ menuList, setListOpen, listPositon }: MenuLis
     const menuRef = useRef<HTMLDivElement>(null);
 
     useClickOutside(menuRef, () => setListOpen(false));
-    
+
     return (
         <div
             ref={menuRef}
@@ -27,7 +27,7 @@ export default function MenuList({ menuList, setListOpen, listPositon }: MenuLis
                         <>
                             {
                                 item.horizonLine &&
-                                <HorizontalDivider />
+                                <HorizontalDivider borderColor="border-gray-200" />
                             }
                             <MenuItem
                                 key={index}

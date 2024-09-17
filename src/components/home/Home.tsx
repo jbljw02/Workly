@@ -29,6 +29,7 @@ export default function Home() {
                                 textSize: 'text-xl',
                                 textColor: 'text-white',
                                 bgColor: 'bg-black',
+                                hover: 'hover:scale-105'
                             }}
                             label="Workly 시작하기"
                             onClick={() => router.push('/signup')} />
@@ -39,6 +40,7 @@ export default function Home() {
                                 textSize: 'text-xl',
                                 textColor: 'text-black',
                                 bgColor: 'bg-white',
+                                hover: 'hover:scale-105'
                             }}
                             label="문의 남기기"
                             onClick={() => router.push('/contact')} />

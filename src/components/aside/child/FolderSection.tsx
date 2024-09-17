@@ -33,22 +33,50 @@ export default function FolderSection({ isCollapsed }: FolderSectionProps) {
 
     const [addingFolder, setAddingFolder] = useState<boolean>(false);
     const [newFolderTitle, setNewFolderTitle] = useState<string>('');
+    const [isDuplicatedInfo, setIsDuplicatedInfo] = useState({
+        isInvalid: false,
+        msg: '이미 존재하는 폴더명이에요',
+    });
 
     const folders = useAppSelector(state => state.folders);
 
     const addNewFolder = async () => {
-        dispatch(addFolders({
-            id: uuidv4(),
-            name: newFolderTitle,
-            documents: [],
-            author: {
-                email: 'jbljw02@naver.com',
-                name: '이진우',
-            },
-            sharedWith: [],
-        }));
+        const folderNameDuplicated = folders.find((folder: Folder) => folder.name === newFolderTitle);
 
-        setNewFolderTitle('');
+        if (folderNameDuplicated) {
+            setIsDuplicatedInfo((prevState) => ({
+                ...prevState,
+                isInvalid: true,
+            }));
+        }
+        else {
+            dispatch(addFolders({
+                id: uuidv4(),
+                name: newFolderTitle,
+                documents: [],
+                author: {
+                    email: 'jbljw02@naver.com',
+                    name: '이진우',
+                },
+                sharedWith: [],
+            }));
+
+            setIsDuplicatedInfo((prevState) => ({
+                ...prevState,
+                isInvalid: false,
+            }));
+
+            setAddingFolder(false);
+            setNewFolderTitle('');
+        }
+    }
+
+    const openModal = () => {
+        setAddingFolder(true);
+        setIsDuplicatedInfo((prevState) => ({
+            ...prevState,
+            isInvalid: false,
+        }));
     }
 
     return (
@@ -66,7 +94,7 @@ export default function FolderSection({ isCollapsed }: FolderSectionProps) {
                 }
                 {/* 새 폴더를 추가하는 영역 */}
                 <div
-                    onClick={() => setAddingFolder(true)}
+                    onClick={openModal}
                     className="flex items-center pl-2.5 h-7 rounded text-neutral-400 hover:bg-gray-100 cursor-pointer">
                     <PlusIcon width="16" />
                     <span
@@ -79,6 +107,7 @@ export default function FolderSection({ isCollapsed }: FolderSectionProps) {
                     value={newFolderTitle}
                     setValue={setNewFolderTitle}
                     submitFunction={addNewFolder}
+                    isInvalidInfo={isDuplicatedInfo}
                     placeholder="새 폴더의 이름을 입력해주세요" />
 
             </div> :
