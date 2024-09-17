@@ -8,7 +8,6 @@ import GoogleLoginButton from '@/components/button/GoogleLoginButton';
 import HeaderButton from '@/app/header/HeaderButton';
 import DivideBar from './DivideBar';
 import AuthTop from './AuthTop';
-import AuthBottom from './AuthBottom';
 
 export default function Page() {
     const [formData, setFormData] = useState({
@@ -20,7 +19,7 @@ export default function Page() {
 
     const [isInvalidInfo, setIsInvalidInfo] = useState({
         isInvalid: false,
-        msg: '이메일을 혹은 비밀번호가 일치하지 않습니다',
+        msg: '이메일 혹은 비밀번호가 일치하지 않습니다',
     })
 
     return (
