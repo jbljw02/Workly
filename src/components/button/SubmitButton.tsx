@@ -7,14 +7,14 @@ type StyleProps = {
     hover: string;
 };
 
-type CommonButtonProps = {
+type SubmitButtonProps = {
     style: StyleProps;
     label: string;
     value: string;
     onClick?: () => void;
 };
 
-export default function CommonButton({ style, label, value, onClick }: CommonButtonProps) {
+export default function SubmitButton({ style, label, value, onClick }: SubmitButtonProps) {
     const { px, py, textSize, textColor, bgColor, hover } = style;
 
     return (

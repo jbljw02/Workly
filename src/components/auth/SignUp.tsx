@@ -8,6 +8,7 @@ import CommonInput from "../input/CommonInput";
 import AuthTop from "./AuthTop";
 import DivideBar from "./DivideBar";
 import { useRouter } from "next/navigation";
+import PINoticeModal from "../button/PINoticeModal";
 
 export default function SignUp() {
     const router = useRouter();
@@ -23,8 +24,17 @@ export default function SignUp() {
 
     const [isInvalidInfo, setIsInvalidInfo] = useState({
         isInvalid: false,
-        msg: '이메일을 혹은 비밀번호가 일치하지 않습니다',
-    })
+        msg: '이메일 혹은 비밀번호가 일치하지 않습니다',
+    });
+
+    const [isPIModalOpen, setIsPIModalOpen] = useState(false);
+
+    const checkPICheckBox = () => {
+        setFormData((prevState) => ({
+            ...prevState,
+            isAgreeForPersonalInfo: !prevState.isAgreeForPersonalInfo,
+        }));
+    }
 
     return (
         <div className="flex w-full h-auto items-center justify-center">
@@ -86,9 +96,13 @@ export default function SignUp() {
                     <div className="flex flex-row gap-1.5">
                         <input
                             type="checkbox"
-                            className="cursor-pointer" />
+                            className="cursor-pointer"
+                            onChange={checkPICheckBox}
+                            checked={formData.isAgreeForPersonalInfo} />
                         <div>
-                            <button className="underline">개인정보 처리방침</button>
+                            <button
+                                onClick={() => setIsPIModalOpen(true)}
+                                className="underline">개인정보 처리방침</button>
                             에 동의합니다.
                         </div>
                     </div>
@@ -99,6 +113,14 @@ export default function SignUp() {
                             className='text-blue-600 underline'>로그인</button>
                     </div>
                 </div>
+                <PINoticeModal
+                    isModalOpen={isPIModalOpen}
+                    setIsModalOpen={setIsPIModalOpen}
+                    setIsAgree={() => setFormData((prevState) => ({
+                        ...prevState,
+                        isAgreeForPersonalInfo: true,
+                    }))}
+                    category="회원가입" />
             </div>
         </div>
     )
