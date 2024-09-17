@@ -4,6 +4,7 @@ type StyleProps = {
     textSize: string;
     textColor: string;
     bgColor: string;
+    hover: string;
 };
 
 type CommonButtonProps = {
@@ -13,13 +14,14 @@ type CommonButtonProps = {
 };
 
 export default function CommonButton({ style, label, onClick }: CommonButtonProps) {
-    const { px, py, textSize, textColor, bgColor } = style;
+    const { px, py, textSize, textColor, bgColor, hover } = style;
 
     return (
         <button
+            type="button"
             onClick={onClick}
-            className={`${px} ${py} ${textSize} ${textColor} ${bgColor} 
-            rounded-lg border transform hover:scale-105 transition-all duration-200`}>
+            className={`${px} ${py} ${textSize} ${textColor} ${bgColor} ${hover}
+            '${bgColor} rounded-lg border transform transition-all duration-200`}>
             {label}
         </button>
     )

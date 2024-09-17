@@ -1,12 +1,14 @@
 import { ModalProps } from '@/types/modalProps';
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Modal from 'react-modal';
+import CommonInput from '../input/CommonInput';
 
 export interface AddInputModal extends ModalProps {
     title: string;
     value: string;
     setValue: React.Dispatch<React.SetStateAction<string>>;
     submitFunction: () => void;
+    isInvalidInfo: { isInvalid: boolean, msg: string };
     placeholder: string;
 }
 
@@ -17,13 +19,11 @@ export default function AddInputModal({
     value,
     setValue,
     submitFunction,
+    isInvalidInfo,
     placeholder }: AddInputModal) {
-    const inputRef = useRef<HTMLInputElement | null>(null);
-
     const modalSubmit = (e: React.FormEvent) => {
         e.preventDefault(); // 폼 제출 시 페이지 리로드 방지
         submitFunction();
-        setIsModalOpen(false);
     }
 
     const closeModal = () => {
@@ -31,17 +31,9 @@ export default function AddInputModal({
         setIsModalOpen(false);
     }
 
-    // 모달 오픈 시 바로 input으로 포커스
-    const afterOpenModal = () => {
-        if (inputRef.current) {
-            inputRef.current.focus();
-        }
-    }
-
     return (
         <Modal
             isOpen={isModalOpen}
-            onAfterOpen={afterOpenModal}
             style={{
                 overlay: {
                     position: 'fixed',
@@ -57,7 +49,7 @@ export default function AddInputModal({
                     left: '50%',
                     top: '45%',
                     width: 500,
-                    height: 220,
+                    height: 240,
                     transform: 'translate(-50%, -50%)',
                     zIndex: 1001,
                 }
@@ -68,15 +60,13 @@ export default function AddInputModal({
                 <div>
                     <div className='font-semibold mb-4'>{title}</div>
                     <div className='text-sm mt-2 mb-2'>이름</div>
-                    <div className='rounded border border-gray-300 w-full px-3 py-1.5 focus-within:border-gray-600 transition-all duration-200'>
-                        <input
-                            ref={inputRef}
-                            className='border-none text-sm outline-none bg-transparent w-full'
-                            type="text"
-                            value={value}
-                            onChange={(e) => setValue(e.target.value)}
-                            placeholder={placeholder} />
-                    </div>
+                    <CommonInput
+                        type="text"
+                        value={value}
+                        setValue={setValue}
+                        placeholder={placeholder}
+                        isInvalidInfo={isInvalidInfo}
+                        autoFocus={true} />
                 </div>
                 {/* 하단 버튼 영역 */}
                 <div className='flex justify-end text-sm gap-3.5'>
