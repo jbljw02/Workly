@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation";
 import PINoticeModal from "../button/PINoticeModal";
 import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
 import { auth } from "../../../firebase/firebasedb";
+import EmailVerifyModal from "../modal/EmailVerifyModal";
 
 export default function SignUp() {
     const router = useRouter();
@@ -46,6 +47,7 @@ export default function SignUp() {
 
     const [isPIModalOpen, setIsPIModalOpen] = useState(false);
     const [isVibrate, setIsVibrate] = useState(false);
+    const [emailVerifyModal, setEmailVerifyModal] = useState(false);
 
     // 개인정보 처리방침 동의 토글
     const checkPICheckBox = () => {
@@ -162,7 +164,7 @@ export default function SignUp() {
             !emailDuplicated.isInvalid &&
             !passwordInvalid.isInvalid &&
             !confirmPasswordInvalid.isInvalid) {
-                signUp();
+            signUp();
         }
         else {
             console.log("불만족")
@@ -175,6 +177,8 @@ export default function SignUp() {
         // const user = userCredential.user;
 
         // await sendEmailVerification(user);
+        setEmailVerifyModal(true);
+
     }
 
     return (
@@ -256,6 +260,9 @@ export default function SignUp() {
                         isAgreeForPersonalInfo: true,
                     }))}
                     category="회원가입" />
+                <EmailVerifyModal
+                    isModalOpen={emailVerifyModal}
+                    setIsModalOpen={setEmailVerifyModal} />
             </div>
         </div>
     )
