@@ -8,8 +8,11 @@ import GoogleLoginButton from '@/components/button/GoogleLoginButton';
 import HeaderButton from '@/app/header/HeaderButton';
 import DivideBar from './DivideBar';
 import AuthTop from './AuthTop';
+import { useRouter } from 'next/navigation';
 
-export default function Page() {
+export default function Login() {
+    const router = useRouter();
+
     const [formData, setFormData] = useState({
         email: '',
         password: '',
@@ -72,7 +75,9 @@ export default function Page() {
                 <div className='flex justify-between items-center text-sm w-full'>
                     <div className='flex flex-row gap-1.5'>
                         <div>아직 계정이 없으신가요?</div>
-                        <button className='text-blue-600 underline'>가입</button>
+                        <button 
+                        onClick={() => router.push('/signup')}
+                        className='text-blue-600 underline'>회원가입</button>
                     </div>
                     <div className='flex flex-row gap-1.5'>
                         <div>비밀번호를 잊으셨나요?</div>
