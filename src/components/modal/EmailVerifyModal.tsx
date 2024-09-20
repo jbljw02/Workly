@@ -2,10 +2,61 @@ import { ModalProps } from '@/types/modalProps';
 import { useState } from 'react';
 import Modal from 'react-modal';
 import CommonButton from '../button/CommonButton';
+import { auth } from '../../../firebase/firebasedb';
+import { useAppDispatch } from '@/redux/hooks';
+import { useRouter } from 'next/navigation';
+import axios from 'axios';
+import { setUser } from '@/redux/features/userSlice';
+import { sendEmailVerification } from '@firebase/auth';
 
 export default function EmailVerifyModal({ isModalOpen, setIsModalOpen }: ModalProps) {
+    const dispatch = useAppDispatch();
+    const router = useRouter();
+    const user = auth.currentUser;
+
     const [isVerify, setIsVerify] = useState<boolean>(true); // 이메일이 인증됐는지
     const [isVibrate, setIsVibrate] = useState<boolean>(false); // 진동 효과를 줄지
+
+    // 사용자의 이메일 인증 여부를 확인하고, 그에 따라 계정을 활성화할지 결정
+    const accountActivate = async () => {
+        if (user) {
+            // 사용자 상태 갱신
+            user.reload().then(async () => {
+                // 사용자의 이메일 인증이 완료된 경우
+                if (user.emailVerified) {
+                    const token = await user.getIdToken();
+                    await axios.post('/api/auth/emailToken', { token }, {
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Accept": "application/json"
+                        },
+                    });
+
+                    dispatch(setUser({
+                        name: user.displayName,
+                        email: user.email,
+                    }));
+
+                    router.push('/');
+                }
+                else {
+                    setIsVerify(false);
+
+                    // 이메일이 인증되지 않은 상태에서 '확인' 버튼을 클릭하면 진동 효과
+                    setIsVibrate(true);
+                    setTimeout(() => {
+                        setIsVibrate(false);
+                    }, 1000)
+                }
+            });
+        }
+    }
+
+    const resendMail = async () => {
+        if (user) {
+            await sendEmailVerification(user);
+        }
+    }
 
     return (
         <Modal
@@ -52,19 +103,19 @@ export default function EmailVerifyModal({ isModalOpen, setIsModalOpen }: ModalP
                     }
                 </div>
                 <div className="flex flex-row items-center justify-center gap-5 mt-5">
-                    <CommonButton
-                        style={{
-                            px: 'px-[91px]',
-                            py: 'py-2.5',
-                            textSize: 'text-base',
-                            textColor: 'text-white',
-                            bgColor: 'bg-black',
-                            hover: 'hover:bg-zinc-800'
-                        }}
-                        label="확인"
-                        onClick={() => {
-                            setIsModalOpen(false)
-                        }} />
+                    <div className={`${isVibrate && 'vibrate'}`}>
+                        <CommonButton
+                            style={{
+                                px: 'px-[91px]',
+                                py: 'py-2.5',
+                                textSize: 'text-base',
+                                textColor: 'text-white',
+                                bgColor: 'bg-black',
+                                hover: 'hover:bg-zinc-800'
+                            }}
+                            label="확인"
+                            onClick={accountActivate} />
+                    </div>
                     <CommonButton
                         style={{
                             px: 'px-[91px]',
@@ -75,7 +126,7 @@ export default function EmailVerifyModal({ isModalOpen, setIsModalOpen }: ModalP
                             hover: 'hover:bg-gray-100'
                         }}
                         label="재전송"
-                        onClick={() => setIsModalOpen(false)} />
+                        onClick={resendMail} />
                 </div>
             </div>
         </Modal>

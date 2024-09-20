@@ -25,7 +25,7 @@ export default function FormInput({
     return (
         <div className="w-full">
             <div className={`rounded border w-full px-3 py-2.5 transition-all duration-200
-                ${isInvalidInfo.isInvalid ? 'border-red-500' : 'border-gray-300 focus-within:border-gray-600'}`}>
+                ${isInvalidInfo?.isInvalid ? 'border-red-500' : 'border-gray-300 focus-within:border-gray-600'}`}>
                 <input
                     type={type}
                     name={name}
@@ -36,7 +36,7 @@ export default function FormInput({
                     placeholder={placeholder} />
             </div>
             {
-                isInvalidInfo.isInvalid &&
+                isInvalidInfo?.isInvalid &&
                 <div className="text-[13px] mt-2 pl-0.5 text-red-500">{isInvalidInfo.msg}</div>
             }
         </div>

@@ -12,6 +12,7 @@ import PINoticeModal from "../button/PINoticeModal";
 import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
 import { auth } from "../../../firebase/firebasedb";
 import EmailVerifyModal from "../modal/EmailVerifyModal";
+import { FirebaseError } from "firebase-admin";
 
 export default function SignUp() {
     const router = useRouter();
@@ -21,6 +22,7 @@ export default function SignUp() {
     const pwdRegex = /^(?=.*[!@#$%^&*(),.?":{}|<>]).{6,}$/;
 
     const [formData, setFormData] = useState({
+        name: '',
         email: '',
         password: '',
         confirmPassword: '',
@@ -156,7 +158,8 @@ export default function SignUp() {
             4. 이메일과 비밀번호가 정규식을 따라야 함
             5. 이메일이 이미 존재하지 않아야 함
         */
-        if (formData.email &&
+        if (formData.name &&
+            formData.email &&
             formData.password &&
             formData.password === formData.confirmPassword &&
             formData.isAgreeForPersonalInfo &&
@@ -173,12 +176,30 @@ export default function SignUp() {
     }
 
     const signUp = async () => {
-        // const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password)
-        // const user = userCredential.user;
+        try {
+            const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password)
+            const user = userCredential.user;
 
-        // await sendEmailVerification(user);
-        setEmailVerifyModal(true);
+            console.log(user);
 
+            // 이메일을 전송한 후,
+            await sendEmailVerification(user);
+
+            // 이메일 인증 여부를 확인하는 모달을 띄움
+            setEmailVerifyModal(true);
+        }
+        catch (error) {
+            // 이미 사용중인 이메일
+            if ((error as FirebaseError).code === 'auth/email-already-in-use') {
+                setPasswordInvalid((prevState) => ({
+                    ...prevState,
+                    isInvalid: true,
+                }));
+            }
+            else {
+                throw error;
+            }
+        }
     }
 
     return (
@@ -192,13 +213,19 @@ export default function SignUp() {
                     className='flex flex-col gap-4 w-full'
                     noValidate>
                     <FormInput
+                        type="text"
+                        name="name"
+                        value={formData.name}
+                        setValue={formChange}
+                        placeholder='이름'
+                        autoFocus={true} />
+                    <FormInput
                         type="email"
                         name="email"
                         value={formData.email}
                         setValue={formChange}
                         placeholder='이메일 주소'
-                        isInvalidInfo={emailInvalid || emailDuplicated}
-                        autoFocus={true} />
+                        isInvalidInfo={emailInvalid || emailDuplicated} />
                     <FormInput
                         type="password"
                         name="password"
@@ -223,7 +250,7 @@ export default function SignUp() {
                             hover: 'hover:bg-blue-700'
                         }}
                         label="회원가입"
-                        value={formData.email && formData.password && formData.confirmPassword}
+                        value={formData.name && formData.email && formData.password && formData.confirmPassword}
                         onClick={formSubmit} />
                 </form>
                 {/* 로그인 영역과 SNS 로그인 영역을 구분하는 바 */}
@@ -241,7 +268,9 @@ export default function SignUp() {
                         <div>
                             <button
                                 onClick={() => setIsPIModalOpen(true)}
-                                className={`underline ${isVibrate && 'vibrate'} ${(formData.isSubmitted && !formData.isAgreeForPersonalInfo) && 'text-red-500'}`}>개인정보 처리방침</button>
+                                className={`underline 
+                                ${isVibrate && 'vibrate'} 
+                                ${(formData.isSubmitted && !formData.isAgreeForPersonalInfo) && 'text-red-500'}`}>개인정보 처리방침</button>
                             에 동의합니다.
                         </div>
                     </div>
