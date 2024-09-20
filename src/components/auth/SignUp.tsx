@@ -4,36 +4,177 @@ import HeaderButton from "@/app/header/HeaderButton";
 import { useState } from "react";
 import GoogleLoginButton from "../button/GoogleLoginButton";
 import SubmitButton from "../button/SubmitButton";
-import CommonInput from "../input/CommonInput";
+import FormInput from "../input/FormInput";
 import AuthTop from "./AuthTop";
 import DivideBar from "./DivideBar";
 import { useRouter } from "next/navigation";
 import PINoticeModal from "../button/PINoticeModal";
+import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
+import { auth } from "../../../firebase/firebasedb";
 
 export default function SignUp() {
     const router = useRouter();
 
+    const emailRegex = /^[A-Za-z0-9_\.\-]+@[A-Za-z0-9\-]+\.[A-Za-z]{2,}$/;
+    // 비밀번호는 최소 6글자 이상이어야 하며, 특수문자를 하나 이상 포함해야 함
+    const pwdRegex = /^(?=.*[!@#$%^&*(),.?":{}|<>]).{6,}$/;
+
     const [formData, setFormData] = useState({
         email: '',
-        emailValid: false,
         password: '',
         confirmPassword: '',
         isAgreeForPersonalInfo: false,
         isSubmitted: false, // 제출 됐는지 여부
     });
 
-    const [isInvalidInfo, setIsInvalidInfo] = useState({
+    const [emailInvalid, setEmailInvalid] = useState({
         isInvalid: false,
-        msg: '이메일 혹은 비밀번호가 일치하지 않습니다',
+        msg: '유효한 이메일을 입력해주세요',
+    });
+    const [emailDuplicated, setEmailDuplicated] = useState({
+        isInvalid: false,
+        msg: '이미 존재하는 이메일입니다',
+    });
+    const [passwordInvalid, setPasswordInvalid] = useState({
+        isInvalid: false,
+        msg: '비밀번호는 6자 이상, 최소 한 개의 특수문자를 포함해야 합니다',
+    });
+    const [confirmPasswordInvalid, setConfirmPasswordInvalid] = useState({
+        isInvalid: false,
+        msg: '비밀번호가 일치하지 않습니다',
     });
 
     const [isPIModalOpen, setIsPIModalOpen] = useState(false);
+    const [isVibrate, setIsVibrate] = useState(false);
 
+    // 개인정보 처리방침 동의 토글
     const checkPICheckBox = () => {
         setFormData((prevState) => ({
             ...prevState,
             isAgreeForPersonalInfo: !prevState.isAgreeForPersonalInfo,
         }));
+    }
+
+    const formChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setFormData((prevState) => ({
+            ...prevState,
+            [name]: value,
+        }));
+
+        // 폼이 1회 이상 제출됐을 시에만
+        if (formData.isSubmitted) {
+            // 이메일이 정규식을 따르고 있는지 검사
+            if (e.target.name === 'email') {
+                if (emailRegex.test(e.target.value)) {
+                    setEmailInvalid((prevState) => ({
+                        ...prevState,
+                        isInvalid: false,
+                    }));
+                }
+                else {
+                    setEmailInvalid((prevState) => ({
+                        ...prevState,
+                        isInvalid: true,
+                    }));
+                }
+            }
+            // 비밀번호가 정규식을 따르고 있는지 검사
+            if (e.target.name === 'password') {
+                if (pwdRegex.test(e.target.value)) {
+                    setPasswordInvalid((prevState) => ({
+                        ...prevState,
+                        isInvalid: false,
+                    }));
+                }
+                else {
+                    setPasswordInvalid((prevState) => ({
+                        ...prevState,
+                        isInvalid: true,
+                    }));
+                }
+            }
+        }
+    };
+
+    const formSubmit = (e: { preventDefault: () => void; }) => {
+        e.preventDefault(); // form의 기본 동작을 막음(조건이 만족해야 전송되도록)
+
+        // 제출 여부 true
+        setFormData((prevState) => ({
+            ...prevState,
+            isSubmitted: true,
+        }));
+
+        // 이메일이 정규식을 따르지 않을 경우
+        if (!emailRegex.test(formData.email)) {
+            setEmailInvalid((prevState) => ({
+                ...prevState,
+                isInvalid: true,
+            }));
+        }
+
+        // 비밀번호가 정규식을 따르지 않을 경우
+        if (!pwdRegex.test(formData.password)) {
+            setPasswordInvalid((prevState) => ({
+                ...prevState,
+                isInvalid: true,
+            }));
+        }
+        // 정규식을 따른다면, 그 뒤엔 비밀번호 확인과 일치하는지 검사
+        else {
+            if (formData.password !== formData.confirmPassword) {
+                setConfirmPasswordInvalid((prevState) => ({
+                    ...prevState,
+                    isInvalid: true,
+                }));
+            }
+            else {
+                setConfirmPasswordInvalid((prevState) => ({
+                    ...prevState,
+                    isInvalid: false,
+                }));
+            }
+        }
+
+        // 개인정보 처리방침에 동의하지 않았을 경우 진동 효과
+        if (!formData.isAgreeForPersonalInfo) {
+            setIsVibrate(true);
+            setTimeout(() => {
+                setIsVibrate(false);
+            }, 1000);
+
+            return;
+        }
+
+        /* 
+            1. 공란이 없어야 함
+            2. 비밀번호와 비밀번호 확인란이 일치해야 함
+            3. 개인정보 처리방침에 동의해야 함
+            4. 이메일과 비밀번호가 정규식을 따라야 함
+            5. 이메일이 이미 존재하지 않아야 함
+        */
+        if (formData.email &&
+            formData.password &&
+            formData.password === formData.confirmPassword &&
+            formData.isAgreeForPersonalInfo &&
+            !emailInvalid.isInvalid &&
+            !emailDuplicated.isInvalid &&
+            !passwordInvalid.isInvalid &&
+            !confirmPasswordInvalid.isInvalid) {
+                signUp();
+        }
+        else {
+            console.log("불만족")
+        }
+
+    }
+
+    const signUp = async () => {
+        // const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password)
+        // const user = userCredential.user;
+
+        // await sendEmailVerification(user);
     }
 
     return (
@@ -46,34 +187,28 @@ export default function SignUp() {
                 <form
                     className='flex flex-col gap-4 w-full'
                     noValidate>
-                    <CommonInput
+                    <FormInput
                         type="email"
+                        name="email"
                         value={formData.email}
-                        setValue={(newEmail: string) => setFormData((prevState) => ({
-                            ...prevState,
-                            email: newEmail,
-                        }))}
+                        setValue={formChange}
                         placeholder='이메일 주소'
-                        isInvalidInfo={isInvalidInfo}
+                        isInvalidInfo={emailInvalid || emailDuplicated}
                         autoFocus={true} />
-                    <CommonInput
+                    <FormInput
                         type="password"
+                        name="password"
                         value={formData.password}
-                        setValue={(newPassword: string) => setFormData((prevState) => ({
-                            ...prevState,
-                            password: newPassword,
-                        }))}
+                        setValue={formChange}
                         placeholder='비밀번호'
-                        isInvalidInfo={isInvalidInfo} />
-                    <CommonInput
+                        isInvalidInfo={passwordInvalid} />
+                    <FormInput
                         type="password"
+                        name="confirmPassword"
                         value={formData.confirmPassword}
-                        setValue={(newPassword: string) => setFormData((prevState) => ({
-                            ...prevState,
-                            confirmPassword: newPassword,
-                        }))}
+                        setValue={formChange}
                         placeholder='비밀번호 확인'
-                        isInvalidInfo={isInvalidInfo} />
+                        isInvalidInfo={confirmPasswordInvalid} />
                     <SubmitButton
                         style={{
                             px: '',
@@ -85,7 +220,7 @@ export default function SignUp() {
                         }}
                         label="회원가입"
                         value={formData.email && formData.password && formData.confirmPassword}
-                        onClick={() => console.log("A")} />
+                        onClick={formSubmit} />
                 </form>
                 {/* 로그인 영역과 SNS 로그인 영역을 구분하는 바 */}
                 <DivideBar />
@@ -102,7 +237,7 @@ export default function SignUp() {
                         <div>
                             <button
                                 onClick={() => setIsPIModalOpen(true)}
-                                className="underline">개인정보 처리방침</button>
+                                className={`underline ${isVibrate && 'vibrate'} ${(formData.isSubmitted && !formData.isAgreeForPersonalInfo) && 'text-red-500'}`}>개인정보 처리방침</button>
                             에 동의합니다.
                         </div>
                     </div>

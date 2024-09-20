@@ -41,6 +41,7 @@
     "@tiptap/starter-kit": "^2.5.8",
     "cropperjs": "^1.6.2",
     "firebase": "^10.13.1",
+    "firebase-admin": "^12.5.0",
     "html2pdf.js": "^0.10.2",
     "next": "14.2.5",
     "next-redux-wrapper": "^8.1.0",
