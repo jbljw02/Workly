@@ -16,9 +16,7 @@ export default function EmailVerifyCheck() {
     // 사용자의 로그인 상태가 변경될 때마다 실행
     useEffect(() => {
         onAuthStateChanged(auth, (user) => {
-            console.log("상태 확인");
             if (user && user.emailVerified) {
-                console.log("이메일 인증 완료");
                 dispatch(setUser({
                     name: user.displayName,
                     email: user.email,
@@ -34,7 +32,6 @@ export default function EmailVerifyCheck() {
         const checkBeforeUnload = async () => {
             const user = auth.currentUser;
             if (user && !user.emailVerified) {
-                console.log("로그아웃");
                 logout();
             }
         };

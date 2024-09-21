@@ -172,7 +172,6 @@ export default function SignUp() {
         else {
             console.log("불만족")
         }
-
     }
 
     const signUp = async () => {
