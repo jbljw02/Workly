@@ -1,5 +1,6 @@
 import { AnyAction, UnknownAction, combineReducers, configureStore } from '@reduxjs/toolkit';
 import { HYDRATE, createWrapper } from "next-redux-wrapper";
+import userReducers from './features/userSlice';
 import scaleReducers from './features/scaleSlice';
 import editorImageReducers from './features/editorImageSlice';
 import fileReducers from './features/fileSlice';
@@ -10,6 +11,7 @@ import documentReducers from './features/documentSlice';
 import folderReducers from './features/folderSlice';
 
 const combinedReducer = combineReducers({
+    user: userReducers.user,
     editorScale: scaleReducers.editorScale,
     imageDimension: editorImageReducers.imageDimension,
     crop: editorImageReducers.crop,

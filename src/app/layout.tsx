@@ -5,6 +5,8 @@ import { makeStore, AppStore } from "@/redux/store";
 import { useRef } from "react";
 import { Provider } from "react-redux";
 import Aside from '@/components/aside/Aside';
+import { useAppDispatch } from '@/redux/hooks';
+import EmailVerifyCheck from '@/components/global/EmailVerifyCheck';
 
 export default function RootLayout({
   children,
@@ -25,6 +27,7 @@ export default function RootLayout({
       <body className="flex min-h-screen">
         <Provider store={storeRef.current}>
           {/* <Aside /> */}
+          <EmailVerifyCheck />
           {children}
         </Provider>
       </body>

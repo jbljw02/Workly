@@ -59,3 +59,30 @@ input[type="number"] {
 .flexbox-fix:nth-child(3) div input {
   text-align: center;
 }
+
+@keyframes vibrate {
+  0% {
+    transform: translateX(0);
+  }
+
+  25% {
+    transform: translateX(-1.5px);
+  }
+
+  50% {
+    transform: translateX(1.5px);
+  }
+
+  75% {
+    transform: translateX(-1.5px);
+  }
+
+  100% {
+    transform: translateX(1.5px);
+  }
+}
+
+.vibrate {
+  display: inline-block;
+  animation: vibrate 0.3s infinite;
+}

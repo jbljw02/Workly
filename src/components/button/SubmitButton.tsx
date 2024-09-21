@@ -11,7 +11,7 @@ type SubmitButtonProps = {
     style: StyleProps;
     label: string;
     value: string;
-    onClick?: () => void;
+    onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
 };
 
 export default function SubmitButton({ style, label, value, onClick }: SubmitButtonProps) {

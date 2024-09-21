@@ -109,7 +109,6 @@ export default function FolderSection({ isCollapsed }: FolderSectionProps) {
                     submitFunction={addNewFolder}
                     isInvalidInfo={isDuplicatedInfo}
                     placeholder="새 폴더의 이름을 입력해주세요" />
-
             </div> :
             <SidebarItem
                 Icon={FolderIcon}

@@ -5,6 +5,7 @@ import LogoIcon from '../../../public/svgs/logo.svg';
 import CommonButton from '../button/CommonButton';
 import Header from './child/Header';
 import Footer from './child/Footer';
+import logout from '@/utils/logout';
 
 export default function Home() {
     const router = useRouter();
@@ -43,7 +44,7 @@ export default function Home() {
                                 hover: 'hover:scale-105'
                             }}
                             label="문의 남기기"
-                            onClick={() => router.push('/contact')} />
+                            onClick={logout} />
                     </div>
                 </div>
             </div>
