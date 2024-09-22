@@ -1,10 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import cookie from 'cookie';
+import admin from '../../../../../firebase/firebaseAdmin';
 
 // 이메일로 로그인시 생성된 토큰을 검증
 export async function POST(req: NextRequest) {
     try {
         const { token } = await req.json();
+        
+        const decodedToken = await admin.auth().verifyIdToken(token);
 
         // 쿠키 설정
         const authCookie = cookie.serialize('authToken', token, {

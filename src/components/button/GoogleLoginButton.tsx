@@ -30,7 +30,7 @@ export default function GoogleLoginButton() {
             if (!token) throw new Error("사용자 토큰을 생성하지 못했습니다.");
 
             // 파이어베이스 토큰 인증
-            await axios.post('/api/auth/googleToken', { token }, {
+            await axios.post('/api/auth/emailToken', { token }, {
                 headers: {
                     "Content-Type": "application/json",
                     "Accept": "application/json"
@@ -41,7 +41,7 @@ export default function GoogleLoginButton() {
                 name: user.displayName,
                 email: user.email,
             }))
-            router.push('/');
+            router.push('/editor/home');
             
             return { user: { name: user.displayName, email: user.email } };
         } catch (error) {
