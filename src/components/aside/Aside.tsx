@@ -27,7 +27,7 @@ import Image from "next/image";
 import { auth } from "../../../firebase/firebasedb";
 import { onAuthStateChanged } from "firebase/auth";
 import logout from "@/utils/logout";
-import UserSection from "./child/UserSection";
+import UserSection from "./child/user/UserSection";
 
 export default function Aside() {
     const dispatch = useAppDispatch();
@@ -133,7 +133,7 @@ export default function Aside() {
             {/* 검색창 및 작업 추가 영역 */}
             <SearchInput isCollapsed={isCollapsed} />
             {/* 메뉴를 모아놓은 영역 */}
-            <div className="border-b border-b-neutral-300 mb-6 mt-3 pb-6">
+            <div className="border-b border-b-neutral-300 mb-6 mt-2 pb-6">
                 <SidebarItem
                     Icon={HomeIcon}
                     IconWidth="17"

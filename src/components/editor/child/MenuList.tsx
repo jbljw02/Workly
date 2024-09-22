@@ -21,7 +21,7 @@ type MenuListProps = {
 export default function MenuList({ menuList, setListOpen, listPositon }: MenuListProps) {
     return (
         <div
-            className={`absolute bg-white rounded-md py-1.5 z-10 border border-neutral-300 shadow-[0px_4px_10px_rgba(0,0,0,0.25)]`}
+            className={`absolute bg-white rounded py-1.5 z-10 border border-neutral-300 shadow-[0px_4px_10px_rgba(0,0,0,0.25)]`}
             style={{ top: listPositon.top, right: listPositon.right }}>
             <ul className="list-none text-sm m-0 p-0">
                 {

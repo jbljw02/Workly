@@ -19,9 +19,11 @@ type FolderItemProps = {
 
 function FolderItem({ folderName }: FolderItemProps) {
     return (
-        <div className="flex items-center pl-2.5 pr-1.5 w-full h-7 rounded cursor-pointer hover:bg-gray-100 group">
-            <FolderIcon width="16" />
-            <div className="ml-2.5 text-sm whitespace-nowrap overflow-hidden">
+        <div className="flex flex-row items-center pl-2.5 pr-1.5 w-full h-7 rounded cursor-pointer hover:bg-gray-100 group">
+            <div className="flex-shrink-0">
+                <FolderIcon width="16" />
+            </div>
+            <div className="ml-2.5 text-sm truncate">
                 {folderName}
             </div>
         </div>
@@ -82,7 +84,7 @@ export default function FolderSection({ isCollapsed }: FolderSectionProps) {
     return (
         // Aside의 width에 따라 각각 다른 레이아웃 출력
         !isCollapsed ?
-            <div className="mb-3">
+            <div className="w-full mb-3 overflow-hidden">
                 <div className="mb-1.5 ml-2 text-[13px] font-semibold">폴더</div>
                 <FolderItem folderName="이진우의 폴더" />
                 {
