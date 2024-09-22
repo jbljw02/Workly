@@ -37,7 +37,7 @@ export default function EmailVerifyModal({ isModalOpen, setIsModalOpen }: ModalP
                         email: user.email,
                     }));
 
-                    router.push('/');
+                    router.push('/editor/home');
                 }
                 else {
                     setIsVerify(false);

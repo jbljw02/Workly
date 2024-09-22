@@ -179,8 +179,6 @@ export default function SignUp() {
             const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password)
             const user = userCredential.user;
 
-            console.log(user);
-
             // 이메일을 전송한 후,
             await sendEmailVerification(user);
 

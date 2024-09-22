@@ -1,11 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import cookie from 'cookie';
+import admin from "../../../../../firebase/firebaseAdmin";
 
 // POST 메서드로 처리
 export async function POST(req: NextRequest) {
     try {
-        const body = await req.json();
-        const token = body.token;
+        const { token } = await req.json();
+
+        const decodedToken = await admin.auth().verifyIdToken(token);
 
         // 토큰을 검증하고 JWT 쿠키로 설정
         const cookieHeader = cookie.serialize('authToken', token, {

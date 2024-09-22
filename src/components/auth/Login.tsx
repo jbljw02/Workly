@@ -73,7 +73,7 @@ export default function Login() {
                     setEmailVerifiedFail(false);
                     getEmailToken();
 
-                    router.push('/');
+                    router.push('/editor/home');
                 }
                 // 이메일 인증이 완료되지 않았을 경우, 인증 모달 팝업
                 else {
