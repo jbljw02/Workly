@@ -4,7 +4,7 @@ import MenuIcon from '../../../../public/svgs/editor/menu-horizontal.svg'
 import ShareIcon from '../../../../public/svgs/editor/share-folder.svg'
 import HoverTooltip from './HoverTooltip'
 import ToolbarButton from './ToolbarButton'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import EditIcon from '../../../../public/svgs/editor/edit.svg'
 import LinkCopyIcon from '../../../../public/svgs/editor/link.svg'
 import DownloadIcon from '../../../../public/svgs/editor/download.svg'
@@ -19,6 +19,7 @@ import formatTimeDiff from '@/utils/formatTimeDiff'
 import { DocumentProps } from '@/redux/features/documentSlice'
 import html2pdf from 'html2pdf.js';
 import { Editor } from '@tiptap/react'
+import { useClickOutside } from '@/components/hooks/useClickOutside'
 
 type EditorHeaderProps = {
     editor: Editor,
@@ -107,6 +108,10 @@ export default function EditorHeader({
         return () => clearInterval(updatedTimeInterval);
     }, [selectedDoc?.updatedAt]);
 
+    const optionRef = useRef<HTMLDivElement>(null);
+
+    useClickOutside(optionRef, () => setMenuListOpen(false), optionRef);
+
     return (
         <div className='flex flex-row justify-between pl-3 pr-5 py-3'>
             {/* 헤더 좌측 영역 */}
@@ -131,20 +136,24 @@ export default function EditorHeader({
                         Icon={LockIcon}
                         iconWidth={20} />
                 </HoverTooltip>
-                <HoverTooltip label="옵션">
-                    <ToolbarButton
-                        Icon={MenuIcon}
-                        iconWidth={25}
-                        onClick={() => setMenuListOpen(true)} />
-                </HoverTooltip>
-                {
-                    menuListOpen &&
-                    <MenuList
-                        menuList={menuItems}
-                        setListOpen={setMenuListOpen}
-                        listPositon={{ top: '46px', right: '18px' }} />
-                }
+                <div
+                    onClick={() => setMenuListOpen(!menuListOpen)}
+                    ref={optionRef}>
+                    <HoverTooltip label="옵션">
+                        <ToolbarButton
+                            Icon={MenuIcon}
+                            iconWidth={25}
+                            onClick={() => setMenuListOpen(true)} />
+                    </HoverTooltip>
+                    {
+                        menuListOpen &&
+                        <MenuList
+                            menuList={menuItems}
+                            setListOpen={setMenuListOpen}
+                            listPositon={{ top: '46px', right: '18px' }} />
+                    }
+                </div>
             </div>
-        </div>
+        </div >
     )
 }

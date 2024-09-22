@@ -4,20 +4,23 @@ import { MenuItemProps } from "./MenuItem";
 import { useClickOutside } from "@/components/hooks/useClickOutside";
 import HorizontalDivider from "./divider/HorizontalDivider";
 
+type ListPosition = {
+    top: string;
+} & (
+        // right와 left중 하나만 인자로 받음
+        { right: string; left?: never } |
+        { left: string; right?: never }
+    );
+
 type MenuListProps = {
     menuList: MenuItemProps[];
     setListOpen: React.Dispatch<React.SetStateAction<boolean>>;
-    listPositon: { top: string, right: string }
+    listPositon: ListPosition
 }
 
 export default function MenuList({ menuList, setListOpen, listPositon }: MenuListProps) {
-    const menuRef = useRef<HTMLDivElement>(null);
-
-    useClickOutside(menuRef, () => setListOpen(false));
-
     return (
         <div
-            ref={menuRef}
             className={`absolute bg-white rounded-md py-1.5 z-10 border border-neutral-300 shadow-[0px_4px_10px_rgba(0,0,0,0.25)]`}
             style={{ top: listPositon.top, right: listPositon.right }}>
             <ul className="list-none text-sm m-0 p-0">

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import SidebarItem from "./child/SidebarItem";
 import SearchInput from "./child/SearchInput";
 import TrashIcon from '../../../public/svgs/trash.svg';
@@ -23,6 +23,11 @@ import { useAppDispatch } from "@/redux/hooks";
 import { addDocuments, DocumentProps } from "@/redux/features/documentSlice";
 import { useRouter } from "next/navigation";
 import FolderSection from "./child/FolderSection";
+import Image from "next/image";
+import { auth } from "../../../firebase/firebasedb";
+import { onAuthStateChanged } from "firebase/auth";
+import logout from "@/utils/logout";
+import UserSection from "./child/UserSection";
 
 export default function Aside() {
     const dispatch = useAppDispatch();
@@ -103,7 +108,7 @@ export default function Aside() {
     return (
         <aside
             ref={sidebarRef}
-            className={`relative p-4 pt-7 flex flex-col transition-width duration-300 ease-in-out`}
+            className={`relative p-4 pt-5 flex flex-col transition-width duration-300 ease-in-out`}
             style={{
                 width: `${sidebarWidth}px`,
                 transitionProperty: 'width',
@@ -124,10 +129,11 @@ export default function Aside() {
                     backgroundColor: '#D1D5DB',
                     transition: 'width 0.2s ease',
                 }} />
+            <UserSection />
             {/* 검색창 및 작업 추가 영역 */}
             <SearchInput isCollapsed={isCollapsed} />
             {/* 메뉴를 모아놓은 영역 */}
-            <div className="border-b border-b-neutral-300 mb-6 mt-4 pb-6">
+            <div className="border-b border-b-neutral-300 mb-6 mt-3 pb-6">
                 <SidebarItem
                     Icon={HomeIcon}
                     IconWidth="17"
@@ -167,6 +173,7 @@ export default function Aside() {
                 Icon={InviteIcon}
                 IconWidth="19"
                 label="멤버 추가"
+                onClick={() => logout(router)}
                 isCollapsed={isCollapsed} />
         </aside>
     );

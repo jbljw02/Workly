@@ -38,11 +38,12 @@ export default function GoogleLoginButton() {
             });
 
             dispatch(setUser({
-                name: user.displayName,
+                displayName: user.displayName,
                 email: user.email,
+                photoURL: user.photoURL,
             }))
             router.push('/editor/home');
-            
+
             return { user: { name: user.displayName, email: user.email } };
         } catch (error) {
             throw error;

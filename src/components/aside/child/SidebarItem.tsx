@@ -28,8 +28,8 @@ export default function SidebarItem({
                 (addClick && !isCollapsed) &&
                 <div
                     onClick={(e) => {
-                        e.stopPropagation();  // 부모 요소로의 이벤트 전파 방지
-                        addClick();          // addClick 이벤트 호출
+                        e.stopPropagation();
+                        addClick();
                     }}
                     className="flex items-center h-auto text-neutral-400 opacity-0 group-hover:opacity-100 transition-opacity">
                     <PlusIcon

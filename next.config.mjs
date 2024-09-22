@@ -7,7 +7,7 @@ const nextConfig = {
       ...config.experiments,
       asyncWebAssembly: true, // WebAssembly 활성화
     };
-    
+
     config.module.rules.push({
       test: /\.svg$/,
       use: [
@@ -19,9 +19,12 @@ const nextConfig = {
         },
       ],
     });
-    
+
     return config;
   },
+  images: {
+    domains: ['lh3.googleusercontent.com'],
+  }
 };
 
 export default nextConfig;
