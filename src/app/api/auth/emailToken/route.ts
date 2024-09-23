@@ -6,7 +6,7 @@ import admin from '../../../../../firebase/firebaseAdmin';
 export async function POST(req: NextRequest) {
     try {
         const { token } = await req.json();
-        
+
         const decodedToken = await admin.auth().verifyIdToken(token);
 
         // 쿠키 설정
@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
             path: '/',
         });
 
-        const response = NextResponse.json({ success: "토큰 인증 성공 및 JWT 쿠키 설정 완료" });
+        const response = NextResponse.json({ success: "토큰 인증 성공 및 JWT 쿠키 설정 완료" }, { status: 200 });
         response.headers.set('Set-Cookie', authCookie);
 
         return response;

@@ -5,8 +5,9 @@ import { makeStore, AppStore } from "@/redux/store";
 import { useRef } from "react";
 import { Provider } from "react-redux";
 import Aside from '@/components/aside/Aside';
-import { useAppDispatch } from '@/redux/hooks';
 import EmailVerifyCheck from '@/components/global/EmailVerifyCheck';
+import { usePathname } from 'next/navigation';
+import { auth } from '../../firebase/firebasedb';
 
 export default function RootLayout({
   children,
@@ -18,7 +19,7 @@ export default function RootLayout({
     // 첫 렌더링 시에 스토어를 생성
     storeRef.current = makeStore();
   }
-
+  const pathname = usePathname();
   return (
     <html lang="en" className="w-full h-full text-[#212121]">
       <head>
@@ -26,7 +27,10 @@ export default function RootLayout({
       </head>
       <body className="flex min-h-screen">
         <Provider store={storeRef.current}>
-          {/* <Aside /> */}
+          {
+            pathname.startsWith('/editor') &&
+            <Aside />
+          }
           <EmailVerifyCheck />
           {children}
         </Provider>

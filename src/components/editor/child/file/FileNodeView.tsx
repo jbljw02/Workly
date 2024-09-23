@@ -15,6 +15,7 @@ import DeleteIcon from '../../../../../public/svgs/trash.svg'
 import MenuList from '../MenuList';
 import { v4 as uuidv4 } from 'uuid';
 import { MenuItemProps } from '../MenuItem';
+import { useClickOutside } from '@/components/hooks/useClickOutside';
 
 interface FileNodeProps {
     attrs: FileNode;
@@ -67,7 +68,8 @@ export default function FileNodeView({ editor, node }: FileNodeViewProps) {
             mimeType: mimeType,
             size: size,
         }));
-        setMenuListOpen(true);
+
+        setMenuListOpen(!menuListOpen);
     }
 
     // 파일 드래그 종료
@@ -184,6 +186,8 @@ export default function FileNodeView({ editor, node }: FileNodeViewProps) {
         }
     ];
 
+    useClickOutside(fileRef, () => setMenuListOpen(false), fileRef);
+
     return (
         <>
             <NodeViewWrapper
@@ -202,6 +206,7 @@ export default function FileNodeView({ editor, node }: FileNodeViewProps) {
                                 <FileEditInput
                                     editor={editor}
                                     node={node}
+                                    isEditing={isEditing}
                                     setIsEditing={setIsEditing} /> :
                                 <div className='ml-1'>{title}</div>
                         }

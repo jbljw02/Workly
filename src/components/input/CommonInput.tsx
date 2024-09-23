@@ -23,7 +23,7 @@ export default function CommonInput({
     return (
         <>
             <div className={`rounded border w-full px-3 py-2.5 transition-all duration-200
-                ${isInvalidInfo.isInvalid ? 'border-red-500' : 'border-gray-300 focus-within:border-gray-600'}`}>
+                ${isInvalidInfo?.isInvalid ? 'border-red-500' : 'border-gray-300 focus-within:border-gray-600'}`}>
                 <input
                     type={type}
                     ref={inputRef}
@@ -33,8 +33,11 @@ export default function CommonInput({
                     placeholder={placeholder} />
             </div>
             {
-                isInvalidInfo.isInvalid &&
-                <div className="text-[13px] mt-2 pl-0.5 text-red-500">{isInvalidInfo.msg}</div>
+                isInvalidInfo?.isInvalid && isInvalidInfo?.msg && (
+                    <div className="text-[13px] mt-2 pl-0.5 text-red-500">
+                        {isInvalidInfo.msg}
+                    </div>
+                )
             }
         </>
     )

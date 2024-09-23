@@ -9,7 +9,7 @@ import AuthTop from "./AuthTop";
 import DivideBar from "./DivideBar";
 import { useRouter } from "next/navigation";
 import PINoticeModal from "../button/PINoticeModal";
-import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
+import { createUserWithEmailAndPassword, sendEmailVerification, updateProfile } from "firebase/auth";
 import { auth } from "../../../firebase/firebasedb";
 import EmailVerifyModal from "../modal/EmailVerifyModal";
 import { FirebaseError } from "firebase-admin";
@@ -178,6 +178,10 @@ export default function SignUp() {
         try {
             const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password)
             const user = userCredential.user;
+
+            await updateProfile(user, {
+                displayName: formData.name, // formData.name을 displayName으로 설정
+            });
 
             // 이메일을 전송한 후,
             await sendEmailVerification(user);

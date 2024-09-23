@@ -153,8 +153,9 @@ export default function Editor({ docId }: { docId: string }) {
     createdAt: '',
     updatedAt: '',
     author: {
-      email: '',
-      name: '',
+      email: null,
+      displayName: null,
+      photoURL: null,
     },
   });
   // 문서의 마지막 편집 시간에 따른 출력값

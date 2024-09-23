@@ -1,5 +1,6 @@
 import { SidebarItemProps } from "@/types/sidebarProps";
 import PlusIcon from '../../../../public/svgs/plus.svg';
+import GroupHoverItem from "./GroupHoverItem";
 
 export default function SidebarItem({
     Icon,
@@ -17,25 +18,21 @@ export default function SidebarItem({
                 {/* 사이드바가 확장된 경우에만 텍스트 표시 */}
                 {
                     !isCollapsed && (
-                        <div className="ml-2.5 text-sm whitespace-nowrap overflow-hidden">
+                        <div className="ml-2.5 text-sm whitespace-nowrap select-none overflow-hidden">
                             {label}
                         </div>
                     )
                 }
             </div>
-
             {
                 (addClick && !isCollapsed) &&
-                <div
+                <GroupHoverItem
+                    Icon={PlusIcon}
+                    IconWidth={15}
                     onClick={(e) => {
-                        e.stopPropagation();  // 부모 요소로의 이벤트 전파 방지
-                        addClick();          // addClick 이벤트 호출
-                    }}
-                    className="flex items-center h-auto text-neutral-400 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <PlusIcon
-                        className="hover:bg-gray-200 p-1"
-                        width="23" />
-                </div>
+                        e.stopPropagation();
+                        addClick();
+                    }} />
             }
         </div>
     );

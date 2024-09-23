@@ -1,27 +1,30 @@
-import { setUser } from "@/redux/features/userSlice";
+import { clearUser, setUser } from "@/redux/features/userSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks"
 import { onAuthStateChanged } from "firebase/auth";
 import { useEffect } from "react";
 import { auth } from "../../../firebase/firebasedb";
 import getEmailToken from "@/utils/getEmailToken";
 import logout from "@/utils/logout";
+import { useRouter } from "next/navigation";
 
 export default function EmailVerifyCheck() {
     const dispatch = useAppDispatch();
-
-    const user = useAppSelector(state => state.user);
-
-    console.log(user);
+    const router = useRouter();
 
     // 사용자의 로그인 상태가 변경될 때마다 실행
     useEffect(() => {
         onAuthStateChanged(auth, (user) => {
+            console.log("유저: ", user);
             if (user && user.emailVerified) {
                 dispatch(setUser({
-                    name: user.displayName,
+                    displayName: user.displayName,
                     email: user.email,
-                }));
+                    photoURL: user.photoURL,
+                }))
                 getEmailToken();
+            }
+            else {
+                dispatch(clearUser());
             }
         });
     }, [dispatch]);
@@ -32,7 +35,7 @@ export default function EmailVerifyCheck() {
         const checkBeforeUnload = async () => {
             const user = auth.currentUser;
             if (user && !user.emailVerified) {
-                logout();
+                logout(router);
             }
         };
 
