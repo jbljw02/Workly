@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { JSONContent } from "@tiptap/react";
-import { User } from "./userSlice";
+import { UserProps } from "./userSlice";
 
 export type DocumentProps = {
     id: string;
@@ -8,7 +8,7 @@ export type DocumentProps = {
     docContent: JSONContent | null;
     createdAt: string;
     updatedAt: string;
-    author: User;
+    author: UserProps;
     collaborators?: string[];
 }
 

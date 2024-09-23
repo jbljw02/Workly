@@ -206,6 +206,7 @@ export default function FileNodeView({ editor, node }: FileNodeViewProps) {
                                 <FileEditInput
                                     editor={editor}
                                     node={node}
+                                    isEditing={isEditing}
                                     setIsEditing={setIsEditing} /> :
                                 <div className='ml-1'>{title}</div>
                         }

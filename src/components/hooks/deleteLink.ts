@@ -2,7 +2,11 @@ import { LinkTooltip, setLinkTooltip } from "@/redux/features/linkSlice";
 import { Editor } from "@tiptap/react";
 import { AppDispatch } from "@/redux/store";
 
-export default function deleteLink(editor: Editor, linkTooltip: LinkTooltip, dispatch: AppDispatch) {
+export default function deleteLink(
+    editor: Editor,
+    linkTooltip: LinkTooltip,
+    dispatch: AppDispatch
+) {
     // 링크가 존재하지 않거나 선택되지 않았을 경우
     if (!linkTooltip.id || !linkTooltip.href || !linkTooltip.position) {
         return;

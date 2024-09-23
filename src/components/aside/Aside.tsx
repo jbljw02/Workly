@@ -22,7 +22,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { useAppDispatch } from "@/redux/hooks";
 import { addDocuments, DocumentProps } from "@/redux/features/documentSlice";
 import { useRouter } from "next/navigation";
-import FolderSection from "./child/FolderSection";
+import FolderSection from "./child/folder/FolderSection";
 import Image from "next/image";
 import { auth } from "../../../firebase/firebasedb";
 import { onAuthStateChanged } from "firebase/auth";

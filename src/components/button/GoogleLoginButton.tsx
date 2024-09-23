@@ -37,11 +37,20 @@ export default function GoogleLoginButton() {
                 },
             });
 
+            // 사용자의 초기 정보를 설정
+            await axios.post('/api/auth/userInitialData', { user }, {
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json"
+                },
+            });
+
             dispatch(setUser({
                 displayName: user.displayName,
                 email: user.email,
                 photoURL: user.photoURL,
             }))
+            
             router.push('/editor/home');
 
             return { user: { name: user.displayName, email: user.email } };

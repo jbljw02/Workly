@@ -1,16 +1,20 @@
 import { useClickOutside } from "@/components/hooks/useClickOutside";
 import { setFileNode } from "@/redux/features/fileSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { Editor } from "@tiptap/react";
 import { useEffect, useRef, useState } from "react";
 import { FileNodeViewProps } from "./FileNodeView";
 import InputControlSpan from "@/components/input/InputControlSpan";
 
 interface FileEditInput extends FileNodeViewProps {
+    isEditing: boolean;
     setIsEditing: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function FileEditInput({ editor, node, setIsEditing }: FileEditInput) {
+export default function FileEditInput({
+    editor,
+    node,
+    isEditing,
+    setIsEditing }: FileEditInput) {
     const dispatch = useAppDispatch();
 
     const { title } = node.attrs;
@@ -27,11 +31,6 @@ export default function FileEditInput({ editor, node, setIsEditing }: FileEditIn
     useClickOutside(containerRef, () => setIsEditing(false));
 
     useEffect(() => {
-        // input에 포커스를 둠
-        if (inputRef.current) {
-            inputRef.current.focus();
-        }
-
         // 파일명과 확장자 분리
         const dotIndex = title.lastIndexOf('.'); // 마지막 .의 인덱스를 찾음
         if (dotIndex !== -1) {
@@ -51,6 +50,15 @@ export default function FileEditInput({ editor, node, setIsEditing }: FileEditIn
         }
     }, [fileTitle]);
 
+    useEffect(() => {
+        if (isEditing && inputRef.current) {
+            setTimeout(() => {
+                inputRef.current?.focus();
+                inputRef.current?.select();
+            }, 0);  // 브라우저 렌더링 이후에 select 호출
+        }
+    }, [isEditing]);
+
     const fileTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFileTitle(e.target.value);
     }
@@ -59,7 +67,7 @@ export default function FileEditInput({ editor, node, setIsEditing }: FileEditIn
     const completeEdit = (e: React.KeyboardEvent<HTMLInputElement>) => {
         // 엔터키를 누를 시에 작업을 마침
         if (e.key === 'Enter') {
-            const updatedTitle = fileTitle + fileMimeType; // 파일명과 확장자를 합함
+            const updatedTitle = fileTitle + fileMimeType; // 파일명과 확장자를 결합
 
             dispatch(setFileNode({
                 ...fileNode,
