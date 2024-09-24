@@ -4,7 +4,7 @@ import PlusIcon from '../../../../../public/svgs/add-folder.svg';
 import { useCallback, useEffect, useRef, useState } from "react";
 import AddInputModal from "@/components/modal/AddInputModal";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { addFolders, Folder, setFolders } from "@/redux/features/folderSlice";
+import { addFolders, deleteFolders, Folder, setFolders } from "@/redux/features/folderSlice";
 import { v4 as uuidv4 } from 'uuid';
 import axios from 'axios';
 import FolderItem from "./FolderItem";
@@ -70,6 +70,7 @@ export default function FolderSection({ isCollapsed }: FolderSectionProps) {
                 await getUserFolder(user.email, dispatch);
             } catch (error) {
                 console.error("폴더 추가 실패: ", error);
+                dispatch(deleteFolders(addedFolder.id));
             }
         }
     }

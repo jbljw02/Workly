@@ -10,6 +10,7 @@ export type DocumentProps = {
     updatedAt: string;
     author: UserProps;
     collaborators?: string[];
+    folderName: string;
 }
 
 const DocumentsState: DocumentProps[] = [];
@@ -34,9 +35,7 @@ export const documentSlice = createSlice({
     },
 })
 
-export const { addDocuments } = documentSlice.actions;
-export const { updateDocuments } = documentSlice.actions;
-export const { deleteDocuments } = documentSlice.actions;
+export const { addDocuments, updateDocuments, deleteDocuments } = documentSlice.actions;
 
 const reducers = {
     documents: documentSlice.reducer,

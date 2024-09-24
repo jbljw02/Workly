@@ -56,10 +56,10 @@ export async function GET(req: NextRequest) {
 // 폴더명 수정 - UPDATE
 export async function PUT(req: NextRequest) {
     try {
-        const { email, folderID, newFolderName } = await req.json();
+        const { email, folderId, newFolderName } = await req.json();
 
         if (!email) return NextResponse.json({ error: "이메일이 제공되지 않음" }, { status: 400 });
-        if (!folderID) return NextResponse.json({ error: "폴더 아이디가 제공되지 않음" }, { status: 400 });
+        if (!folderId) return NextResponse.json({ error: "폴더 아이디가 제공되지 않음" }, { status: 400 });
 
         const userDocRef = doc(firestore, 'users', email);
         const userDocSnap = await getDoc(userDocRef);
@@ -72,7 +72,7 @@ export async function PUT(req: NextRequest) {
         const folders = userData.folders || [];
 
         const updatedFolders = folders.map((folder: Folder) => {
-            if (folder.id === folderID) {
+            if (folder.id === folderId) {
                 return {
                     ...folder,
                     name: newFolderName,
@@ -95,12 +95,10 @@ export async function DELETE(req: NextRequest) {
         const {searchParams} = new URL(req.url);
         
         const email = searchParams.get('email');
-        const folderID = searchParams.get('folderID')
-
-        console.log(email, folderID);
+        const folderId = searchParams.get('folderId')
 
         if (!email) return NextResponse.json({ error: "이메일이 제공되지 않음" }, { status: 400 });
-        if (!folderID) return NextResponse.json({ error: "폴더 아이디가 제공되지 않음" }, { status: 400 });
+        if (!folderId) return NextResponse.json({ error: "폴더 아이디가 제공되지 않음" }, { status: 400 });
 
         const userDocRef = doc(firestore, 'users', email);
         const userDocSnap = await getDoc(userDocRef);
@@ -113,7 +111,7 @@ export async function DELETE(req: NextRequest) {
         const folders = userData.folders || [];
 
         // 삭제할 폴더를 제외한 나머지 폴더로 목록을 재생성
-        const updatedFolders = folders.filter((folder: Folder) => folder.id !== folderID);
+        const updatedFolders = folders.filter((folder: Folder) => folder.id !== folderId);
 
         await updateDoc(userDocRef, { folders: updatedFolders });
 

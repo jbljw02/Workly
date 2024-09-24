@@ -45,12 +45,12 @@ const masterReducer = (state: CombinedState | undefined, action: AnyAction) => {
 export const makeStore = () => {
     return configureStore({
         reducer: masterReducer,
-    })
-}
+    });
+};
 
+// RootState는 reducer에서 바로 추론 가능
+export type RootState = ReturnType<typeof masterReducer>;
 // AppStore 타입은 configureStore로 생성된 타입
 export type AppStore = ReturnType<typeof makeStore>
-// RootState가 Redux 스토어의 상태 타입임을 나타냄
-export type RootState = ReturnType<AppStore['getState']>
-// AppDispatch가 액션
-export type AppDispatch = AppStore['dispatch']
+// AppDispatch는 스토어의 dispatch 타입
+export type AppDispatch = ReturnType<typeof makeStore>['dispatch'];

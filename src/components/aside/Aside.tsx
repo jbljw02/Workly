@@ -19,7 +19,7 @@ import HoverTooltip from "../editor/child/HoverTooltip";
 import HelpIcon from '../../../public/svgs/help.svg';
 import InviteIcon from '../../../public/svgs/add-person.svg';
 import { v4 as uuidv4 } from 'uuid';
-import { useAppDispatch } from "@/redux/hooks";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { addDocuments, DocumentProps } from "@/redux/features/documentSlice";
 import { useRouter } from "next/navigation";
 import FolderSection from "./child/folder/FolderSection";
@@ -28,10 +28,15 @@ import { auth } from "../../../firebase/firebasedb";
 import { onAuthStateChanged } from "firebase/auth";
 import logout from "@/utils/logout";
 import UserSection from "./child/user/UserSection";
+import { addDocumentToFolder, Folder } from "@/redux/features/folderSlice";
+import axios from 'axios';
 
 export default function Aside() {
     const dispatch = useAppDispatch();
     const router = useRouter();
+
+    const user = useAppSelector(state => state.user);
+    const folders = useAppSelector(state => state.folders);
 
     const expandedWidth = 240; // 넓은 상태의 너비
     const collapsedWidth = 70; // 좁은 상태의 너비
@@ -87,22 +92,45 @@ export default function Aside() {
     };
 
     // 문서를 생성하고 작성할 수 있도록 Editor 페이지로 이동
-    const writeDocument = () => {
+    const writeDocument = async () => {
+        const defaultFolder = folders[0];
+
         const newDocument: DocumentProps = {
             id: uuidv4(),
             title: '',
             docContent: null,
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
-            author: {
-                email: 'jbljw02@naver.com',
-                name: '이진우',
-            },
+            author: user,
+            folderName: defaultFolder.folderName,
         };
 
+
+        // 전체 문서 배열에 추가
+        dispatch(addDocuments(newDocument));
+        // 문서를 기본 폴더에 추가
+        dispatch(addDocumentToFolder({ folderId: defaultFolder.id, document: newDocument }));
+
+        // 문서를 배열에 추가
         dispatch(addDocuments(newDocument));
 
-        router.push(`/editor/${newDocument.id}`);
+        try {
+            const res = await axios.post('/api/document',
+                { email: user.email, folderId: defaultFolder.id, document: newDocument },
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Accept": "application/json"
+                    },
+                })
+
+            console.log(res);
+
+        } catch (error) {
+            console.error(error)
+        }
+
+        router.push(`/editor/${defaultFolder.id}/${newDocument.id}`);
     }
 
     return (
