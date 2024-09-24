@@ -14,6 +14,20 @@ export type DocumentProps = {
 }
 
 const DocumentsState: DocumentProps[] = [];
+const selectedDocumentState: DocumentProps = {
+    id: '',
+    title: '',
+    docContent: null,
+    createdAt: '',
+    updatedAt: '',
+    author: {
+        email: '',
+        displayName: '',
+        photoURL: '',
+    },
+    collaborators: [],
+    folderName: '',
+}
 
 export const documentSlice = createSlice({
     name: 'documents',
@@ -32,13 +46,28 @@ export const documentSlice = createSlice({
         deleteDocuments: (state, action) => {
             return state.filter(doc => doc.id !== action.payload.id);
         },
+        setDocuments: (state, action) => {
+            return action.payload;
+        }
     },
 })
 
-export const { addDocuments, updateDocuments, deleteDocuments } = documentSlice.actions;
+export const selectedDocument = createSlice({
+    name: 'selectedDocument',
+    initialState: selectedDocumentState,
+    reducers: {
+        setSelectedDocument: (state, action) => {
+            return action.payload;
+        }
+    }
+})
+
+export const { addDocuments, updateDocuments, deleteDocuments, setDocuments } = documentSlice.actions;
+export const { setSelectedDocument } = selectedDocument.actions;
 
 const reducers = {
     documents: documentSlice.reducer,
+    selectedDocument: selectedDocument.reducer,
 }
 
 export default reducers;

@@ -3,6 +3,33 @@ import firestore from "../../../../firebase/firestore";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { Folder } from "@/redux/features/folderSlice";
 
+// 사용자의 문서를 요청 - READ
+export async function GET(req: NextRequest) {
+    try {
+        const { searchParams } = req.nextUrl;
+        const email = searchParams.get('email');
+
+        if (!email) {
+            return NextResponse.json({ error: "이메일이 제공되지 않음" }, { status: 400 });
+        }
+
+        const userDocRef = doc(firestore, 'users', email);
+        const userDocSnap = await getDoc(userDocRef);
+
+        if (!userDocSnap.exists()) {
+            return NextResponse.json({ error: "사용자 정보 존재 X" }, { status: 404 });
+        }
+
+        const userData = userDocSnap.data();
+        const documents = userData.documents || [];
+
+        return NextResponse.json(documents, { status: 200 });
+    } catch (error) {
+        return NextResponse.json({ error: "문서 정보 요청 실패" }, { status: 500 });
+    }
+}
+
+// 사용자의 문서를 추가 - CREATE
 export async function POST(req: NextRequest) {
     try {
         const { email, folderId, document } = await req.json();

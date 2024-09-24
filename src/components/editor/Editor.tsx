@@ -26,12 +26,12 @@ import { v4 as uuidv4 } from 'uuid';
 import '@/styles/editor.css';
 import { LinkTooltip, setLinkTooltip } from '@/redux/features/linkSlice'
 import LinkNode from '../../../lib/linkNode';
-import EditorHeader from './child/EditorHeader'
+import EditorHeader from './child/header/EditorHeader'
 import ImageNodeView from './child/image/ImageNodeView'
 import DragHandle from '@tiptap-pro/extension-drag-handle-react'
 import MenuIcon from '../../../public/svgs/editor/menu-vertical.svg'
 import Placeholder from '@tiptap/extension-placeholder'
-import { DocumentProps, updateDocuments } from '@/redux/features/documentSlice'
+import { DocumentProps, setSelectedDocument, updateDocuments } from '@/redux/features/documentSlice'
 import formatTimeDiff from '@/utils/formatTimeDiff'
 
 export default function Editor({ docId }: { docId: string }) {
@@ -144,43 +144,33 @@ export default function Editor({ docId }: { docId: string }) {
   const openColorPicker = useAppSelector(state => state.openColorPicker);
 
   const documents = useAppSelector(state => state.documents);
-  const [docTitle, setDocTitle] = useState<string>(''); // 문서 제목
   // 문서들 중에 현재 편집 중인 문서를 선택
-  const [selectedDoc, setSelectedDoc] = useState<DocumentProps>({
-    id: '',
-    title: '',
-    docContent: null,
-    createdAt: '',
-    updatedAt: '',
-    author: {
-      email: null,
-      displayName: null,
-      photoURL: null,
-    },
-  });
+  const selectedDocument = useAppSelector(state => state.selectedDocument);
+  const [docTitle, setDocTitle] = useState<string>(selectedDocument.title); // 문서 제목
   // 문서의 마지막 편집 시간에 따른 출력값
   const [lastUpdatedTime, setLastUpdatedTime] = useState<string>('현재 편집 중');
 
+  // 선택된 문서를 지정
   useEffect(() => {
     if (documents.length && docId) {
       const selectedDoc = documents.find((doc: DocumentProps) => doc.id === docId);
-      setSelectedDoc(selectedDoc);
+      dispatch(setSelectedDocument(selectedDoc));
     }
   }, [documents, docId]);
 
   useEffect(() => {
-    if (editor && selectedDoc) {
+    if (editor && selectedDocument) {
       // 에디터 업데이트 발생 시 실행
       editor.on('update', () => {
         const updatedDoc = {
-          ...selectedDoc, // 현재 선택된 문서
+          ...selectedDocument, // 현재 선택된 문서
           title: docTitle,
           docContent: editor.getJSON(), // 에디터 내용 
           updatedAt: new Date().toISOString(), // 업데이트 시간
         };
 
         dispatch(updateDocuments(updatedDoc));
-        setSelectedDoc(updatedDoc);
+        dispatch(setSelectedDocument(updatedDoc));
         setLastUpdatedTime(formatTimeDiff(updatedDoc.updatedAt));
       });
     }
@@ -198,7 +188,6 @@ export default function Editor({ docId }: { docId: string }) {
     <div className="flex-grow h-full">
       <EditorHeader
         editor={editor}
-        selectedDoc={selectedDoc}
         lastUpdatedTime={lastUpdatedTime}
         setLastUpdatedTime={setLastUpdatedTime} />
       <MenuBar editor={editor} />
@@ -226,7 +215,7 @@ export default function Editor({ docId }: { docId: string }) {
           editor={editor}
           className="origin-top-left h-full"
           style={{
-            pointerEvents: openColorPicker && 'none',
+            pointerEvents: openColorPicker ? 'none' : undefined,
           }}>
         </EditorContent>
       </div>

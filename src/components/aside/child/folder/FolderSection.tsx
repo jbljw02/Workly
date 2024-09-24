@@ -104,7 +104,7 @@ export default function FolderSection({ isCollapsed }: FolderSectionProps) {
                 {/* 새 폴더를 추가하는 영역 */}
                 <div
                     onClick={openModal}
-                    className="flex items-center pl-2.5 h-[30px] rounded text-neutral-400 hover:bg-gray-100 cursor-pointer">
+                    className="flex items-center pl-2 h-[30px] rounded text-neutral-400 hover:bg-gray-100 cursor-pointer">
                     <PlusIcon width="16" />
                     <span
                         className="text-[13px] ml-2 whitespace-nowrap overflow-hidden">새 폴더</span>

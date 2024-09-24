@@ -93,7 +93,7 @@ export default function Aside() {
 
     // 문서를 생성하고 작성할 수 있도록 Editor 페이지로 이동
     const writeDocument = async () => {
-        const defaultFolder = folders[0];
+        const defaultFolder: Folder = folders[0];
 
         const newDocument: DocumentProps = {
             id: uuidv4(),
@@ -102,32 +102,28 @@ export default function Aside() {
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
             author: user,
-            folderName: defaultFolder.folderName,
+            folderName: defaultFolder.name,
         };
 
-
-        // 전체 문서 배열에 추가
-        dispatch(addDocuments(newDocument));
-        // 문서를 기본 폴더에 추가
-        dispatch(addDocumentToFolder({ folderId: defaultFolder.id, document: newDocument }));
-
-        // 문서를 배열에 추가
-        dispatch(addDocuments(newDocument));
-
         try {
-            const res = await axios.post('/api/document',
+            await axios.post('/api/document',
                 { email: user.email, folderId: defaultFolder.id, document: newDocument },
                 {
                     headers: {
                         "Content-Type": "application/json",
                         "Accept": "application/json"
                     },
-                })
+                });
 
-            console.log(res);
+            // 전체 문서 배열에 추가
+            dispatch(addDocuments(newDocument));
+            // 문서를 기본 폴더에 추가
+            dispatch(addDocumentToFolder({ folderId: defaultFolder.id, document: newDocument }));
 
+            // 문서를 배열에 추가
+            dispatch(addDocuments(newDocument));
         } catch (error) {
-            console.error(error)
+            console.error(error);
         }
 
         router.push(`/editor/${defaultFolder.id}/${newDocument.id}`);
