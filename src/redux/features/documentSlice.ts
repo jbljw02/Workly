@@ -37,14 +37,21 @@ export const documentSlice = createSlice({
             state.push(action.payload);
         },
         updateDocuments: (state, action) => {
-            const index = state.findIndex(doc => doc.id === action.payload.id);
+            const index = state.findIndex(doc => doc.id === action.payload);
             if (index !== -1) {
                 // 문서가 존재할 때만 업데이트
                 state[index] = { ...state[index], ...action.payload };
             }
         },
+        renameDocuments: (state, action) => {
+            const { docId, newTitle } = action.payload;
+            const index = state.findIndex(folder => folder.id === docId);
+            if (index !== -1) {
+                state[index].title = newTitle;
+            }
+        },
         deleteDocuments: (state, action) => {
-            return state.filter(doc => doc.id !== action.payload.id);
+            return state.filter(doc => doc.id !== action.payload);
         },
         setDocuments: (state, action) => {
             return action.payload;
@@ -62,7 +69,7 @@ export const selectedDocument = createSlice({
     }
 })
 
-export const { addDocuments, updateDocuments, deleteDocuments, setDocuments } = documentSlice.actions;
+export const { addDocuments, updateDocuments, renameDocuments, deleteDocuments, setDocuments } = documentSlice.actions;
 export const { setSelectedDocument } = selectedDocument.actions;
 
 const reducers = {

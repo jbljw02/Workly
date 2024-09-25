@@ -12,16 +12,11 @@ import MoveIcon from '../../../../../public/svgs/editor/move-folder.svg'
 import MenuList from '../MenuList'
 import { MenuItemProps } from '../MenuItem'
 import LockIcon from '../../../../../public/svgs/editor/lock.svg'
-import IconButton from '@/components/button/IconButton'
 import formatTimeDiff from '@/utils/formatTimeDiff'
-import { DocumentProps, setSelectedDocument } from '@/redux/features/documentSlice'
 import html2pdf from 'html2pdf.js';
 import { Editor } from '@tiptap/react'
 import { useClickOutside } from '@/components/hooks/useClickOutside'
-import { usePathname, useRouter } from 'next/navigation'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
-import { Folder } from '@/redux/features/folderSlice'
-import getUserDocument from '@/components/hooks/getUserDocument'
 import HeaderTitle from './HeaderTitle'
 
 type EditorHeaderProps = {

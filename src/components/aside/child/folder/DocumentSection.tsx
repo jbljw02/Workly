@@ -1,17 +1,27 @@
 import { Folder } from "@/redux/features/folderSlice"
 import DocumentIcon from '../../../../../public/svgs/document.svg';
 import DocumentItem from "./DocumentItem";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import getUserDocument from "@/components/hooks/getUserDocument";
+import { useEffect, useMemo } from "react";
 
-type DocumentSection = {
+type DocumentSectionProps = {
     folder: Folder,
 }
 
-export default function DocumentSection({ folder }: DocumentSection) {
+export default function DocumentSection({ folder }: DocumentSectionProps) {
+    const documents = useAppSelector(state => state.documents);
+
+    // 전체 문서에서 폴더가 가지고 있는 docId와 일치하는 것들만 필터링
+    const documentsInFolder = useMemo(() => {
+        return documents.filter(doc => folder.documentIds.includes(doc.id));
+    }, [documents, folder.documentIds]);
+
     return (
         <div>
             {
-                folder.documents.length ?
-                    folder.documents.map(doc => {
+                documentsInFolder.length ?
+                    documentsInFolder.map(doc => {
                         return (
                             // 각각의 폴더 영역
                             <DocumentItem document={doc} />

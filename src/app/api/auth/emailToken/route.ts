@@ -13,7 +13,6 @@ export async function POST(req: NextRequest) {
         const authCookie = cookie.serialize('authToken', token, {
             httpOnly: true,
             secure: process.env.NODE_ENV !== 'development', // 개발 환경이 아닐 때에만 secure 적용
-            maxAge: 3600, // 유효 시간(1시간)
             sameSite: 'strict', // CSRF 공격 방지
             path: '/',
         });

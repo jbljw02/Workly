@@ -158,8 +158,6 @@ export default function Editor({ docId }: { docId: string }) {
     }
   }, [documents, docId]);
 
-  console.log(docTitle);
-
   // 에디터의 내용이 변경될 때마다 적용
   useEffect(() => {
     const updateDocument = () => {
@@ -171,7 +169,7 @@ export default function Editor({ docId }: { docId: string }) {
           updatedAt: new Date().toISOString(),
         };
 
-        dispatch(updateDocuments(updatedDoc));
+        dispatch(updateDocuments(updatedDoc.id));
         dispatch(setSelectedDocument(updatedDoc));
         setLastUpdatedTime(formatTimeDiff(updatedDoc.updatedAt));
       }
@@ -185,8 +183,6 @@ export default function Editor({ docId }: { docId: string }) {
       editor?.off('update', updateDocument);
     };
   }, [editor, dispatch, selectedDocument]);
-
-  console.log(selectedDocument.title);
 
   // docTitle이 변경될 때만 문서 제목을 업데이트
   useEffect(() => {

@@ -12,6 +12,7 @@ import { deleteFolders } from '@/redux/features/folderSlice';
 import PlusIcon from '../../../../../public/svgs/plus.svg';
 import HoverTooltip from '@/components/editor/child/HoverTooltip';
 import DocumentSection from './DocumentSection';
+import EditInput from './EditInput';
 
 type FolderItemProps = {
     folder: Folder;
@@ -24,11 +25,8 @@ export default function FolderItem({ folder }: FolderItemProps) {
     const folders = useAppSelector(state => state.folders)
 
     const [isHovered, setIsHovered] = useState(false);
-
-    const inputRef = useRef<HTMLInputElement | null>(null);
     const [isEditing, setIsEditing] = useState(false);
     const [isExpanded, setIsExpanded] = useState(false);
-
     const [folderTitle, setFolderTitle] = useState(folder.name);
 
     const completeEdit = async (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -51,7 +49,7 @@ export default function FolderItem({ folder }: FolderItemProps) {
                     });
 
                 // 폴더가 수정됐으니 전체 배열 업데이트
-                await getUserFolder(user.email, dispatch);
+                getUserFolder(user.email, dispatch);
             } catch (error) {
                 console.error(error);
 
@@ -68,7 +66,6 @@ export default function FolderItem({ folder }: FolderItemProps) {
 
     // 폴더 삭제 요청
     const deleteFolder = async () => {
-        // const prevFolder = folder; // 변경 이전 폴더 상태
         const prevFolders = [...folders];
 
         dispatch(deleteFolders(folder.id))
@@ -86,20 +83,13 @@ export default function FolderItem({ folder }: FolderItemProps) {
             });
 
             // 폴더가 삭제됐으니 전체 배열 업데이트
-            await getUserFolder(user.email, dispatch);
+            getUserFolder(user.email, dispatch);
         } catch (error) {
             console.error(error);
             // 삭제에 실패하면 롤백
             dispatch(setFolders(prevFolders));
         }
     }
-
-    useEffect(() => {
-        if (isEditing && inputRef.current) {
-            inputRef.current.focus();
-            inputRef.current.select();
-        }
-    }, [isEditing]);
 
     return (
         <div className='w-full'>
@@ -117,7 +107,7 @@ export default function FolderItem({ folder }: FolderItemProps) {
                                 <FolderIcon width="15" /> : (
                                     isHovered ?
                                         <div className='hover:bg-gray-200 rounded-sm transition-transform duration-300 '>
-                                            {/* 화살표를 클릭 시 문서 목록을 확장시켜 보여줌 */}
+                                            {/* 화살표를 클릭 시 문서 */}
                                             <ArrowIcon
                                                 onClick={() => setIsExpanded(!isExpanded)}
                                                 className={`transition-transform duration-300 
@@ -133,15 +123,13 @@ export default function FolderItem({ folder }: FolderItemProps) {
                     <div className="text-sm truncate select-none">
                         {
                             isEditing ?
-                                <input
-                                    ref={inputRef}
-                                    type="text"
-                                    value={folderTitle}
-                                    onChange={(e) => setFolderTitle(e.target.value)}
-                                    onKeyDown={completeEdit}
-                                    className="text-sm truncate bg-transparent outline-none"
-                                    autoFocus
-                                    onBlur={() => setIsEditing(false)} /> :
+                                <EditInput
+                                    title={folderTitle}
+                                    setTitle={setFolderTitle}
+                                    completeEdit={completeEdit}
+                                    isEditing={isEditing}
+                                    setIsEditing={setIsEditing} />
+                                :
                                 folder.name
                         }
                     </div>

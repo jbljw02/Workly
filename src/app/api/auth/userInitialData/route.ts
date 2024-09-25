@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
             const initialFolder = {
                 id: uuidv4(),
                 name: '내 폴더',
-                documents: [],
+                documentIds: [],
                 author: {
                     email: user.email,
                     displayName: user.displayName,
@@ -29,6 +29,7 @@ export async function POST(req: NextRequest) {
             await setDoc(doc(firestore, 'users', user.email), {
                 email: user.email,
                 folders: [initialFolder],
+                documents: [],
             });
 
             return NextResponse.json({ success: "회원가입 후 폴더 추가 성공" }, { status: 200 });

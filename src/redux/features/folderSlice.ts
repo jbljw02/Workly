@@ -5,7 +5,7 @@ import { UserProps } from "./userSlice";
 export type Folder = {
     id: string;
     name: string;
-    documents: DocumentProps[];
+    documentIds: string[];
     author: UserProps;
     sharedWith?: string[];
 }
@@ -34,12 +34,10 @@ export const foldersSlice = createSlice({
         },
         // 폴더에 문서를 추가
         addDocumentToFolder: (state, action) => {
-            const { folderId, document } = action.payload;
+            const { folderId, docId } = action.payload;
             const folder = state.find(folder => folder.id === folderId);
             if (folder) {
-                folder.documents.push(document); // 폴더에 문서를 추가
-            } else{
-                console.error("폴더찾기실패")
+                folder.documentIds.push(docId); // 폴더에 문서 ID를 추가
             }
         },
     },

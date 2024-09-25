@@ -30,6 +30,8 @@ import logout from "@/utils/logout";
 import UserSection from "./child/user/UserSection";
 import { addDocumentToFolder, Folder } from "@/redux/features/folderSlice";
 import axios from 'axios';
+import getUserDocument from "../hooks/getUserDocument";
+import getUserFolder from "../hooks/getUserFolder";
 
 export default function Aside() {
     const dispatch = useAppDispatch();
@@ -115,10 +117,14 @@ export default function Aside() {
                     },
                 });
 
+            // 문서를 추가했으니 전체 배열 업데이트
+            getUserDocument(user.email, dispatch);
+            getUserFolder(user.email, dispatch);
+
             // 전체 문서 배열에 추가
             dispatch(addDocuments(newDocument));
-            // 문서를 기본 폴더에 추가
-            dispatch(addDocumentToFolder({ folderId: defaultFolder.id, document: newDocument }));
+            // 문서 ID를 기본 폴더에 추가
+            dispatch(addDocumentToFolder({ folderId: defaultFolder.id, document: newDocument.id }));
 
             // 문서를 배열에 추가
             dispatch(addDocuments(newDocument));

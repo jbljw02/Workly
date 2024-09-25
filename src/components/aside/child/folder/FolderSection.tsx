@@ -10,6 +10,7 @@ import axios from 'axios';
 import FolderItem from "./FolderItem";
 import getUserFolder from "@/components/hooks/getUserFolder";
 import DocumentSection from "./DocumentSection";
+import getUserDocument from "@/components/hooks/getUserDocument";
 
 type FolderSectionProps = {
     isCollapsed: boolean;
@@ -79,6 +80,7 @@ export default function FolderSection({ isCollapsed }: FolderSectionProps) {
     useEffect(() => {
         if (user.email) {
             getUserFolder(user.email, dispatch);
+            getUserDocument(user.email, dispatch);
         }
     }, [user.email, getUserFolder]);
 
