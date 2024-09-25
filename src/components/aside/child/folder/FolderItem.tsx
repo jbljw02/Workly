@@ -9,6 +9,9 @@ import DeleteIcon from '../../../../../public/svgs/trash.svg';
 import GroupHoverItem from '../GroupHoverItem';
 import getUserFolder from '@/components/hooks/getUserFolder';
 import { deleteFolders } from '@/redux/features/folderSlice';
+import PlusIcon from '../../../../../public/svgs/plus.svg';
+import HoverTooltip from '@/components/editor/child/HoverTooltip';
+import DocumentSection from './DocumentSection';
 
 type FolderItemProps = {
     folder: Folder;
@@ -24,6 +27,7 @@ export default function FolderItem({ folder }: FolderItemProps) {
 
     const inputRef = useRef<HTMLInputElement | null>(null);
     const [isEditing, setIsEditing] = useState(false);
+    const [isExpanded, setIsExpanded] = useState(false);
 
     const [folderTitle, setFolderTitle] = useState(folder.name);
 
@@ -98,56 +102,82 @@ export default function FolderItem({ folder }: FolderItemProps) {
     }, [isEditing]);
 
     return (
-        <div
-            className="flex justify-between pl-1.5 pr-1 w-full h-[30px] rounded cursor-pointer hover:bg-gray-100 group"
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}>
-            <div className="flex flex-row items-center overflow-hidden">
-                <div className="flex items-center justify-center flex-shrink-0 w-5">
-                    {
-                        // 수정 중일 때는 폴더 아이콘만 보여주고, 아니라면 hover 상태에 따라 제어
-                        isEditing ?
-                            <FolderIcon width="15" /> : (
-                                isHovered ?
-                                    <ArrowIcon
-                                        className="hover:bg-gray-200 rounded-sm"
-                                        width="20" /> :
-                                    <FolderIcon
-                                        width="15" />
-                            )
-                    }
+        <div className='w-full'>
+            {/* 각각의 폴더 영역 */}
+            <div
+                className="flex justify-between w-full pl-1.5 pr-1 h-[30px] rounded cursor-pointer hover:bg-gray-100 group"
+                onMouseEnter={() => setIsHovered(true)}
+                onMouseLeave={() => setIsHovered(false)}>
+                <div className="flex flex-row items-center gap-1.5 overflow-hidden">
+                    {/* 폴더 아이콘 */}
+                    <div className="flex items-center justify-center flex-shrink-0 w-5">
+                        {
+                            // 수정 중일 때는 폴더 아이콘만 보여주고, 아니라면 hover 상태에 따라 제어
+                            isEditing ?
+                                <FolderIcon width="15" /> : (
+                                    isHovered ?
+                                        <div className='hover:bg-gray-200 rounded-sm transition-transform duration-300 '>
+                                            {/* 화살표를 클릭 시 문서 목록을 확장시켜 보여줌 */}
+                                            <ArrowIcon
+                                                onClick={() => setIsExpanded(!isExpanded)}
+                                                className={`transition-transform duration-300 
+                                                    ${isExpanded ? 'rotate-90' : 'rotate-0'}`}
+                                                width="20" />
+                                        </div> :
+                                        <FolderIcon
+                                            width="15" />
+                                )
+                        }
+                    </div>
+                    {/* 폴더의 제목 */}
+                    <div className="text-sm truncate select-none">
+                        {
+                            isEditing ?
+                                <input
+                                    ref={inputRef}
+                                    type="text"
+                                    value={folderTitle}
+                                    onChange={(e) => setFolderTitle(e.target.value)}
+                                    onKeyDown={completeEdit}
+                                    className="text-sm truncate bg-transparent outline-none"
+                                    autoFocus
+                                    onBlur={() => setIsEditing(false)} /> :
+                                folder.name
+                        }
+                    </div>
                 </div>
-                <div className="ml-1.5 text-sm truncate select-none">
+                {/* 폴더에 적용할 수 있는 옵션들 */}
+                <div className="flex flex-row items-center ml-1">
                     {
-                        isEditing ?
-                            <input
-                                ref={inputRef}
-                                type="text"
-                                value={folderTitle}
-                                onChange={(e) => setFolderTitle(e.target.value)}
-                                onKeyDown={completeEdit}
-                                className="text-sm truncate bg-transparent outline-none"
-                                autoFocus
-                                onBlur={() => setIsEditing(false)} /> :
-                            folder.name
+                        folder.name !== '내 폴더' &&
+                        <>
+                            <HoverTooltip label='폴더명 수정'>
+                                <GroupHoverItem
+                                    Icon={EditIcon}
+                                    IconWidth={15}
+                                    onClick={() => setIsEditing(true)} />
+                            </HoverTooltip>
+                            <HoverTooltip label='폴더 삭제'>
+                                <GroupHoverItem
+                                    Icon={DeleteIcon}
+                                    IconWidth={15}
+                                    onClick={deleteFolder} />
+                            </HoverTooltip>
+                            <HoverTooltip label='폴더에 문서 추가'>
+                                <GroupHoverItem
+                                    Icon={PlusIcon}
+                                    IconWidth={15}
+                                    onClick={deleteFolder} />
+                            </HoverTooltip>
+                        </>
                     }
                 </div>
             </div>
-            <div className="flex flex-row ml-1">
-                {
-                    folder.name !== '내 폴더' &&
-                    <>
-                        <GroupHoverItem
-                            Icon={EditIcon}
-                            IconWidth={15}
-                            onClick={() => setIsEditing(true)} />
-                        <GroupHoverItem
-                            Icon={DeleteIcon}
-                            IconWidth={15}
-                            onClick={deleteFolder} />
-                    </>
-                }
-            </div>
+            {/* 확장 시 하위 문서들을 보여줌 */}
+            {
+                isExpanded &&
+                <DocumentSection folder={folder} />
+            }
         </div>
     );
 }

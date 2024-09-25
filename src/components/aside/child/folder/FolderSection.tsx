@@ -9,6 +9,7 @@ import { v4 as uuidv4 } from 'uuid';
 import axios from 'axios';
 import FolderItem from "./FolderItem";
 import getUserFolder from "@/components/hooks/getUserFolder";
+import DocumentSection from "./DocumentSection";
 
 type FolderSectionProps = {
     isCollapsed: boolean;
@@ -92,10 +93,10 @@ export default function FolderSection({ isCollapsed }: FolderSectionProps) {
     return (
         // Aside의 width에 따라 각각 다른 레이아웃 출력
         !isCollapsed ?
-            <div className="w-full mb-3 overflow-hidden">
+            <div className="w-full mb-3">
                 <div className="mb-1.5 ml-2 text-[13px] font-semibold">폴더</div>
                 {
-                    folders.length && folders.map((folder: Folder) => {
+                    folders.length && folders.map(folder => {
                         return (
                             <FolderItem folder={folder} />
                         )

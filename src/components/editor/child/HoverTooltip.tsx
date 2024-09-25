@@ -17,7 +17,7 @@ export default function HoverTooltip({ label, children }: HoverTooltipProps) {
             {children}
             {
                 isHovered && (
-                    <div className="absolute mt-1 left-1/2 transform -translate-x-1/2 flex flex-col items-center z-50">
+                    <div className="absolute mt-1 left-1/2 transform -translate-x-1/2 flex flex-col items-center z-10">
                         <div className="bg-black text-white text-xs rounded py-1 px-2 whitespace-nowrap">
                             {label}
                         </div>

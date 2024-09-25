@@ -158,27 +158,50 @@ export default function Editor({ docId }: { docId: string }) {
     }
   }, [documents, docId]);
 
+  console.log(docTitle);
+
+  // 에디터의 내용이 변경될 때마다 적용
   useEffect(() => {
-    if (editor && selectedDocument) {
-      // 에디터 업데이트 발생 시 실행
-      editor.on('update', () => {
+    const updateDocument = () => {
+      if (editor && selectedDocument) {
         const updatedDoc = {
-          ...selectedDocument, // 현재 선택된 문서
+          ...selectedDocument,
           title: docTitle,
-          docContent: editor.getJSON(), // 에디터 내용 
-          updatedAt: new Date().toISOString(), // 업데이트 시간
+          docContent: editor.getJSON(),
+          updatedAt: new Date().toISOString(),
         };
 
         dispatch(updateDocuments(updatedDoc));
         dispatch(setSelectedDocument(updatedDoc));
         setLastUpdatedTime(formatTimeDiff(updatedDoc.updatedAt));
-      });
+      }
+    };
+
+    if (editor) {
+      editor.on('update', updateDocument);
     }
 
     return () => {
-      editor?.off('update');
+      editor?.off('update', updateDocument);
     };
-  }, [editor, docTitle, dispatch]);
+  }, [editor, dispatch, selectedDocument]);
+
+  console.log(selectedDocument.title);
+
+  // docTitle이 변경될 때만 문서 제목을 업데이트
+  useEffect(() => {
+    if (selectedDocument) {
+      const updatedDoc = {
+        ...selectedDocument,
+        title: docTitle,
+      };
+
+      // 현재 상태와 업데이트하려는 내용이 동일하지 않을 때만 dispatch 호출
+      if (selectedDocument.title !== docTitle) {
+        dispatch(setSelectedDocument(updatedDoc));
+      }
+    }
+  }, [docTitle, dispatch, selectedDocument]);
 
   if (!editor) {
     return null;
