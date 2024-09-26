@@ -1,38 +1,36 @@
-import DocumentIcon from '../../../../public/svgs/document.svg'
-import PaperIcon from '../../../../public/svgs/editor/paper.svg'
-import MenuIcon from '../../../../public/svgs/editor/menu-horizontal.svg'
-import ShareIcon from '../../../../public/svgs/editor/share-folder.svg'
-import HoverTooltip from './HoverTooltip'
-import ToolbarButton from './ToolbarButton'
+import PaperIcon from '../../../../../public/svgs/editor/paper.svg'
+import MenuIcon from '../../../../../public/svgs/editor/menu-horizontal.svg'
+import HoverTooltip from '../HoverTooltip'
+import ToolbarButton from '../ToolbarButton'
 import { useEffect, useRef, useState } from 'react'
-import EditIcon from '../../../../public/svgs/editor/edit.svg'
-import LinkCopyIcon from '../../../../public/svgs/editor/link.svg'
-import DownloadIcon from '../../../../public/svgs/editor/download.svg'
-import CopyIcon from '../../../../public/svgs/editor/copy.svg'
-import DeleteIcon from '../../../../public/svgs/trash.svg'
-import MoveIcon from '../../../../public/svgs/editor/move-folder.svg'
-import MenuList from './MenuList'
-import { MenuItemProps } from './MenuItem'
-import LockIcon from '../../../../public/svgs/editor/lock.svg'
-import IconButton from '@/components/button/IconButton'
+import EditIcon from '../../../../../public/svgs/editor/edit.svg'
+import LinkCopyIcon from '../../../../../public/svgs/editor/link.svg'
+import DownloadIcon from '../../../../../public/svgs/editor/download.svg'
+import CopyIcon from '../../../../../public/svgs/editor/copy.svg'
+import DeleteIcon from '../../../../../public/svgs/trash.svg'
+import MoveIcon from '../../../../../public/svgs/editor/move-folder.svg'
+import MenuList from '../MenuList'
+import { MenuItemProps } from '../MenuItem'
+import LockIcon from '../../../../../public/svgs/editor/lock.svg'
 import formatTimeDiff from '@/utils/formatTimeDiff'
-import { DocumentProps } from '@/redux/features/documentSlice'
 import html2pdf from 'html2pdf.js';
 import { Editor } from '@tiptap/react'
 import { useClickOutside } from '@/components/hooks/useClickOutside'
+import { useAppDispatch, useAppSelector } from '@/redux/hooks'
+import HeaderTitle from './HeaderTitle'
 
 type EditorHeaderProps = {
     editor: Editor,
-    selectedDoc: DocumentProps;
     lastUpdatedTime: string;
     setLastUpdatedTime: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export default function EditorHeader({
     editor,
-    selectedDoc,
     lastUpdatedTime,
     setLastUpdatedTime }: EditorHeaderProps) {
+    const selectedDocument = useAppSelector(state => state.selectedDocument);
+
     const [menuListOpen, setMenuListOpen] = useState(false);
 
     // 에디터 내용을 PDF로 변환하고 다운로드하는 함수
@@ -47,10 +45,10 @@ export default function EditorHeader({
         // PDF 옵션 설정 (선택 사항)
         const options = {
             margin: 1,
-            filename: selectedDoc.title || '제목 없는 문서',
+            filename: selectedDocument.title || '제목 없는 문서',
             image: { type: 'jpeg', quality: 0.98 },
             html2canvas: { scale: 2 }, // 요소를 렌더링 할때의 해상도(기본 해상도의 두 배)
-            // 인치 단위, A4 크기로 다운로두, 세로 방향
+            // 인치 단위, A4 크기로 다운로드, 세로 방향
             jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
         };
 
@@ -101,12 +99,12 @@ export default function EditorHeader({
     useEffect(() => {
         // 1분마다 문서의 마지막 편집 시간이 언제인지 확인
         const updatedTimeInterval = setInterval(() => {
-            const updatedTime = formatTimeDiff(selectedDoc.updatedAt);
+            const updatedTime = formatTimeDiff(selectedDocument.updatedAt);
             setLastUpdatedTime(updatedTime);
         }, 60000);
 
         return () => clearInterval(updatedTimeInterval);
-    }, [selectedDoc?.updatedAt]);
+    }, [selectedDocument.updatedAt]);
 
     const optionRef = useRef<HTMLDivElement>(null);
 
@@ -115,16 +113,7 @@ export default function EditorHeader({
     return (
         <div className='flex flex-row justify-between pl-3 pr-5 py-3'>
             {/* 헤더 좌측 영역 */}
-            <div className='flex flex-row items-center gap-2'>
-                <div className='flex items-center p-1 mr-0.5 border rounded-md'>
-                    <PaperIcon width="20" />
-                </div>
-                <div className='flex flex-row items-center gap-1'>
-                    <div className='text-sm rounded-sm hover:underline cursor-pointer'>이진우의 폴더</div>
-                    <div className='text-sm font-light mx-1'>{'/'}</div>
-                    <div className='text-sm font-bold'>미국 여행</div>
-                </div>
-            </div>
+            <HeaderTitle />
             {/* 헤더 우측 영역 */}
             <div className='flex flex-row items-center gap-1'>
                 <div className='text-sm text-neutral-400 mr-1'>{lastUpdatedTime}</div>

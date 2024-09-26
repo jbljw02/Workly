@@ -5,7 +5,7 @@ import { UserProps } from "./userSlice";
 export type Folder = {
     id: string;
     name: string;
-    documents: DocumentProps[];
+    documentIds: string[];
     author: UserProps;
     sharedWith?: string[];
 }
@@ -20,24 +20,30 @@ export const foldersSlice = createSlice({
             state.push(action.payload);
         },
         renameFolders: (state, action) => {
-            const index = state.findIndex(folder => folder.id === action.payload.id);
+            const { folderId, newName } = action.payload;
+            const index = state.findIndex(folder => folder.id === folderId);
             if (index !== -1) {
-                state[index].name = action.payload.newName;
+                state[index].name = newName;
             }
         },
         deleteFolders: (state, action) => {
-            return state.filter(folder => folder.id !== action.payload.id);
+            return state.filter(folder => folder.id !== action.payload);
         },
         setFolders: (state, action) => {
             return action.payload;
-        }
+        },
+        // 폴더에 문서를 추가
+        addDocumentToFolder: (state, action) => {
+            const { folderId, docId } = action.payload;
+            const folder = state.find(folder => folder.id === folderId);
+            if (folder) {
+                folder.documentIds.push(docId); // 폴더에 문서 ID를 추가
+            }
+        },
     },
 })
 
-export const { addFolders } = foldersSlice.actions;
-export const { renameFolders } = foldersSlice.actions;
-export const { deleteFolders } = foldersSlice.actions;
-export const { setFolders } = foldersSlice.actions;
+export const { addFolders, renameFolders, deleteFolders, setFolders, addDocumentToFolder } = foldersSlice.actions;
 
 const reducers = {
     folders: foldersSlice.reducer,

@@ -7,7 +7,7 @@ import fileReducers from './features/fileSlice';
 import linkReducers from './features/linkSlice';
 import selectionReducers from './features/selectionSlice';
 import textColorReducers from './features/textColorSlice';
-import documentReducers from './features/documentSlice';
+import documentReducers, { selectedDocument } from './features/documentSlice';
 import folderReducers from './features/folderSlice';
 
 const combinedReducer = combineReducers({
@@ -22,12 +22,14 @@ const combinedReducer = combineReducers({
     textColor: textColorReducers.textColor,
     openColorPicker: textColorReducers.openColorPicker,
     documents: documentReducers.documents,
+    selectedDocument: documentReducers.selectedDocument,
     folders: folderReducers.folders,
 })
 
-type CombinedState = ReturnType<typeof combinedReducer>;
+// RootState가 Redux 스토어의 상태 타입임을 나타냄
+export type RootState = ReturnType<typeof combinedReducer>;
 
-const masterReducer = (state: CombinedState | undefined, action: AnyAction) => {
+const masterReducer = (state: RootState, action: AnyAction) => {
     // 액션의 타입이 HYDRATE일 경우, 즉 서버 사이드 렌더링이 발생할 때
     if (action.type === HYDRATE) {
         const nextState = {
@@ -45,12 +47,10 @@ const masterReducer = (state: CombinedState | undefined, action: AnyAction) => {
 export const makeStore = () => {
     return configureStore({
         reducer: masterReducer,
-    })
-}
+    });
+};
 
 // AppStore 타입은 configureStore로 생성된 타입
 export type AppStore = ReturnType<typeof makeStore>
-// RootState가 Redux 스토어의 상태 타입임을 나타냄
-export type RootState = ReturnType<AppStore['getState']>
-// AppDispatch가 액션
-export type AppDispatch = AppStore['dispatch']
+// AppDispatch는 스토어의 dispatch 타입
+export type AppDispatch = ReturnType<typeof makeStore>['dispatch'];

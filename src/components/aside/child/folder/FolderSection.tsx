@@ -4,11 +4,13 @@ import PlusIcon from '../../../../../public/svgs/add-folder.svg';
 import { useCallback, useEffect, useRef, useState } from "react";
 import AddInputModal from "@/components/modal/AddInputModal";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { addFolders, Folder, setFolders } from "@/redux/features/folderSlice";
+import { addFolders, deleteFolders, Folder, setFolders } from "@/redux/features/folderSlice";
 import { v4 as uuidv4 } from 'uuid';
 import axios from 'axios';
 import FolderItem from "./FolderItem";
 import getUserFolder from "@/components/hooks/getUserFolder";
+import DocumentSection from "./DocumentSection";
+import getUserDocument from "@/components/hooks/getUserDocument";
 
 type FolderSectionProps = {
     isCollapsed: boolean;
@@ -70,6 +72,7 @@ export default function FolderSection({ isCollapsed }: FolderSectionProps) {
                 await getUserFolder(user.email, dispatch);
             } catch (error) {
                 console.error("폴더 추가 실패: ", error);
+                dispatch(deleteFolders(addedFolder.id));
             }
         }
     }
@@ -77,6 +80,7 @@ export default function FolderSection({ isCollapsed }: FolderSectionProps) {
     useEffect(() => {
         if (user.email) {
             getUserFolder(user.email, dispatch);
+            getUserDocument(user.email, dispatch);
         }
     }, [user.email, getUserFolder]);
 
@@ -91,10 +95,10 @@ export default function FolderSection({ isCollapsed }: FolderSectionProps) {
     return (
         // Aside의 width에 따라 각각 다른 레이아웃 출력
         !isCollapsed ?
-            <div className="w-full mb-3 overflow-hidden">
+            <div className="w-full mb-3">
                 <div className="mb-1.5 ml-2 text-[13px] font-semibold">폴더</div>
                 {
-                    folders.length && folders.map((folder: Folder) => {
+                    folders.length && folders.map(folder => {
                         return (
                             <FolderItem folder={folder} />
                         )
@@ -103,7 +107,7 @@ export default function FolderSection({ isCollapsed }: FolderSectionProps) {
                 {/* 새 폴더를 추가하는 영역 */}
                 <div
                     onClick={openModal}
-                    className="flex items-center pl-2.5 h-[30px] rounded text-neutral-400 hover:bg-gray-100 cursor-pointer">
+                    className="flex items-center pl-2 h-[30px] rounded text-neutral-400 hover:bg-gray-100 cursor-pointer">
                     <PlusIcon width="16" />
                     <span
                         className="text-[13px] ml-2 whitespace-nowrap overflow-hidden">새 폴더</span>

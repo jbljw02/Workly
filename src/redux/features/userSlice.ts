@@ -1,15 +1,15 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export type UserProps = {
-    email: string | null;
-    displayName: string | null;
-    photoURL: string | null;
+    email: string;
+    displayName: string;
+    photoURL: string;
 };
 
 const UserState: UserProps = {
-    email: null,
-    displayName: null,
-    photoURL: null,
+    email: '',
+    displayName: '',
+    photoURL: '',
 };
 
 export const userSlice = createSlice({
@@ -22,9 +22,9 @@ export const userSlice = createSlice({
             state.photoURL = action.payload.photoURL;
         },
         clearUser: (state) => {
-            state.email = null;
-            state.displayName = null;
-            state.photoURL = null;
+            state.email = '';
+            state.displayName = '';
+            state.photoURL = '';
         }
     },
 })

@@ -5,7 +5,6 @@ type GroupHoverProps = {
 }
 
 export default function GroupHoverItem({ onClick, Icon, IconWidth }: GroupHoverProps) {
-
     return (
         <button
             onClick={onClick}
