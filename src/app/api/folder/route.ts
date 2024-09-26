@@ -97,7 +97,7 @@ export async function DELETE(req: NextRequest) {
         const { searchParams } = new URL(req.url);
 
         const email = searchParams.get('email');
-        const folderId = searchParams.get('folderId')
+        const folderId = searchParams.get('folderId');
 
         if (!email) return NextResponse.json({ error: "이메일이 제공되지 않음" }, { status: 400 });
         if (!folderId) return NextResponse.json({ error: "폴더 아이디가 제공되지 않음" }, { status: 400 });
@@ -118,7 +118,6 @@ export async function DELETE(req: NextRequest) {
         if (!targetFolder) {
             return NextResponse.json({ error: "폴더를 찾을 수 없음" }, { status: 404 });
         }
-
         const documentIdsToDelete = targetFolder.documentIds || [];
 
         // 폴더 안에 있는 documentIds에 해당하는 문서를 삭제한 나머지 문서 목록

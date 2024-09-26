@@ -14,8 +14,9 @@ export default function DocumentSection({ folder }: DocumentSectionProps) {
 
     // 전체 문서에서 폴더가 가지고 있는 docId와 일치하는 것들만 필터링
     const documentsInFolder = useMemo(() => {
-        return documents.filter(doc => folder.documentIds.includes(doc.id));
+        return documents.filter(doc => folder.documentIds?.includes(doc.id));
     }, [documents, folder.documentIds]);
+
 
     return (
         <div>

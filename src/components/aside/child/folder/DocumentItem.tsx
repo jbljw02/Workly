@@ -38,7 +38,6 @@ export default function DocumentItem({ document }: DocumentItemProps) {
                     {
                         email: user.email,
                         docId: document.id,
-                        parentFolderName: document.folderName,
                         newDocName: docTitle
                     },
                     {
@@ -74,6 +73,7 @@ export default function DocumentItem({ document }: DocumentItemProps) {
             await axios.delete('/api/document', {
                 params: {
                     email: user.email,
+                    parentFolderName: document.folderName,
                     docId: document.id,
                 },
                 headers: {
