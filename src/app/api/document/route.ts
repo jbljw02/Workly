@@ -22,16 +22,16 @@ export async function POST(req: NextRequest) {
 
         const userData = userDocSnap.data();
         const folders = userData.folders || [];
-
+        
         // 문서를 추가할 폴더의 인덱스를 찾고 문서를 추가함
         const targetFolderIndex = folders.findIndex((folder: Folder) => folder.id === folderId);
         if (targetFolderIndex === -1) {
             return NextResponse.json({ error: "폴더를 찾을 수 없음" }, { status: 404 });
         }
 
+        console.log("아: ", folders[targetFolderIndex]);
         // 폴더의 documents 배열에 문서 ID 추가
         folders[targetFolderIndex].documentIds.push(document.id);
-
         // folders 업데이트
         await updateDoc(userDocRef, {
             folders: folders
@@ -40,6 +40,7 @@ export async function POST(req: NextRequest) {
         // 문서 배열에 파라미터로 받은 문서를 추가
         const documents = userData.documents || [];
         documents.push(document);
+
 
         // documents 업데이트
         await updateDoc(userDocRef, {

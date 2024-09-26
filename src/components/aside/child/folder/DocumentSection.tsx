@@ -17,7 +17,6 @@ export default function DocumentSection({ folder }: DocumentSectionProps) {
         return documents.filter(doc => folder.documentIds?.includes(doc.id));
     }, [documents, folder.documentIds]);
 
-
     return (
         <div>
             {
