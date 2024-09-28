@@ -43,22 +43,19 @@ export default function FolderSection({ isCollapsed }: FolderSectionProps) {
             const addedFolder = {
                 id: uuidv4(),
                 name: newFolderTitle,
-                documents: [],
+                documentIds: [],
                 author: user,
                 sharedWith: [],
             }
 
-            dispatch(addFolders(addedFolder));
-
-            setIsDuplicatedInfo((prevState) => ({
-                ...prevState,
-                isInvalid: false,
-            }));
-
-            setAddingFolder(false);
-            setNewFolderTitle('');
-
             try {
+                dispatch(addFolders(addedFolder));
+
+                setIsDuplicatedInfo((prevState) => ({
+                    ...prevState,
+                    isInvalid: false,
+                }));
+
                 // 폴더 추가 요청
                 await axios.post('/api/folder',
                     { email: user.email, folder: addedFolder },
@@ -72,7 +69,7 @@ export default function FolderSection({ isCollapsed }: FolderSectionProps) {
                 await getUserFolder(user.email, dispatch);
             } catch (error) {
                 console.error("폴더 추가 실패: ", error);
-                dispatch(deleteFolders(addedFolder.id));
+                dispatch(deleteFolders(addedFolder.id)); // 폴더 추가 실패 시 롤백
             }
         }
     }

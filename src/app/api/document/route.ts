@@ -31,7 +31,6 @@ export async function POST(req: NextRequest) {
 
         // 폴더의 documents 배열에 문서 ID 추가
         folders[targetFolderIndex].documentIds.push(document.id);
-
         // folders 업데이트
         await updateDoc(userDocRef, {
             folders: folders
@@ -40,6 +39,7 @@ export async function POST(req: NextRequest) {
         // 문서 배열에 파라미터로 받은 문서를 추가
         const documents = userData.documents || [];
         documents.push(document);
+
 
         // documents 업데이트
         await updateDoc(userDocRef, {
@@ -81,11 +81,10 @@ export async function GET(req: NextRequest) {
 // 문서명을 수정 - UPDATE
 export async function PUT(req: NextRequest) {
     try {
-        const { email, docId, newDocName } = await req.json();
+        const { email, docId, newDocName, newDocContent } = await req.json();
 
         if (!email) return NextResponse.json({ error: "이메일이 제공되지 않음" }, { status: 400 });
         if (!docId) return NextResponse.json({ error: "폴더 아이디가 제공되지 않음" }, { status: 400 });
-        if (!newDocName) return NextResponse.json({ error: "폴더명이 제공되지 않음" }, { status: 400 });
 
         const userDocRef = doc(firestore, 'users', email);
         const userDocSnap = await getDoc(userDocRef);
@@ -95,16 +94,17 @@ export async function PUT(req: NextRequest) {
         }
 
         const userData = userDocSnap.data();
-
         const allDocs: DocumentProps[] = userData.documents || [];
 
-        // 선택된 폴더 내에 있는 문서명만 변경
+        // 선택된 문서를 찾아 변경
         const updatedDocs = allDocs.map(doc => {
             if (doc.id === docId) {
+                // 새로운 문서명이나 내용이 있으면 업데이트
                 return {
                     ...doc,
-                    title: newDocName,
-                }
+                    title: newDocName !== undefined ? newDocName : doc.title,
+                    docContent: newDocContent !== undefined ? newDocContent : doc.docContent,
+                };
             }
             return doc;
         });

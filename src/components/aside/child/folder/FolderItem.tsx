@@ -1,7 +1,7 @@
 import FolderIcon from '../../../../../public/svgs/folder.svg';
 import { useEffect, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { addFolders, Folder, renameFolders, setFolders } from "@/redux/features/folderSlice";
+import { addDocumentToFolder, addFolders, Folder, renameFolders, setFolders } from "@/redux/features/folderSlice";
 import axios from 'axios';
 import ArrowIcon from '../../../../../public/svgs/right-arrow.svg';
 import EditIcon from '../../../../../public/svgs/editor/pencil-edit.svg';
@@ -13,6 +13,12 @@ import PlusIcon from '../../../../../public/svgs/plus.svg';
 import HoverTooltip from '@/components/editor/child/HoverTooltip';
 import DocumentSection from './DocumentSection';
 import EditInput from './EditInput';
+import { addDocuments, deleteDocuments, DocumentProps } from '@/redux/features/documentSlice';
+import AddInputModal from '@/components/modal/AddInputModal';
+import { setDoc } from 'firebase/firestore';
+import { v4 as uuidv4 } from 'uuid';
+import getUserDocument from '@/components/hooks/getUserDocument';
+import { useRouter } from 'next/navigation';
 
 type FolderItemProps = {
     folder: Folder;
@@ -25,9 +31,12 @@ export default function FolderItem({ folder }: FolderItemProps) {
     const folders = useAppSelector(state => state.folders)
 
     const [isHovered, setIsHovered] = useState(false);
-    const [isEditing, setIsEditing] = useState(false);
-    const [isExpanded, setIsExpanded] = useState(false);
+    const [isEditing, setIsEditing] = useState(false); // 폴더명 수정중
+    const [isAdding, setIsAdding] = useState(false); // 폴더에 문서 추가중
+    const [isExpanded, setIsExpanded] = useState(false); // 문서 영역을 확장 시켰는지
+
     const [folderTitle, setFolderTitle] = useState(folder.name);
+    const [docTitle, setDocTitle] = useState('');
 
     const completeEdit = async (e: React.KeyboardEvent<HTMLInputElement>) => {
         // 엔터키가 클릭될 시, 작업을 종료하고 폴더명 수정 요청 전송
@@ -91,6 +100,45 @@ export default function FolderItem({ folder }: FolderItemProps) {
         }
     }
 
+    // 선택된 폴더에 문서 추가
+    const addDocToFolder = async () => {
+        const newDocument: DocumentProps = {
+            id: uuidv4(),
+            title: docTitle,
+            docContent: null,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+            author: user,
+            folderName: folder.name,
+        }
+
+        try {
+            // 전체 문서 배열에 추가
+            dispatch(addDocuments(newDocument));
+            // 문서 ID를 기본 폴더에 추가
+            dispatch(addDocumentToFolder({ folderId: folder.id, document: newDocument.id }));
+
+            // 문서를 배열에 추가
+            dispatch(addDocuments(newDocument));
+
+            await axios.post('/api/document',
+                { email: user.email, folderId: folder.id, document: newDocument },
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Accept": "application/json"
+                    },
+                });
+
+            // 문서를 추가했으니 전체 배열 업데이트
+            getUserDocument(user.email, dispatch);
+            getUserFolder(user.email, dispatch);
+        } catch (error) {
+            console.error(error);
+            dispatch(deleteDocuments(newDocument.id)); // 문서 추가 실패 시 롤백
+        }
+    }
+
     return (
         <div className='w-full'>
             {/* 각각의 폴더 영역 */}
@@ -137,27 +185,34 @@ export default function FolderItem({ folder }: FolderItemProps) {
                 {/* 폴더에 적용할 수 있는 옵션들 */}
                 <div className="flex flex-row items-center ml-1">
                     {
-                        folder.name !== '내 폴더' &&
-                        <>
-                            <HoverTooltip label='폴더명 수정'>
-                                <GroupHoverItem
-                                    Icon={EditIcon}
-                                    IconWidth={15}
-                                    onClick={() => setIsEditing(true)} />
-                            </HoverTooltip>
-                            <HoverTooltip label='폴더 삭제'>
-                                <GroupHoverItem
-                                    Icon={DeleteIcon}
-                                    IconWidth={15}
-                                    onClick={deleteFolder} />
-                            </HoverTooltip>
+                        folder.name == '내 폴더' ?
                             <HoverTooltip label='폴더에 문서 추가'>
                                 <GroupHoverItem
                                     Icon={PlusIcon}
                                     IconWidth={15}
-                                    onClick={deleteFolder} />
+                                    onClick={() => setIsAdding(true)} />
                             </HoverTooltip>
-                        </>
+                            :
+                            <>
+                                <HoverTooltip label='폴더명 수정'>
+                                    <GroupHoverItem
+                                        Icon={EditIcon}
+                                        IconWidth={15}
+                                        onClick={() => setIsEditing(true)} />
+                                </HoverTooltip>
+                                <HoverTooltip label='폴더 삭제'>
+                                    <GroupHoverItem
+                                        Icon={DeleteIcon}
+                                        IconWidth={15}
+                                        onClick={deleteFolder} />
+                                </HoverTooltip>
+                                <HoverTooltip label='폴더에 문서 추가'>
+                                    <GroupHoverItem
+                                        Icon={PlusIcon}
+                                        IconWidth={15}
+                                        onClick={() => setIsAdding(true)} />
+                                </HoverTooltip>
+                            </>
                     }
                 </div>
             </div>
@@ -166,6 +221,14 @@ export default function FolderItem({ folder }: FolderItemProps) {
                 isExpanded &&
                 <DocumentSection folder={folder} />
             }
+            <AddInputModal
+                isModalOpen={isAdding}
+                setIsModalOpen={setIsAdding}
+                title='폴더에 문서 추가하기'
+                value={docTitle}
+                setValue={setDocTitle}
+                submitFunction={addDocToFolder}
+                placeholder="추가할 문서의 이름을 입력해주세요" />
         </div>
     );
 }
