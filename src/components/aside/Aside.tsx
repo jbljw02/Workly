@@ -159,6 +159,7 @@ export default function Aside() {
                     backgroundColor: '#D1D5DB',
                     transition: 'width 0.2s ease',
                 }} />
+            {/* 사용자의 정보 영역 */}
             <UserSection />
             {/* 검색창 및 작업 추가 영역 */}
             <SearchInput isCollapsed={isCollapsed} />

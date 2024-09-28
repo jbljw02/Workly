@@ -4,18 +4,26 @@ import DocumentItem from "./DocumentItem";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import getUserDocument from "@/components/hooks/getUserDocument";
 import { useEffect, useMemo } from "react";
+import { useRouter } from "next/dist/client/components/navigation";
 
 type DocumentSectionProps = {
     folder: Folder,
 }
 
 export default function DocumentSection({ folder }: DocumentSectionProps) {
+    const router = useRouter();
+
     const documents = useAppSelector(state => state.documents);
 
     // 전체 문서에서 폴더가 가지고 있는 docId와 일치하는 것들만 필터링
     const documentsInFolder = useMemo(() => {
         return documents.filter(doc => folder.documentIds?.includes(doc.id));
     }, [documents, folder.documentIds]);
+
+    // 선택된 문서의 경로로 라우팅
+    const docRouting = (folderId: string, docId: string) => {
+        router.push(`/editor/${folderId}/${docId}`)
+    }
 
     return (
         <div>
@@ -24,7 +32,9 @@ export default function DocumentSection({ folder }: DocumentSectionProps) {
                     documentsInFolder.map(doc => {
                         return (
                             // 각각의 폴더 영역
-                            <DocumentItem document={doc} />
+                            <DocumentItem
+                                onClick={() => docRouting(folder.id, doc.id)}
+                                document={doc} />
                         )
                     }) :
                     // 폴더에 하위 문서가 없을 때

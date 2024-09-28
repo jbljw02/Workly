@@ -10,7 +10,7 @@ import Color from '@tiptap/extension-color'
 import ListItem from '@tiptap/extension-list-item'
 import OrderedList from '@tiptap/extension-ordered-list'
 import CodeBlock from '@tiptap/extension-code-block'
-import React, { CSSProperties, useEffect, useState } from 'react'
+import React, { CSSProperties, useCallback, useEffect, useState } from 'react'
 import MenuBar from './child/MenuBar'
 import Heading from '@tiptap/extension-heading'
 import BulletList from '@tiptap/extension-bullet-list'
@@ -31,8 +31,11 @@ import ImageNodeView from './child/image/ImageNodeView'
 import DragHandle from '@tiptap-pro/extension-drag-handle-react'
 import MenuIcon from '../../../public/svgs/editor/menu-vertical.svg'
 import Placeholder from '@tiptap/extension-placeholder'
-import { DocumentProps, setSelectedDocument, updateDocuments } from '@/redux/features/documentSlice'
+import { DocumentProps, renameDocuments, setSelectedDocument, updateDocuments } from '@/redux/features/documentSlice'
 import formatTimeDiff from '@/utils/formatTimeDiff'
+import { debounce } from "lodash";
+import axios from 'axios'
+import { headers } from 'next/headers'
 
 export default function Editor({ docId }: { docId: string }) {
   const dispatch = useAppDispatch();
@@ -142,6 +145,7 @@ export default function Editor({ docId }: { docId: string }) {
   })
 
   const openColorPicker = useAppSelector(state => state.openColorPicker);
+  const user = useAppSelector(state => state.user);
 
   const documents = useAppSelector(state => state.documents);
   // 문서들 중에 현재 편집 중인 문서를 선택
@@ -154,12 +158,46 @@ export default function Editor({ docId }: { docId: string }) {
   useEffect(() => {
     if (documents.length && docId) {
       const selectedDoc = documents.find((doc: DocumentProps) => doc.id === docId);
-      dispatch(setSelectedDocument(selectedDoc));
+      if (selectedDoc) {
+        setDocTitle(selectedDoc?.title);
+        dispatch(setSelectedDocument(selectedDoc));
+      }
     }
   }, [documents, docId]);
 
+  // editor의 값을 state의 값과 동기화
+  useEffect(() => {
+    editor?.commands.setContent(selectedDocument.docContent);
+  }, [editor, documents]);
+
+  // 에디터의 값을 DB에 저장하기 위해 서버로 요청 전송
+  // 디바운싱을 이용하여 과도한 요청 방지
+  const editorUpdatedRequest = useCallback(
+    debounce((updatedDoc, email) => {
+      try {
+        axios.put(
+          '/api/document',
+          {
+            email: email,
+            docId: updatedDoc.id,
+            newDocName: updatedDoc.title,
+            newDocContent: updatedDoc.docContent,
+          },
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              Accept: 'application/json',
+            },
+          });
+      } catch (error) {
+        console.error(error);
+      }
+    }, 1000), // 1초의 딜레이
+    []);
+
   // 에디터의 내용이 변경될 때마다 적용
   useEffect(() => {
+    console.log("!!");
     const updateDocument = () => {
       if (editor && selectedDocument) {
         const updatedDoc = {
@@ -172,6 +210,7 @@ export default function Editor({ docId }: { docId: string }) {
         dispatch(updateDocuments(updatedDoc.id));
         dispatch(setSelectedDocument(updatedDoc));
         setLastUpdatedTime(formatTimeDiff(updatedDoc.updatedAt));
+        editorUpdatedRequest(updatedDoc, user.email);
       }
     };
 
@@ -184,7 +223,7 @@ export default function Editor({ docId }: { docId: string }) {
     };
   }, [editor, dispatch, selectedDocument]);
 
-  // docTitle이 변경될 때만 문서 제목을 업데이트
+  // docTitle이 변경될 때 문서 제목을 업데이트
   useEffect(() => {
     if (selectedDocument) {
       const updatedDoc = {
@@ -195,9 +234,11 @@ export default function Editor({ docId }: { docId: string }) {
       // 현재 상태와 업데이트하려는 내용이 동일하지 않을 때만 dispatch 호출
       if (selectedDocument.title !== docTitle) {
         dispatch(setSelectedDocument(updatedDoc));
+        dispatch(renameDocuments({ docId: updatedDoc.id, newTitle: updatedDoc.title }));
+        editorUpdatedRequest(updatedDoc, user.email);
       }
     }
-  }, [docTitle, dispatch, selectedDocument]);
+  }, [docTitle, dispatch]);
 
   if (!editor) {
     return null;

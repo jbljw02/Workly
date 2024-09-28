@@ -12,13 +12,16 @@ import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import getUserDocument from "@/components/hooks/getUserDocument";
 import axios from 'axios';
 import getUserFolder from "@/components/hooks/getUserFolder";
+import { useRouter } from "next/navigation";
 
 type DocumentItemProps = {
     document: DocumentProps;
+    onClick: () => void;
 }
 
-export default function DocumentItem({ document }: DocumentItemProps) {
+export default function DocumentItem({ document, onClick }: DocumentItemProps) {
     const dispatch = useAppDispatch();
+    const router = useRouter();
 
     const user = useAppSelector(state => state.user);
     const documents = useAppSelector(state => state.documents);
@@ -38,7 +41,7 @@ export default function DocumentItem({ document }: DocumentItemProps) {
                     {
                         email: user.email,
                         docId: document.id,
-                        newDocName: docTitle
+                        newDocName: docTitle,
                     },
                     {
                         headers: {
@@ -81,6 +84,7 @@ export default function DocumentItem({ document }: DocumentItemProps) {
                     "Accept": "application/json",
                 },
             });
+            router.push('/editor/home')
         } catch (error) {
             console.error(error);
             // 삭제에 실패하면 롤백
@@ -89,7 +93,9 @@ export default function DocumentItem({ document }: DocumentItemProps) {
     }
 
     return (
-        <div className="flex flex-row justify-between items-center pl-3 pr-1 w-full h-[30px] text-sm rounded cursor-pointer hover:bg-gray-100 group">
+        <div
+            onClick={onClick}
+            className="flex flex-row justify-between items-center pl-3 pr-1 w-full h-[30px] text-sm rounded cursor-pointer hover:bg-gray-100 group">
             {/* 아이콘과 문서명 */}
             <div className="flex flex-row gap-2 text-zinc-600 overflow-hidden">
                 <div className="flex flex-shrink-0">

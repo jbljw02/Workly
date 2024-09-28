@@ -18,6 +18,7 @@ import AddInputModal from '@/components/modal/AddInputModal';
 import { setDoc } from 'firebase/firestore';
 import { v4 as uuidv4 } from 'uuid';
 import getUserDocument from '@/components/hooks/getUserDocument';
+import { useRouter } from 'next/navigation';
 
 type FolderItemProps = {
     folder: Folder;
@@ -119,7 +120,7 @@ export default function FolderItem({ folder }: FolderItemProps) {
 
             // 문서를 배열에 추가
             dispatch(addDocuments(newDocument));
-            
+
             await axios.post('/api/document',
                 { email: user.email, folderId: folder.id, document: newDocument },
                 {
@@ -184,27 +185,34 @@ export default function FolderItem({ folder }: FolderItemProps) {
                 {/* 폴더에 적용할 수 있는 옵션들 */}
                 <div className="flex flex-row items-center ml-1">
                     {
-                        folder.name !== '내 폴더' &&
-                        <>
-                            <HoverTooltip label='폴더명 수정'>
-                                <GroupHoverItem
-                                    Icon={EditIcon}
-                                    IconWidth={15}
-                                    onClick={() => setIsEditing(true)} />
-                            </HoverTooltip>
-                            <HoverTooltip label='폴더 삭제'>
-                                <GroupHoverItem
-                                    Icon={DeleteIcon}
-                                    IconWidth={15}
-                                    onClick={deleteFolder} />
-                            </HoverTooltip>
+                        folder.name == '내 폴더' ?
                             <HoverTooltip label='폴더에 문서 추가'>
                                 <GroupHoverItem
                                     Icon={PlusIcon}
                                     IconWidth={15}
                                     onClick={() => setIsAdding(true)} />
                             </HoverTooltip>
-                        </>
+                            :
+                            <>
+                                <HoverTooltip label='폴더명 수정'>
+                                    <GroupHoverItem
+                                        Icon={EditIcon}
+                                        IconWidth={15}
+                                        onClick={() => setIsEditing(true)} />
+                                </HoverTooltip>
+                                <HoverTooltip label='폴더 삭제'>
+                                    <GroupHoverItem
+                                        Icon={DeleteIcon}
+                                        IconWidth={15}
+                                        onClick={deleteFolder} />
+                                </HoverTooltip>
+                                <HoverTooltip label='폴더에 문서 추가'>
+                                    <GroupHoverItem
+                                        Icon={PlusIcon}
+                                        IconWidth={15}
+                                        onClick={() => setIsAdding(true)} />
+                                </HoverTooltip>
+                            </>
                     }
                 </div>
             </div>

@@ -39,7 +39,6 @@ export const documentSlice = createSlice({
         updateDocuments: (state, action) => {
             const index = state.findIndex(doc => doc.id === action.payload);
             if (index !== -1) {
-                // 문서가 존재할 때만 업데이트
                 state[index] = { ...state[index], ...action.payload };
             }
         },
