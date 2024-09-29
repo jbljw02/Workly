@@ -1,5 +1,3 @@
-'use client'
-
 import { useEditor, EditorContent, ReactNodeViewRenderer, JSONContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import Underline from '@tiptap/extension-underline'
@@ -36,6 +34,7 @@ import formatTimeDiff from '@/utils/formatTimeDiff'
 import { debounce } from "lodash";
 import axios from 'axios'
 import { headers } from 'next/headers'
+import { GetServerSideProps } from 'next'
 
 export default function Editor({ docId }: { docId: string }) {
   const dispatch = useAppDispatch();
@@ -167,8 +166,11 @@ export default function Editor({ docId }: { docId: string }) {
 
   // editor의 값을 state의 값과 동기화
   useEffect(() => {
-    editor?.commands.setContent(selectedDocument.docContent);
-  }, [editor, documents]);
+    // selectedDocument.id를 의존성 배열에 넣음으로써 초기화 시에만 실행 되도록 함
+    if (editor && selectedDocument && selectedDocument.docContent) {
+      editor.commands.setContent(selectedDocument.docContent);
+    }
+  }, [editor, selectedDocument.id]);
 
   // 에디터의 값을 DB에 저장하기 위해 서버로 요청 전송
   // 디바운싱을 이용하여 과도한 요청 방지
@@ -197,7 +199,6 @@ export default function Editor({ docId }: { docId: string }) {
 
   // 에디터의 내용이 변경될 때마다 적용
   useEffect(() => {
-    console.log("!!");
     const updateDocument = () => {
       if (editor && selectedDocument) {
         const updatedDoc = {
@@ -207,7 +208,7 @@ export default function Editor({ docId }: { docId: string }) {
           updatedAt: new Date().toISOString(),
         };
 
-        dispatch(updateDocuments(updatedDoc.id));
+        dispatch(updateDocuments({ docId: updatedDoc.id, updatedData: updatedDoc }));
         dispatch(setSelectedDocument(updatedDoc));
         setLastUpdatedTime(formatTimeDiff(updatedDoc.updatedAt));
         editorUpdatedRequest(updatedDoc, user.email);
@@ -248,16 +249,19 @@ export default function Editor({ docId }: { docId: string }) {
     <div className="flex-grow h-full">
       <EditorHeader
         editor={editor}
+        docTitle={docTitle}
         lastUpdatedTime={lastUpdatedTime}
         setLastUpdatedTime={setLastUpdatedTime} />
       <MenuBar editor={editor} />
-      <div className='m-4 h-full'>
+      <div
+        id="editor-content"
+        className='p-4 h-full'>
         <input
           type="text"
           value={docTitle}
           onChange={(e) => setDocTitle(e.target.value)}
           placeholder="제목을 입력해주세요"
-          className="editor-title text-[40px] pl-5 font-bold outline-none w-full"
+          className="editor-title text-[40px] pl-5 pb-4 font-bold outline-none w-full"
           onKeyDown={(e) => {
             // Enter 키를 눌렀을 때 editor로 포커스를 이동
             if (e.key === 'Enter') {

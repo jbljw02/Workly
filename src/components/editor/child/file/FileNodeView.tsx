@@ -193,11 +193,14 @@ export default function FileNodeView({ editor, node }: FileNodeViewProps) {
             <NodeViewWrapper
                 onDragEnd={dropFile}
                 data-drag-handle
+                contentEditable={false}
                 draggable="true">
                 <div
+                    data-file={title}
                     onClick={fileClick}
                     ref={fileRef}
-                    className={`relative inline-flex flex-row items-center justify-center w-auto rounded-md p-2 mt-2 mb-2 hover:bg-gray-100 cursor-pointer duration-100 ${menuListOpen ? 'bg-gray-100' : 'bg-gray-50'}`}>
+                    className={`data-file relative inline-flex flex-row items-center justify-center w-auto rounded-md p-2 mt-2 mb-2 hover:bg-gray-100 cursor-pointer duration-100 
+                    ${menuListOpen ? 'bg-gray-100' : 'bg-gray-50'}`}>
                     <FileInfoIcon width="26" />
                     <div className='flex justify-between items-center mt-0.5'>
                         {

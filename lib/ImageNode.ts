@@ -4,7 +4,7 @@ import { Plugin, PluginKey } from "prosemirror-state"; // Plugin을 prosemirror-
 import ImageNodeView from "@/components/editor/child/image/ImageNodeView";
 
 const ImageNode = ResizableImage.extend({
-  draggable: true, // 노드를 드래그 가능하게 설정
+  draggable: true,
 
   addNodeView() {
     return ReactNodeViewRenderer(ImageNodeView); // ImageNodeView.tsx의 NodeView와 연결

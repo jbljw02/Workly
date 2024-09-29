@@ -35,7 +35,10 @@ ol li::marker {
     color: inherit;
 }
 
-h1, h2, h4, p {
+h1,
+h2,
+h4,
+p {
     padding: 4px 0px;
 }
 
@@ -71,7 +74,6 @@ hr {
 
 .image-component {
     margin: 16px 0;
-    /* 1rem -> 16px */
 }
 
 .node-imageComponent {

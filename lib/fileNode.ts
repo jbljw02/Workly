@@ -16,9 +16,19 @@ const FileNode = Node.create({
             title: { default: null }, // 파일명
             mimeType: { default: null }, // 파일 형식
             size: { default: null }, // 파일 크기
+            fileName: { default: null }
         };
     },
-
+    parseHTML() {
+        return [
+            {
+                tag: 'div[data-file]',
+            },
+        ];
+    },
+    renderHTML({ HTMLAttributes }) {
+        return ['div', { ...HTMLAttributes, 'data-file': HTMLAttributes.title }];
+    },
     addProseMirrorPlugins() {
         return [
             new Plugin({
@@ -47,9 +57,6 @@ const FileNode = Node.create({
             }),
         ];
     },
-
-
-
     addNodeView() {
         return ReactNodeViewRenderer(FileNodeView);
     },
