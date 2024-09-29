@@ -255,22 +255,22 @@ export default function MenuBar({ editor }: { editor: Editor }) {
                         Icon={OlIcon}
                         iconWidth={22} />
                 </HoverTooltip>
-                <HoverTooltip label='정렬'>
-                    {/* 텍스트의 정렬 기준을 정하는 드롭다운 영역 */}
-                    <div className="relative">
+                {/* 텍스트의 정렬 기준을 정하는 드롭다운 영역 */}
+                <div className="relative">
+                    <HoverTooltip label='정렬'>
                         <ToolbarButton
                             onClick={() => setAlignDropdownOpen(!alignDropdownOpen)}
                             Icon={AlignLeftIcon}
                             iconWidth={21} />
-                        {
-                            alignDropdownOpen && (
-                                <AlignDropdown
-                                    editor={editor}
-                                    setAlignDropdownOpen={setAlignDropdownOpen} />
-                            )
-                        }
-                    </div>
-                </HoverTooltip>
+                    </HoverTooltip>
+                    {
+                        alignDropdownOpen && (
+                            <AlignDropdown
+                                editor={editor}
+                                setAlignDropdownOpen={setAlignDropdownOpen} />
+                        )
+                    }
+                </div>
                 <HoverTooltip label='구분선'>
                     <ToolbarButton
                         onClick={() => editor.chain().focus().setHorizontalRule().run()}
