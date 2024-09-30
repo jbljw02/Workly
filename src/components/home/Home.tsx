@@ -44,7 +44,7 @@ export default function Home() {
                                 hover: 'hover:scale-105'
                             }}
                             label="문의 남기기"
-                            onClick={logout} />
+                            onClick={() => logout(router)} />
                     </div>
                 </div>
             </div>

@@ -21,9 +21,9 @@ export default function FolderSection({ isCollapsed }: FolderSectionProps) {
 
     const [addingFolder, setAddingFolder] = useState<boolean>(false);
     const [newFolderTitle, setNewFolderTitle] = useState<string>('');
-    const [isDuplicatedInfo, setIsDuplicatedInfo] = useState({
+    const [isFolderInvalidInfo, setIsFolderInvalidInfo] = useState({
         isInvalid: false,
-        msg: '이미 존재하는 폴더명이에요',
+        msg: '',
     });
 
     const user = useAppSelector(state => state.user);
@@ -34,43 +34,49 @@ export default function FolderSection({ isCollapsed }: FolderSectionProps) {
         const folderNameDuplicated = folders.find((folder: Folder) => folder.name === newFolderTitle);
 
         if (folderNameDuplicated) {
-            setIsDuplicatedInfo((prevState) => ({
-                ...prevState,
+            setIsFolderInvalidInfo(({
+                msg: '이미 존재하는 폴더명입니다.',
                 isInvalid: true,
             }));
+
+            return true;
         }
-        else {
-            const addedFolder = {
-                id: uuidv4(),
-                name: newFolderTitle,
-                documentIds: [],
-                author: user,
-                sharedWith: [],
-            }
+        const addedFolder = {
+            id: uuidv4(),
+            name: newFolderTitle,
+            documentIds: [],
+            author: user,
+            sharedWith: [],
+        }
 
-            try {
-                dispatch(addFolders(addedFolder));
+        try {
+            // 폴더 추가 요청
+            await axios.post('/api/folder',
+                { email: user.email, folder: addedFolder },
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Accept": "application/json"
+                    },
+                });
+            // 폴더가 추가됐으니 전체 업데이트
+            await getUserFolder(user.email, dispatch);
 
-                setIsDuplicatedInfo((prevState) => ({
-                    ...prevState,
-                    isInvalid: false,
-                }));
+            dispatch(addFolders(addedFolder));
+            setIsFolderInvalidInfo({
+                msg: '',
+                isInvalid: false,
+            });
 
-                // 폴더 추가 요청
-                await axios.post('/api/folder',
-                    { email: user.email, folder: addedFolder },
-                    {
-                        headers: {
-                            "Content-Type": "application/json",
-                            "Accept": "application/json"
-                        },
-                    });
-                // 폴더가 추가됐으니 전체 업데이트
-                await getUserFolder(user.email, dispatch);
-            } catch (error) {
-                console.error("폴더 추가 실패: ", error);
-                dispatch(deleteFolders(addedFolder.id)); // 폴더 추가 실패 시 롤백
-            }
+            return false;
+        } catch (error) {
+            console.error("폴더 추가 실패: ", error);
+            setIsFolderInvalidInfo(({
+                msg: '폴더 추가에 실패했습니다. 잠시 후 다시 시도해주세요.',
+                isInvalid: true,
+            }));
+
+            return true;
         }
     }
 
@@ -80,14 +86,6 @@ export default function FolderSection({ isCollapsed }: FolderSectionProps) {
             getUserDocument(user.email, dispatch);
         }
     }, [user.email, getUserFolder]);
-
-    const openModal = () => {
-        setAddingFolder(true);
-        setIsDuplicatedInfo((prevState) => ({
-            ...prevState,
-            isInvalid: false,
-        }));
-    }
 
     return (
         // Aside의 width에 따라 각각 다른 레이아웃 출력
@@ -103,7 +101,7 @@ export default function FolderSection({ isCollapsed }: FolderSectionProps) {
                 }
                 {/* 새 폴더를 추가하는 영역 */}
                 <div
-                    onClick={openModal}
+                    onClick={() => setAddingFolder(true)}
                     className="flex items-center pl-2 h-[30px] rounded text-neutral-400 hover:bg-gray-100 cursor-pointer">
                     <PlusIcon width="16" />
                     <span
@@ -116,7 +114,8 @@ export default function FolderSection({ isCollapsed }: FolderSectionProps) {
                     value={newFolderTitle}
                     setValue={setNewFolderTitle}
                     submitFunction={addNewFolder}
-                    isInvalidInfo={isDuplicatedInfo}
+                    isInvalidInfo={isFolderInvalidInfo}
+                    setIsInvalidInfo={setIsFolderInvalidInfo}
                     placeholder="새 폴더의 이름을 입력해주세요" />
             </div> :
             <SidebarItem

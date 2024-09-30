@@ -22,6 +22,17 @@ import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import PdfFileNode from '../file/PdfFileNode'
 import ReactDOMServer from 'react-dom/server';
+import AddInputModal from '@/components/modal/AddInputModal'
+import { usePathname } from 'next/navigation'
+import WarningAlert from '@/components/alert/WarningAlert'
+import CompleteAlert from '@/components/alert/CompleteAlert'
+import { addDocuments, deleteDocuments, DocumentProps } from '@/redux/features/documentSlice'
+import { v4 as uuidv4 } from 'uuid';
+import { addDocumentToFolder, Folder } from '@/redux/features/folderSlice'
+import getUserDocument from '@/components/hooks/getUserDocument'
+import getUserFolder from '@/components/hooks/getUserFolder'
+import axios from 'axios'
+import DocumentMoveModal from '@/components/modal/DocumentMoveModal'
 
 type EditorHeaderProps = {
     editor: Editor,
@@ -35,9 +46,31 @@ export default function EditorHeader({
     docTitle,
     lastUpdatedTime,
     setLastUpdatedTime }: EditorHeaderProps) {
+    const dispatch = useAppDispatch();
+
+    const user = useAppSelector(state => state.user);
     const selectedDocument = useAppSelector(state => state.selectedDocument);
+    const folders = useAppSelector(state => state.folders);
+
+    // 문서가 소속된 폴더를 찾음
+    const parentFolder = folders.find(folder => folder.name === selectedDocument.folderName);
 
     const [menuListOpen, setMenuListOpen] = useState(false);
+    const [isLinkCopied, setIsLinkCopied] = useState(false);
+    const [isDocCopied, setIsDocCopied] = useState(false);
+    const [isMoving, setIsMoving] = useState(false);
+
+    const [isFailedInfo, setIsFailedInfo] = useState({
+        isFailed: false,
+        msg: '',
+    });
+
+    // 링크 복사
+    const copyURL = () => {
+        const currentURL = window.location.href;
+        navigator.clipboard.writeText(currentURL);
+        setIsLinkCopied(true);
+    }
 
     // 에디터 내용을 PDF로 변환하고 다운로드하는 함수
     const downloadPDF = async () => {
@@ -57,7 +90,7 @@ export default function EditorHeader({
                 const filename = node.getAttribute('title') || '알 수 없는 파일';
                 const fileUrl = node.getAttribute('href') || ''; // 파일의 URL을 가져옴 (미리 업로드되어 있다고 가정)
 
-                 // 컴포넌트를 HTML로 변환
+                // 컴포넌트를 HTML로 변환
                 const pdfFileNodeHtml = ReactDOMServer.renderToString(
                     <PdfFileNode fileTitle={filename} fileUrl={fileUrl} />
                 );
@@ -106,24 +139,62 @@ export default function EditorHeader({
         }
     };
 
+    // 문서의 사본을 생성
+    const copyDoc = async (doc: DocumentProps) => {
+        const copiedDocument: DocumentProps = {
+            ...doc,
+            id: uuidv4(), // 사본이지만 ID는 중복되면 안 되기에 새로 생성
+        }
+
+        if (parentFolder) {
+            try {
+                // 전체 문서 배열에 추가
+                dispatch(addDocuments(copiedDocument));
+                // 문서 ID를 폴더에 추가
+                dispatch(addDocumentToFolder({ folderId: parentFolder.id, document: copiedDocument.id }));
+
+                await axios.post('/api/document',
+                    { email: user.email, folderId: parentFolder.id, document: copiedDocument },
+                    {
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Accept": "application/json"
+                        },
+                    });
+
+                setIsDocCopied(true);
+                // 문서를 추가했으니 전체 배열 업데이트
+                getUserDocument(user.email, dispatch);
+                getUserFolder(user.email, dispatch);
+            } catch (error) {
+                console.error(error);
+                dispatch(deleteDocuments(copiedDocument.id)); // 문서 복사 실패 시 롤백
+                setIsFailedInfo({
+                    isFailed: true,
+                    msg: `${selectedDocument.title}의 사본 생성에 실패했습니다.`,
+                })
+            }
+        }
+    }
+
     const menuItems: MenuItemProps[] = [
-        {
-            Icon: EditIcon,
-            IconWidth: "16",
-            label: "문서명 변경",
-            onClick: () => console.log("A")
-        },
         {
             Icon: MoveIcon,
             IconWidth: "15",
             label: "옮기기",
-            onClick: () => console.log("A")
+            onClick: () => setIsMoving(true),
+        },
+        {
+            Icon: CopyIcon,
+            IconWidth: "16",
+            label: "사본 만들기",
+            onClick: () => copyDoc(selectedDocument),
         },
         {
             Icon: LinkCopyIcon,
             IconWidth: "16",
             label: "링크 복사",
-            onClick: () => console.log("A")
+            onClick: () => copyURL(),
         },
         {
             Icon: DownloadIcon,
@@ -132,17 +203,11 @@ export default function EditorHeader({
             onClick: () => downloadPDF(),
         },
         {
-            Icon: CopyIcon,
-            IconWidth: "16",
-            label: "사본 만들기",
-            onClick: () => console.log("A"),
-            horizonLine: true,
-        },
-        {
             Icon: DeleteIcon,
             IconWidth: "17",
             label: "휴지통으로 이동",
-            onClick: () => console.log("A")
+            onClick: () => console.log("A"),
+            horizonLine: true,
         }
     ];
 
@@ -193,6 +258,27 @@ export default function EditorHeader({
                     }
                 </div>
             </div>
+            {/* 링크 복사가 완료됐음을 알리는 alert */}
+            <CompleteAlert
+                isModalOpen={isLinkCopied}
+                setIsModalOpen={setIsLinkCopied}
+                label="링크가 복사되었습니다" />
+            {/* 문서의 복제가 완료됐음을 알리는 alert */}
+            <CompleteAlert
+                isModalOpen={isDocCopied}
+                setIsModalOpen={setIsDocCopied}
+                label={`${parentFolder?.name}에 ${selectedDocument.title} 사본이 생성되었습니다.`} />
+            {/* 작업이 실패했을 때 알릴 alert */}
+            <WarningAlert
+                isModalOpen={isFailedInfo.isFailed}
+                setIsModalOpen={() => setIsFailedInfo((prevState) => ({
+                    ...prevState,
+                    isFailed: true,
+                }))}
+                label={isFailedInfo.msg} />
+            <DocumentMoveModal
+                isModalOpen={isMoving}
+                setIsModalOpen={setIsMoving} />
         </div>
     )
 }

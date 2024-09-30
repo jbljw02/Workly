@@ -15,10 +15,8 @@ import DocumentSection from './DocumentSection';
 import EditInput from './EditInput';
 import { addDocuments, deleteDocuments, DocumentProps } from '@/redux/features/documentSlice';
 import AddInputModal from '@/components/modal/AddInputModal';
-import { setDoc } from 'firebase/firestore';
 import { v4 as uuidv4 } from 'uuid';
 import getUserDocument from '@/components/hooks/getUserDocument';
-import { useRouter } from 'next/navigation';
 
 type FolderItemProps = {
     folder: Folder;
@@ -37,6 +35,11 @@ export default function FolderItem({ folder }: FolderItemProps) {
 
     const [folderTitle, setFolderTitle] = useState(folder.name);
     const [docTitle, setDocTitle] = useState('');
+
+    const [isDocInvalidInfo, setIsDocInvalidInfo] = useState({
+        isInvalid: false,
+        msg: '문서 추가에 실패했습니다. 잠시 후 다시 시도해주세요.',
+    });
 
     const completeEdit = async (e: React.KeyboardEvent<HTMLInputElement>) => {
         // 엔터키가 클릭될 시, 작업을 종료하고 폴더명 수정 요청 전송
@@ -113,13 +116,6 @@ export default function FolderItem({ folder }: FolderItemProps) {
         }
 
         try {
-            // 전체 문서 배열에 추가
-            dispatch(addDocuments(newDocument));
-            // 문서 ID를 기본 폴더에 추가
-            dispatch(addDocumentToFolder({ folderId: folder.id, document: newDocument.id }));
-
-            // 문서를 배열에 추가
-            dispatch(addDocuments(newDocument));
 
             await axios.post('/api/document',
                 { email: user.email, folderId: folder.id, document: newDocument },
@@ -131,11 +127,28 @@ export default function FolderItem({ folder }: FolderItemProps) {
                 });
 
             // 문서를 추가했으니 전체 배열 업데이트
-            getUserDocument(user.email, dispatch);
-            getUserFolder(user.email, dispatch);
+            await getUserDocument(user.email, dispatch);
+            await getUserFolder(user.email, dispatch);
+
+            // 전체 문서 배열에 추가
+            dispatch(addDocuments(newDocument));
+            // 문서 ID를 폴더에 추가
+            dispatch(addDocumentToFolder({ folderId: folder.id, document: newDocument.id }));
+
+            setIsDocInvalidInfo(({
+                msg: '',
+                isInvalid: false,
+            }));
+
+            return false;
         } catch (error) {
             console.error(error);
-            dispatch(deleteDocuments(newDocument.id)); // 문서 추가 실패 시 롤백
+            setIsDocInvalidInfo(({
+                msg: '문서 추가에 실패했습니다. 잠시 후 다시 시도해주세요.',
+                isInvalid: true,
+            }));
+
+            return true;
         }
     }
 
@@ -154,7 +167,7 @@ export default function FolderItem({ folder }: FolderItemProps) {
                             isEditing ?
                                 <FolderIcon width="15" /> : (
                                     isHovered ?
-                                        <div className='hover:bg-gray-200 rounded-sm transition-transform duration-300 '>
+                                        <div className='hover:bg-gray-200 rounded-sm transition-transform duration-300'>
                                             {/* 화살표를 클릭 시 문서 */}
                                             <ArrowIcon
                                                 onClick={() => setIsExpanded(!isExpanded)}
@@ -176,8 +189,7 @@ export default function FolderItem({ folder }: FolderItemProps) {
                                     setTitle={setFolderTitle}
                                     completeEdit={completeEdit}
                                     isEditing={isEditing}
-                                    setIsEditing={setIsEditing} />
-                                :
+                                    setIsEditing={setIsEditing} /> :
                                 folder.name
                         }
                     </div>
@@ -191,8 +203,7 @@ export default function FolderItem({ folder }: FolderItemProps) {
                                     Icon={PlusIcon}
                                     IconWidth={15}
                                     onClick={() => setIsAdding(true)} />
-                            </HoverTooltip>
-                            :
+                            </HoverTooltip> :
                             <>
                                 <HoverTooltip label='폴더명 수정'>
                                     <GroupHoverItem
@@ -228,6 +239,8 @@ export default function FolderItem({ folder }: FolderItemProps) {
                 value={docTitle}
                 setValue={setDocTitle}
                 submitFunction={addDocToFolder}
+                isInvalidInfo={isDocInvalidInfo}
+                setIsInvalidInfo={setIsDocInvalidInfo}
                 placeholder="추가할 문서의 이름을 입력해주세요" />
         </div>
     );

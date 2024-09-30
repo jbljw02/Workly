@@ -1,10 +1,10 @@
-import { NoticeModal } from "./NoticeModal";
 import CautionIcon from '../../../public/svgs/caution.svg'
 import CloseIcon from '../../../public/svgs/editor/close.svg'
 import { useEffect, useRef, useState } from "react";
 import { useClickOutside } from "../hooks/useClickOutside";
+import { NoticeModalProps } from '@/types/noticeModalProps';
 
-export default function TooltipNotice({ isModalOpen, setIsModalOpen, label }: NoticeModal) {
+export default function WarningAlert({ isModalOpen, setIsModalOpen, label }: NoticeModalProps) {
     if (!isModalOpen) return null;
 
     const [animation, setAnimation] = useState<string>('slide-up');
@@ -30,10 +30,12 @@ export default function TooltipNotice({ isModalOpen, setIsModalOpen, label }: No
     return (
         <div
             ref={tooltipRef}
-            className={`${animation} fixed bottom-7 right-7 w-80 flex items-center p-4 rounded-lg text-yellow-900 bg-yellow-100 border border-yellow-200`}>
+            className={`${animation} fixed bottom-7 right-7 min-w-80 w-auto flex items-center p-4 rounded-lg text-yellow-900 bg-yellow-100 border border-yellow-200`}>
             <CautionIcon width="20" className="mr-3" />
             <div className="flex-grow text-sm font-medium">{label}</div>
-            <button onClick={closeTooltip}>
+            <button
+                className='ml-3'
+                onClick={closeTooltip}>
                 <CloseIcon
                     width="15"
                     className="text-yellow-800 hover:text-yellow-600" />

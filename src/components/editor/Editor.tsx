@@ -233,11 +233,9 @@ export default function Editor({ docId }: { docId: string }) {
       };
 
       // 현재 상태와 업데이트하려는 내용이 동일하지 않을 때만 dispatch 호출
-      if (selectedDocument.title !== docTitle) {
-        dispatch(setSelectedDocument(updatedDoc));
-        dispatch(renameDocuments({ docId: updatedDoc.id, newTitle: updatedDoc.title }));
-        editorUpdatedRequest(updatedDoc, user.email);
-      }
+      dispatch(setSelectedDocument(updatedDoc));
+      dispatch(renameDocuments({ docId: updatedDoc.id, newTitle: updatedDoc.title }));
+      editorUpdatedRequest(updatedDoc, user.email);
     }
   }, [docTitle, dispatch]);
 
