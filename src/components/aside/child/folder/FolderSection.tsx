@@ -62,7 +62,6 @@ export default function FolderSection({ isCollapsed }: FolderSectionProps) {
             // 폴더가 추가됐으니 전체 업데이트
             await getUserFolder(user.email, dispatch);
 
-            dispatch(addFolders(addedFolder));
             setIsFolderInvalidInfo({
                 msg: '',
                 isInvalid: false,

@@ -15,7 +15,7 @@ export default function EmailVerifyCheck() {
     useEffect(() => {
         onAuthStateChanged(auth, (user) => {
             console.log("유저: ", user);
-            if (user && user.emailVerified) {
+            if (user && user.emailVerified && user.displayName && user.email && user.photoURL) {
                 dispatch(setUser({
                     displayName: user.displayName,
                     email: user.email,

@@ -116,7 +116,6 @@ export default function FolderItem({ folder }: FolderItemProps) {
         }
 
         try {
-
             await axios.post('/api/document',
                 { email: user.email, folderId: folder.id, document: newDocument },
                 {
@@ -129,11 +128,6 @@ export default function FolderItem({ folder }: FolderItemProps) {
             // 문서를 추가했으니 전체 배열 업데이트
             await getUserDocument(user.email, dispatch);
             await getUserFolder(user.email, dispatch);
-
-            // 전체 문서 배열에 추가
-            dispatch(addDocuments(newDocument));
-            // 문서 ID를 폴더에 추가
-            dispatch(addDocumentToFolder({ folderId: folder.id, document: newDocument.id }));
 
             setIsDocInvalidInfo(({
                 msg: '',

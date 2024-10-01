@@ -40,7 +40,6 @@ export async function POST(req: NextRequest) {
         const documents = userData.documents || [];
         documents.push(document);
 
-
         // documents 업데이트
         await updateDoc(userDocRef, {
             documents: documents,

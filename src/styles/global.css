@@ -11,7 +11,7 @@ body {
 }
 
 .scrollbar-thin::-webkit-scrollbar-thumb {
-  background-color: #b9b9b9; /* 스크롤바 색상 */
+  background-color: #b9b9b9;
   border-radius: 2px;
 }
 
@@ -92,6 +92,5 @@ input[type="number"] {
 }
 
 .vibrate {
-  display: inline-block;
   animation: vibrate 0.3s infinite;
 }
