@@ -28,10 +28,10 @@ import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import LinkTooltip from './link/LinkTooltip'
 import NoticeModal from '@/components/modal/NoticeModal'
 import { setTextSelection } from '@/redux/features/selectionSlice'
-import TooltipNotice from '@/components/modal/TooltipNotice'
 import ColorPicker from './ColorPicker'
 import { setTextColor } from '@/redux/features/textColorSlice'
 import VerticalDivider from './divider/VerticalDivider'
+import WarningAlert from '@/components/alert/WarningAlert'
 
 export default function MenuBar({ editor }: { editor: Editor }) {
     const dispatch = useAppDispatch();
@@ -309,7 +309,7 @@ export default function MenuBar({ editor }: { editor: Editor }) {
                 {
                     // 아무 영역도 드래그하지 않고 링크를 클릭했을 때
                     linkNoticeModal &&
-                    <TooltipNotice
+                    <WarningAlert
                         isModalOpen={linkNoticeModal}
                         setIsModalOpen={setLinkNoticeModal}
                         label="링크를 연결할 영역을 드래그해주세요" />

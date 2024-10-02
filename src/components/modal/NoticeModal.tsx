@@ -1,11 +1,8 @@
 import { ModalProps } from '@/types/modalProps';
+import { NoticeModalProps } from '@/types/noticeModalProps';
 import Modal from 'react-modal';
 
-export interface NoticeModal extends ModalProps {
-    label: string | React.ReactNode;
-}
-
-export default function NoticeModal({ isModalOpen, setIsModalOpen, label }: NoticeModal) {
+export default function NoticeModal({ isModalOpen, setIsModalOpen, label }: NoticeModalProps) {
     return (
         <Modal
             isOpen={isModalOpen}

@@ -22,7 +22,7 @@ export default function CommonInput({
 
     return (
         <>
-            <div className={`rounded border w-full px-3 py-2.5 transition-all duration-200
+            <div className={`rounded border w-full px-3 py-2 transition-all duration-200
                 ${isInvalidInfo?.isInvalid ? 'border-red-500' : 'border-gray-300 focus-within:border-gray-600'}`}>
                 <input
                     type={type}

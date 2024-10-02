@@ -6,6 +6,8 @@ import CommonButton from '../button/CommonButton';
 import Header from './child/Header';
 import Footer from './child/Footer';
 import logout from '@/utils/logout';
+import { useAppDispatch, useAppSelector } from '@/redux/hooks';
+import { useEffect } from 'react';
 
 export default function Home() {
     const router = useRouter();
@@ -44,7 +46,7 @@ export default function Home() {
                                 hover: 'hover:scale-105'
                             }}
                             label="문의 남기기"
-                            onClick={logout} />
+                            onClick={() => logout(router)} />
                     </div>
                 </div>
             </div>

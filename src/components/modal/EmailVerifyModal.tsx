@@ -32,11 +32,13 @@ export default function EmailVerifyModal({ isModalOpen, setIsModalOpen }: ModalP
                         },
                     });
 
-                    dispatch(setUser({
-                        displayName: user.displayName,
-                        email: user.email,
-                        photoURL: user.photoURL,
-                    }))
+                    if (user.displayName && user.email && user.photoURL) {
+                        dispatch(setUser({
+                            displayName: user.displayName,
+                            email: user.email,
+                            photoURL: user.photoURL,
+                        }))
+                    }
                     router.push('/editor/home');
                 }
                 else {

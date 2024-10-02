@@ -9,8 +9,9 @@ export interface AddInputModal extends ModalProps {
     title: string;
     value: string;
     setValue: React.Dispatch<React.SetStateAction<string>>;
-    submitFunction: () => void;
+    submitFunction: () => Promise<boolean>;
     isInvalidInfo?: { isInvalid: boolean, msg: string };
+    setIsInvalidInfo?: React.Dispatch<React.SetStateAction<{ isInvalid: boolean; msg: string }>>;
     placeholder: string;
 }
 
@@ -22,10 +23,12 @@ export default function AddInputModal({
     setValue,
     submitFunction,
     isInvalidInfo,
+    setIsInvalidInfo,
     placeholder }: AddInputModal) {
-    const modalSubmit = (e: React.FormEvent) => {
+    const modalSubmit = async (e: React.FormEvent) => {
         e.preventDefault(); // 폼 제출 시 페이지 리로드 방지
-        submitFunction();
+        const isFailed = await submitFunction();
+        if (isFailed) return; // 실패 시 모달을 닫지 않음
         setIsModalOpen(false);
         setValue('');
     }
@@ -33,6 +36,10 @@ export default function AddInputModal({
     const closeModal = () => {
         setValue('');
         setIsModalOpen(false);
+        setIsInvalidInfo && setIsInvalidInfo({
+            msg: '',
+            isInvalid: false,
+        })
     }
 
     return (
@@ -56,6 +63,7 @@ export default function AddInputModal({
                     height: 240,
                     transform: 'translate(-50%, -50%)',
                     zIndex: 1001,
+                    padding: 22,
                 }
             }}>
             <form
@@ -81,7 +89,7 @@ export default function AddInputModal({
                             textSize: 'text-sm',
                             textColor: 'text-white',
                             bgColor: 'bg-blue-500',
-                            hover: 'hover:border-blue-700',
+                            hover: 'hover:bg-blue-700',
                         }}
                         label="만들기"
                         value={value} />

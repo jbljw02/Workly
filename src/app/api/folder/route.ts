@@ -112,7 +112,7 @@ export async function DELETE(req: NextRequest) {
         const userData = userDocSnap.data();
         const folders: Folder[] = userData.folders || [];
         const documents: DocumentProps[] = userData.documents || [];
-
+2
         // 삭제할 폴더를 찾아서 그 폴더의 documentIds 가져옴
         const targetFolder = folders.find((folder: Folder) => folder.id === folderId);
         if (!targetFolder) {

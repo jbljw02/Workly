@@ -8,7 +8,7 @@ import Color from '@tiptap/extension-color'
 import ListItem from '@tiptap/extension-list-item'
 import OrderedList from '@tiptap/extension-ordered-list'
 import CodeBlock from '@tiptap/extension-code-block'
-import React, { CSSProperties, useCallback, useEffect, useState } from 'react'
+import React, { CSSProperties, useCallback, useEffect, useRef, useState } from 'react'
 import MenuBar from './child/MenuBar'
 import Heading from '@tiptap/extension-heading'
 import BulletList from '@tiptap/extension-bullet-list'
@@ -153,6 +153,21 @@ export default function Editor({ docId }: { docId: string }) {
   // 문서의 마지막 편집 시간에 따른 출력값
   const [lastUpdatedTime, setLastUpdatedTime] = useState<string>('현재 편집 중');
 
+  const latestDocRef = useRef(selectedDocument);
+
+  // ref를 사용하여 최신 값을 참조해서 담음
+  useEffect(() => {
+    latestDocRef.current = selectedDocument;
+  }, [selectedDocument]);
+
+  // editor의 값을 state의 값과 동기화
+  useEffect(() => {
+    // selectedDocument.id를 의존성 배열에 넣음으로써 초기화 시에만 실행 되도록 함
+    if (editor && selectedDocument && selectedDocument.docContent) {
+      editor.commands.setContent(selectedDocument.docContent);
+    }
+  }, [editor, selectedDocument.id]);
+
   // 선택된 문서를 지정
   useEffect(() => {
     if (documents.length && docId) {
@@ -164,45 +179,40 @@ export default function Editor({ docId }: { docId: string }) {
     }
   }, [documents, docId]);
 
-  // editor의 값을 state의 값과 동기화
-  useEffect(() => {
-    // selectedDocument.id를 의존성 배열에 넣음으로써 초기화 시에만 실행 되도록 함
-    if (editor && selectedDocument && selectedDocument.docContent) {
-      editor.commands.setContent(selectedDocument.docContent);
-    }
-  }, [editor, selectedDocument.id]);
-
   // 에디터의 값을 DB에 저장하기 위해 서버로 요청 전송
   // 디바운싱을 이용하여 과도한 요청 방지
   const editorUpdatedRequest = useCallback(
-    debounce((updatedDoc, email) => {
+    debounce(async (email, latestDoc) => {
+      if (!latestDoc && email) return;
       try {
-        axios.put(
+        await axios.put(
           '/api/document',
           {
             email: email,
-            docId: updatedDoc.id,
-            newDocName: updatedDoc.title,
-            newDocContent: updatedDoc.docContent,
+            docId: latestDoc.id,
+            newDocName: latestDoc.title,
+            newDocContent: latestDoc.docContent,
           },
           {
             headers: {
               'Content-Type': 'application/json',
               Accept: 'application/json',
             },
-          });
+          }
+        );
       } catch (error) {
         console.error(error);
       }
     }, 1000), // 1초의 딜레이
-    []);
+    []
+  );
 
   // 에디터의 내용이 변경될 때마다 적용
   useEffect(() => {
     const updateDocument = () => {
-      if (editor && selectedDocument) {
+      if (editor && latestDocRef.current) {
         const updatedDoc = {
-          ...selectedDocument,
+          ...latestDocRef.current,
           title: docTitle,
           docContent: editor.getJSON(),
           updatedAt: new Date().toISOString(),
@@ -211,7 +221,10 @@ export default function Editor({ docId }: { docId: string }) {
         dispatch(updateDocuments({ docId: updatedDoc.id, updatedData: updatedDoc }));
         dispatch(setSelectedDocument(updatedDoc));
         setLastUpdatedTime(formatTimeDiff(updatedDoc.updatedAt));
-        editorUpdatedRequest(updatedDoc, user.email);
+
+        if (updatedDoc && user.email) {
+          editorUpdatedRequest(user.email, updatedDoc);
+        }
       }
     };
 
@@ -222,24 +235,26 @@ export default function Editor({ docId }: { docId: string }) {
     return () => {
       editor?.off('update', updateDocument);
     };
-  }, [editor, dispatch, selectedDocument]);
+  }, [editor, dispatch, docTitle, user.email]);
 
-  // docTitle이 변경될 때 문서 제목을 업데이트
-  useEffect(() => {
+  // 문서명이 변경되었을 때
+  const docTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (selectedDocument) {
       const updatedDoc = {
         ...selectedDocument,
-        title: docTitle,
+        title: e.target.value,
       };
+      
+      setDocTitle(e.target.value);
+      dispatch(setSelectedDocument(updatedDoc));
+      dispatch(renameDocuments({ docId: updatedDoc.id, newTitle: updatedDoc.title }));
+      setLastUpdatedTime(formatTimeDiff(updatedDoc.updatedAt));
 
-      // 현재 상태와 업데이트하려는 내용이 동일하지 않을 때만 dispatch 호출
-      if (selectedDocument.title !== docTitle) {
-        dispatch(setSelectedDocument(updatedDoc));
-        dispatch(renameDocuments({ docId: updatedDoc.id, newTitle: updatedDoc.title }));
-        editorUpdatedRequest(updatedDoc, user.email);
+      if (updatedDoc && user.email) {
+        editorUpdatedRequest(user.email, updatedDoc);
       }
     }
-  }, [docTitle, dispatch]);
+  }
 
   if (!editor) {
     return null;
@@ -259,7 +274,7 @@ export default function Editor({ docId }: { docId: string }) {
         <input
           type="text"
           value={docTitle}
-          onChange={(e) => setDocTitle(e.target.value)}
+          onChange={(e) => docTitleChange(e)}
           placeholder="제목을 입력해주세요"
           className="editor-title text-[40px] pl-5 pb-4 font-bold outline-none w-full"
           onKeyDown={(e) => {

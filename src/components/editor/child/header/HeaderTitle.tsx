@@ -1,4 +1,3 @@
-import getUserDocument from "@/components/hooks/getUserDocument";
 import { setSelectedDocument } from "@/redux/features/documentSlice";
 import { Folder } from "@/redux/features/folderSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
@@ -21,8 +20,6 @@ export default function HeaderTitle() {
     // 현재 선택된 문서를 지정
     useEffect(() => {
         if (user.email) {
-            getUserDocument(user.email, dispatch);
-
             const currentDocument = documents.find(doc => doc.id === documentId);
             dispatch(setSelectedDocument(currentDocument));
         }
