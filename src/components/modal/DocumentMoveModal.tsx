@@ -6,10 +6,11 @@ import { useEffect, useState } from "react";
 import FolderIcon from '../../../public/svgs/folder.svg';
 import CommonButton from "../button/CommonButton";
 import CloseIcon from '../../../public/svgs/close.svg';
-import { Folder } from "@/redux/features/folderSlice";
+import { addDocumentToFolder, Folder, removeDocumentFromFolder } from "@/redux/features/folderSlice";
 import getUserDocument from "../hooks/getUserDocument";
 import getUserFolder from "../hooks/getUserFolder";
 import axios from 'axios';
+import { DocumentProps, updateDocuments } from "@/redux/features/documentSlice";
 
 export default function DocumentMoveModal({ isModalOpen, setIsModalOpen }: ModalProps) {
     const dispatch = useAppDispatch();
@@ -51,6 +52,13 @@ export default function DocumentMoveModal({ isModalOpen, setIsModalOpen }: Modal
             }, 1000);
         }
         else {
+            const parentFolder = folders.find(folder => folder.name === selectedDocument.folderName);
+
+            const newDoc: DocumentProps = {
+                ...selectedDocument,
+                folderName: folder.name,
+            }
+
             try {
                 await axios.put('/api/document/move',
                     { email: user.email, folderId: folder.id, document: selectedDocument },
@@ -64,6 +72,14 @@ export default function DocumentMoveModal({ isModalOpen, setIsModalOpen }: Modal
                 // 문서를 추가했으니 전체 배열 업데이트
                 await getUserDocument(user.email, dispatch);
                 await getUserFolder(user.email, dispatch);
+
+                // 문서
+                dispatch(updateDocuments({ docId: selectedDocument.id, ...newDoc }));
+
+                // 기존 폴더에서 문서 ID를 삭제하고, 새 폴더에 문서 ID를 추가
+                dispatch(removeDocumentFromFolder({ folderId: parentFolder?.id, docId: newDoc.id }));
+                dispatch(addDocumentToFolder({ folderId: folder.id, docId: newDoc.id }));
+
 
                 setIsModalOpen(false);
             } catch (error) {
