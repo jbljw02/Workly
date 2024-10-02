@@ -28,6 +28,7 @@ export default function DocumentMoveModal({ isModalOpen, setIsModalOpen }: Modal
         setIsModalOpen(false);
     }
 
+    // 문서 검색 필터링
     useEffect(() => {
         if (targetFolder) {
             const filteredFolders = folders.filter(folder =>
@@ -40,7 +41,9 @@ export default function DocumentMoveModal({ isModalOpen, setIsModalOpen }: Modal
         }
     }, [targetFolder, folders]);
 
+    // 문서의 폴더를 이동
     const moveDoc = async (folder: Folder) => {
+        // 현재 폴더를 클릭하면 경고
         if (folder.name === selectedDocument.folderName) {
             setVibrateFolderId(folder.id); // 진동 효과를 적용할 폴더의 ID를 설정
             setTimeout(() => {
@@ -62,6 +65,7 @@ export default function DocumentMoveModal({ isModalOpen, setIsModalOpen }: Modal
                 await getUserDocument(user.email, dispatch);
                 await getUserFolder(user.email, dispatch);
 
+                setIsModalOpen(false);
             } catch (error) {
                 console.error(error);
             }
@@ -127,7 +131,8 @@ export default function DocumentMoveModal({ isModalOpen, setIsModalOpen }: Modal
                                                     <FolderIcon width="15" />
                                                     <div className="text-sm truncate select-none">{folder.name}</div>
                                                 </div>
-                                                <div className="text-[12px] pr-3 text-neutral-500 select-none">
+                                                <div className={`text-[12px] pr-3 text-neutral-500 select-none
+                                                    ${vibrateFolderId === folder.id ? 'vibrate text-red-500' : ''}`}>
                                                     {
                                                         selectedDocument.folderName === folder.name && '현재 폴더'
                                                     }

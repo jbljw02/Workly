@@ -151,7 +151,9 @@ export default function EditorHeader({
                 // 전체 문서 배열에 추가
                 dispatch(addDocuments(copiedDocument));
                 // 문서 ID를 폴더에 추가
-                dispatch(addDocumentToFolder({ folderId: parentFolder.id, document: copiedDocument.id }));
+                dispatch(addDocumentToFolder({ folderId: parentFolder.id, docId: copiedDocument.id }));
+
+                setIsDocCopied(true);
 
                 await axios.post('/api/document',
                     { email: user.email, folderId: parentFolder.id, document: copiedDocument },
@@ -162,10 +164,9 @@ export default function EditorHeader({
                         },
                     });
 
-                setIsDocCopied(true);
                 // 문서를 추가했으니 전체 배열 업데이트
-                getUserDocument(user.email, dispatch);
-                getUserFolder(user.email, dispatch);
+                // getUserDocument(user.email, dispatch);
+                // getUserFolder(user.email, dispatch);
             } catch (error) {
                 console.error(error);
                 dispatch(deleteDocuments(copiedDocument.id)); // 문서 복사 실패 시 롤백

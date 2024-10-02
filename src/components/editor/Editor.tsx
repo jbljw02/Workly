@@ -244,7 +244,8 @@ export default function Editor({ docId }: { docId: string }) {
         ...selectedDocument,
         title: e.target.value,
       };
-
+      
+      setDocTitle(e.target.value);
       dispatch(setSelectedDocument(updatedDoc));
       dispatch(renameDocuments({ docId: updatedDoc.id, newTitle: updatedDoc.title }));
       setLastUpdatedTime(formatTimeDiff(updatedDoc.updatedAt));

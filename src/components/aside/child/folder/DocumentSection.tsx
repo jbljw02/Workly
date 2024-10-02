@@ -3,8 +3,9 @@ import DocumentIcon from '../../../../../public/svgs/document.svg';
 import DocumentItem from "./DocumentItem";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import getUserDocument from "@/components/hooks/getUserDocument";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/dist/client/components/navigation";
+import { DocumentProps } from "@/redux/features/documentSlice";
 
 type DocumentSectionProps = {
     folder: Folder,
@@ -17,7 +18,7 @@ export default function DocumentSection({ folder }: DocumentSectionProps) {
 
     // 전체 문서에서 폴더가 가지고 있는 docId와 일치하는 것들만 필터링
     const documentsInFolder = useMemo(() =>
-        documents.filter(doc => folder.documentIds?.includes(doc.id)),
+        documents.filter(doc => folder.documentIds.includes(doc.id)),
         [documents, folder]);
 
     // 선택된 문서의 경로로 라우팅
