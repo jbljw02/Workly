@@ -4,7 +4,7 @@ import axios from 'axios';
 
 // 사용자의 전체 폴더를 요청
 const getUserFolder = async (email: string, dispatch: AppDispatch) => {
-    const response = await axios.get(`/api/folder`, {
+    const response = await axios.get('/api/folder', {
         params: { email },
         headers: {
             "Content-Type": "application/json",
@@ -14,4 +14,4 @@ const getUserFolder = async (email: string, dispatch: AppDispatch) => {
     dispatch(setFolders(response.data));
 }
 
-export default getUserFolder
+export default getUserFolder;

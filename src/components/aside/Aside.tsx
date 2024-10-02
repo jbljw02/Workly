@@ -32,6 +32,7 @@ import { addDocumentToFolder, Folder } from "@/redux/features/folderSlice";
 import axios from 'axios';
 import getUserDocument from "../hooks/getUserDocument";
 import getUserFolder from "../hooks/getUserFolder";
+import { AppDispatch } from "@/redux/store";
 
 export default function Aside() {
     const dispatch = useAppDispatch();

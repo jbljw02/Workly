@@ -49,7 +49,7 @@ export default function DocumentMoveModal({ isModalOpen, setIsModalOpen }: Modal
         }
         else {
             try {
-                const res = await axios.put('/api/document/move',
+                await axios.put('/api/document/move',
                     { email: user.email, folderId: folder.id, document: selectedDocument },
                     {
                         headers: {
@@ -58,7 +58,6 @@ export default function DocumentMoveModal({ isModalOpen, setIsModalOpen }: Modal
                         },
                     });
 
-                console.log(res.data);
                 // 문서를 추가했으니 전체 배열 업데이트
                 await getUserDocument(user.email, dispatch);
                 await getUserFolder(user.email, dispatch);

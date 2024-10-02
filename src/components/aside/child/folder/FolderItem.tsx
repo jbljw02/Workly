@@ -61,7 +61,7 @@ export default function FolderItem({ folder }: FolderItemProps) {
                     });
 
                 // 폴더가 수정됐으니 전체 배열 업데이트
-                getUserFolder(user.email, dispatch);
+                await getUserFolder(user.email, dispatch);
             } catch (error) {
                 console.error(error);
 
