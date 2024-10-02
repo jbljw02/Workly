@@ -7,7 +7,6 @@ import PaperIcon from '../../../../../public/svgs/editor/paper.svg'
 
 export default function HeaderTitle() {
     const dispatch = useAppDispatch();
-    const user = useAppSelector(state => state.user);
 
     const pathname = usePathname();
     const pathParts = pathname.split('/');

@@ -46,10 +46,10 @@ export default function FolderItem({ folder }: FolderItemProps) {
         if (e.key === 'Enter') {
             const prevFolder = folder; // 변경 이전 폴더 상태
 
-            dispatch(renameFolders({ folderId: folder.id, newName: folderTitle }));
-            setIsEditing(false);
-
             try {
+                dispatch(renameFolders({ folderId: folder.id, newName: folderTitle }));
+                setIsEditing(false);
+
                 await axios.put('/api/folder',
                     { email: user.email, folderId: folder.id, newFolderName: folderTitle },
                     {

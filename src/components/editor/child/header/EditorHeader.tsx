@@ -57,6 +57,7 @@ export default function EditorHeader({
     const [isLinkCopied, setIsLinkCopied] = useState(false);
     const [isDocCopied, setIsDocCopied] = useState(false);
     const [isMoving, setIsMoving] = useState(false);
+    const [isMovedComplete, setIsMovedComplete] = useState(false);
 
     const [isFailedInfo, setIsFailedInfo] = useState({
         isFailed: false,
@@ -151,8 +152,6 @@ export default function EditorHeader({
                 // 문서 ID를 폴더에 추가
                 dispatch(addDocumentToFolder({ folderId: parentFolder.id, docId: copiedDocument.id }));
 
-                setIsDocCopied(true);
-
                 await axios.post('/api/document',
                     { email: user.email, folderId: parentFolder.id, document: copiedDocument },
                     {
@@ -161,9 +160,11 @@ export default function EditorHeader({
                             "Accept": "application/json"
                         },
                     });
+
+                setIsDocCopied(true);
             } catch (error) {
                 console.error(error);
-                
+
                 // 문서 복사 실패 시 롤백
                 dispatch(deleteDocuments(copiedDocument.id));
                 setIsFailedInfo({
@@ -265,6 +266,11 @@ export default function EditorHeader({
                 isModalOpen={isDocCopied}
                 setIsModalOpen={setIsDocCopied}
                 label={`${parentFolder?.name}에 ${selectedDocument.title} 사본이 생성되었습니다.`} />
+            {/* 문서의 이동이 완료됐음을 알리는 alert */}
+            <CompleteAlert
+                isModalOpen={isMovedComplete}
+                setIsModalOpen={setIsMovedComplete}
+                label={`${selectedDocument.title}를 ${selectedDocument.folderName}로 옮겼습니다.`} />
             {/* 작업이 실패했을 때 알릴 alert */}
             <WarningAlert
                 isModalOpen={isFailedInfo.isFailed}
@@ -275,7 +281,8 @@ export default function EditorHeader({
                 label={isFailedInfo.msg} />
             <DocumentMoveModal
                 isModalOpen={isMoving}
-                setIsModalOpen={setIsMoving} />
+                setIsModalOpen={setIsMoving}
+                setIsMoved={setIsMovedComplete} />
         </div>
     )
 }

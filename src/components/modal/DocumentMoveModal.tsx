@@ -8,18 +8,24 @@ import CloseIcon from '../../../public/svgs/close.svg';
 import { addDocumentToFolder, Folder, removeDocumentFromFolder } from "@/redux/features/folderSlice";
 import axios from 'axios';
 import { DocumentProps, setSelectedDocument, updateDocuments } from "@/redux/features/documentSlice";
+import CompleteAlert from "../alert/CompleteAlert";
 
-export default function DocumentMoveModal({ isModalOpen, setIsModalOpen }: ModalProps) {
+interface DocumentMoveModalProps extends ModalProps {
+    setIsMoved: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export default function DocumentMoveModal({ isModalOpen, setIsModalOpen, setIsMoved }: DocumentMoveModalProps) {
     const dispatch = useAppDispatch();
 
     const selectedDocument = useAppSelector(state => state.selectedDocument);
     const folders = useAppSelector(state => state.folders);
     const user = useAppSelector(state => state.user);
 
+    // 검색을 통해 필터링 된 폴더들
     const [searchedFolders, setSearchedFolders] = useState<Folder[]>(folders);
-
-    const [targetFolder, setTargetFolder] = useState('');
-    const [vibrateFolderId, setVibrateFolderId] = useState<string | null>(null)
+    const [targetFolder, setTargetFolder] = useState(''); // 검색 input값
+    // 어떤 폴더에 진동 효과를 줄지 
+    const [vibrateFolderId, setVibrateFolderId] = useState<string | null>(null);
 
     const closeModal = () => {
         setTargetFolder('');
@@ -70,14 +76,15 @@ export default function DocumentMoveModal({ isModalOpen, setIsModalOpen }: Modal
                 // 전체 문서중에 변경할 문서의 폴더 이름을 변경
                 dispatch(updateDocuments({ docId: selectedDocument.id, ...newDoc }));
 
-
                 // 기존 폴더에서 문서 ID를 삭제하고, 새 폴더에 문서 ID를 추가
                 dispatch(removeDocumentFromFolder({ folderId: parentFolder?.id, docId: newDoc.id }));
                 dispatch(addDocumentToFolder({ folderId: folder.id, docId: newDoc.id }));
 
+                setIsMoved(true);
                 setIsModalOpen(false);
             } catch (error) {
                 console.error(error);
+                setIsMoved(false);
             }
         }
     }
@@ -156,6 +163,6 @@ export default function DocumentMoveModal({ isModalOpen, setIsModalOpen }: Modal
                     }
                 </div>
             </div>
-        </Modal >
+        </Modal>
     )
 }
