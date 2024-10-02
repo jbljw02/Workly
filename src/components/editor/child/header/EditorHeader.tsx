@@ -29,8 +29,6 @@ import CompleteAlert from '@/components/alert/CompleteAlert'
 import { addDocuments, deleteDocuments, DocumentProps } from '@/redux/features/documentSlice'
 import { v4 as uuidv4 } from 'uuid';
 import { addDocumentToFolder, Folder } from '@/redux/features/folderSlice'
-import getUserDocument from '@/components/hooks/getUserDocument'
-import getUserFolder from '@/components/hooks/getUserFolder'
 import axios from 'axios'
 import DocumentMoveModal from '@/components/modal/DocumentMoveModal'
 
@@ -163,13 +161,11 @@ export default function EditorHeader({
                             "Accept": "application/json"
                         },
                     });
-
-                // 문서를 추가했으니 전체 배열 업데이트
-                // getUserDocument(user.email, dispatch);
-                // getUserFolder(user.email, dispatch);
             } catch (error) {
                 console.error(error);
-                dispatch(deleteDocuments(copiedDocument.id)); // 문서 복사 실패 시 롤백
+                
+                // 문서 복사 실패 시 롤백
+                dispatch(deleteDocuments(copiedDocument.id));
                 setIsFailedInfo({
                     isFailed: true,
                     msg: `${selectedDocument.title}의 사본 생성에 실패했습니다.`,

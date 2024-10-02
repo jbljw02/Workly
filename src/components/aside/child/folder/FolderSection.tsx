@@ -60,9 +60,8 @@ export default function FolderSection({ isCollapsed }: FolderSectionProps) {
                         "Accept": "application/json"
                     },
                 });
-            // 폴더가 추가됐으니 전체 업데이트
-            await getUserFolder(user.email, dispatch);
 
+            dispatch(addFolders(addedFolder));
             setIsFolderInvalidInfo({
                 msg: '',
                 isInvalid: false,
@@ -81,14 +80,12 @@ export default function FolderSection({ isCollapsed }: FolderSectionProps) {
     }
 
     useEffect(() => {
-
         const getUserData = async (email: string, dispatch: AppDispatch) => {
             if (email) {
                 await getUserFolder(email, dispatch);
                 await getUserDocument(email, dispatch);
             }
         }
-
         getUserData(user.email, dispatch);
     }, [user.email, dispatch]);
 

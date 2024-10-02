@@ -1,4 +1,3 @@
-import getUserDocument from "@/components/hooks/getUserDocument";
 import { setSelectedDocument } from "@/redux/features/documentSlice";
 import { Folder } from "@/redux/features/folderSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";

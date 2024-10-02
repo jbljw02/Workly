@@ -45,12 +45,14 @@ export default function GoogleLoginButton() {
                 },
             });
 
-            dispatch(setUser({
-                displayName: user.displayName,
-                email: user.email,
-                photoURL: user.photoURL,
-            }))
-            
+            if (user.displayName && user.email && user.photoURL) {
+                dispatch(setUser({
+                    displayName: user.displayName,
+                    email: user.email,
+                    photoURL: user.photoURL,
+                }))
+            }
+
             router.push('/editor/home');
 
             return { user: { name: user.displayName, email: user.email } };

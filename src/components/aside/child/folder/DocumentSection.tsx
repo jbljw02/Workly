@@ -2,7 +2,6 @@ import { Folder } from "@/redux/features/folderSlice"
 import DocumentIcon from '../../../../../public/svgs/document.svg';
 import DocumentItem from "./DocumentItem";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import getUserDocument from "@/components/hooks/getUserDocument";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/dist/client/components/navigation";
 import { DocumentProps } from "@/redux/features/documentSlice";

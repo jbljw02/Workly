@@ -9,7 +9,6 @@ import { deleteDocuments, DocumentProps, renameDocuments, setDocuments } from "@
 import HoverTooltip from "@/components/editor/child/HoverTooltip";
 import EditInput from "./EditInput";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import getUserDocument from "@/components/hooks/getUserDocument";
 import axios from 'axios';
 import getUserFolder from "@/components/hooks/getUserFolder";
 import { useRouter } from "next/navigation";
@@ -33,10 +32,10 @@ export default function DocumentItem({ document, onClick }: DocumentItemProps) {
         if (e.key === 'Enter') {
             const prevDoc = document;
 
-            dispatch(renameDocuments({ docId: document.id, newTitle: docTitle }));
-            setIsEditing(false);
-
             try {
+                dispatch(renameDocuments({ docId: document.id, newTitle: docTitle }));
+                setIsEditing(false);
+
                 await axios.put('/api/document',
                     {
                         email: user.email,
@@ -49,20 +48,16 @@ export default function DocumentItem({ document, onClick }: DocumentItemProps) {
                             "Accept": "application/json"
                         },
                     });
-
-                // 문서명이 수정됐으니 전체 배열 업데이트
-                getUserDocument(user.email, dispatch);
-                getUserFolder(user.email, dispatch);
             } catch (error) {
                 console.error(error);
 
+                // 요청 실패 시 롤백
                 setDocTitle(prevDoc.title);
                 dispatch(renameDocuments({ docId: prevDoc.id, newTitle: prevDoc.title }));
             }
         }
         if (e.key === 'Escape') {
             setIsEditing(false);
-
         }
     }
 
