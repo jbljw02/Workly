@@ -2,6 +2,7 @@ import { Mark, mergeAttributes } from '@tiptap/core';
 import { Plugin, PluginKey } from 'prosemirror-state';
 import { linkClickPlugin, LinkHoverPlugin } from './linkPlugin';
 import { LinkTooltip } from '@/redux/features/linkSlice';
+import { RawCommands } from '@tiptap/react';
 
 export interface LinkAttributes {
     href: string;
@@ -53,21 +54,22 @@ const LinkNode = Mark.create({
         return {
             setLink:
                 (attributes: LinkAttributes) =>
-                    ({ commands }) => {
+                    ({ commands }: { commands: any }) => {
                         return commands.setMark(this.name, attributes);
                     },
             toggleLink:
                 (attributes: LinkAttributes) =>
-                    ({ commands }) => {
+                    ({ commands }: { commands: any }) => {
                         return commands.toggleMark(this.name, attributes);
                     },
             unsetLink:
                 () =>
-                    ({ commands }) => {
+                    ({ commands }: { commands: any }) => {
                         return commands.unsetMark(this.name);
                     },
-        };
+        } as Partial<RawCommands>;
     },
+
 
     addProseMirrorPlugins() {
         const setLinkTooltip = this.options.setLinkTooltip as (payload: Partial<LinkTooltip>) => void;

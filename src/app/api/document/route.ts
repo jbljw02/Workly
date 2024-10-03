@@ -142,6 +142,7 @@ export async function DELETE(req: NextRequest) {
         const userData = userDocSnap.data();
         const folders: Folder[] = userData.folders || [];
         const documents: DocumentProps[] = userData.documents || [];
+        const trash: DocumentProps[] = userData.trash || []; // 휴지통 필드 추가
 
         // 문서 ID를 삭제할 폴더를 찾음
         const targetFolder = folders.find((folder: Folder) => folder.name === folderName);
@@ -155,17 +156,24 @@ export async function DELETE(req: NextRequest) {
         const updatedFolders = folders.map(folder =>
             folder.name === folderName ? targetFolder : folder);
 
-        // 전체 문서 배열에서 해당 문서를 제거
+        // 문서 ID가 일치하지 않는 문서를 제외하고 재할당(즉, 문서 ID가 일치하는 문서는 삭제)
         const updatedDocuments = documents.filter(doc => doc.id !== docId);
+
+        // 전체 문서 배열에서 해당 문서를 찾아 휴지통으로 이동
+        const documentToMove = documents.find(doc => doc.id === docId);
+        if (!documentToMove) {
+            return NextResponse.json({ error: "문서를 찾을 수 없음" }, { status: 404 });
+        }
+        const updatedTrash = [...trash, documentToMove]; // 휴지통에 문서 추가
 
         await updateDoc(userDocRef, {
             folders: updatedFolders,
             documents: updatedDocuments,
-        })
+            trash: updatedTrash,
+        });
 
         return NextResponse.json({ success: "문서 삭제 성공" }, { status: 200 });
     } catch (error) {
         return NextResponse.json({ error: "문서 삭제 실패" }, { status: 500 });
     }
-
 }

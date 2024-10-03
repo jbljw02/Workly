@@ -1,9 +1,7 @@
-import PaperIcon from '../../../../../public/svgs/editor/paper.svg'
 import MenuIcon from '../../../../../public/svgs/editor/menu-horizontal.svg'
 import HoverTooltip from '../HoverTooltip'
 import ToolbarButton from '../ToolbarButton'
 import { useEffect, useRef, useState } from 'react'
-import EditIcon from '../../../../../public/svgs/editor/edit.svg'
 import LinkCopyIcon from '../../../../../public/svgs/editor/link.svg'
 import DownloadIcon from '../../../../../public/svgs/editor/download.svg'
 import CopyIcon from '../../../../../public/svgs/editor/copy.svg'
@@ -13,17 +11,12 @@ import MenuList from '../MenuList'
 import { MenuItemProps } from '../MenuItem'
 import LockIcon from '../../../../../public/svgs/editor/lock.svg'
 import formatTimeDiff from '@/utils/formatTimeDiff'
-import html2pdf from 'html2pdf.js';
 import { Editor } from '@tiptap/react'
 import { useClickOutside } from '@/components/hooks/useClickOutside'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import HeaderTitle from './HeaderTitle'
-import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
 import PdfFileNode from '../file/PdfFileNode'
 import ReactDOMServer from 'react-dom/server';
-import AddInputModal from '@/components/modal/AddInputModal'
-import { usePathname } from 'next/navigation'
 import WarningAlert from '@/components/alert/WarningAlert'
 import CompleteAlert from '@/components/alert/CompleteAlert'
 import { addDocuments, deleteDocuments, DocumentProps } from '@/redux/features/documentSlice'
@@ -31,6 +24,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { addDocumentToFolder, Folder } from '@/redux/features/folderSlice'
 import axios from 'axios'
 import DocumentMoveModal from '@/components/modal/DocumentMoveModal'
+import useDeleteDocument from '@/components/hooks/deleteDocument'
+import { usePathname } from 'next/navigation'
 
 type EditorHeaderProps = {
     editor: Editor,
@@ -45,6 +40,12 @@ export default function EditorHeader({
     lastUpdatedTime,
     setLastUpdatedTime }: EditorHeaderProps) {
     const dispatch = useAppDispatch();
+    const deleteDoc = useDeleteDocument();
+
+    const pathname = usePathname();
+    const pathParts = pathname.split('/');
+    const folderId = pathParts[2]; // '/editor/[folderId]/[documentId]'일 때 folderId는 2번째 인덱스
+    const documentId = pathParts[3]; // documentId는 3번째 인덱스
 
     const user = useAppSelector(state => state.user);
     const selectedDocument = useAppSelector(state => state.selectedDocument);
@@ -204,7 +205,7 @@ export default function EditorHeader({
             Icon: DeleteIcon,
             IconWidth: "17",
             label: "휴지통으로 이동",
-            onClick: () => console.log("A"),
+            onClick: () => deleteDoc(selectedDocument, documentId),
             horizonLine: true,
         }
     ];

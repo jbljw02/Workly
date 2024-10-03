@@ -8,7 +8,6 @@ import CloseIcon from '../../../public/svgs/close.svg';
 import { addDocumentToFolder, Folder, removeDocumentFromFolder } from "@/redux/features/folderSlice";
 import axios from 'axios';
 import { DocumentProps, setSelectedDocument, updateDocuments } from "@/redux/features/documentSlice";
-import CompleteAlert from "../alert/CompleteAlert";
 
 interface DocumentMoveModalProps extends ModalProps {
     setIsMoved: React.Dispatch<React.SetStateAction<boolean>>;

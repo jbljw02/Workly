@@ -11,7 +11,8 @@ import EditInput from "./EditInput";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import axios from 'axios';
 import getUserFolder from "@/components/hooks/getUserFolder";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import useDeleteDocument from "@/components/hooks/deleteDocument";
 
 type DocumentItemProps = {
     document: DocumentProps;
@@ -20,7 +21,12 @@ type DocumentItemProps = {
 
 export default function DocumentItem({ document, onClick }: DocumentItemProps) {
     const dispatch = useAppDispatch();
-    const router = useRouter();
+    const deleteDoc = useDeleteDocument();
+    
+    const pathname = usePathname();
+    const pathParts = pathname.split('/');
+    const folderId = pathParts[2]; // '/editor/[folderId]/[documentId]'일 때 folderId는 2번째 인덱스
+    const documentId = pathParts[3]; // documentId는 3번째 인덱스
 
     const user = useAppSelector(state => state.user);
     const documents = useAppSelector(state => state.documents);
@@ -61,32 +67,6 @@ export default function DocumentItem({ document, onClick }: DocumentItemProps) {
         }
     }
 
-    // 문서 삭제 요청
-    const deleteDoc = async () => {
-        const prevDocs = [...documents];
-
-        dispatch(deleteDocuments(document.id));
-
-        try {
-            await axios.delete('/api/document', {
-                params: {
-                    email: user.email,
-                    parentFolderName: document.folderName,
-                    docId: document.id,
-                },
-                headers: {
-                    "Content-Type": "application/json",
-                    "Accept": "application/json",
-                },
-            });
-            router.push('/editor/home')
-        } catch (error) {
-            console.error(error);
-            // 삭제에 실패하면 롤백
-            dispatch(setDocuments(prevDocs));
-        }
-    }
-
     return (
         <div
             onClick={onClick}
@@ -121,7 +101,7 @@ export default function DocumentItem({ document, onClick }: DocumentItemProps) {
                     <GroupHoverItem
                         Icon={DeleteIcon}
                         IconWidth={15}
-                        onClick={deleteDoc} />
+                        onClick={() => deleteDoc(document, documentId)} />
                 </HoverTooltip>
             </div>
         </div>

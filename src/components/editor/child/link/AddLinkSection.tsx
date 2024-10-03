@@ -62,13 +62,13 @@ export default function AddLinkSection({ editor, position, setAddingLink }: AddL
             let href = inputElement.value.trim();
 
             // 상대 경로로 인식하지 않도록 프로토콜을 추가
-            // 예를 들어, naver.com으로 입력할 시에 WorkHub/naver.com으로 리다이렉션 되지 않도록
+            // 예를 들어, naver.com으로 입력할 시에 Workly/naver.com으로 리다이렉션 되지 않도록
             if (!/^https?:\/\//i.test(href)) {
                 href = `https://${href}`;
             }
 
             const id = uuidv4(); // 각 a태그를 구분할 고유값
-            editor.chain().focus().extendMarkRange('link').setLink({ href, id } as LinkAttributes).run();
+            (editor.chain() as any).focus().extendMarkRange('link').setLink({ href, id }).run();
             setAddingLink(false);
         }
         // ESC를 누르면 창 닫음
