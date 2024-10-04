@@ -101,8 +101,9 @@ export default function Aside() {
             docContent: null,
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
-            author: user,
+            author: user.email,
             folderName: defaultFolder.name,
+            collaborators: [],
         };
 
         try {

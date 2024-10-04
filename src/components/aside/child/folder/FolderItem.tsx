@@ -104,8 +104,9 @@ export default function FolderItem({ folder }: FolderItemProps) {
             docContent: null,
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
-            author: user,
+            author: user.email,
             folderName: folder.name,
+            collaborators: [],
         }
 
         try {

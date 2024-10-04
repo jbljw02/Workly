@@ -1,4 +1,4 @@
-import { useEditor, EditorContent, ReactNodeViewRenderer, JSONContent } from '@tiptap/react'
+import { useEditor, EditorContent, ReactNodeViewRenderer, JSONContent, Extension } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import Underline from '@tiptap/extension-underline'
 import Highlight from '@tiptap/extension-highlight'
@@ -35,6 +35,11 @@ import { debounce } from "lodash";
 import axios from 'axios'
 import { headers } from 'next/headers'
 import { GetServerSideProps } from 'next'
+import Collaboration from '@tiptap/extension-collaboration';
+import * as Y from 'yjs'
+import { TiptapCollabProvider } from '@hocuspocus/provider'
+
+const doc = new Y.Doc();
 
 export default function Editor({ docId }: { docId: string }) {
   const dispatch = useAppDispatch();
@@ -50,6 +55,7 @@ export default function Editor({ docId }: { docId: string }) {
           keepMarks: true,
           keepAttributes: true,
         },
+        history: false,
       }),
       Document,
       Underline,
@@ -61,8 +67,6 @@ export default function Editor({ docId }: { docId: string }) {
       }),
       TextStyle,
       Color,
-      BulletList,
-      OrderedList,
       ListItem,
       TextAlign.configure({
         types: ['heading', 'paragraph'],
@@ -127,21 +131,21 @@ export default function Editor({ docId }: { docId: string }) {
       }),
       Placeholder.configure({
         placeholder: ({ node, editor }) => {
-          // 현재 선택된 paragraph 노드만 placeholder 표시
           const { from, to } = editor.state.selection;
           const isSelected = from === to && editor.state.selection.$from.parent === node;
 
           return node.type.name === 'paragraph' && isSelected ? "명령어를 사용하려면 '/' 키를 누르세요." : '';
         },
         showOnlyCurrent: false,
-      }),
+      }) as Extension,
+      Collaboration.configure({ document: doc })
     ],
     editorProps: {
       attributes: {
         class: 'prose prose-sm sm:prose lg:prose-lg xl:prose-xl m-4 focus:outline-none',
       },
     },
-  })
+  });
 
   const openColorPicker = useAppSelector(state => state.openColorPicker);
   const user = useAppSelector(state => state.user);
@@ -159,6 +163,41 @@ export default function Editor({ docId }: { docId: string }) {
   useEffect(() => {
     latestDocRef.current = selectedDocument;
   }, [selectedDocument]);
+
+  // 에디터 초기 마운트 시에 JWT 발급 및 접근 권한 여부 확인
+  useEffect(() => {
+    let provider: TiptapCollabProvider | null = null;
+
+    const tiptapCollabCheck = async () => {
+      try {
+        // Tiptap JWT 토큰 가져오기
+        if(user.email && selectedDocument.author && selectedDocument.id) {
+          const response = await axios.get(`/api/auth/getCollabToken?userEmail=${user.email}&authorEmail=${selectedDocument.author}&docId=${selectedDocument.id}`);
+          const { tiptapToken } = response.data as { tiptapToken: string };
+          
+          // Tiptap 협업 기능을 위한 프로바이더 설정
+          provider = new TiptapCollabProvider({
+            name: docId, // 문서의 고유 식별자
+            appId: 'rm8veqko',
+            token: tiptapToken, // 사용자 인증을 위한 Tiptap JWT
+            document: doc, // 공유할 문서 객체
+          });
+
+          console.log(provider);
+        }
+      } catch (error) {
+        console.error('Tiptap 초기화 오류:', error);
+      }
+    }
+
+    tiptapCollabCheck();
+
+    return () => {
+      if (provider) {
+        provider.destroy();
+      }
+    };
+  }, [selectedDocument.id, selectedDocument.author, user.email, docId]);
 
   // editor의 값을 state의 값과 동기화
   useEffect(() => {
@@ -244,7 +283,7 @@ export default function Editor({ docId }: { docId: string }) {
         ...selectedDocument,
         title: e.target.value,
       };
-      
+
       setDocTitle(e.target.value);
       dispatch(setSelectedDocument(updatedDoc));
       dispatch(renameDocuments({ docId: updatedDoc.id, newTitle: updatedDoc.title }));

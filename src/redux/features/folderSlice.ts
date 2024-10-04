@@ -6,7 +6,7 @@ export type Folder = {
     id: string;
     name: string;
     documentIds: string[];
-    author: UserProps;
+    author: string[];
     sharedWith?: string[];
 }
 

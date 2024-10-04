@@ -1,11 +1,9 @@
-import { Folder } from "@/redux/features/folderSlice"
 import DocumentIcon from '../../../../../public/svgs/document.svg';
 import { useRef, useState } from "react";
 import GroupHoverItem from "../GroupHoverItem";
-import ArrowIcon from '../../../../../public/svgs/right-arrow.svg';
 import EditIcon from '../../../../../public/svgs/editor/pencil-edit.svg';
 import DeleteIcon from '../../../../../public/svgs/trash.svg';
-import { deleteDocuments, DocumentProps, renameDocuments, setDocuments } from "@/redux/features/documentSlice";
+import { DocumentProps, renameDocuments, setDocuments } from "@/redux/features/documentSlice";
 import HoverTooltip from "@/components/editor/child/HoverTooltip";
 import EditInput from "./EditInput";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
