@@ -4,13 +4,13 @@ import GroupHoverItem from "../GroupHoverItem";
 import EditIcon from '../../../../../public/svgs/editor/pencil-edit.svg';
 import DeleteIcon from '../../../../../public/svgs/trash.svg';
 import { DocumentProps, renameDocuments, setDocuments } from "@/redux/features/documentSlice";
-import HoverTooltip from "@/components/editor/child/HoverTooltip";
 import EditInput from "./EditInput";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import axios from 'axios';
 import getUserFolder from "@/components/hooks/getUserFolder";
 import { usePathname, useRouter } from "next/navigation";
 import useDeleteDocument from "@/components/hooks/deleteDocument";
+import HoverTooltip from '@/components/editor/child/menuBar/HoverTooltip';
 
 type DocumentItemProps = {
     document: DocumentProps;

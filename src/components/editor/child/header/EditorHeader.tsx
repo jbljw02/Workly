@@ -1,6 +1,4 @@
 import MenuIcon from '../../../../../public/svgs/editor/menu-horizontal.svg'
-import HoverTooltip from '../HoverTooltip'
-import ToolbarButton from '../ToolbarButton'
 import { useEffect, useRef, useState } from 'react'
 import LinkCopyIcon from '../../../../../public/svgs/editor/link.svg'
 import DownloadIcon from '../../../../../public/svgs/editor/download.svg'
@@ -26,6 +24,8 @@ import axios from 'axios'
 import DocumentMoveModal from '@/components/modal/DocumentMoveModal'
 import useDeleteDocument from '@/components/hooks/deleteDocument'
 import { usePathname } from 'next/navigation'
+import HoverTooltip from '../menuBar/HoverTooltip'
+import ToolbarButton from '../menuBar/ToolbarButton'
 
 type EditorHeaderProps = {
     editor: Editor,

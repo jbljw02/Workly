@@ -19,6 +19,7 @@
     "@tiptap/extension-bullet-list": "^2.5.9",
     "@tiptap/extension-code-block": "^2.5.9",
     "@tiptap/extension-collaboration": "^2.8.0",
+    "@tiptap/extension-collaboration-cursor": "^2.8.0",
     "@tiptap/extension-color": "^2.5.8",
     "@tiptap/extension-document": "^2.5.9",
     "@tiptap/extension-dropcursor": "^2.6.1",
@@ -68,6 +69,7 @@
     "uuid": "^10.0.0",
     "y-prosemirror": "^1.2.12",
     "y-protocols": "^1.0.6",
+    "y-webrtc": "^10.3.0",
     "yjs": "^13.6.19"
   },
   "devDependencies": {

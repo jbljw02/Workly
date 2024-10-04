@@ -172,7 +172,7 @@ const NodeView = (resizableImgProps: ResizableImageNodeViewRendererProps) => {
 
 const ImageNodeView = ResizableImage.extend({
   addNodeView() {
-    return ReactNodeViewRenderer(NodeView);
+    return ReactNodeViewRenderer(NodeView as React.ComponentType<any>);
   },
 });
 
