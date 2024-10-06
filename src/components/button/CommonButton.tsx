@@ -21,7 +21,7 @@ export default function CommonButton({ style, label, onClick }: CommonButtonProp
             type="button"
             onClick={onClick}
             className={`${px} ${py} ${textSize} ${textColor} ${bgColor} ${hover}
-            '${bgColor} rounded-lg border transform transition-all duration-200`}>
+            rounded-lg border transform transition-all duration-200`}>
             {label}
         </button>
     )

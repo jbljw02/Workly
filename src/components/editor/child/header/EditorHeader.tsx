@@ -26,6 +26,7 @@ import useDeleteDocument from '@/components/hooks/deleteDocument'
 import { usePathname } from 'next/navigation'
 import HoverTooltip from '../menuBar/HoverTooltip'
 import ToolbarButton from '../menuBar/ToolbarButton'
+import ShareDocumentModal from '@/components/modal/ShareDocumentModal'
 
 type EditorHeaderProps = {
     editor: Editor,
@@ -55,15 +56,19 @@ export default function EditorHeader({
     const parentFolder = folders.find(folder => folder.name === selectedDocument.folderName);
 
     const [menuListOpen, setMenuListOpen] = useState(false);
-    const [isLinkCopied, setIsLinkCopied] = useState(false);
-    const [isDocCopied, setIsDocCopied] = useState(false);
-    const [isMoving, setIsMoving] = useState(false);
-    const [isMovedComplete, setIsMovedComplete] = useState(false);
+    const [isLinkCopied, setIsLinkCopied] = useState(false); // 링크가 복사됐는지
+    const [isDocCopied, setIsDocCopied] = useState(false); // 문서가 복사됐는지
+    const [isMoving, setIsMoving] = useState(false); // 문서가 이동중인지
+    const [isMovedComplete, setIsMovedComplete] = useState(false); // 문서가 이동에 성공했는지
+    const [isShareModal, setIsShareModal] = useState(false); // 문서가 공유됐는지
 
     const [isFailedInfo, setIsFailedInfo] = useState({
         isFailed: false,
         msg: '',
     });
+
+    const shareDoc = () => {
+    }
 
     // 링크 복사
     const copyURL = () => {
@@ -232,7 +237,9 @@ export default function EditorHeader({
             <div className='flex flex-row items-center gap-1'>
                 <div className='text-sm text-neutral-400 mr-1'>{lastUpdatedTime}</div>
                 <HoverTooltip label='문서를 공유하거나 게시'>
-                    <button className='text-sm px-1.5 py-1 rounded-sm hover:bg-gray-100 cursor-pointer'>공유</button>
+                    <button
+                        onClick={() => setIsShareModal(true)}
+                        className='text-sm px-1.5 py-1 rounded-sm hover:bg-gray-100 cursor-pointer'>공유</button>
                 </HoverTooltip>
                 <HoverTooltip label="나에게만 공개">
                     <ToolbarButton
@@ -280,10 +287,15 @@ export default function EditorHeader({
                     isFailed: true,
                 }))}
                 label={isFailedInfo.msg} />
+            {/* 문서 이동 모달 */}
             <DocumentMoveModal
                 isModalOpen={isMoving}
                 setIsModalOpen={setIsMoving}
                 setIsMoved={setIsMovedComplete} />
+            {/* 문서 공유 모달 */}
+            <ShareDocumentModal
+                isModalOpen={isShareModal}
+                setIsModalOpen={setIsShareModal} />
         </div>
     )
 }

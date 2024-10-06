@@ -4,44 +4,20 @@ import Modal from 'react-modal';
 import CommonInput from '../input/CommonInput';
 import SubmitButton from '../button/SubmitButton';
 import CommonButton from '../button/CommonButton';
-import ModalHeader from './ModalHeader';
-import InputLabelContainer from './InputLabelContainer';
+import CloseIcon from '../../../public/svgs/close.svg';
 
-export interface AddInputModal extends ModalProps {
-    title: string;
-    value: string;
-    setValue: React.Dispatch<React.SetStateAction<string>>;
-    submitFunction: () => Promise<boolean>;
-    isInvalidInfo?: { isInvalid: boolean, msg: string };
-    setIsInvalidInfo?: React.Dispatch<React.SetStateAction<{ isInvalid: boolean; msg: string }>>;
-    placeholder: string;
+export interface ShareDocumentModalProps extends ModalProps {
 }
 
-export default function AddInputModal({
+export default function ShareDocumentModal({
     isModalOpen,
-    setIsModalOpen,
-    title,
-    value,
-    setValue,
-    submitFunction,
-    isInvalidInfo,
-    setIsInvalidInfo,
-    placeholder }: AddInputModal) {
-    const modalSubmit = async (e: React.FormEvent) => {
-        e.preventDefault(); // 폼 제출 시 페이지 리로드 방지
-        const isFailed = await submitFunction();
-        if (isFailed) return; // 실패 시 모달을 닫지 않음
-        setIsModalOpen(false);
-        setValue('');
-    }
+    setIsModalOpen }: ShareDocumentModalProps) {
+
+    const [targetEmail, setTargetEmail] = useState<string>('');
 
     const closeModal = () => {
-        setValue('');
+        setTargetEmail('');
         setIsModalOpen(false);
-        setIsInvalidInfo && setIsInvalidInfo({
-            msg: '',
-            isInvalid: false,
-        })
     }
 
     return (
@@ -69,20 +45,43 @@ export default function AddInputModal({
                 }
             }}>
             <form
-                onSubmit={modalSubmit}
-                className='flex flex-col h-full justify-between'>
+                className='flex flex-col h-full justify-between py-7'>
                 <div>
-                    <ModalHeader
-                        label={<div className='font-semibold'>{title}</div>}
-                        closeModal={closeModal} />
-                    <InputLabelContainer
-                        label="폴더"
-                        value={value}
-                        setValue={setValue} 
-                        placeholder={placeholder} />
+                    <div className='mb-4'>
+                        <div className='flex flex-row gap-4 border-b px-6 pb-2 '>
+                            <div className=''>다른 사용자와 공유</div>
+                            <div className=''>웹 페이지로 게시</div>
+                        </div>
+                        <button
+                            onClick={closeModal}
+                            className="absolute top-5 right-5">
+                            <CloseIcon
+                                className="hover:text-gray-500"
+                                width="18" />
+                        </button>
+                    </div>
+                    <div className='flex flex-row items-center justify-between px-5 gap-6'>
+                        <CommonInput
+                            type="text"
+                            value={targetEmail}
+                            setValue={setTargetEmail}
+                            placeholder={'초대할 사용자의 이메일'}
+                            autoFocus={true} />
+                        <CommonButton
+                            style={{
+                                px: 'px-3.5',
+                                py: 'py-2',
+                                textSize: 'text-sm',
+                                textColor: 'text-white',
+                                bgColor: 'bg-blue-500',
+                                hover: 'hover:bg-blue-700',
+                            }}
+                            label='초대'
+                            onClick={closeModal} />
+                    </div>
                 </div>
                 {/* 하단 버튼 영역 */}
-                <div className='flex justify-end text-sm gap-3.5 px-6 pb-6'>
+                <div className='flex justify-end text-sm gap-3.5 px-5'>
                     <SubmitButton
                         style={{
                             px: 'px-3.5',
@@ -93,7 +92,7 @@ export default function AddInputModal({
                             hover: 'hover:bg-blue-700',
                         }}
                         label="만들기"
-                        value={value} />
+                        value={targetEmail} />
                     <CommonButton
                         style={{
                             px: 'px-3.5',

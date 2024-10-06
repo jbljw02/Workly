@@ -305,14 +305,10 @@ export default function MenuBar({ editor }: { editor: Editor }) {
                         position={selectionPos}
                         setAddingLink={setAddingLink} />
                 }
-                {
-                    // 아무 영역도 드래그하지 않고 링크를 클릭했을 때
-                    linkNoticeModal &&
-                    <WarningAlert
-                        isModalOpen={linkNoticeModal}
-                        setIsModalOpen={setLinkNoticeModal}
-                        label="링크를 연결할 영역을 드래그해주세요" />
-                }
+                <WarningAlert
+                    isModalOpen={linkNoticeModal}
+                    setIsModalOpen={setLinkNoticeModal}
+                    label="링크를 연결할 영역을 드래그해주세요" />
                 {/* 링크에 hover를 했을 시 보여지는 툴팁 */}
                 <LinkTooltip editor={editor} />
                 <HoverTooltip label='코드 삽입'>

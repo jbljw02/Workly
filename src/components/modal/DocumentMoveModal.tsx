@@ -8,6 +8,8 @@ import CloseIcon from '../../../public/svgs/close.svg';
 import { addDocumentToFolder, Folder, removeDocumentFromFolder } from "@/redux/features/folderSlice";
 import axios from 'axios';
 import { DocumentProps, setSelectedDocument, updateDocuments } from "@/redux/features/documentSlice";
+import ModalHeader from "./ModalHeader";
+import InputLabelContainer from "./InputLabelContainer";
 
 interface DocumentMoveModalProps extends ModalProps {
     setIsMoved: React.Dispatch<React.SetStateAction<boolean>>;
@@ -109,29 +111,20 @@ export default function DocumentMoveModal({ isModalOpen, setIsModalOpen, setIsMo
                     height: 390,
                     transform: 'translate(-50%, -50%)',
                     zIndex: 1001,
-                    padding: 25,
+                    padding: 0,
                 }
             }}>
-            <div className='flex flex-col h-full justify-between'>
-                <div>
-                    <div className='mb-4 text-lg'>
-                        <span className="font-semibold">{selectedDocument.title || '제목 없는 문서'}</span>
-                        를 어디로 옮길까요?
-                    </div>
-                    <button
-                        onClick={closeModal}
-                        className="absolute top-5 right-5">
-                        <CloseIcon
-                            className="hover:text-gray-500"
-                            width="18" />
-                    </button>
-                    <CommonInput
-                        type="text"
-                        value={targetFolder}
-                        setValue={setTargetFolder}
-                        placeholder="문서를 옮길 폴더 검색"
-                        autoFocus={true} />
-                    <div className="mt-5 mb-1.5 ml-2 text-[13px] font-semibold">폴더</div>
+            <div className='flex flex-col h-full'>
+                <ModalHeader
+                    label={<div className="text-[17px]"><b>{selectedDocument.title || '제목 없는 문서'}</b>를 어디로 옮길까요?</div>}
+                    closeModal={closeModal} />
+                <InputLabelContainer
+                    label="폴더"
+                    value={targetFolder}
+                    setValue={setTargetFolder}
+                    placeholder="문서를 옮길 폴더 검색" />
+                <div className="pl-6 pr-5">
+                    <div className="mt-5 pb-1.5 pl-2 text-[13px] font-semibold">폴더 목록</div>
                     {
                         searchedFolders.length ?
                             <div className="w-full max-h-52 overflow-y-scroll scrollbar-thin">
@@ -141,7 +134,7 @@ export default function DocumentMoveModal({ isModalOpen, setIsModalOpen, setIsMo
                                             <div
                                                 key={folder.id}
                                                 onClick={() => moveDoc(folder)}
-                                                className="flex flex-row justify-between items-center w-full pl-2 h-[30px] rounded-sm overflow-x-hidden cursor-pointer hover:bg-gray-100 group">
+                                                className="flex flex-row justify-between items-center w-full pl-2 h-[30px] rounded-[4px] overflow-x-hidden cursor-pointer hover:bg-gray-100 group">
                                                 <div className={`flex flex-row items-center gap-1.5 
                                                     ${vibrateFolderId === folder.id ? 'vibrate text-red-500' : ''}`}>
                                                     <FolderIcon width="15" />
@@ -158,7 +151,7 @@ export default function DocumentMoveModal({ isModalOpen, setIsModalOpen, setIsMo
                                     })
                                 }
                             </div> :
-                            <div className="flex justify-center items-center text-neutral-400 w-full h-full text-sm pl-2">검색 결과 없음</div>
+                            <div className="flex justify-center items-center text-neutral-400 w-full h-full text-sm pt-7">검색 결과 없음</div>
                     }
                 </div>
             </div>

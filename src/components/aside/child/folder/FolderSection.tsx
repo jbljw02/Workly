@@ -110,7 +110,7 @@ export default function FolderSection({ isCollapsed }: FolderSectionProps) {
                     className="flex items-center pl-2 h-[30px] rounded text-neutral-400 hover:bg-gray-100 cursor-pointer">
                     <PlusIcon width="16" />
                     <span
-                        className="text-[13px] ml-2 whitespace-nowrap overflow-hidden">새 폴더</span>
+                        className="text-[13px] ml-2 whitespace-nowrap overflow-hidden select-none">새 폴더</span>
                 </div>
                 <AddInputModal
                     isModalOpen={addingFolder}
