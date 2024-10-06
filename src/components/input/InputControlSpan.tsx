@@ -4,6 +4,7 @@ type InputControlSpanProps = {
     label: string;
 }
 
+// input의 글자수에 따른 크기에 따라 크기를 조절
 const InputControlSpan = forwardRef<HTMLSpanElement, InputControlSpanProps>(
     ({ label }, ref) => {
         return (

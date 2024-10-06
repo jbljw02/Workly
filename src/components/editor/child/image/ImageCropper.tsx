@@ -1,7 +1,7 @@
 import { setCrop } from "@/redux/features/editorImageSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { RefObject, SetStateAction } from "react";
-import ReactCrop, { PixelCrop } from "react-image-crop";
+import { RefObject} from "react";
+import ReactCrop from "react-image-crop";
 import { ResizableImageNodeViewRendererProps } from "tiptap-extension-resizable-image";
 
 type ImageCropper = {
@@ -16,7 +16,7 @@ export default function ImageCropper({ imgRef, resizableImgProps }: ImageCropper
 
     return (
         <ReactCrop
-            crop={crop}
+            crop={{...crop, unit: 'px'}}
             onChange={(newCrop) => dispatch(setCrop(newCrop))}
             style={{
                 maxWidth: `${imageDimension.width}px`,
