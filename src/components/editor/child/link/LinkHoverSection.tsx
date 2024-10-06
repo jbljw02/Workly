@@ -4,9 +4,9 @@ import InputControlSpan from '@/components/input/InputControlSpan';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { useEffect, useRef } from 'react';
 import WorldIcon from '../../../../../public/svgs/editor/world.svg';
-import HoverTooltip from '../HoverTooltip';
 import EditIcon from '../../../../../public/svgs/editor/pencil-edit.svg';
 import DeleteIcon from '../../../../../public/svgs/trash.svg';
+import HoverTooltip from '../menuBar/HoverTooltip';
 
 export default function LinkHoverSection({ editor, setIsEditing }: LinkSectionProps) {
     const dispatch = useAppDispatch();

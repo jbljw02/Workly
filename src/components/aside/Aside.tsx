@@ -15,7 +15,6 @@ import PlusIcon from '../../../public/svgs/plus.svg';
 import ProjectIcon from '../../../public/svgs/project.svg';
 import SettingIcon from '../../../public/svgs/setting.svg';
 import FolderIcon from '../../../public/svgs/folder.svg';
-import HoverTooltip from "../editor/child/HoverTooltip";
 import HelpIcon from '../../../public/svgs/help.svg';
 import InviteIcon from '../../../public/svgs/add-person.svg';
 import { v4 as uuidv4 } from 'uuid';
@@ -101,8 +100,9 @@ export default function Aside() {
             docContent: null,
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
-            author: user,
+            author: user.email,
             folderName: defaultFolder.name,
+            collaborators: [],
         };
 
         try {

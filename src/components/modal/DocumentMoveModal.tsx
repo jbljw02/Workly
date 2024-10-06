@@ -4,24 +4,27 @@ import Modal from 'react-modal';
 import CommonInput from "../input/CommonInput";
 import { useEffect, useState } from "react";
 import FolderIcon from '../../../public/svgs/folder.svg';
-import CommonButton from "../button/CommonButton";
 import CloseIcon from '../../../public/svgs/close.svg';
-import { Folder } from "@/redux/features/folderSlice";
-import getUserDocument from "../hooks/getUserDocument";
-import getUserFolder from "../hooks/getUserFolder";
+import { addDocumentToFolder, Folder, removeDocumentFromFolder } from "@/redux/features/folderSlice";
 import axios from 'axios';
+import { DocumentProps, setSelectedDocument, updateDocuments } from "@/redux/features/documentSlice";
 
-export default function DocumentMoveModal({ isModalOpen, setIsModalOpen }: ModalProps) {
+interface DocumentMoveModalProps extends ModalProps {
+    setIsMoved: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export default function DocumentMoveModal({ isModalOpen, setIsModalOpen, setIsMoved }: DocumentMoveModalProps) {
     const dispatch = useAppDispatch();
 
     const selectedDocument = useAppSelector(state => state.selectedDocument);
     const folders = useAppSelector(state => state.folders);
     const user = useAppSelector(state => state.user);
 
+    // 검색을 통해 필터링 된 폴더들
     const [searchedFolders, setSearchedFolders] = useState<Folder[]>(folders);
-
-    const [targetFolder, setTargetFolder] = useState('');
-    const [vibrateFolderId, setVibrateFolderId] = useState<string | null>(null)
+    const [targetFolder, setTargetFolder] = useState(''); // 검색 input값
+    // 어떤 폴더에 진동 효과를 줄지 
+    const [vibrateFolderId, setVibrateFolderId] = useState<string | null>(null);
 
     const closeModal = () => {
         setTargetFolder('');
@@ -51,6 +54,14 @@ export default function DocumentMoveModal({ isModalOpen, setIsModalOpen }: Modal
             }, 1000);
         }
         else {
+            // 현재 옮길 문서의 부모 폴더
+            const parentFolder = folders.find(folder => folder.name === selectedDocument.folderName);
+
+            const newDoc: DocumentProps = {
+                ...selectedDocument,
+                folderName: folder.name,
+            }
+
             try {
                 await axios.put('/api/document/move',
                     { email: user.email, folderId: folder.id, document: selectedDocument },
@@ -61,13 +72,18 @@ export default function DocumentMoveModal({ isModalOpen, setIsModalOpen }: Modal
                         },
                     });
 
-                // 문서를 추가했으니 전체 배열 업데이트
-                await getUserDocument(user.email, dispatch);
-                await getUserFolder(user.email, dispatch);
+                // 전체 문서중에 변경할 문서의 폴더 이름을 변경
+                dispatch(updateDocuments({ docId: selectedDocument.id, ...newDoc }));
 
+                // 기존 폴더에서 문서 ID를 삭제하고, 새 폴더에 문서 ID를 추가
+                dispatch(removeDocumentFromFolder({ folderId: parentFolder?.id, docId: newDoc.id }));
+                dispatch(addDocumentToFolder({ folderId: folder.id, docId: newDoc.id }));
+
+                setIsMoved(true);
                 setIsModalOpen(false);
             } catch (error) {
                 console.error(error);
+                setIsMoved(false);
             }
         }
     }
@@ -99,7 +115,7 @@ export default function DocumentMoveModal({ isModalOpen, setIsModalOpen }: Modal
             <div className='flex flex-col h-full justify-between'>
                 <div>
                     <div className='mb-4 text-lg'>
-                        <span className="font-semibold">{selectedDocument.title}</span>
+                        <span className="font-semibold">{selectedDocument.title || '제목 없는 문서'}</span>
                         를 어디로 옮길까요?
                     </div>
                     <button
@@ -146,6 +162,6 @@ export default function DocumentMoveModal({ isModalOpen, setIsModalOpen }: Modal
                     }
                 </div>
             </div>
-        </Modal >
+        </Modal>
     )
 }

@@ -10,12 +10,12 @@ import GroupHoverItem from '../GroupHoverItem';
 import getUserFolder from '@/components/hooks/getUserFolder';
 import { deleteFolders } from '@/redux/features/folderSlice';
 import PlusIcon from '../../../../../public/svgs/plus.svg';
-import HoverTooltip from '@/components/editor/child/HoverTooltip';
 import DocumentSection from './DocumentSection';
 import EditInput from './EditInput';
 import { addDocuments, deleteDocuments, DocumentProps } from '@/redux/features/documentSlice';
 import AddInputModal from '@/components/modal/AddInputModal';
 import { v4 as uuidv4 } from 'uuid';
+import HoverTooltip from '@/components/editor/child/menuBar/HoverTooltip';
 
 type FolderItemProps = {
     folder: Folder;
@@ -46,10 +46,10 @@ export default function FolderItem({ folder }: FolderItemProps) {
         if (e.key === 'Enter') {
             const prevFolder = folder; // 변경 이전 폴더 상태
 
-            dispatch(renameFolders({ folderId: folder.id, newName: folderTitle }));
-            setIsEditing(false);
-
             try {
+                dispatch(renameFolders({ folderId: folder.id, newName: folderTitle }));
+                setIsEditing(false);
+
                 await axios.put('/api/folder',
                     { email: user.email, folderId: folder.id, newFolderName: folderTitle },
                     {
@@ -104,8 +104,9 @@ export default function FolderItem({ folder }: FolderItemProps) {
             docContent: null,
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
-            author: user,
+            author: user.email,
             folderName: folder.name,
+            collaborators: [],
         }
 
         try {

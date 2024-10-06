@@ -8,8 +8,8 @@ export type DocumentProps = {
     docContent: JSONContent | null;
     createdAt: string;
     updatedAt: string;
-    author: UserProps;
-    collaborators?: string[];
+    author: string;
+    collaborators: string[];
     folderName: string;
 }
 
@@ -20,11 +20,7 @@ const selectedDocumentState: DocumentProps = {
     docContent: null,
     createdAt: '',
     updatedAt: '',
-    author: {
-        email: '',
-        displayName: '',
-        photoURL: '',
-    },
+    author: '',
     collaborators: [],
     folderName: '',
 }

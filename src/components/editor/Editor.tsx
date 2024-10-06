@@ -1,4 +1,4 @@
-import { useEditor, EditorContent, ReactNodeViewRenderer, JSONContent } from '@tiptap/react'
+import { useEditor, EditorContent, ReactNodeViewRenderer, JSONContent, Extension } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import Underline from '@tiptap/extension-underline'
 import Highlight from '@tiptap/extension-highlight'
@@ -9,7 +9,6 @@ import ListItem from '@tiptap/extension-list-item'
 import OrderedList from '@tiptap/extension-ordered-list'
 import CodeBlock from '@tiptap/extension-code-block'
 import React, { CSSProperties, useCallback, useEffect, useRef, useState } from 'react'
-import MenuBar from './child/MenuBar'
 import Heading from '@tiptap/extension-heading'
 import BulletList from '@tiptap/extension-bullet-list'
 import { FontSize } from '../../../lib/fontSize'
@@ -20,132 +19,36 @@ import Dropcursor from '@tiptap/extension-dropcursor'
 import 'tiptap-extension-resizable-image/styles.css';
 import FileHandler from '@tiptap-pro/extension-file-handler'
 import FileNode from '../../../lib/fileNode'
-import { v4 as uuidv4 } from 'uuid';
 import '@/styles/editor.css';
-import { LinkTooltip, setLinkTooltip } from '@/redux/features/linkSlice'
-import LinkNode from '../../../lib/linkNode';
 import EditorHeader from './child/header/EditorHeader'
-import ImageNodeView from './child/image/ImageNodeView'
 import DragHandle from '@tiptap-pro/extension-drag-handle-react'
 import MenuIcon from '../../../public/svgs/editor/menu-vertical.svg'
-import Placeholder from '@tiptap/extension-placeholder'
 import { DocumentProps, renameDocuments, setSelectedDocument, updateDocuments } from '@/redux/features/documentSlice'
 import formatTimeDiff from '@/utils/formatTimeDiff'
 import { debounce } from "lodash";
 import axios from 'axios'
-import { headers } from 'next/headers'
-import { GetServerSideProps } from 'next'
+import * as Y from 'yjs'
+import { TiptapCollabProvider } from '@hocuspocus/provider'
+import MenuBar from './child/menuBar/MenuBar'
+import editorExtensions from '../../../lib/editorExtension'
+
+const doc = new Y.Doc();
+const appId = process.env.NEXT_PUBLIC_TIPTAP_APP_ID;
 
 export default function Editor({ docId }: { docId: string }) {
   const dispatch = useAppDispatch();
+  const user = useAppSelector(state => state.user);
 
   const editor = useEditor({
-    extensions: [
-      StarterKit.configure({
-        bulletList: {
-          keepMarks: true,
-          keepAttributes: true,
-        },
-        orderedList: {
-          keepMarks: true,
-          keepAttributes: true,
-        },
-      }),
-      Document,
-      Underline,
-      Highlight.configure({
-        multicolor: true,
-        HTMLAttributes: {
-          class: 'highlight',
-        },
-      }),
-      TextStyle,
-      Color,
-      BulletList,
-      OrderedList,
-      ListItem,
-      TextAlign.configure({
-        types: ['heading', 'paragraph'],
-      }),
-      Heading.configure({
-        levels: [1, 2, 3],
-      }),
-      FontSize,
-      FontFamily,
-      CodeBlock,
-      LinkNode.configure({
-        openOnClick: true,
-        autolink: true,
-        defaultProtocol: 'https',
-        setLinkTooltip: (payload: LinkTooltip) => dispatch(setLinkTooltip(payload))
-      }),
-      Dropcursor,
-      ImageNodeView.configure({
-        defaultWidth: 600,
-        defaultHeight: 600,
-      }),
-      FileNode,
-      FileHandler.configure({
-        onDrop: (currentEditor, files, pos) => {
-          files.forEach(file => {
-            const fileReader = new FileReader();
-
-            fileReader.onload = () => {
-              const src = fileReader.result as string;
-              const blobUrl = URL.createObjectURL(file);
-
-              const fileId = uuidv4(); // 파일의 고유 ID 생성
-
-              // 이미지 파일일 경우
-              if (file.type.startsWith('image/')) {
-                currentEditor.commands.setResizableImage({
-                  src: src,
-                  alt: '',
-                  title: file.name,
-                  className: 'resizable-img',
-                  'data-keep-ratio': true,
-                });
-              }
-              else {
-                // 이미지가 아닌 일반 파일일 경우
-                currentEditor.chain().insertContentAt(pos, {
-                  type: 'file',
-                  attrs: {
-                    id: fileId,
-                    href: blobUrl,
-                    title: file.name,
-                    mimeType: file.type,
-                    size: file.size,
-                  },
-                }).focus().run();
-              }
-            };
-
-            fileReader.readAsDataURL(file);
-          });
-        },
-      }),
-      Placeholder.configure({
-        placeholder: ({ node, editor }) => {
-          // 현재 선택된 paragraph 노드만 placeholder 표시
-          const { from, to } = editor.state.selection;
-          const isSelected = from === to && editor.state.selection.$from.parent === node;
-
-          return node.type.name === 'paragraph' && isSelected ? "명령어를 사용하려면 '/' 키를 누르세요." : '';
-        },
-        showOnlyCurrent: false,
-      }),
-    ],
+    extensions: editorExtensions(dispatch, user),
     editorProps: {
       attributes: {
         class: 'prose prose-sm sm:prose lg:prose-lg xl:prose-xl m-4 focus:outline-none',
       },
     },
-  })
+  });
 
   const openColorPicker = useAppSelector(state => state.openColorPicker);
-  const user = useAppSelector(state => state.user);
-
   const documents = useAppSelector(state => state.documents);
   // 문서들 중에 현재 편집 중인 문서를 선택
   const selectedDocument = useAppSelector(state => state.selectedDocument);
@@ -159,6 +62,39 @@ export default function Editor({ docId }: { docId: string }) {
   useEffect(() => {
     latestDocRef.current = selectedDocument;
   }, [selectedDocument]);
+
+  // 에디터 초기 마운트 시에 JWT 발급 및 접근 권한 여부 확인
+  useEffect(() => {
+    let provider: TiptapCollabProvider | null = null;
+
+    const tiptapCollabCheck = async () => {
+      try {
+        // Tiptap JWT 토큰 가져오기
+        if (user.email && selectedDocument.author && selectedDocument.id) {
+          const response = await axios.get(`/api/auth/getCollabToken?userEmail=${user.email}&authorEmail=${selectedDocument.author}&docId=${selectedDocument.id}`);
+          const { tiptapToken } = response.data as { tiptapToken: string };
+
+          // Tiptap 협업 기능을 위한 프로바이더 설정
+          provider = new TiptapCollabProvider({
+            name: docId, // 문서의 고유 식별자
+            appId: appId!,
+            token: tiptapToken, // 사용자 인증을 위한 Tiptap JWT
+            document: doc, // 공유할 문서 객체
+          });
+        }
+      } catch (error) {
+        console.error('Tiptap 초기화 오류:', error);
+      }
+    }
+
+    tiptapCollabCheck();
+
+    return () => {
+      if (provider) {
+        provider.destroy();
+      }
+    };
+  }, [selectedDocument.id, selectedDocument.author, user.email, docId]);
 
   // editor의 값을 state의 값과 동기화
   useEffect(() => {
@@ -244,7 +180,7 @@ export default function Editor({ docId }: { docId: string }) {
         ...selectedDocument,
         title: e.target.value,
       };
-      
+
       setDocTitle(e.target.value);
       dispatch(setSelectedDocument(updatedDoc));
       dispatch(renameDocuments({ docId: updatedDoc.id, newTitle: updatedDoc.title }));
