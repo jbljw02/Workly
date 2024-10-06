@@ -116,7 +116,7 @@ export default function DocumentMoveModal({ isModalOpen, setIsModalOpen, setIsMo
             }}>
             <div className='flex flex-col h-full'>
                 <ModalHeader
-                    label={<div className="text-[17px]"><b>{selectedDocument.title || '제목 없는 문서'}</b>를 어디로 옮길까요?</div>}
+                    label={<div className="font-normal text-[17px]"><b>{selectedDocument.title || '제목 없는 문서'}</b>를 어디로 옮길까요?</div>}
                     closeModal={closeModal} />
                 <InputLabelContainer
                     label="폴더"
@@ -124,7 +124,7 @@ export default function DocumentMoveModal({ isModalOpen, setIsModalOpen, setIsMo
                     setValue={setTargetFolder}
                     placeholder="문서를 옮길 폴더 검색" />
                 <div className="pl-6 pr-5">
-                    <div className="mt-5 pb-1.5 pl-2 text-[13px] font-semibold">폴더 목록</div>
+                    <div className="mt-5 pb-1.5 pl-1.5 text-[13px] font-semibold">폴더 목록</div>
                     {
                         searchedFolders.length ?
                             <div className="w-full max-h-52 overflow-y-scroll scrollbar-thin">

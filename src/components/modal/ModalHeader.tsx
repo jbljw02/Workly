@@ -8,14 +8,12 @@ type ModalHeaderProps = {
 
 export default function ModalHeader({ label, closeModal }: ModalHeaderProps) {
     return (
-        <div className='flex flex-row justify-between text-[17px] px-6 pt-5 pb-3'>
-            <div>{label}</div>
+        <div className='flex flex-row w-full items-center justify-between px-6 pt-4 pb-3'>
+            <div className='flex items-center font-semibold text-[17px]'>{label}</div>
             <button
-                onClick={closeModal}
-                className="">
-                <CloseIcon
-                    className="hover:text-gray-500 text-gray-600"
-                    width="25" />
+                className='flex items-center justify-center w-8 h-8 p-1 rounded-md text-gray-500 hover:bg-zinc-50 duration-150'
+                onClick={closeModal}>
+                <CloseIcon width="25" />
             </button>
         </div>
     )
