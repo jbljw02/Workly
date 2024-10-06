@@ -2,10 +2,14 @@ import { useClickOutside } from "@/components/hooks/useClickOutside";
 import { setFileNode } from "@/redux/features/fileSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { useEffect, useRef, useState } from "react";
-import { FileNodeViewProps } from "./FileNodeView";
 import InputControlSpan from "@/components/input/InputControlSpan";
+import { FileNodeAttrs } from "../../../../../lib/fileNode";
+import { Editor } from "@tiptap/react";
+import { FileNodeViewProps } from "./FileNodeView";
 
 interface FileEditInput extends FileNodeViewProps {
+    editor: Editor;
+    node: Node & {attrs: FileNodeAttrs}
     isEditing: boolean;
     setIsEditing: React.Dispatch<React.SetStateAction<boolean>>;
 }

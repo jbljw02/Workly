@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Editor, NodeViewWrapper } from '@tiptap/react';
+import { Editor, NodeViewWrapper, NodeViewProps } from '@tiptap/react';
 import FileInfoIcon from '../../../../../public/svgs/editor/file-info.svg';
 import FileFullModal from '@/components/modal/FileFullModal';
 import FileBlockIcon from '../../../../../public/svgs/editor/file-block.svg';
@@ -16,14 +16,13 @@ import MenuList from '../MenuList';
 import { v4 as uuidv4 } from 'uuid';
 import { MenuItemProps } from '../MenuItem';
 import { useClickOutside } from '@/components/hooks/useClickOutside';
+import { FileNodeAttrs } from '../../../../../lib/fileNode';
 
-interface FileNodeProps {
-    attrs: FileNode;
-}
-
-export type FileNodeViewProps = {
+export interface FileNodeViewProps {
     editor: Editor;
-    node: FileNodeProps;
+    node: Node & {
+        attrs: FileNodeAttrs;
+    };
 }
 
 export default function FileNodeView({ editor, node }: FileNodeViewProps) {
@@ -237,7 +236,7 @@ export default function FileNodeView({ editor, node }: FileNodeViewProps) {
                 href={fileNode.href}
                 download={fileNode.title}>
                 {
-                    // 파일 형식이 PDF일 경우 PDF 뷰어를 통해 보여주고, 다른 형식일 경우 대체 화면 출력
+                    // 파일 형식이 PDF일 경우 PDF 뷰어��� 통해 보여주고, 다른 형식일 경우 대체 화면 출력
                     mimeType === 'application/pdf' ? (
                         <iframe
                             className='absolute w-full h-full max-w-[90vw] max-h-[90vh] rounded-md'
