@@ -98,7 +98,9 @@ export default function FolderSection({ isCollapsed }: FolderSectionProps) {
                 {
                     folders.length && folders.map(folder => {
                         return (
-                            <FolderItem folder={folder} />
+                            <div key={folder.id}>
+                                <FolderItem folder={folder} />
+                            </div>
                         )
                     })
                 }

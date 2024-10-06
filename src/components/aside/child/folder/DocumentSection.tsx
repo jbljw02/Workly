@@ -32,9 +32,12 @@ export default function DocumentSection({ folder }: DocumentSectionProps) {
                     documentsInFolder.map(doc => {
                         return (
                             // 각각의 폴더 영역
-                            <DocumentItem
-                                onClick={() => docRouting(folder.id, doc.id)}
-                                document={doc} />
+                            <div key={doc.id}>
+                                <DocumentItem
+                                    onClick={() => docRouting(folder.id, doc.id)}
+                                    document={doc} />
+                            </div>
+
                         )
                     }) :
                     // 폴더에 하위 문서가 없을 때

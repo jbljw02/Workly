@@ -16,4 +16,6 @@ const InputControlSpan = forwardRef<HTMLSpanElement, InputControlSpanProps>(
     }
 );
 
+InputControlSpan.displayName = 'InputControlSpan';
+
 export default InputControlSpan;

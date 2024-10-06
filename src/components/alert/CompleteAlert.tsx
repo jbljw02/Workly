@@ -5,8 +5,6 @@ import CompleteIcon from '../../../public/svgs/write/task.svg';
 import { NoticeModalProps } from '@/types/noticeModalProps';
 
 export default function CompleteAlert({ isModalOpen, setIsModalOpen, label }: NoticeModalProps) {
-    if (!isModalOpen) return null;
-
     const [animation, setAnimation] = useState<string>('slide-up');
     const tooltipRef = useRef<HTMLDivElement>(null);
 
@@ -26,6 +24,8 @@ export default function CompleteAlert({ isModalOpen, setIsModalOpen, label }: No
     };
 
     useClickOutside(tooltipRef, () => closeTooltip());
+
+    if (!isModalOpen) return null;
 
     return (
         <div
