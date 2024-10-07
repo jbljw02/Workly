@@ -65,7 +65,13 @@ export default function EmailVerifyModal({ isModalOpen, setIsModalOpen }: ModalP
             isOpen={isModalOpen}
             style={{
                 overlay: {
-                    backgroundColor: 'rgba(0, 0, 0, 0.5)'
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                    zIndex: 48,
                 },
                 content: {
                     position: 'absolute',
@@ -77,6 +83,7 @@ export default function EmailVerifyModal({ isModalOpen, setIsModalOpen }: ModalP
                     paddingBottom: 35,
                     paddingLeft: 40,
                     paddingRight: 40,
+                    zIndex: 49,
                     transform: 'translate(-50%, -50%)',
                 }
             }}>

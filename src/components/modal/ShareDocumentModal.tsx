@@ -8,6 +8,9 @@ import ModalHeader from './ModalHeader';
 import UserProfile from '../aside/child/user/UserProfile';
 import ArrowIcon from '../../../public/svgs/down-arrow.svg';
 import WebIcon from '../../../public/svgs/web.svg';
+import { useAppDispatch } from '@/redux/hooks';
+import { showCompleteAlert } from '@/redux/features/alertSlice';
+import { useCopyURL } from '../hooks/useCopyURL';
 
 type ShareContentProps = {
     targetEmail: string;
@@ -78,6 +81,9 @@ function PublishContent() {
 }
 
 export default function ShareDocumentModal({ isModalOpen, setIsModalOpen }: ModalProps) {
+    const dispatch = useAppDispatch();
+    const { copyURL } = useCopyURL();
+
     const [targetEmail, setTargetEmail] = useState<string>(''); // 초대할 이메일
     const [workCategory, setWorkCategory] = useState<'공유' | '게시'>('공유');
 
@@ -97,7 +103,7 @@ export default function ShareDocumentModal({ isModalOpen, setIsModalOpen }: Moda
                     right: 0,
                     bottom: 0,
                     backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                    zIndex: 1000,
+                    zIndex: 48,
                 },
                 content: {
                     position: 'absolute',
@@ -106,7 +112,7 @@ export default function ShareDocumentModal({ isModalOpen, setIsModalOpen }: Moda
                     width: 600,
                     height: 440,
                     transform: 'translate(-50%, -50%)',
-                    zIndex: 1001,
+                    zIndex: 49,
                     padding: 0,
                 }
             }}>
@@ -155,7 +161,7 @@ export default function ShareDocumentModal({ isModalOpen, setIsModalOpen }: Moda
                                     hover: 'hover:bg-blue-700',
                                 }}
                                 label="링크 복사"
-                                onClick={closeModal} />
+                                onClick={copyURL} />
                         </div> :
                         <div className='flex justify-center w-full text-sm p-5 border-t'>
                             <CommonButton

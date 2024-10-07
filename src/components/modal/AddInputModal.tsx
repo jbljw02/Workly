@@ -29,10 +29,12 @@ export default function AddInputModal({
     placeholder }: AddInputModal) {
     const modalSubmit = async (e: React.FormEvent) => {
         e.preventDefault(); // 폼 제출 시 페이지 리로드 방지
-        const isFailed = await submitFunction();
-        if (isFailed) return; // 실패 시 모달을 닫지 않음
-        setIsModalOpen(false);
-        setValue('');
+        if (value) {
+            const isFailed = await submitFunction();
+            if (isFailed) return; // 실패 시 모달을 닫지 않음
+            setIsModalOpen(false);
+            setValue('');
+        }
     }
 
     const closeModal = () => {
@@ -42,6 +44,13 @@ export default function AddInputModal({
             msg: '',
             isInvalid: false,
         })
+    }
+
+    const handleKeyPress = (e: React.KeyboardEvent<HTMLFormElement>) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            modalSubmit(e);
+        }
     }
 
     return (
@@ -70,6 +79,7 @@ export default function AddInputModal({
             }}>
             <form
                 onSubmit={modalSubmit}
+                onKeyDown={handleKeyPress}
                 className='flex flex-col h-full justify-between'>
                 <div>
                     <ModalHeader
@@ -78,7 +88,7 @@ export default function AddInputModal({
                     <InputLabelContainer
                         label="폴더"
                         value={value}
-                        setValue={setValue} 
+                        setValue={setValue}
                         placeholder={placeholder} />
                 </div>
                 {/* 하단 버튼 영역 */}

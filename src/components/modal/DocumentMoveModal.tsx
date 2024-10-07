@@ -10,12 +10,9 @@ import axios from 'axios';
 import { DocumentProps, setSelectedDocument, updateDocuments } from "@/redux/features/documentSlice";
 import ModalHeader from "./ModalHeader";
 import InputLabelContainer from "./InputLabelContainer";
+import { showCompleteAlert, showWarningAlert } from "@/redux/features/alertSlice";
 
-interface DocumentMoveModalProps extends ModalProps {
-    setIsMoved: React.Dispatch<React.SetStateAction<boolean>>;
-}
-
-export default function DocumentMoveModal({ isModalOpen, setIsModalOpen, setIsMoved }: DocumentMoveModalProps) {
+export default function DocumentMoveModal({ isModalOpen, setIsModalOpen }: ModalProps) {
     const dispatch = useAppDispatch();
 
     const selectedDocument = useAppSelector(state => state.selectedDocument);
@@ -81,11 +78,12 @@ export default function DocumentMoveModal({ isModalOpen, setIsModalOpen, setIsMo
                 dispatch(removeDocumentFromFolder({ folderId: parentFolder?.id, docId: newDoc.id }));
                 dispatch(addDocumentToFolder({ folderId: folder.id, docId: newDoc.id }));
 
-                setIsMoved(true);
+                // 문서 이동이 성공했다는 Alert를 띄우고 모달 닫기
+                dispatch(showCompleteAlert(`${selectedDocument.title}를 ${folder.name}로 옮겼습니다.`))
                 setIsModalOpen(false);
             } catch (error) {
                 console.error(error);
-                setIsMoved(false);
+                dispatch(showWarningAlert(`${selectedDocument.title}를 이동하는 데에 실패했습니다.`))
             }
         }
     }
@@ -101,7 +99,7 @@ export default function DocumentMoveModal({ isModalOpen, setIsModalOpen, setIsMo
                     right: 0,
                     bottom: 0,
                     backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                    zIndex: 1000,
+                    zIndex: 48,
                 },
                 content: {
                     position: 'absolute',
@@ -110,7 +108,7 @@ export default function DocumentMoveModal({ isModalOpen, setIsModalOpen, setIsMo
                     width: 510,
                     height: 390,
                     transform: 'translate(-50%, -50%)',
-                    zIndex: 1001,
+                    zIndex: 49,
                     padding: 0,
                 }
             }}>

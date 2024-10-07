@@ -170,7 +170,7 @@ export default function SignUp() {
             signUp();
         }
         else {
-            console.log("불만족")
+            console.log("불만족");
         }
     }
 

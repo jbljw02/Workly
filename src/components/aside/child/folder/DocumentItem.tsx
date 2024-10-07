@@ -9,8 +9,8 @@ import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import axios from 'axios';
 import getUserFolder from "@/components/hooks/getUserFolder";
 import { usePathname, useRouter } from "next/navigation";
-import useDeleteDocument from "@/components/hooks/deleteDocument";
 import HoverTooltip from '@/components/editor/child/menuBar/HoverTooltip';
+import useDeleteDocument from '@/components/hooks/useDeleteDocument';
 
 type DocumentItemProps = {
     document: DocumentProps;

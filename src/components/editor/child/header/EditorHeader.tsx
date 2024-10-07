@@ -22,11 +22,13 @@ import { v4 as uuidv4 } from 'uuid';
 import { addDocumentToFolder, Folder } from '@/redux/features/folderSlice'
 import axios from 'axios'
 import DocumentMoveModal from '@/components/modal/DocumentMoveModal'
-import useDeleteDocument from '@/components/hooks/deleteDocument'
 import { usePathname } from 'next/navigation'
 import HoverTooltip from '../menuBar/HoverTooltip'
 import ToolbarButton from '../menuBar/ToolbarButton'
 import ShareDocumentModal from '@/components/modal/ShareDocumentModal'
+import { showCompleteAlert, showWarningAlert } from '@/redux/features/alertSlice'
+import useDeleteDocument from '@/components/hooks/useDeleteDocument'
+import { useCopyURL } from '@/components/hooks/useCopyURL'
 
 type EditorHeaderProps = {
     editor: Editor,
@@ -42,6 +44,8 @@ export default function EditorHeader({
     setLastUpdatedTime }: EditorHeaderProps) {
     const dispatch = useAppDispatch();
     const deleteDoc = useDeleteDocument();
+    
+    const { copyURL } = useCopyURL();
 
     const pathname = usePathname();
     const pathParts = pathname.split('/');
@@ -56,26 +60,9 @@ export default function EditorHeader({
     const parentFolder = folders.find(folder => folder.name === selectedDocument.folderName);
 
     const [menuListOpen, setMenuListOpen] = useState(false);
-    const [isLinkCopied, setIsLinkCopied] = useState(false); // 링크가 복사됐는지
-    const [isDocCopied, setIsDocCopied] = useState(false); // 문서가 복사됐는지
     const [isMoving, setIsMoving] = useState(false); // 문서가 이동중인지
-    const [isMovedComplete, setIsMovedComplete] = useState(false); // 문서가 이동에 성공했는지
     const [isShareModal, setIsShareModal] = useState(false); // 문서가 공유됐는지
 
-    const [isFailedInfo, setIsFailedInfo] = useState({
-        isFailed: false,
-        msg: '',
-    });
-
-    const shareDoc = () => {
-    }
-
-    // 링크 복사
-    const copyURL = () => {
-        const currentURL = window.location.href;
-        navigator.clipboard.writeText(currentURL);
-        setIsLinkCopied(true);
-    }
 
     // 에디터 내용을 PDF로 변환하고 다운로드하는 함수
     const downloadPDF = async () => {
@@ -167,16 +154,13 @@ export default function EditorHeader({
                         },
                     });
 
-                setIsDocCopied(true);
+                dispatch(showCompleteAlert(`${parentFolder?.name}에 ${selectedDocument.title} 사본이 생성되었습니다.`));
             } catch (error) {
                 console.error(error);
 
                 // 문서 복사 실패 시 롤백
                 dispatch(deleteDocuments(copiedDocument.id));
-                setIsFailedInfo({
-                    isFailed: true,
-                    msg: `${selectedDocument.title}의 사본 생성에 실패했습니다.`,
-                })
+                dispatch(showWarningAlert(`${selectedDocument.title}의 사본 생성에 실패했습니다.`));
             }
         }
     }
@@ -264,34 +248,10 @@ export default function EditorHeader({
                     }
                 </div>
             </div>
-            {/* 링크 복사가 완료됐음을 알리는 alert */}
-            <CompleteAlert
-                isModalOpen={isLinkCopied}
-                setIsModalOpen={setIsLinkCopied}
-                label="링크가 복사되었습니다" />
-            {/* 문서의 복제가 완료됐음을 알리는 alert */}
-            <CompleteAlert
-                isModalOpen={isDocCopied}
-                setIsModalOpen={setIsDocCopied}
-                label={`${parentFolder?.name}에 ${selectedDocument.title} 사본이 생성되었습니다.`} />
-            {/* 문서의 이동이 완료됐음을 알리는 alert */}
-            <CompleteAlert
-                isModalOpen={isMovedComplete}
-                setIsModalOpen={setIsMovedComplete}
-                label={`${selectedDocument.title}를 ${selectedDocument.folderName}로 옮겼습니다.`} />
-            {/* 작업이 실패했을 때 알릴 alert */}
-            <WarningAlert
-                isModalOpen={isFailedInfo.isFailed}
-                setIsModalOpen={() => setIsFailedInfo((prevState) => ({
-                    ...prevState,
-                    isFailed: true,
-                }))}
-                label={isFailedInfo.msg} />
             {/* 문서 이동 모달 */}
             <DocumentMoveModal
                 isModalOpen={isMoving}
-                setIsModalOpen={setIsMoving}
-                setIsMoved={setIsMovedComplete} />
+                setIsModalOpen={setIsMoving} />
             {/* 문서 공유 모달 */}
             <ShareDocumentModal
                 isModalOpen={isShareModal}
