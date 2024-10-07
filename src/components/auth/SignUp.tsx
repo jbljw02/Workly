@@ -212,6 +212,7 @@ export default function SignUp() {
                     subtitle='Workly에 오신 것을 환영합니다!' />
                 <form
                     className='flex flex-col gap-4 w-full'
+                    onSubmit={formSubmit}
                     noValidate>
                     <FormInput
                         type="text"
@@ -251,8 +252,7 @@ export default function SignUp() {
                             hover: 'hover:bg-blue-700'
                         }}
                         label="회원가입"
-                        value={formData.name && formData.email && formData.password && formData.confirmPassword}
-                        onClick={formSubmit} />
+                        value={formData.name && formData.email && formData.password && formData.confirmPassword} />
                 </form>
                 {/* 로그인 영역과 SNS 로그인 영역을 구분하는 바 */}
                 <DivideBar />

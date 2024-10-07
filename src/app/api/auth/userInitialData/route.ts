@@ -20,8 +20,8 @@ export async function POST(req: NextRequest) {
                 documentIds: [],
                 author: {
                     email: user.email,
-                    displayName: user.displayName,
-                    photoURL: user.photoURL,
+                    displayName: user.displayName || null,
+                    photoURL: user.photoURL || null,
                 },
                 sharedWith: [],
             }
@@ -35,6 +35,6 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ success: "회원가입 후 폴더 추가 성공" }, { status: 200 });
         }
     } catch (error) {
-        return NextResponse.json({ success: "회원가입 후 폴더 추가 성공" }, { status: 500 });
+        return NextResponse.json({ success: "회원가입 후 폴더 추가 실패" }, { status: 500 });
     }
 }

@@ -89,6 +89,7 @@ export default function AddInputModal({
                         label="폴더"
                         value={value}
                         setValue={setValue}
+                        isInvalidInfo={isInvalidInfo}
                         placeholder={placeholder} />
                 </div>
                 {/* 하단 버튼 영역 */}
@@ -103,7 +104,8 @@ export default function AddInputModal({
                             hover: 'hover:bg-blue-700',
                         }}
                         label="만들기"
-                        value={value} />
+                        value={value}
+                        onClick={modalSubmit} />
                     <CommonButton
                         style={{
                             px: 'px-3.5',
@@ -113,8 +115,7 @@ export default function AddInputModal({
                             bgColor: 'bg-transparent',
                             hover: 'hover:border-gray-600',
                         }}
-                        label='취소'
-                        onClick={closeModal} />
+                        label='취소' />
                 </div>
             </form>
         </Modal>

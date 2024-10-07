@@ -25,7 +25,6 @@ import { v4 as uuidv4 } from 'uuid';
 import AddLinkSection, { SelectionPosition } from '../link/AddLinkSection'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import LinkTooltip from '../link/LinkTooltip'
-import NoticeModal from '@/components/modal/NoticeModal'
 import { setTextSelection } from '@/redux/features/selectionSlice'
 import ColorPicker from './ColorPicker'
 import { setTextColor } from '@/redux/features/textColorSlice'

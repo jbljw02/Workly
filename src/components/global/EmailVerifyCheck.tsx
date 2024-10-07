@@ -14,11 +14,11 @@ export default function EmailVerifyCheck() {
     // 사용자의 로그인 상태가 변경될 때마다 실행
     useEffect(() => {
         onAuthStateChanged(auth, (user) => {
-            if (user && user.emailVerified && user.displayName && user.email && user.photoURL) {
+            if (user && user.emailVerified && user.displayName && user.email) {
                 dispatch(setUser({
                     displayName: user.displayName,
                     email: user.email,
-                    photoURL: user.photoURL,
+                    photoURL: user.photoURL!,
                 }))
                 getEmailToken();
             }

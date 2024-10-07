@@ -108,6 +108,7 @@ export default function Login() {
                     subtitle='Workly에서 계속해서 작업하세요.' />
                 <form
                     className='flex flex-col gap-4 w-full'
+                    onSubmit={formSubmit}
                     noValidate>
                     <FormInput
                         type="email"
@@ -134,8 +135,7 @@ export default function Login() {
                             hover: 'hover:bg-blue-700'
                         }}
                         label="로그인"
-                        value={formData.email && formData.password}
-                        onClick={formSubmit} />
+                        value={formData.email && formData.password} />
                 </form>
                 {/* 로그인 영역과 SNS 로그인 영역을 구분하는 바 */}
                 <DivideBar />

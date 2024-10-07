@@ -11,6 +11,7 @@ import WebIcon from '../../../public/svgs/web.svg';
 import { useAppDispatch } from '@/redux/hooks';
 import { showCompleteAlert } from '@/redux/features/alertSlice';
 import { useCopyURL } from '../hooks/useCopyURL';
+import { getAuth } from 'firebase/auth';
 
 type ShareContentProps = {
     targetEmail: string;
@@ -20,10 +21,16 @@ type ShareContentProps = {
 
 // 다른 사용자의 이메일을 입력하고 초대를 전송하는 영역
 function ShareContent({ targetEmail, setTargetEmail, closeModal }: ShareContentProps) {
+    const inviteUser = async (e: React.FormEvent) => {
+        e.preventDefault();
+    }
+
     return (
         <>
             {/* 초대할 사용자의 이메일을 작성하고 초대를 전송하는 영역 */}
-            < div className='flex flex-row items-center justify-between px-5 mb-7 gap-6' >
+            <form
+                onSubmit={inviteUser}
+                className='flex flex-row items-center justify-between px-5 mb-7 gap-6' >
                 <div className='w-[480px]'>
                     <CommonInput
                         type="text"
@@ -32,7 +39,7 @@ function ShareContent({ targetEmail, setTargetEmail, closeModal }: ShareContentP
                         placeholder={'초대할 사용자의 이메일'}
                         autoFocus={true} />
                 </div>
-                <CommonButton
+                <SubmitButton
                     style={{
                         px: 'px-3.5',
                         py: 'py-2.5',
@@ -42,10 +49,10 @@ function ShareContent({ targetEmail, setTargetEmail, closeModal }: ShareContentP
                         hover: 'hover:bg-blue-700',
                     }}
                     label='초대'
-                    onClick={closeModal} />
-            </div >
+                    value={targetEmail} />
+            </form>
             {/* 현재 문서에 접근 권한이 있는 사용자를 나열 */}
-            < div className='flex flex-col px-5' >
+            <div className='flex flex-col px-5' >
                 <div className='text-sm font-semibold mb-4'>접근 권한이 있는 사용자</div>
                 <div className='flex flex-col gap-4 max-h-[120px] overflow-y-scroll scrollbar-thin'>
                     <div className='flex flex-row items-center justify-between'>
@@ -116,7 +123,7 @@ export default function ShareDocumentModal({ isModalOpen, setIsModalOpen }: Moda
                     padding: 0,
                 }
             }}>
-            <form
+            <div
                 className='flex flex-col h-full justify-between'>
                 <div>
                     <ModalHeader
@@ -177,7 +184,7 @@ export default function ShareDocumentModal({ isModalOpen, setIsModalOpen }: Moda
                                 onClick={closeModal} />
                         </div>
                 }
-            </form>
+            </div>
         </Modal>
     )
 }
