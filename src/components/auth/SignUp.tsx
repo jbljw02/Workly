@@ -35,6 +35,8 @@ export default function SignUp() {
         msg: '',
     });
 
+    console.log("이메일: ", emailInvalid)
+
     const [passwordInvalid, setPasswordInvalid] = useState({
         isInvalid: false,
         msg: '비밀번호는 6자 이상, 최소 한 개의 특수문자를 포함해야 합니다',

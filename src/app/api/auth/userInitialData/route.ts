@@ -34,11 +34,18 @@ export async function POST(req: NextRequest) {
             photoURL: user.photoURL ? user.photoURL : avatarURL,
             folders: [initialFolder],
             documents: [],
-            coworkers: [{
+            coworkers: [
+                {
                 email: 'jbljjw02@naver.com',
                 displayName: '홍길동',
                 photoURL: avatarURL,
-            }],
+            },
+            {
+                email: 'jhope@naver.com',
+                displayName: '김철수',
+                photoURL: avatarURL,
+            }
+        ],
         });
 
         return NextResponse.json({ success: "회원가입 후 폴더 추가 성공" }, { status: 200 });
