@@ -7,7 +7,8 @@ const ImageNode = ResizableImage.extend({
   draggable: true,
 
   addNodeView() {
-    return ReactNodeViewRenderer(ImageNodeView); // ImageNodeView.tsx의 NodeView와 연결
+    return ReactNodeViewRenderer(ImageNodeView as any);
+
   },
 
   addProseMirrorPlugins() {
@@ -17,7 +18,6 @@ const ImageNode = ResizableImage.extend({
         props: {
           handleDOMEvents: {
             dragstart: (view, event) => {
-              console.log("AAA");
               // 드래그 시작 시 복사 방지
               if (event.dataTransfer) {
                 event.dataTransfer.effectAllowed = 'move'; // 이동 모드로 변경

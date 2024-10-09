@@ -5,7 +5,7 @@ import TriangleRightIcon from '../../../../public/svgs/editor/triangle-right.svg
 import TriangleUpIcon from '../../../../public/svgs/editor/triangle-up.svg'
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { setEditorScale } from "@/redux/features/scaleSlice";
-import HoverTooltip from "./HoverTooltip";
+import HoverTooltip from "./menuBar/HoverTooltip";
 
 export default function RatioDropdown() {
     const dispatch = useAppDispatch();

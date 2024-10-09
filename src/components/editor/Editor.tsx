@@ -1,24 +1,7 @@
 import { useEditor, EditorContent, ReactNodeViewRenderer, JSONContent, Extension } from '@tiptap/react'
-import StarterKit from '@tiptap/starter-kit'
-import Underline from '@tiptap/extension-underline'
-import Highlight from '@tiptap/extension-highlight'
-import TextAlign from '@tiptap/extension-text-align'
-import TextStyle from '@tiptap/extension-text-style'
-import Color from '@tiptap/extension-color'
-import ListItem from '@tiptap/extension-list-item'
-import OrderedList from '@tiptap/extension-ordered-list'
-import CodeBlock from '@tiptap/extension-code-block'
 import React, { CSSProperties, useCallback, useEffect, useRef, useState } from 'react'
-import Heading from '@tiptap/extension-heading'
-import BulletList from '@tiptap/extension-bullet-list'
-import { FontSize } from '../../../lib/fontSize'
-import { FontFamily } from '../../../lib/fontFamily'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
-import Document from '@tiptap/extension-document'
-import Dropcursor from '@tiptap/extension-dropcursor'
 import 'tiptap-extension-resizable-image/styles.css';
-import FileHandler from '@tiptap-pro/extension-file-handler'
-import FileNode from '../../../lib/fileNode'
 import '@/styles/editor.css';
 import EditorHeader from './child/header/EditorHeader'
 import DragHandle from '@tiptap-pro/extension-drag-handle-react'
@@ -71,7 +54,14 @@ export default function Editor({ docId }: { docId: string }) {
       try {
         // Tiptap JWT 토큰 가져오기
         if (user.email && selectedDocument.author && selectedDocument.id) {
-          const response = await axios.get(`/api/auth/getCollabToken?userEmail=${user.email}&authorEmail=${selectedDocument.author}&docId=${selectedDocument.id}`);
+          const response = await axios.get('/api/auth/getCollabToken', {
+            params: {
+              userEmail: user.email,
+              authorEmail: selectedDocument.author,
+              docId: selectedDocument.id
+            }
+          });
+          
           const { tiptapToken } = response.data as { tiptapToken: string };
 
           // Tiptap 협업 기능을 위한 프로바이더 설정

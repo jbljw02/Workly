@@ -10,12 +10,12 @@ export default function HeaderButton() {
             <button
                 type="button"
                 onClick={() => router.back()}>
-                <BackIcon width="20" />
+                <BackIcon width="18" />
             </button>
             <button
                 type="button"
                 onClick={() => router.push('/')}>
-                <CloseIcon width="20" />
+                <CloseIcon width="25" />
             </button>
         </header>
     )

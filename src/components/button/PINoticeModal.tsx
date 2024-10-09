@@ -34,7 +34,7 @@ export default function PINoticeModal({ isModalOpen, setIsModalOpen, setIsAgree,
                     className='absolute top-6 right-6'>
                     <CloseIcon
                         className="hover:text-gray-500"
-                        width="21" />
+                        width="25" />
                 </button>
                 <div className="flex flex-row justify-between">
                     <div className="text-2xl font-bold">개인정보 처리방침</div>

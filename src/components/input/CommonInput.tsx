@@ -1,7 +1,7 @@
 import { InputProps } from "@/types/commonInput";
 import { useEffect, useRef } from "react"
 
-interface CommonInputProps extends InputProps {
+export interface CommonInputProps extends InputProps {
     setValue: React.Dispatch<React.SetStateAction<string>>;
 }
 

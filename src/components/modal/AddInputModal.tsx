@@ -4,6 +4,8 @@ import Modal from 'react-modal';
 import CommonInput from '../input/CommonInput';
 import SubmitButton from '../button/SubmitButton';
 import CommonButton from '../button/CommonButton';
+import ModalHeader from './ModalHeader';
+import InputLabelContainer from './InputLabelContainer';
 
 export interface AddInputModal extends ModalProps {
     title: string;
@@ -27,10 +29,12 @@ export default function AddInputModal({
     placeholder }: AddInputModal) {
     const modalSubmit = async (e: React.FormEvent) => {
         e.preventDefault(); // 폼 제출 시 페이지 리로드 방지
-        const isFailed = await submitFunction();
-        if (isFailed) return; // 실패 시 모달을 닫지 않음
-        setIsModalOpen(false);
-        setValue('');
+        if (value) {
+            const isFailed = await submitFunction();
+            if (isFailed) return; // 실패 시 모달을 닫지 않음
+            setIsModalOpen(false);
+            setValue('');
+        }
     }
 
     const closeModal = () => {
@@ -40,6 +44,13 @@ export default function AddInputModal({
             msg: '',
             isInvalid: false,
         })
+    }
+
+    const handleKeyPress = (e: React.KeyboardEvent<HTMLFormElement>) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            modalSubmit(e);
+        }
     }
 
     return (
@@ -63,25 +74,26 @@ export default function AddInputModal({
                     height: 240,
                     transform: 'translate(-50%, -50%)',
                     zIndex: 1001,
-                    padding: 22,
+                    padding: 0,
                 }
             }}>
             <form
                 onSubmit={modalSubmit}
+                onKeyDown={handleKeyPress}
                 className='flex flex-col h-full justify-between'>
                 <div>
-                    <div className='font-semibold mb-4'>{title}</div>
-                    <div className='text-sm mt-2 mb-2'>이름</div>
-                    <CommonInput
-                        type="text"
+                    <ModalHeader
+                        label={<div className='font-semibold'>{title}</div>}
+                        closeModal={closeModal} />
+                    <InputLabelContainer
+                        label="폴더"
                         value={value}
                         setValue={setValue}
-                        placeholder={placeholder}
                         isInvalidInfo={isInvalidInfo}
-                        autoFocus={true} />
+                        placeholder={placeholder} />
                 </div>
                 {/* 하단 버튼 영역 */}
-                <div className='flex justify-end text-sm gap-3.5'>
+                <div className='flex justify-end text-sm gap-3.5 px-6 pb-6'>
                     <SubmitButton
                         style={{
                             px: 'px-3.5',
@@ -92,7 +104,8 @@ export default function AddInputModal({
                             hover: 'hover:bg-blue-700',
                         }}
                         label="만들기"
-                        value={value} />
+                        value={value}
+                        onClick={modalSubmit} />
                     <CommonButton
                         style={{
                             px: 'px-3.5',
@@ -102,8 +115,7 @@ export default function AddInputModal({
                             bgColor: 'bg-transparent',
                             hover: 'hover:border-gray-600',
                         }}
-                        label='취소'
-                        onClick={closeModal} />
+                        label='취소' />
                 </div>
             </form>
         </Modal>

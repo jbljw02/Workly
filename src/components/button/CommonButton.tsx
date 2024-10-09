@@ -20,8 +20,8 @@ export default function CommonButton({ style, label, onClick }: CommonButtonProp
         <button
             type="button"
             onClick={onClick}
-            className={`${px} ${py} ${textSize} ${textColor} ${bgColor} ${hover}
-            '${bgColor} rounded-lg border transform transition-all duration-200`}>
+            className={`${px} ${py} ${textSize} ${textColor} ${bgColor} ${hover} 
+            whitespace-nowrap rounded-lg border transform transition-all duration-200 select-none`}>
             {label}
         </button>
     )

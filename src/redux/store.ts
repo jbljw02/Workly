@@ -9,6 +9,7 @@ import selectionReducers from './features/selectionSlice';
 import textColorReducers from './features/textColorSlice';
 import documentReducers, { selectedDocument } from './features/documentSlice';
 import folderReducers from './features/folderSlice';
+import alertReducers from './features/alertSlice';
 
 const combinedReducer = combineReducers({
     user: userReducers.user,
@@ -24,6 +25,7 @@ const combinedReducer = combineReducers({
     documents: documentReducers.documents,
     selectedDocument: documentReducers.selectedDocument,
     folders: folderReducers.folders,
+    globalAlert: alertReducers.globalAlert,
 })
 
 // RootState가 Redux 스토어의 상태 타입임을 나타냄

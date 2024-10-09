@@ -5,28 +5,29 @@ import { useClickOutside } from "../hooks/useClickOutside";
 import { NoticeModalProps } from '@/types/noticeModalProps';
 
 export default function WarningAlert({ isModalOpen, setIsModalOpen, label }: NoticeModalProps) {
-    if (!isModalOpen) return null;
-
     const [animation, setAnimation] = useState<string>('slide-up');
     const tooltipRef = useRef<HTMLDivElement>(null);
-
+    
     useEffect(() => {
-        // 애니메이션을 먼저 적용하고 툴팁을 닫음
-        const timer = setTimeout(() => {
-            setAnimation('slide-down');
-            setTimeout(() => setIsModalOpen(false), 500);
-        }, 3000);
+        if (isModalOpen) {
+            setAnimation('slide-up');
+            const timer = setTimeout(() => {
+                closeTooltip();
+            }, 3000);
 
-        return () => clearTimeout(timer);
-    }, [setIsModalOpen]);
-
+            return () => clearTimeout(timer);
+        }
+    }, [isModalOpen]);
+    
     const closeTooltip = () => {
         setAnimation('slide-down');
         setTimeout(() => setIsModalOpen(false), 500);
     };
-
-    useClickOutside(tooltipRef, () => closeTooltip());
-
+    
+    useClickOutside(tooltipRef, closeTooltip);
+    
+    if (!isModalOpen) return null;
+    
     return (
         <div
             ref={tooltipRef}

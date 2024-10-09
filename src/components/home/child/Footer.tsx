@@ -26,7 +26,7 @@ export default function Footer() {
                         className='text-black group-hover:text-gray-600'
                         width="22" />
                     <div className='text-sm group-hover:underline'>
-                        Workly's Github
+                        Workly&apos;s Github
                     </div>
                 </button>
                 <div className='flex flex-row gap-3 mt-auto text-sm'>

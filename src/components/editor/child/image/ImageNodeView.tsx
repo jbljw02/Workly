@@ -1,6 +1,5 @@
 import { NodeViewWrapper, ReactNodeViewRenderer } from '@tiptap/react';
 import { ResizableImage, ResizableImageComponent, ResizableImageNodeViewRendererProps } from 'tiptap-extension-resizable-image';
-import { Plugin, PluginKey } from 'prosemirror-state'; // ProseMirror 플러그인을 가져옴
 import { useEffect, useRef, useState } from 'react';
 import 'react-image-crop/dist/ReactCrop.css';
 import { useClickOutside } from '@/components/hooks/useClickOutside';
@@ -9,7 +8,6 @@ import ImageCropper from './ImageCropper';
 import ImageCropBar from './ImageCropBar';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { setCrop, setImageDimension } from '@/redux/features/editorImageSlice';
-import DragHandle from '@tiptap-pro/extension-drag-handle-react';
 
 const NodeView = (resizableImgProps: ResizableImageNodeViewRendererProps) => {
   const dispatch = useAppDispatch();

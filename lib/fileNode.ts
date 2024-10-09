@@ -3,6 +3,15 @@ import { ReactNodeViewRenderer } from '@tiptap/react';
 import { Plugin } from 'prosemirror-state';
 import FileNodeView from '@/components/editor/child/file/FileNodeView';
 
+export interface FileNodeAttrs {
+    id: string;
+    href: string;
+    title: string;
+    mimeType: string;
+    size: number;
+    fileName: string;
+}
+
 const FileNode = Node.create({
     name: 'file',
     group: 'block',
@@ -58,7 +67,7 @@ const FileNode = Node.create({
         ];
     },
     addNodeView() {
-        return ReactNodeViewRenderer(FileNodeView);
+        return ReactNodeViewRenderer(FileNodeView as any);
     },
 
 });
