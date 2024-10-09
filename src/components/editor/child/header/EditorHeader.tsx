@@ -44,7 +44,7 @@ export default function EditorHeader({
     setLastUpdatedTime }: EditorHeaderProps) {
     const dispatch = useAppDispatch();
     const deleteDoc = useDeleteDocument();
-    
+
     const { copyURL } = useCopyURL();
 
     const pathname = usePathname();
@@ -239,13 +239,11 @@ export default function EditorHeader({
                             iconWidth={25}
                             onClick={() => setMenuListOpen(true)} />
                     </HoverTooltip>
-                    {
-                        menuListOpen &&
-                        <MenuList
-                            menuList={menuItems}
-                            setListOpen={setMenuListOpen}
-                            listPositon={{ top: '46px', right: '18px' }} />
-                    }
+                    <MenuList
+                        isOpen={menuListOpen}
+                        menuList={menuItems}
+                        setListOpen={setMenuListOpen}
+                        listPositon={{ top: '46px', right: '18px' }} />
                 </div>
             </div>
             {/* 문서 이동 모달 */}

@@ -199,8 +199,8 @@ export default function ShareContent({ targetEmail, setTargetEmail, closeModal }
                             displayedUsers.map((user, index) => (
                                 <div
                                     key={user.email}
-                                    className={`flex w-full items-center justify-between px-3 py-2 rounded ${index === selectedIndex ? 'bg-gray-100' : ''
-                                        }`}
+                                    className={`flex flex-row w-full items-center justify-between pl-3 pr-2 py-2 rounded cursor-pointer select-none 
+                                        ${index === selectedIndex ? 'bg-gray-100' : ''}`}
                                     onMouseEnter={() => coworkerMouseEnter(index)}
                                     onMouseLeave={coworkerMouseLeave}>
                                     <UserProfile user={user} />
@@ -217,13 +217,10 @@ export default function ShareContent({ targetEmail, setTargetEmail, closeModal }
                 <div className='flex flex-col gap-4 max-h-[120px] overflow-y-scroll scrollbar-thin'>
                     <div className='flex flex-row items-center justify-between'>
                         <UserProfile user={user} />
-                        <button className='flex flex-row items-center justify-center gap-1 px-2 py-1 text-neutral-400 rounded hover:bg-gray-100'>
-                            <div className='whitespace-nowrap text-sm'>전체 허용</div>
-                            <ArrowIcon width="17" />
-                        </button>
+                        <AuthorityButton />
                     </div>
                 </div>
-            </div >
+            </div>
         </div>
     )
 }

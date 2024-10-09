@@ -219,15 +219,11 @@ export default function FileNodeView({ editor, node }: FileNodeViewProps) {
                             <MenuIcon width="18" />
                         </div>
                     </div>
-                    {
-                        // 파일의 메뉴바를 펼치고 있는지
-                        menuListOpen && (
-                            <MenuList
-                                menuList={menuItems}
-                                setListOpen={setMenuListOpen}
-                                listPositon={{ top: '50px', right: '0px' }} />
-                        )
-                    }
+                    <MenuList
+                        isOpen={menuListOpen}
+                        menuList={menuItems}
+                        setListOpen={setMenuListOpen}
+                        listPositon={{ top: '50px', right: '0px' }} />
                 </div>
             </NodeViewWrapper>
             <FileFullModal
