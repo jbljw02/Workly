@@ -1,7 +1,7 @@
 'use client';
 
 import HeaderButton from "@/app/header/HeaderButton";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import GoogleLoginButton from "../button/GoogleLoginButton";
 import SubmitButton from "../button/SubmitButton";
 import FormInput from "../input/FormInput";
@@ -32,12 +32,9 @@ export default function SignUp() {
 
     const [emailInvalid, setEmailInvalid] = useState({
         isInvalid: false,
-        msg: '유효한 이메일을 입력해주세요',
+        msg: '',
     });
-    const [emailDuplicated, setEmailDuplicated] = useState({
-        isInvalid: false,
-        msg: '이미 존재하는 이메일입니다',
-    });
+
     const [passwordInvalid, setPasswordInvalid] = useState({
         isInvalid: false,
         msg: '비밀번호는 6자 이상, 최소 한 개의 특수문자를 포함해야 합니다',
@@ -71,16 +68,16 @@ export default function SignUp() {
             // 이메일이 정규식을 따르고 있는지 검사
             if (e.target.name === 'email') {
                 if (emailRegex.test(e.target.value)) {
-                    setEmailInvalid((prevState) => ({
-                        ...prevState,
+                    setEmailInvalid( {
+                        msg: '',
                         isInvalid: false,
-                    }));
+                    });
                 }
                 else {
-                    setEmailInvalid((prevState) => ({
-                        ...prevState,
+                    setEmailInvalid( {
+                        msg: '유효하지 않은 이메일입니다',
                         isInvalid: true,
-                    }));
+                    });
                 }
             }
             // 비밀번호가 정규식을 따르고 있는지 검사
@@ -112,10 +109,10 @@ export default function SignUp() {
 
         // 이메일이 정규식을 따르지 않을 경우
         if (!emailRegex.test(formData.email)) {
-            setEmailInvalid((prevState) => ({
-                ...prevState,
+            setEmailInvalid( {
+                msg: '유효하지 않은 이메일입니다',
                 isInvalid: true,
-            }));
+            });
         }
 
         // 비밀번호가 정규식을 따르지 않을 경우
@@ -164,7 +161,6 @@ export default function SignUp() {
             formData.password === formData.confirmPassword &&
             formData.isAgreeForPersonalInfo &&
             !emailInvalid.isInvalid &&
-            !emailDuplicated.isInvalid &&
             !passwordInvalid.isInvalid &&
             !confirmPasswordInvalid.isInvalid) {
             signUp();
@@ -192,16 +188,17 @@ export default function SignUp() {
         catch (error) {
             // 이미 사용중인 이메일
             if ((error as FirebaseError).code === 'auth/email-already-in-use') {
-                setPasswordInvalid((prevState) => ({
-                    ...prevState,
+                setEmailInvalid( {
+                    msg: '이미 존재하는 이메일입니다',
                     isInvalid: true,
-                }));
+                });
             }
             else {
                 throw error;
             }
         }
     }
+
 
     return (
         <div className="flex w-full h-auto items-center justify-center">
@@ -227,7 +224,7 @@ export default function SignUp() {
                         value={formData.email}
                         setValue={formChange}
                         placeholder='이메일 주소'
-                        isInvalidInfo={emailInvalid || emailDuplicated} />
+                        isInvalidInfo={emailInvalid} />
                     <FormInput
                         type="password"
                         name="password"

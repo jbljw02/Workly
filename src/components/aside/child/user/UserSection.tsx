@@ -12,6 +12,8 @@ import UserMenuList from "./UserMenuList";
 import UserProfile from "./UserProfile";
 
 export default function UserSection() {
+    const user = useAppSelector(state => state.user);
+    
     const containerRef = useRef<HTMLDivElement>(null);
 
     const [menuListOpen, setMenuListOpen] = useState(false);
@@ -24,7 +26,7 @@ export default function UserSection() {
             ref={containerRef}
             onClick={() => setMenuListOpen(!menuListOpen)}>
             <div className="cursor-pointer">
-                <UserProfile />
+                <UserProfile user={user} />
             </div>
             {
                 menuListOpen &&

@@ -54,7 +54,14 @@ export default function Editor({ docId }: { docId: string }) {
       try {
         // Tiptap JWT 토큰 가져오기
         if (user.email && selectedDocument.author && selectedDocument.id) {
-          const response = await axios.get(`/api/auth/getCollabToken?userEmail=${user.email}&authorEmail=${selectedDocument.author}&docId=${selectedDocument.id}`);
+          const response = await axios.get('/api/auth/getCollabToken', {
+            params: {
+              userEmail: user.email,
+              authorEmail: selectedDocument.author,
+              docId: selectedDocument.id
+            }
+          });
+          
           const { tiptapToken } = response.data as { tiptapToken: string };
 
           // Tiptap 협업 기능을 위한 프로바이더 설정

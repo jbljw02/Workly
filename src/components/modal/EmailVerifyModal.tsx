@@ -7,7 +7,10 @@ import { useAppDispatch } from '@/redux/hooks';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { setUser } from '@/redux/features/userSlice';
-import { sendEmailVerification } from '@firebase/auth';
+import { sendEmailVerification, updateProfile } from '@firebase/auth';
+import path from "path";
+import fs from "fs";
+import { getDownloadURL, getStorage, ref } from 'firebase/storage';
 
 export default function EmailVerifyModal({ isModalOpen, setIsModalOpen }: ModalProps) {
     const dispatch = useAppDispatch();
@@ -31,7 +34,17 @@ export default function EmailVerifyModal({ isModalOpen, setIsModalOpen }: ModalP
                             "Accept": "application/json"
                         },
                     });
-                    
+
+                    // 스토리지에서 아바타 이미지를 가져옴
+                    const storage = getStorage();
+                    const avatarRef = ref(storage, 'images/avatar.png');
+                    const avatarURL = await getDownloadURL(avatarRef);
+
+                    // 이메일을 통해 인증된 사용자는 아바타 이미지를 사용
+                    await updateProfile(user, {
+                        photoURL: avatarURL,
+                    });
+
                     // 사용자의 초기 정보를 설정
                     await axios.post('/api/auth/userInitialData', { user }, {
                         headers: {
@@ -40,11 +53,11 @@ export default function EmailVerifyModal({ isModalOpen, setIsModalOpen }: ModalP
                         },
                     });
 
-                    if (user.displayName && user.email && user.photoURL) {
+                    if (user.displayName && user.email) {
                         dispatch(setUser({
                             displayName: user.displayName,
                             email: user.email,
-                            photoURL: user.photoURL,
+                            photoURL: user.photoURL ? user.photoURL : avatarURL,
                         }))
                     }
                     router.push('/editor/home');
@@ -93,6 +106,7 @@ export default function EmailVerifyModal({ isModalOpen, setIsModalOpen }: ModalP
                     paddingRight: 40,
                     zIndex: 49,
                     transform: 'translate(-50%, -50%)',
+                    overflow: 'hidden',
                 }
             }}>
             <div className="flex flex-col justify-center items-center text-center gap-3">

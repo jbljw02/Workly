@@ -6,6 +6,7 @@ import logout from "@/utils/logout";
 import HorizontalDivider from "@/components/editor/child/divider/HorizontalDivider";
 import UserProfile from "./UserProfile";
 import ContactIcon from '../../../../../public/svgs/contact.svg';
+import { useAppSelector } from "@/redux/hooks";
 
 type UserMenuList = {
     setListOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -13,7 +14,8 @@ type UserMenuList = {
 
 export default function UserMenuList({ setListOpen }: UserMenuList) {
     const router = useRouter();
-
+    const user = useAppSelector(state => state.user);
+    
     const menuItems: MenuItemProps[] = [
         {
             Icon: UserIcon,
@@ -35,10 +37,11 @@ export default function UserMenuList({ setListOpen }: UserMenuList) {
             horizonLine: true,
         },
     ];
+
     return (
         <div className="flex flex-col w-full overflow-hidden absolute bg-white border rounded border-neutral-300 pt-3.5 pb-1.5 z-10 top-[72px] left-4 shadow-[0px_4px_10px_rgba(0,0,0,0.25)]">
             <div className="pb-2 pr-3 pl-3">
-                <UserProfile />
+                <UserProfile user={user} />
             </div>
             <HorizontalDivider borderColor="border-gray-200" />
             <ul className="list-none text-sm m-0 p-0">
