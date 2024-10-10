@@ -2,9 +2,8 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { JSONContent } from "@tiptap/react";
 import { UserProps } from "./userSlice";
 
-export type Collaborator = {
-    email: string;
-    authority: 'read' | 'write' | 'all';
+export interface Collaborator extends UserProps {
+    authority: '읽기 허용' | '쓰기 허용' | '전체 허용' | '관리자';
 }
 
 export type DocumentProps = {

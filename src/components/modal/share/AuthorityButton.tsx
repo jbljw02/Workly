@@ -2,15 +2,20 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import ArrowIcon from '../../../../public/svgs/down-arrow.svg';
 import { useClickOutside } from '@/components/hooks/useClickOutside';
+import { useAppSelector } from '@/redux/hooks';
 
-type AuthorityCategory = '전체 허용' | '쓰기 허용' | '읽기 허용';
+type AuthorityCategory = '전체 허용' | '쓰기 허용' | '읽기 허용' | '관리자';
 
-interface DropdownProps {
+type DropdownProps = {
     dropdownPosition: { top: number; left: number };
     authorityList: Array<{ label: string; description: string }>;
     setAuthority: (authority: AuthorityCategory) => void;
     setIsOpen: (isOpen: boolean) => void;
     buttonRef: React.RefObject<HTMLDivElement>;
+}
+
+type AuthorityButtonProps = {
+    initialAuthority: AuthorityCategory;
 }
 
 // 권한을 선택하는 드롭다운
@@ -49,13 +54,17 @@ function Dropdown({
     );
 }
 
-export default function AuthorityButton() {
+export default function AuthorityButton({ initialAuthority }: AuthorityButtonProps) {
     const buttonRef = useRef<HTMLDivElement>(null);
 
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
 
-    const [authority, setAuthority] = useState<AuthorityCategory>('전체 허용');
+    const selectedDocument = useAppSelector(state => state.selectedDocument);
+    const user = useAppSelector(state => state.user);
+
+    // 초기 권한 상태로 설정하고, 권한이 변경될 때마다 업데이트
+    const [authority, setAuthority] = useState<AuthorityCategory>(initialAuthority);
 
     const authorityList = [
         {
@@ -104,12 +113,21 @@ export default function AuthorityButton() {
         <>
             <div
                 ref={buttonRef}
-                onClick={(e) => {
-                    setIsOpen((prevState) => !prevState);
+                onClick={() => {
+                    if (authority !== '관리자') {
+                        setIsOpen((prevState) => !prevState);
+                    }
                 }}
-                className='flex flex-row items-center justify-center gap-1 px-2 py-1 text-neutral-400 rounded hover:bg-gray-200 select-none cursor-pointer'>
-                <div className='whitespace-nowrap text-sm'>{authority}</div>
-                <ArrowIcon width="17" />
+                className={`flex flex-row items-center justify-center gap-1 px-2 py-1 text-neutral-400 rounded select-none 
+                    ${authority === '관리자' ? '' : 'hover:bg-gray-200 cursor-pointer'}`}>
+                {
+                    authority === '관리자' ?
+                        <div className='whitespace-nowrap text-sm pr-2'>관리자</div> :
+                        <>
+                            <div className='whitespace-nowrap text-sm'>{authority}</div>
+                            <ArrowIcon width="17" />
+                        </>
+                }
             </div>
             <div>
                 {/* React Portal을 이용하여 독립적으로 렌더링 */}
@@ -121,8 +139,7 @@ export default function AuthorityButton() {
                             authorityList={authorityList}
                             setAuthority={setAuthority}
                             setIsOpen={setIsOpen}
-                            buttonRef={buttonRef}
-                        />,
+                            buttonRef={buttonRef} />,
                         document.body)
                 }
             </div>

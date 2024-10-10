@@ -1,7 +1,7 @@
 import UserProfile from '@/components/aside/child/user/UserProfile';
 import SubmitButton from '@/components/button/SubmitButton';
 import CommonInput from '@/components/input/CommonInput';
-import { updateDocuments, setSelectedDocument } from '@/redux/features/documentSlice';
+import { updateDocuments, setSelectedDocument, Collaborator } from '@/redux/features/documentSlice';
 import { UserProps } from '@/redux/features/userSlice';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { useState, useCallback, useEffect, useMemo } from 'react';
@@ -20,27 +20,33 @@ export default function ShareContent({ targetEmail, setTargetEmail, closeModal }
 
     const user = useAppSelector(state => state.user);
     const selectedDocument = useAppSelector(state => state.selectedDocument);
+    const documents = useAppSelector(state => state.documents);
+
+    // 모든 문서에서 협업자들을 가져와 하나의 배열에 할당
+    // flat을 통해 배열을 평탄화 - 객체에 담겨있는 여러 값을 하나의 값에 몰아넣음
+    const allCoworkers: Collaborator[] = useMemo(() => documents.map(doc => doc.collaborators).flat(), [documents]);
 
     const [allUsers, setAllUsers] = useState<UserProps[]>([]); // 모든 사용자
-    const [coworkerList, setCoworkerList] = useState<UserProps[]>([]); // 현재 계정의 협업자들
+    const [coworkerList, setCoworkerList] = useState<Collaborator[]>([]); // 현재 문서 협업자들
 
     const [selectedIndex, setSelectedIndex] = useState<number>(-1);
     const [isKeyboardNav, setIsKeyboardNav] = useState<boolean>(false);
 
     // 검색 결과가 협업자, 모든 사용자에도 없을 경우 보여줄 프로필
-    const unknownUser = useMemo(() => ({
+    const unknownUser: Collaborator = useMemo(() => ({
         displayName: targetEmail,
         email: targetEmail,
         photoURL: 'unknown-user',
+        authority: '전체 허용',
     }), [targetEmail]);
 
     // 사용자의 협업자들을 가져와 coworkerList에 담음
-    const getCoworkers = useCallback(async (email: string) => {
+    const getCoworkers = useCallback(async (email: string, docId: string) => {
         try {
-            const response = await axios.get('/api/coworker', {
-                params: { email },
+            const response = await axios.get('/api/document/coworker', {
+                params: { email: email, docId: docId },
             });
-            setCoworkerList(response.data as UserProps[]);
+            setCoworkerList(response.data as Collaborator[]);
         } catch (error) {
             console.error('협업자 가져오기 오류: ', error);
         }
@@ -57,8 +63,8 @@ export default function ShareContent({ targetEmail, setTargetEmail, closeModal }
     }, []);
 
     useEffect(() => {
-        getCoworkers(user.email);
-    }, [user.email, getCoworkers]);
+        getCoworkers(user.email, selectedDocument.id);
+    }, [user.email, selectedDocument.id, getCoworkers]);
 
     useEffect(() => {
         getAllUsers();
@@ -67,26 +73,41 @@ export default function ShareContent({ targetEmail, setTargetEmail, closeModal }
     // 필터링된 협업자 목록 생성
     // input의 값과 사용자의 이메일이 정확히 일치할 때만 해당 사용자를 출력하고, 
     // 부분적으로 일치할 때는 전체 사용자가 아닌 협업자 목록에서 검색 후 제안
-    const searchedCoworkers = useMemo(() => {
+    const searchedCoworkers: Collaborator[] = useMemo(() => {
         if (targetEmail.trim() === '') {
             return [];
         }
 
         // 전체 사용자 목록에서 '정확히' 일치하는 사용자 검색
         const allUsersMatched = allUsers.find(user =>
-            user.email.toLowerCase() === targetEmail.trim().toLowerCase().trim()
+            user.email.toLowerCase() === targetEmail.trim().toLowerCase()
         );
+
+        // 이메일이 사용자 목록에 존재하는 값이 있을 때, 그 값이 협업자 목록에도 존재하는지 확인
+        if (allUsersMatched) {
+            const matchedCoworker = allCoworkers.find(coworker => coworker.email === allUsersMatched.email);
+            // 존재한다면 그 값을 사용
+            if (matchedCoworker) {
+                return [matchedCoworker];
+            }
+            // 존재하지 않는다면 authority를 포함한 새로운 객체 생성
+            else {
+                return [{
+                    email: allUsersMatched.email,
+                    displayName: allUsersMatched.displayName,
+                    photoURL: allUsersMatched.photoURL,
+                    authority: '전체 허용'
+                }];
+            }
+        }
 
         // 협업자 목록에서 '부분' 일치하는 사용자 검색
-        const coworkersMatched = coworkerList.filter(user =>
-            user.email.toLowerCase().includes(targetEmail.trim().toLowerCase().trim())
+        const coworkersMatched = allCoworkers.filter(coworker =>
+            coworker.email.toLowerCase().includes(targetEmail.trim().toLowerCase())
         );
 
-        // 정확히 일치하는 사용자가 있으면 먼저 추가, 그 다음 부분 일치하는 협업자들 추가
-        return allUsersMatched
-            ? [allUsersMatched, ...coworkersMatched.filter(user => user.email !== allUsersMatched.email)]
-            : coworkersMatched;
-    }, [targetEmail, allUsers, coworkerList]);
+        return coworkersMatched;
+    }, [targetEmail, allUsers, coworkerList, allCoworkers]);
 
     // 검색된 협업자가 있다면 해당 사용자의 프로필을 보여주고,
     // 없다면 알 수 없는 임시 프로필을 보여줌
@@ -196,15 +217,15 @@ export default function ShareContent({ targetEmail, setTargetEmail, closeModal }
                 targetEmail && (
                     <div className='absolute w-[480px] left-0 right-0 z-50 flex flex-col p-2 mt-2 border rounded-lg mx-5 bg-white shadow-xl'>
                         {
-                            displayedUsers.map((user, index) => (
+                            displayedUsers.map((coworker, index) => (
                                 <div
-                                    key={user.email}
+                                    key={coworker.email}
                                     className={`flex flex-row w-full items-center justify-between pl-3 pr-2 py-2 rounded cursor-pointer select-none 
                                         ${index === selectedIndex ? 'bg-gray-100' : ''}`}
                                     onMouseEnter={() => coworkerMouseEnter(index)}
                                     onMouseLeave={coworkerMouseLeave}>
-                                    <UserProfile user={user} />
-                                    <AuthorityButton />
+                                    <UserProfile user={coworker} />
+                                    <AuthorityButton initialAuthority={coworker.email === selectedDocument.author ? '관리자' : coworker.authority} />
                                 </div>
                             ))
                         }
@@ -217,7 +238,7 @@ export default function ShareContent({ targetEmail, setTargetEmail, closeModal }
                 <div className='flex flex-col gap-4 max-h-[120px] overflow-y-scroll scrollbar-thin'>
                     <div className='flex flex-row items-center justify-between'>
                         <UserProfile user={user} />
-                        <AuthorityButton />
+                        <AuthorityButton initialAuthority='관리자' />
                     </div>
                 </div>
             </div>
