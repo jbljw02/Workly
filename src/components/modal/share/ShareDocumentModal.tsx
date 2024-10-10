@@ -11,24 +11,20 @@ import WebIcon from '../../../../public/svgs/web.svg';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { showCompleteAlert } from '@/redux/features/alertSlice';
 import { useCopyURL } from '../../hooks/useCopyURL';
-import { getAuth } from 'firebase/auth';
-import { collection, getDocs } from 'firebase/firestore';
-import fireStore from '../../../../firebase/firestore';
-import { setSelectedDocument, updateDocuments } from '@/redux/features/documentSlice';
-import axios from 'axios';
 import { UserProps } from '@/redux/features/userSlice';
 import PublishContent from './PublishContent';
 import ShareContent from './ShareContent';
+import { setTargetSharingEmail } from '@/redux/features/shareDocumentSlice';
 
 export default function ShareDocumentModal({ isModalOpen, setIsModalOpen }: ModalProps) {
     const dispatch = useAppDispatch();
     const { copyURL } = useCopyURL();
 
-    const [targetEmail, setTargetEmail] = useState<string>(''); // 초대할 이메일
+    const targetEmail = useAppSelector(state => state.targetSharingEmail);
     const [workCategory, setWorkCategory] = useState<'공유' | '게시'>('공유');
 
     const closeModal = () => {
-        setTargetEmail('');
+        dispatch(setTargetSharingEmail(''));
         setIsModalOpen(false);
     }
 
@@ -76,10 +72,7 @@ export default function ShareDocumentModal({ isModalOpen, setIsModalOpen }: Moda
                     {
                         workCategory === '공유' ?
                             // 다른 사용자의 이메일을 입력하고 초대를 전송하는 영역
-                            <ShareContent
-                                targetEmail={targetEmail}
-                                setTargetEmail={setTargetEmail}
-                                closeModal={closeModal} /> :
+                            <ShareContent/> :
                             // 문서를 웹 페이지로 게시하는 영역
                             <PublishContent />
                     }

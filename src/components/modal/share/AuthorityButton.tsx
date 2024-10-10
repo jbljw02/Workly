@@ -16,6 +16,7 @@ type DropdownProps = {
 
 type AuthorityButtonProps = {
     initialAuthority: AuthorityCategory;
+    isClickEnabled?: boolean;
 }
 
 // 권한을 선택하는 드롭다운
@@ -42,7 +43,7 @@ function Dropdown({
                     <button
                         key={index}
                         className='flex flex-col px-3 py-2 text-sm hover:bg-gray-100'
-                        onClick={(e) => {
+                        onClick={() => {
                             setAuthority(authority.label as AuthorityCategory);
                             setIsOpen(false);
                         }}>
@@ -54,18 +55,14 @@ function Dropdown({
     );
 }
 
-export default function AuthorityButton({ initialAuthority }: AuthorityButtonProps) {
+export default function AuthorityButton({ initialAuthority, isClickEnabled }: AuthorityButtonProps) {
     const buttonRef = useRef<HTMLDivElement>(null);
 
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
 
-    const selectedDocument = useAppSelector(state => state.selectedDocument);
-    const user = useAppSelector(state => state.user);
-
     // 초기 권한 상태로 설정하고, 권한이 변경될 때마다 업데이트
     const [authority, setAuthority] = useState<AuthorityCategory>(initialAuthority);
-
     const authorityList = [
         {
             label: '전체 허용',
@@ -114,15 +111,17 @@ export default function AuthorityButton({ initialAuthority }: AuthorityButtonPro
             <div
                 ref={buttonRef}
                 onClick={() => {
-                    if (authority !== '관리자') {
+                    if (authority !== '관리자' && isClickEnabled) {
                         setIsOpen((prevState) => !prevState);
                     }
                 }}
+                // 클릭이 활성화된 상태이거나 관리자 권한이 아닐 때만
                 className={`flex flex-row items-center justify-center gap-1 px-2 py-1 text-neutral-400 rounded select-none 
-                    ${authority === '관리자' ? '' : 'hover:bg-gray-200 cursor-pointer'}`}>
+                    ${authority === '관리자' ? '' :
+                    isClickEnabled ? 'hover:bg-gray-200 cursor-pointer' : ''}`}>
                 {
                     authority === '관리자' ?
-                        <div className='whitespace-nowrap text-sm pr-2'>관리자</div> :
+                        <div className='whitespace-nowrap text-sm mr-9'>관리자</div> :
                         <>
                             <div className='whitespace-nowrap text-sm'>{authority}</div>
                             <ArrowIcon width="17" />

@@ -14,12 +14,11 @@ import { auth } from "../../../firebase/firebasedb";
 import EmailVerifyModal from "../modal/EmailVerifyModal";
 import { FirebaseError } from "firebase-admin";
 
+export const emailRegex = /^[A-Za-z0-9_\.\-]+@[A-Za-z0-9\-]+\.[A-Za-z]{2,}$/;
+export const pwdRegex = /^(?=.*[!@#$%^&*(),.?":{}|<>]).{6,}$/;
+
 export default function SignUp() {
     const router = useRouter();
-
-    const emailRegex = /^[A-Za-z0-9_\.\-]+@[A-Za-z0-9\-]+\.[A-Za-z]{2,}$/;
-    // 비밀번호는 최소 6글자 이상이어야 하며, 특수문자를 하나 이상 포함해야 함
-    const pwdRegex = /^(?=.*[!@#$%^&*(),.?":{}|<>]).{6,}$/;
 
     const [formData, setFormData] = useState({
         name: '',
@@ -70,13 +69,13 @@ export default function SignUp() {
             // 이메일이 정규식을 따르고 있는지 검사
             if (e.target.name === 'email') {
                 if (emailRegex.test(e.target.value)) {
-                    setEmailInvalid( {
+                    setEmailInvalid({
                         msg: '',
                         isInvalid: false,
                     });
                 }
                 else {
-                    setEmailInvalid( {
+                    setEmailInvalid({
                         msg: '유효하지 않은 이메일입니다',
                         isInvalid: true,
                     });
@@ -111,7 +110,7 @@ export default function SignUp() {
 
         // 이메일이 정규식을 따르지 않을 경우
         if (!emailRegex.test(formData.email)) {
-            setEmailInvalid( {
+            setEmailInvalid({
                 msg: '유효하지 않은 이메일입니다',
                 isInvalid: true,
             });
@@ -190,7 +189,7 @@ export default function SignUp() {
         catch (error) {
             // 이미 사용중인 이메일
             if ((error as FirebaseError).code === 'auth/email-already-in-use') {
-                setEmailInvalid( {
+                setEmailInvalid({
                     msg: '이미 존재하는 이메일입니다',
                     isInvalid: true,
                 });

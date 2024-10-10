@@ -28,11 +28,22 @@ export const userSlice = createSlice({
         }
     },
 })
+export const allUsers = createSlice({
+    name: 'allUsers',
+    initialState: [] as UserProps[],
+    reducers: {
+        setAllUsers: (state, action: PayloadAction<UserProps[]>) => {
+            return action.payload;
+        }
+    },
+})
 
 export const { setUser, clearUser } = userSlice.actions;
+export const { setAllUsers } = allUsers.actions;
 
 const reducers = {
     user: userSlice.reducer,
+    allUsers: allUsers.reducer,
 }
 
 export default reducers;

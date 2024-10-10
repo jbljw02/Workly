@@ -10,7 +10,7 @@ type StyleProps = {
 type SubmitButtonProps = {
     style: StyleProps;
     label: string;
-    value: string;
+    value: string | boolean;
     onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
 };
 

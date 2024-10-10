@@ -10,9 +10,11 @@ import textColorReducers from './features/textColorSlice';
 import documentReducers, { selectedDocument } from './features/documentSlice';
 import folderReducers from './features/folderSlice';
 import alertReducers from './features/alertSlice';
+import shareDocumentReducers from './features/shareDocumentSlice';
 
 const combinedReducer = combineReducers({
     user: userReducers.user,
+    allUsers: userReducers.allUsers,
     editorScale: scaleReducers.editorScale,
     imageDimension: editorImageReducers.imageDimension,
     crop: editorImageReducers.crop,
@@ -26,6 +28,9 @@ const combinedReducer = combineReducers({
     selectedDocument: documentReducers.selectedDocument,
     folders: folderReducers.folders,
     globalAlert: alertReducers.globalAlert,
+    coworkerList: shareDocumentReducers.coworkerList,
+    selectedCoworkers: shareDocumentReducers.selectedCoworkers,
+    targetSharingEmail: shareDocumentReducers.targetSharingEmail,
 })
 
 // RootState가 Redux 스토어의 상태 타입임을 나타냄
