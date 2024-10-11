@@ -2,67 +2,41 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import ArrowIcon from '../../../../public/svgs/down-arrow.svg';
 import { useClickOutside } from '@/components/hooks/useClickOutside';
-import { useAppSelector } from '@/redux/hooks';
+import { useAppDispatch, useAppSelector } from '@/redux/hooks';
+import { updateCoworkerAuthority } from '@/redux/features/shareDocumentSlice';
+import { Collaborator } from '@/redux/features/documentSlice';
+import axios from 'axios';
 
-type AuthorityCategory = '전체 허용' | '쓰기 허용' | '읽기 허용' | '관리자';
+type AuthorityCategory = '전체 허용' | '쓰기 허용' | '읽기 허용' | '관리자' | '멤버 제거';
 
 type DropdownProps = {
     dropdownPosition: { top: number; left: number };
-    authorityList: Array<{ label: string; description: string }>;
-    setAuthority: (authority: AuthorityCategory) => void;
     setIsOpen: (isOpen: boolean) => void;
     buttonRef: React.RefObject<HTMLDivElement>;
+    targetUser: Collaborator;
+    isMember?: boolean;
 }
 
 type AuthorityButtonProps = {
     initialAuthority: AuthorityCategory;
+    targetUser: Collaborator;
     isClickEnabled?: boolean;
+    isMember?: boolean;
 }
 
 // 권한을 선택하는 드롭다운
 function Dropdown({
     dropdownPosition,
-    authorityList,
-    setAuthority,
     setIsOpen,
-    buttonRef }: DropdownProps) {
+    buttonRef,
+    targetUser,
+    isMember }: DropdownProps) {
+    const dispatch = useAppDispatch();
     const dropdownRef = useRef<HTMLDivElement>(null);
-    useClickOutside(dropdownRef, () => setIsOpen(false), buttonRef);
-    return (
-        <div
-            ref={dropdownRef}
-            style={{
-                position: 'absolute',
-                top: `${dropdownPosition.top}px`,
-                left: `${dropdownPosition.left}px`,
-                zIndex: 50,
-            }}
-            className='flex flex-col bg-white border border-gray-200 rounded shadow-xl'>
-            {
-                authorityList.map((authority, index) => (
-                    <button
-                        key={index}
-                        className='flex flex-col px-3 py-2 text-sm hover:bg-gray-100'
-                        onClick={() => {
-                            setAuthority(authority.label as AuthorityCategory);
-                            setIsOpen(false);
-                        }}>
-                        <div className='text-sm'>{authority.label}</div>
-                        <div className='text-xs text-neutral-400 whitespace-nowrap'>{authority.description}</div>
-                    </button>
-                ))}
-        </div>
-    );
-}
 
-export default function AuthorityButton({ initialAuthority, isClickEnabled }: AuthorityButtonProps) {
-    const buttonRef = useRef<HTMLDivElement>(null);
+    const selectedDocument = useAppSelector(state => state.selectedDocument);
+    const targetSharingEmail = useAppSelector(state => state.targetSharingEmail);
 
-    const [isOpen, setIsOpen] = useState<boolean>(false);
-    const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
-
-    // 초기 권한 상태로 설정하고, 권한이 변경될 때마다 업데이트
-    const [authority, setAuthority] = useState<AuthorityCategory>(initialAuthority);
     const authorityList = [
         {
             label: '전체 허용',
@@ -75,8 +49,74 @@ export default function AuthorityButton({ initialAuthority, isClickEnabled }: Au
         {
             label: '읽기 허용',
             description: '문서를 열람할 수 있습니다.'
-        }
+        },
+        // 이미 문서의 멤버인 경우
+        ...(isMember ? [{
+            label: '멤버 제거',
+            description: '이 사용자를 문서에서 제거합니다.'
+        }] : []),
     ];
+
+    // 선택한 사용자의 권한 변경
+    const selectAutority = async (authorEmail: string, targetemail: string, docId: string, authority: AuthorityCategory) => {
+        if (isMember) {
+            await axios.put('/api/document/coworker', {
+                authorEmail: authorEmail,
+                targetEmail: targetemail,
+                docId: docId,
+                newAuthority: authority
+            })
+
+            dispatch(updateCoworkerAuthority({ email: targetemail, newAuthority: authority }));
+        }
+        else {
+            dispatch(updateCoworkerAuthority({ email: targetemail, newAuthority: authority }));
+        }
+        setIsOpen(false);
+    }
+
+    useClickOutside(dropdownRef, () => setIsOpen(false), buttonRef);
+
+    return (
+        <div
+            ref={dropdownRef}
+            style={{
+                position: 'absolute',
+                top: `${dropdownPosition.top}px`,
+                left: `${dropdownPosition.left}px`,
+                zIndex: 50,
+            }}
+            className='flex flex-col bg-white border border-gray-200 rounded shadow-xl'>
+            {
+                authorityList.map((authority, index) => (
+                    <div
+                        key={index}
+                        className='flex flex-col px-3 py-1.5 text-sm hover:bg-gray-100 cursor-pointer'
+                        onClick={() => selectAutority(selectedDocument.author, targetUser.email, selectedDocument.id, authority.label as AuthorityCategory)}>
+                        <div className='text-sm'>{authority.label}</div>
+                        <div className='text-xs text-neutral-400 whitespace-nowrap'>{authority.description}</div>
+                    </div>
+                ))
+            }
+            {
+
+            }
+        </div>
+    );
+}
+
+export default function AuthorityButton({
+    initialAuthority,
+    targetUser,
+    isClickEnabled,
+    isMember }: AuthorityButtonProps) {
+    const buttonRef = useRef<HTMLDivElement>(null);
+
+    const [isOpen, setIsOpen] = useState<boolean>(false);
+    const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
+
+    // 초기 권한 상태로 설정하고, 권한이 변경될 때마다 업데이트
+    const [authority, setAuthority] = useState<AuthorityCategory>(initialAuthority);
 
     useEffect(() => {
         if (!buttonRef.current) return;
@@ -110,20 +150,21 @@ export default function AuthorityButton({ initialAuthority, isClickEnabled }: Au
         <>
             <div
                 ref={buttonRef}
-                onClick={() => {
-                    if (authority !== '관리자' && isClickEnabled) {
+                onClick={(e) => {
+                    if (initialAuthority !== '관리자' && isClickEnabled) {
+                        e.stopPropagation();
                         setIsOpen((prevState) => !prevState);
                     }
                 }}
                 // 클릭이 활성화된 상태이거나 관리자 권한이 아닐 때만
                 className={`flex flex-row items-center justify-center gap-1 px-2 py-1 text-neutral-400 rounded select-none 
-                    ${authority === '관리자' ? '' :
-                    isClickEnabled ? 'hover:bg-gray-200 cursor-pointer' : ''}`}>
+                    ${initialAuthority === '관리자' ? '' :
+                        (isClickEnabled ? 'hover:bg-gray-200 cursor-pointer' : '')}`}>
                 {
-                    authority === '관리자' ?
+                    initialAuthority === '관리자' ?
                         <div className='whitespace-nowrap text-sm mr-9'>관리자</div> :
                         <>
-                            <div className='whitespace-nowrap text-sm'>{authority}</div>
+                            <div className='whitespace-nowrap text-sm'>{initialAuthority}</div>
                             <ArrowIcon width="17" />
                         </>
                 }
@@ -135,10 +176,10 @@ export default function AuthorityButton({ initialAuthority, isClickEnabled }: Au
                     createPortal(
                         <Dropdown
                             dropdownPosition={dropdownPosition}
-                            authorityList={authorityList}
-                            setAuthority={setAuthority}
                             setIsOpen={setIsOpen}
-                            buttonRef={buttonRef} />,
+                            buttonRef={buttonRef}
+                            targetUser={targetUser}
+                            isMember={isMember} />,
                         document.body)
                 }
             </div>

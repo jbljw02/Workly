@@ -3,7 +3,7 @@ import { JSONContent } from "@tiptap/react";
 import { UserProps } from "./userSlice";
 
 export interface Collaborator extends UserProps {
-    authority: '읽기 허용' | '쓰기 허용' | '전체 허용' | '관리자';
+    authority: '읽기 허용' | '쓰기 허용' | '전체 허용' | '관리자' | '멤버 제거';
 }
 
 export type DocumentProps = {

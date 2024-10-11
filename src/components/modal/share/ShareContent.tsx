@@ -18,15 +18,10 @@ export default function ShareContent() {
     const user = useAppSelector(state => state.user);
     const selectedDocument = useAppSelector(state => state.selectedDocument);
     const documents = useAppSelector(state => state.documents);
-
-    // 모든 문서에서 협업자들을 가져와 하나의 배열에 할당
-    // flat을 통해 배열을 평탄화 - 객체에 담겨있는 여러 값을 하나의 값에 몰아넣음
-    const allCoworkers: Collaborator[] = useMemo(() => documents.map(doc => doc.collaborators).flat(), [documents]);
-
-    const allUsers = useAppSelector(state => state.allUsers);
-    const coworkerList = useAppSelector(state => state.coworkerList);
-    const selectedCoworkers = useAppSelector(state => state.selectedCoworkers);
-    const targetSharingEmail = useAppSelector(state => state.targetSharingEmail);
+    const allUsers = useAppSelector(state => state.allUsers); // 모든 사용자
+    const coworkerList = useAppSelector(state => state.coworkerList); // 현재 문서의 협업자들
+    const selectedCoworkers = useAppSelector(state => state.selectedCoworkers); // 선택된 협업자들
+    const targetSharingEmail = useAppSelector(state => state.targetSharingEmail); // 공유할 사용자의 이메일
 
     const [selectedIndex, setSelectedIndex] = useState<number>(-1); // 선택된 협업자 인덱스
     const [isKeyboardNav, setIsKeyboardNav] = useState<boolean>(false); // 키보드 네비게이션 모드 여부
@@ -63,7 +58,7 @@ export default function ShareContent() {
     }, []);
 
     useEffect(() => {
-        getCoworkers(user.email, selectedDocument.id);
+        getCoworkers(selectedDocument.author, selectedDocument.id);
     }, [user.email, selectedDocument.id, getCoworkers]);
 
     useEffect(() => {
@@ -71,12 +66,21 @@ export default function ShareContent() {
     }, [getAllUsers]);
 
     // 협업자를 선택하는 함수
-    const coworkerSelect = useCallback((coworker: Collaborator) => {
+    const coworkerSelect = (coworker: Collaborator) => {
         if (isDropdownEnabled) {
             dispatch(setTargetSharingEmail(''));
             dispatch(setSelectedCoworkers([...selectedCoworkers, coworker]));
         }
-    }, [isDropdownEnabled, dispatch, selectedCoworkers]);
+    };
+
+    // 모든 문서에서 협업자들을 가져와 하나의 배열에 할당
+    // flat을 통해 배열을 평탄화 - 객체에 담겨있는 여러 값을 하나의 값에 몰아넣음
+    const allCoworkers: Collaborator[] = useMemo(() => documents.map(doc => doc.collaborators).flat(),
+        [documents]);
+
+    console.log(coworkerList);
+
+    // console.log(allCoworkers);
 
     // 필터링된 협업자 목록 생성
     // input의 값과 사용자의 이메일이 정확히 일치할 때만 해당 사용자를 출력하고, 
@@ -91,32 +95,26 @@ export default function ShareContent() {
             user.email.toLowerCase() === targetSharingEmail.trim().toLowerCase()
         );
 
-        // 이메일이 사용자 목록에 존재하는 값이 있을 때, 그 값이 협업자 목록에도 존재하는지 확인
+        // 찾은 사용자가 협업자 목록에도 있다면 그 값을 사용하고(권한을 일치시키기 위해),
+        // 없다면 협업자가 아니라는 의미이므로, authority를 포함한 새로운 객체 생성
         if (allUsersMatched) {
-            const matchedCoworker = allCoworkers.find(coworker => coworker.email === allUsersMatched.email);
-            // 존재한다면 그 값을 사용
-            if (matchedCoworker) {
-                return [matchedCoworker];
-            }
-            // 존재하지 않는다면 authority를 포함한 새로운 객체 생성
-            else {
-                return [{
-                    email: allUsersMatched.email,
-                    displayName: allUsersMatched.displayName,
-                    photoURL: allUsersMatched.photoURL,
-                    authority: '전체 허용'
-                }];
-            }
+            return [
+                coworkerList.find(coworker => coworker.email === allUsersMatched.email) ||
+                {
+                    ...allUsersMatched,
+                    authority: '전체 허용',
+                }
+            ];
         }
 
         // 협업자 목록에서 '부분' 일치하는 사용자 검색
-        const coworkersMatched = allCoworkers.filter(coworker => {
+        const coworkersMatched = coworkerList.filter(coworker => {
             const [localPart] = coworker.email.split('@'); // 도메인 앞부분만 추출해서 검색
             return localPart.toLowerCase().includes(targetSharingEmail.trim().toLowerCase());
         });
 
         return coworkersMatched;
-    }, [targetSharingEmail, allUsers, coworkerList, allCoworkers]);
+    }, [targetSharingEmail, coworkerList, allUsers]);
 
     // 검색된 협업자가 있다면 해당 사용자의 프로필을 보여주고,
     // 없다면 알 수 없는 임시 프로필을 보여줌
@@ -194,7 +192,8 @@ export default function ShareContent() {
             {/* 사용자를 초대하는 작업을 처리하는 폼 */}
             <ShareForm />
             {
-                targetSharingEmail && (
+                // 사용자 배열의 값이 초기값이 아닐 때
+                displayedUsers.length > 0 && displayedUsers[0].email && (
                     <div className="absolute w-[480px] left-0 right-0 z-50 flex flex-col p-2 mt-2 border rounded-lg mx-5 bg-white shadow-xl">
                         {
                             displayedUsers.map((coworker, index) => (
@@ -212,8 +211,10 @@ export default function ShareContent() {
                                         user={coworker}
                                         isAlreadyCoworker={coworkerList.some(user => user.email === coworker.email)} />
                                     <AuthorityButton
+                                        targetUser={coworker}
                                         isClickEnabled={isDropdownEnabled}
-                                        initialAuthority={coworker.email === selectedDocument.author ? '관리자' : coworker.authority} />
+                                        initialAuthority={coworker.email === selectedDocument.author ? '관리자' : coworker.authority}
+                                        isMember={coworkerList.some(user => user.email === coworker.email)} />
                                 </button>
                             ))
                         }
@@ -222,16 +223,23 @@ export default function ShareContent() {
             {/* 현재 문서에 접근 권한이 있는 사용자를 나열 */}
             <div className='flex flex-col mt-7 px-5'>
                 <div className='text-sm font-semibold mb-4'>접근 권한이 있는 사용자</div>
-                <div className='flex flex-col gap-4 max-h-[120px] overflow-y-scroll scrollbar-thin pb-2'>
+                <div className='flex flex-col gap-4 max-h-[120px] overflow-y-scroll scrollbar-thin'>
                     <div className='flex flex-row items-center justify-between'>
                         <UserProfile user={user} />
-                        <AuthorityButton initialAuthority='관리자' />
+                        <AuthorityButton
+                            targetUser={{ ...user, authority: '관리자' }}
+                            isClickEnabled={true}
+                            initialAuthority='관리자' />
                     </div>
                     {
                         coworkerList.map(coworker => (
                             <div className='flex flex-row items-center justify-between'>
                                 <UserProfile user={coworker} />
-                                <AuthorityButton initialAuthority={coworker.authority} />
+                                <AuthorityButton
+                                    targetUser={coworker}
+                                    isClickEnabled={true}
+                                    initialAuthority={coworker.authority}
+                                    isMember={true} />
                             </div>
                         ))
                     }
