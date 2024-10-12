@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import ArrowIcon from '../../../../public/svgs/down-arrow.svg';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
@@ -16,31 +16,28 @@ type AuthorityButtonProps = {
 }
 
 export default function AuthorityButton({ initialAuthority, targetUser, isClickEnabled, isMember }: AuthorityButtonProps) {
-    const dispatch = useAppDispatch();
-    
     const buttonRef = useRef<HTMLDivElement>(null);
     const coworkerList = useAppSelector(state => state.coworkerList);
-    const selectedCoworkers = useAppSelector(state => state.selectedCoworkers);
 
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [currentAuthority, setCurrentAuthority] = useState<AuthorityCategory>(initialAuthority);
     const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 }); // 권한을 선택하는 드롭다운의 포지션
 
-    // 드롭다운의 위치를 업데이트
-    useEffect(() => {
-        const updatePosition = () => {
-            // 버튼의 현재 위치와 크기 정보를 가져옴
-            const rect = buttonRef.current?.getBoundingClientRect();
-            if (rect) {
-                // 드롭다운의 위치: 버튼 바로 아래
-                // window.scrollY와 window.scrollX를 더해 스크롤 위치 고려
-                setDropdownPosition({
-                    top: rect.bottom + window.scrollY,
-                    left: rect.left + window.scrollX,
-                });
-            }
-        };
+    // 드롭다운의 위치를 업데이트하는 함수를 useCallback으로 선언
+    const updatePosition = useCallback(() => {
+        // 버튼의 현재 위치와 크기 정보를 가져옴
+        const rect = buttonRef.current?.getBoundingClientRect();
+        if (rect) {
+            // 드롭다운의 위치: 버튼 바로 아래
+            // window.scrollY와 window.scrollX를 더해 스크롤 위치 고려
+            setDropdownPosition({
+                top: rect.bottom + window.scrollY,
+                left: rect.left + window.scrollX,
+            });
+        }
+    }, [buttonRef]);
 
+    useEffect(() => {
         updatePosition();
 
         const resizeObserver = new ResizeObserver(updatePosition);
@@ -54,7 +51,7 @@ export default function AuthorityButton({ initialAuthority, targetUser, isClickE
             }
             resizeObserver.disconnect();
         };
-    }, [buttonRef]);
+    }, [updatePosition]);
 
     // 전역 상태의 변경사항을 보이기 위해 currentAuthority 업데이트
     useEffect(() => {
@@ -86,7 +83,10 @@ export default function AuthorityButton({ initialAuthority, targetUser, isClickE
                 className={`flex items-center gap-1 px-2 py-1 text-neutral-400 rounded select-none 
                     ${currentAuthority === '관리자' ? '' :
                         (isClickEnabled ? 'hover:bg-gray-200 cursor-pointer' : '')}`}>
-                <div className='whitespace-nowrap text-sm'>{currentAuthority}</div>
+                <div className={`whitespace-nowrap text-sm
+                    ${currentAuthority === '관리자' ? 'mr-9' : ''}`}>
+                    {initialAuthority}
+                </div>
                 {
                     currentAuthority !== '관리자' && <ArrowIcon width="17" />
                 }

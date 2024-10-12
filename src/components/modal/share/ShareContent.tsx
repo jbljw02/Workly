@@ -213,7 +213,7 @@ export default function ShareContent() {
             {/* 현재 문서에 접근 권한이 있는 사용자를 나열 */}
             <div className='flex flex-col mt-7 px-5'>
                 <div className='text-sm font-semibold mb-4'>접근 권한이 있는 사용자</div>
-                <div className='flex flex-col gap-4 max-h-[120px] overflow-y-scroll scrollbar-thin'>
+                <div className='flex flex-col gap-4 pb-4 min-h-[105px] max-h-[600px] overflow-y-scroll scrollbar-thin'>
                     <div className='flex flex-row items-center justify-between'>
                         <UserProfile user={user} />
                         <AuthorityButton

@@ -107,7 +107,6 @@ export default function AuthorityDropdown({ dropdownPosition, setIsOpen, buttonR
     };
 
     useClickOutside(dropdownRef, () => setIsOpen(false), buttonRef);
-
     return (
         <div
             ref={dropdownRef}

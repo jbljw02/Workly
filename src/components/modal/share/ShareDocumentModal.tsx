@@ -20,7 +20,6 @@ export default function ShareDocumentModal({ isModalOpen, setIsModalOpen }: Moda
     const dispatch = useAppDispatch();
     const { copyURL } = useCopyURL();
 
-    const targetEmail = useAppSelector(state => state.targetSharingEmail);
     const [workCategory, setWorkCategory] = useState<'공유' | '게시'>('공유');
 
     const closeModal = () => {
@@ -39,12 +38,13 @@ export default function ShareDocumentModal({ isModalOpen, setIsModalOpen }: Moda
                 content: {
                     position: 'absolute',
                     left: '50%',
-                    top: '45%',
+                    top: '48%',
                     width: 600,
-                    height: 440,
+                    height: 'fit-content', // h-auto와 같이 크기에 맞춰서 height 조절
                     transform: 'translate(-50%, -50%)',
                     zIndex: 49,
                     padding: 0,
+                    overflow: 'hidden',
                 }
             }}>
             <div

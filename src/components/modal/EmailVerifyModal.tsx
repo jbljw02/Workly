@@ -99,7 +99,7 @@ export default function EmailVerifyModal({ isModalOpen, setIsModalOpen }: ModalP
                     left: '50%',
                     top: '45%',
                     width: 540,
-                    height: 250,
+                    height: 'fit-content',
                     paddingTop: 35,
                     paddingBottom: 35,
                     paddingLeft: 40,
