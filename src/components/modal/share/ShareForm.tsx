@@ -28,8 +28,6 @@ export default function ShareForm() {
     const inviteUser = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        console.log("동작: ", selectedCoworkers);
-
         try {
             // 추가중인 협업자를 문서에 추가
             const newDoc = {
@@ -42,8 +40,7 @@ export default function ShareForm() {
                 return;
             }
 
-            console.log('협업자 추가 시작');
-            const response = await axios.post('/api/document/coworker', {
+            await axios.post('/api/document/coworker', {
                 email: selectedDocument.author,
                 docId: selectedDocument.id,
                 collaborators: selectedCoworkers,
@@ -57,8 +54,6 @@ export default function ShareForm() {
             dispatch(showCompleteAlert('선택된 사용자들을 멤버로 초대했습니다.'));
 
             dispatch(setSelectedCoworkers([])); // 작업을 마쳤으니 선택된 협업자들을 초기화
-
-            console.log('협업자 추가 성공: ', response.data);
         } catch (error) {
             dispatch(showWarningAlert('선택된 사용자들을 멤버로 초대하는 데 실패했습니다.'));
 

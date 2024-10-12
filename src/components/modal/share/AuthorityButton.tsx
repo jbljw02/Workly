@@ -1,21 +1,11 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import ArrowIcon from '../../../../public/svgs/down-arrow.svg';
-import { useClickOutside } from '@/components/hooks/useClickOutside';
-import { useAppDispatch, useAppSelector } from '@/redux/hooks';
-import { updateCoworkerAuthority } from '@/redux/features/shareDocumentSlice';
+import { useAppSelector } from '@/redux/hooks';
 import { Collaborator } from '@/redux/features/documentSlice';
-import axios from 'axios';
+import AuthorityDropdown from './AuthorityDropdown';
 
-type AuthorityCategory = '전체 허용' | '쓰기 허용' | '읽기 허용' | '관리자' | '멤버 제거';
-
-type DropdownProps = {
-    dropdownPosition: { top: number; left: number };
-    setIsOpen: (isOpen: boolean) => void;
-    buttonRef: React.RefObject<HTMLDivElement>;
-    targetUser: Collaborator;
-    isMember?: boolean;
-}
+export type AuthorityCategory = '전체 허용' | '쓰기 허용' | '읽기 허용' | '관리자' | '멤버 제거';
 
 type AuthorityButtonProps = {
     initialAuthority: AuthorityCategory;
@@ -24,108 +14,27 @@ type AuthorityButtonProps = {
     isMember?: boolean;
 }
 
-// 권한을 선택하는 드롭다운
-function Dropdown({
-    dropdownPosition,
-    setIsOpen,
-    buttonRef,
-    targetUser,
-    isMember }: DropdownProps) {
-    const dispatch = useAppDispatch();
-    const dropdownRef = useRef<HTMLDivElement>(null);
-
-    const selectedDocument = useAppSelector(state => state.selectedDocument);
-    const targetSharingEmail = useAppSelector(state => state.targetSharingEmail);
-
-    const authorityList = [
-        {
-            label: '전체 허용',
-            description: '문서를 편집하고, 다른 사용자에게 공유할 수 있습니다.'
-        },
-        {
-            label: '쓰기 허용',
-            description: '문서를 열람하고 편집할 수 있습니다.'
-        },
-        {
-            label: '읽기 허용',
-            description: '문서를 열람할 수 있습니다.'
-        },
-        // 이미 문서의 멤버인 경우
-        ...(isMember ? [{
-            label: '멤버 제거',
-            description: '이 사용자를 문서에서 제거합니다.'
-        }] : []),
-    ];
-
-    // 선택한 사용자의 권한 변경
-    const selectAutority = async (authorEmail: string, targetemail: string, docId: string, authority: AuthorityCategory) => {
-        if (isMember) {
-            await axios.put('/api/document/coworker', {
-                authorEmail: authorEmail,
-                targetEmail: targetemail,
-                docId: docId,
-                newAuthority: authority
-            })
-
-            dispatch(updateCoworkerAuthority({ email: targetemail, newAuthority: authority }));
-        }
-        else {
-            dispatch(updateCoworkerAuthority({ email: targetemail, newAuthority: authority }));
-        }
-        setIsOpen(false);
-    }
-
-    useClickOutside(dropdownRef, () => setIsOpen(false), buttonRef);
-
-    return (
-        <div
-            ref={dropdownRef}
-            style={{
-                position: 'absolute',
-                top: `${dropdownPosition.top}px`,
-                left: `${dropdownPosition.left}px`,
-                zIndex: 50,
-            }}
-            className='flex flex-col bg-white border border-gray-200 rounded shadow-xl'>
-            {
-                authorityList.map((authority, index) => (
-                    <div
-                        key={index}
-                        className='flex flex-col px-3 py-1.5 text-sm hover:bg-gray-100 cursor-pointer'
-                        onClick={() => selectAutority(selectedDocument.author, targetUser.email, selectedDocument.id, authority.label as AuthorityCategory)}>
-                        <div className='text-sm'>{authority.label}</div>
-                        <div className='text-xs text-neutral-400 whitespace-nowrap'>{authority.description}</div>
-                    </div>
-                ))
-            }
-            {
-
-            }
-        </div>
-    );
-}
-
 export default function AuthorityButton({
     initialAuthority,
     targetUser,
     isClickEnabled,
-    isMember }: AuthorityButtonProps) {
+    isMember = false,
+}: AuthorityButtonProps) {
     const buttonRef = useRef<HTMLDivElement>(null);
+    const coworkerList = useAppSelector(state => state.coworkerList);
 
     const [isOpen, setIsOpen] = useState<boolean>(false);
-    const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
+    const [currentAuthority, setCurrentAuthority] = useState<AuthorityCategory>(initialAuthority);
+    const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 }); // 권한을 선택하는 드롭다운의 포지션
 
-    // 초기 권한 상태로 설정하고, 권한이 변경될 때마다 업데이트
-    const [authority, setAuthority] = useState<AuthorityCategory>(initialAuthority);
-
+    // 드롭다운의 위치를 업데이트
     useEffect(() => {
-        if (!buttonRef.current) return;
-
-        // 드롭다운 위치를 업데이트하는 함수
         const updatePosition = () => {
+            // 버튼의 현재 위치와 크기 정보를 가져옴
             const rect = buttonRef.current?.getBoundingClientRect();
             if (rect) {
-                // 버튼의 위치를 기반으로 드롭다운 위치 설정
+                // 드롭다운의 위치: 버튼 바로 아래
+                // window.scrollY와 window.scrollX를 더해 스크롤 위치 고려
                 setDropdownPosition({
                     top: rect.bottom + window.scrollY,
                     left: rect.left + window.scrollX,
@@ -133,56 +42,69 @@ export default function AuthorityButton({
             }
         };
 
-        const resizeObserver = new ResizeObserver(updatePosition);
-        resizeObserver.observe(buttonRef.current);
+        updatePosition();
 
-        // 드롭다운이 열릴 때 위치 업데이트
-        if (isOpen) {
-            updatePosition();
+        const resizeObserver = new ResizeObserver(updatePosition);
+        if (buttonRef.current) {
+            resizeObserver.observe(buttonRef.current);
         }
 
         return () => {
+            if (buttonRef.current) {
+                resizeObserver.unobserve(buttonRef.current);
+            }
             resizeObserver.disconnect();
         };
-    }, [isOpen]);
+    }, [buttonRef]); // buttonRef가 변경될 때마다 이펙트 재실행
+
+    // 전역 상태의 변경사항을 보이기 위해 currentAuthority 업데이트
+    useEffect(() => {
+        // 사용자가 멤버인 경우에만 실행
+        if (isMember) {
+            // 현재 작업중인 협업자를 찾음
+            const updatedCoworker = coworkerList.find(coworker => coworker.email === targetUser.email);
+            if (updatedCoworker) {
+                // 해당 협업자의 권한으로 현재 권한을 업데이트
+                setCurrentAuthority(updatedCoworker.authority as AuthorityCategory);
+            }
+        }
+    }, [coworkerList]);
+
+    // 드롭다운을 토글
+    const toggleDropdown = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        if (currentAuthority !== '관리자' && isClickEnabled) {
+            setIsOpen(prev => !prev);
+        }
+    };
 
     return (
         <>
             <div
                 ref={buttonRef}
-                onClick={(e) => {
-                    if (initialAuthority !== '관리자' && isClickEnabled) {
-                        e.stopPropagation();
-                        setIsOpen((prevState) => !prevState);
-                    }
-                }}
-                // 클릭이 활성화된 상태이거나 관리자 권한이 아닐 때만
-                className={`flex flex-row items-center justify-center gap-1 px-2 py-1 text-neutral-400 rounded select-none 
-                    ${initialAuthority === '관리자' ? '' :
+                onClick={toggleDropdown}
+                // 현재 권한이 관리자인지, 이메일이 정규식을 충족해 클릭이 가능한 상태인지에 따라 분기
+                className={`flex items-center gap-1 px-2 py-1 text-neutral-400 rounded select-none 
+                    ${currentAuthority === '관리자' ? '' :
                         (isClickEnabled ? 'hover:bg-gray-200 cursor-pointer' : '')}`}>
+                <div className='whitespace-nowrap text-sm'>{currentAuthority}</div>
                 {
-                    initialAuthority === '관리자' ?
-                        <div className='whitespace-nowrap text-sm mr-9'>관리자</div> :
-                        <>
-                            <div className='whitespace-nowrap text-sm'>{initialAuthority}</div>
-                            <ArrowIcon width="17" />
-                        </>
+                    currentAuthority !== '관리자' && <ArrowIcon width="17" />
                 }
             </div>
-            <div>
-                {/* React Portal을 이용하여 독립적으로 렌더링 */}
-                {
-                    isOpen &&
-                    createPortal(
-                        <Dropdown
-                            dropdownPosition={dropdownPosition}
-                            setIsOpen={setIsOpen}
-                            buttonRef={buttonRef}
-                            targetUser={targetUser}
-                            isMember={isMember} />,
-                        document.body)
-                }
-            </div>
+            {/* React Portal을 이용하여 모달의 간섭을 받지 않도록 독립적으로 렌더링 */}
+            {
+                isOpen && createPortal(
+                    <AuthorityDropdown
+                        dropdownPosition={dropdownPosition}
+                        setIsOpen={setIsOpen}
+                        buttonRef={buttonRef}
+                        targetUser={targetUser}
+                        isMember={isMember}
+                        setCurrentAuthority={setCurrentAuthority} />,
+                    document.body
+                )
+            }
         </>
     );
 }

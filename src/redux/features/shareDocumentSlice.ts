@@ -26,7 +26,11 @@ export const coworkerList = createSlice({
             const coworker = state.find(coworker => coworker.email === email);
             if (coworker) {
                 coworker.authority = newAuthority;
+                console.log("coworker: ", coworker);
             }
+        },
+        deleteCoworker: (state, action) => {
+            return state.filter(coworker => coworker.email !== action.payload);
         }
     },
 })
@@ -42,7 +46,7 @@ export const selectedCoworkers = createSlice({
 })
 
 export const { setTargetSharingEmail } = targetSharingEmail.actions;
-export const { setCoworkerList, addCoworker, updateCoworkerAuthority } = coworkerList.actions;
+export const { setCoworkerList, addCoworker, updateCoworkerAuthority, deleteCoworker } = coworkerList.actions;
 export const { setSelectedCoworkers } = selectedCoworkers.actions;
 
 const reducers = {

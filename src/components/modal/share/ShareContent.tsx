@@ -17,7 +17,6 @@ export default function ShareContent() {
 
     const user = useAppSelector(state => state.user);
     const selectedDocument = useAppSelector(state => state.selectedDocument);
-    const documents = useAppSelector(state => state.documents);
     const allUsers = useAppSelector(state => state.allUsers); // 모든 사용자
     const coworkerList = useAppSelector(state => state.coworkerList); // 현재 문서의 협업자들
     const selectedCoworkers = useAppSelector(state => state.selectedCoworkers); // 선택된 협업자들
@@ -72,15 +71,6 @@ export default function ShareContent() {
             dispatch(setSelectedCoworkers([...selectedCoworkers, coworker]));
         }
     };
-
-    // 모든 문서에서 협업자들을 가져와 하나의 배열에 할당
-    // flat을 통해 배열을 평탄화 - 객체에 담겨있는 여러 값을 하나의 값에 몰아넣음
-    const allCoworkers: Collaborator[] = useMemo(() => documents.map(doc => doc.collaborators).flat(),
-        [documents]);
-
-    console.log(coworkerList);
-
-    // console.log(allCoworkers);
 
     // 필터링된 협업자 목록 생성
     // input의 값과 사용자의 이메일이 정확히 일치할 때만 해당 사용자를 출력하고, 

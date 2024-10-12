@@ -128,3 +128,48 @@ export async function PUT(req: NextRequest) {
         return NextResponse.json({ error: "협업자 권한 변경 실패" }, { status: 500 });
     }
 }
+
+// 문서의 협업자 제거하기 - DELETE
+export async function DELETE(req: NextRequest) {
+    try {
+        const { searchParams } = req.nextUrl;
+        
+        const authorEmail = searchParams.get('authorEmail');
+        const targetEmail = searchParams.get('targetEmail');
+        const docId = searchParams.get('docId');
+
+        if (!authorEmail) return NextResponse.json({ error: "이메일이 제공되지 않음" }, { status: 400 });
+        if (!targetEmail) return NextResponse.json({ error: "협업자 이메일이 제공되지 않음" }, { status: 400 });
+        if (!docId) return NextResponse.json({ error: "문서 ID가 제공되지 않음" }, { status: 400 });
+
+        const userDocRef = doc(firestore, 'users', authorEmail);
+        const userDocSnap = await getDoc(userDocRef);
+
+        if (!userDocSnap.exists()) {
+            return NextResponse.json({ error: "사용자 정보 존재 X" }, { status: 404 });
+        }
+
+        const userData = userDocSnap.data();
+        const targetDoc: DocumentProps = userData.documents.find((doc: DocumentProps) => doc.id === docId);
+        const collaborators = targetDoc?.collaborators || [];
+
+        console.log("collaborators: ", collaborators);
+
+        // 협업자 목록에서 타겟 협업자 제거
+        const updatedCollaborators = collaborators.filter(collab => collab.email !== targetEmail);
+
+        targetDoc.collaborators = updatedCollaborators;
+
+        const updatedDocuments: DocumentProps[] = userData.documents.map((doc: DocumentProps) =>
+            doc.id === docId ? targetDoc : doc
+        );
+
+        await updateDoc(userDocRef, {
+            documents: updatedDocuments
+        });
+
+        return NextResponse.json({ success: "문서의 협업자 제거 성공" }, { status: 200 });
+    } catch (error) {
+        return NextResponse.json({ error: "문서의 협업자 제거 실패" }, { status: 500 });
+    }
+}
