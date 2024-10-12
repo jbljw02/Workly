@@ -7,9 +7,9 @@ import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import ArrowIcon from '../../../../public/svgs/down-arrow.svg';
 import axios from 'axios';
-import AuthorityButton from './AuthorityButton';
+import AuthorityButton, { AuthorityCategory } from './AuthorityButton';
 import ShareForm from './ShareForm';
-import { setCoworkerList, setSelectedCoworkers, setTargetSharingEmail } from '@/redux/features/shareDocumentSlice';
+import { setCoworkerList, setSearchedCoworkers, setSelectedCoworkers, setTargetSharingEmail } from '@/redux/features/shareDocumentSlice';
 import { emailRegex } from '@/components/auth/SignUp';
 
 export default function ShareContent() {
@@ -21,6 +21,7 @@ export default function ShareContent() {
     const coworkerList = useAppSelector(state => state.coworkerList); // 현재 문서의 협업자들
     const selectedCoworkers = useAppSelector(state => state.selectedCoworkers); // 선택된 협업자들
     const targetSharingEmail = useAppSelector(state => state.targetSharingEmail); // 공유할 사용자의 이메일
+    const searchedCoworkers = useAppSelector(state => state.searchedCoworkers); // 검색된 협업자들
 
     const [selectedIndex, setSelectedIndex] = useState<number>(-1); // 선택된 협업자 인덱스
     const [isKeyboardNav, setIsKeyboardNav] = useState<boolean>(false); // 키보드 네비게이션 모드 여부
@@ -75,9 +76,10 @@ export default function ShareContent() {
     // 필터링된 협업자 목록 생성
     // input의 값과 사용자의 이메일이 정확히 일치할 때만 해당 사용자를 출력하고, 
     // 부분적으로 일치할 때는 전체 사용자가 아닌 협업자 목록에서 검색 후 제안
-    const searchedCoworkers: Collaborator[] = useMemo(() => {
+    useEffect(() => {
         if (targetSharingEmail.trim() === '') {
-            return [];
+            dispatch(setSearchedCoworkers([]));
+            return;
         }
 
         // 전체 사용자 목록에서 '정확히' 일치하는 사용자 검색
@@ -88,13 +90,15 @@ export default function ShareContent() {
         // 찾은 사용자가 협업자 목록에도 있다면 그 값을 사용하고(권한을 일치시키기 위해),
         // 없다면 협업자가 아니라는 의미이므로, authority를 포함한 새로운 객체 생성
         if (allUsersMatched) {
-            return [
+            const matchedCoworker = [
                 coworkerList.find(coworker => coworker.email === allUsersMatched.email) ||
                 {
                     ...allUsersMatched,
                     authority: '전체 허용',
                 }
             ];
+            dispatch(setSearchedCoworkers(matchedCoworker));
+            return;
         }
 
         // 협업자 목록에서 '부분' 일치하는 사용자 검색
@@ -103,18 +107,14 @@ export default function ShareContent() {
             return localPart.toLowerCase().includes(targetSharingEmail.trim().toLowerCase());
         });
 
-        return coworkersMatched;
-    }, [targetSharingEmail, coworkerList, allUsers]);
-
-    // 검색된 협업자가 있다면 해당 사용자의 프로필을 보여주고,
-    // 없다면 알 수 없는 임시 프로필을 보여줌
-    const displayedUsers = useMemo(() => {
-        return searchedCoworkers.length > 0 ? searchedCoworkers : [unknownUser];
-    }, [searchedCoworkers, unknownUser]);
+        // 검색된 협업자가 있다면 해당 사용자의 프로필을 보여주고,
+        // 없다면 임시 프로필을 보여줌
+        dispatch(setSearchedCoworkers(coworkersMatched.length > 0 ? coworkersMatched : [unknownUser]));
+    }, [targetSharingEmail, coworkerList, allUsers, dispatch, unknownUser]);
 
     // 검색된 협업자들 중 키보드로 사용자 이동 및 선택
     const coworkerNavigate = useCallback((e: KeyboardEvent) => {
-        if (displayedUsers.length === 0) return;
+        if (searchedCoworkers.length === 0) return;
         if (!isKeyboardNav) return;
 
         // 위쪽 또는 아래쪽 화살표 키를 눌렀을 때
@@ -125,21 +125,21 @@ export default function ShareContent() {
                 if (e.key === 'ArrowDown') {
                     // 아래쪽 화살표: 다음 항목 선택
                     // e.g. 마지막 항목에서 아래쪽 화살표를 누르면 첫번째 항목으로 이동.. (2+1)%3=0
-                    return (prev + 1) % displayedUsers.length;
+                    return (prev + 1) % searchedCoworkers.length;
                 }
                 else {
                     // 위쪽 화살표: 이전 항목 선택
-                    return (prev - 1 + displayedUsers.length) % displayedUsers.length;
+                    return (prev - 1 + searchedCoworkers.length) % searchedCoworkers.length;
                 }
             });
         }
         // Enter 키를 눌렀고 선택된 항목이 있을 때
         else if (e.key === 'Enter' && selectedIndex !== -1) {
             e.preventDefault();
-            const selectedUser = displayedUsers[selectedIndex]; // 선택된 사용자 가져오기
+            const selectedUser = searchedCoworkers[selectedIndex]; // 선택된 사용자 가져오기
             coworkerSelect(selectedUser);
         }
-    }, [displayedUsers, selectedIndex, setTargetSharingEmail]);
+    }, [searchedCoworkers, selectedIndex, setTargetSharingEmail]);
 
     useEffect(() => {
         window.addEventListener('keydown', coworkerNavigate);
@@ -183,10 +183,10 @@ export default function ShareContent() {
             <ShareForm />
             {
                 // 사용자 배열의 값이 초기값이 아닐 때
-                displayedUsers.length > 0 && displayedUsers[0].email && (
+                searchedCoworkers.length > 0 && searchedCoworkers[0].email && (
                     <div className="absolute w-[480px] left-0 right-0 z-50 flex flex-col p-2 mt-2 border rounded-lg mx-5 bg-white shadow-xl">
                         {
-                            displayedUsers.map((coworker, index) => (
+                            searchedCoworkers.map((coworker, index) => (
                                 <button
                                     key={coworker.email}
                                     // 드롭다운 메뉴가 활성화되어 있으며 현재 선택된 항목이 있을 때 배경색 변경

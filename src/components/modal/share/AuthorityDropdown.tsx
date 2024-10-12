@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState } from "react";
 import { useClickOutside } from "@/components/hooks/useClickOutside";
 import { Collaborator } from "@/redux/features/documentSlice";
-import { deleteCoworker, setCoworkerList, updateCoworkerAuthority } from "@/redux/features/shareDocumentSlice";
+import { deleteCoworker, setCoworkerList, updateCoworkerAuthority, updateSearchedCoworkerAuthority } from "@/redux/features/shareDocumentSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import axios from "axios";
 import { AuthorityCategory } from "./AuthorityButton";
@@ -16,14 +16,7 @@ type AuthorityDropdownProps = {
     setCurrentAuthority: (authority: AuthorityCategory) => void;
 }
 
-export default function AuthorityDropdown({
-    dropdownPosition,
-    setIsOpen,
-    buttonRef,
-    targetUser,
-    isMember,
-    setCurrentAuthority
-}: AuthorityDropdownProps) {
+export default function AuthorityDropdown({ dropdownPosition, setIsOpen, buttonRef, targetUser, isMember, setCurrentAuthority }: AuthorityDropdownProps) {
     const dispatch = useAppDispatch();
     const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -107,6 +100,7 @@ export default function AuthorityDropdown({
         }
         // 멤버가 아닐 경우 단순 화면에 보이는 권한만 변경
         else {
+            dispatch(updateSearchedCoworkerAuthority({ email: targetUser.email, newAuthority: authority }));
             setCurrentAuthority(authority);
             setIsOpen(false);
         }

@@ -41,8 +41,8 @@ export default function ShareForm() {
             }
 
             await axios.post('/api/document/coworker', {
-                email: selectedDocument.author,
-                docId: selectedDocument.id,
+                email: newDoc.author,
+                docId: newDoc.id,
                 collaborators: selectedCoworkers,
             });
 
@@ -55,9 +55,8 @@ export default function ShareForm() {
 
             dispatch(setSelectedCoworkers([])); // 작업을 마쳤으니 선택된 협업자들을 초기화
         } catch (error) {
-            dispatch(showWarningAlert('선택된 사용자들을 멤버로 초대하는 데 실패했습니다.'));
-
             console.error('협업자 추가 오류: ', error);
+            dispatch(showWarningAlert('선택된 사용자들을 멤버로 초대하는 데 실패했습니다.'));
         }
 
     }

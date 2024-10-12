@@ -1,9 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import ArrowIcon from '../../../../public/svgs/down-arrow.svg';
-import { useAppSelector } from '@/redux/hooks';
+import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { Collaborator } from '@/redux/features/documentSlice';
 import AuthorityDropdown from './AuthorityDropdown';
+import { setSelectedCoworkers } from '@/redux/features/shareDocumentSlice';
 
 export type AuthorityCategory = '전체 허용' | '쓰기 허용' | '읽기 허용' | '관리자' | '멤버 제거';
 
@@ -14,14 +15,12 @@ type AuthorityButtonProps = {
     isMember?: boolean;
 }
 
-export default function AuthorityButton({
-    initialAuthority,
-    targetUser,
-    isClickEnabled,
-    isMember = false,
-}: AuthorityButtonProps) {
+export default function AuthorityButton({ initialAuthority, targetUser, isClickEnabled, isMember }: AuthorityButtonProps) {
+    const dispatch = useAppDispatch();
+    
     const buttonRef = useRef<HTMLDivElement>(null);
     const coworkerList = useAppSelector(state => state.coworkerList);
+    const selectedCoworkers = useAppSelector(state => state.selectedCoworkers);
 
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [currentAuthority, setCurrentAuthority] = useState<AuthorityCategory>(initialAuthority);
@@ -55,7 +54,7 @@ export default function AuthorityButton({
             }
             resizeObserver.disconnect();
         };
-    }, [buttonRef]); // buttonRef가 변경될 때마다 이펙트 재실행
+    }, [buttonRef]);
 
     // 전역 상태의 변경사항을 보이기 위해 currentAuthority 업데이트
     useEffect(() => {

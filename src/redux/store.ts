@@ -29,6 +29,7 @@ const combinedReducer = combineReducers({
     folders: folderReducers.folders,
     globalAlert: alertReducers.globalAlert,
     coworkerList: shareDocumentReducers.coworkerList,
+    searchedCoworkers: shareDocumentReducers.searchedCoworkers,
     selectedCoworkers: shareDocumentReducers.selectedCoworkers,
     targetSharingEmail: shareDocumentReducers.targetSharingEmail,
 })

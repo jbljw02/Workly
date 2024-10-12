@@ -133,7 +133,7 @@ export async function PUT(req: NextRequest) {
 export async function DELETE(req: NextRequest) {
     try {
         const { searchParams } = req.nextUrl;
-        
+
         const authorEmail = searchParams.get('authorEmail');
         const targetEmail = searchParams.get('targetEmail');
         const docId = searchParams.get('docId');
@@ -152,8 +152,6 @@ export async function DELETE(req: NextRequest) {
         const userData = userDocSnap.data();
         const targetDoc: DocumentProps = userData.documents.find((doc: DocumentProps) => doc.id === docId);
         const collaborators = targetDoc?.collaborators || [];
-
-        console.log("collaborators: ", collaborators);
 
         // 협업자 목록에서 타겟 협업자 제거
         const updatedCollaborators = collaborators.filter(collab => collab.email !== targetEmail);
