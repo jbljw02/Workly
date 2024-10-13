@@ -106,7 +106,8 @@ export default function DocumentMoveModal({ isModalOpen, setIsModalOpen }: Modal
                     left: '50%',
                     top: '45%',
                     width: 510,
-                    height: 390,
+                    maxHeight: '80vh',
+                    height: 'fit-content',
                     transform: 'translate(-50%, -50%)',
                     zIndex: 49,
                     padding: 0,
@@ -121,7 +122,7 @@ export default function DocumentMoveModal({ isModalOpen, setIsModalOpen }: Modal
                     value={targetFolder}
                     setValue={setTargetFolder}
                     placeholder="문서를 옮길 폴더 검색" />
-                <div className="pl-6 pr-5">
+                <div className="pl-6 pr-5 pb-6">
                     <div className="mt-5 pb-1.5 pl-1.5 text-[13px] font-semibold">폴더 목록</div>
                     {
                         searchedFolders.length ?

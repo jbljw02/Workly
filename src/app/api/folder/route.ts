@@ -34,9 +34,7 @@ export async function GET(req: NextRequest) {
         const { searchParams } = req.nextUrl;
         const email = searchParams.get('email');
 
-        if (!email) {
-            return NextResponse.json({ error: "이메일이 제공되지 않음" }, { status: 400 });
-        }
+        if (!email) return NextResponse.json({ error: "이메일이 제공되지 않음" }, { status: 400 });
 
         const userDocRef = doc(firestore, 'users', email);
         const userDocSnap = await getDoc(userDocRef);

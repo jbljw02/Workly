@@ -1,7 +1,12 @@
 import { UserProps } from "@/redux/features/userSlice";
 import Image from "next/image";
 
-export default function UserProfile({ user }: { user: UserProps }) {
+type UserProfileProps = {
+    user: UserProps;
+    isAlreadyCoworker?: boolean;
+}
+
+export default function UserProfile({ user, isAlreadyCoworker }: UserProfileProps) {
     if (!user) return null;
     return (
         <div className="flex flex-row items-center gap-3 w-full">
@@ -15,7 +20,13 @@ export default function UserProfile({ user }: { user: UserProps }) {
                 height={37}
                 className="rounded-full" />
             <div className="flex flex-col justify-start overflow-hidden w-full">
-                <div className="text-sm truncate w-full">{user.displayName}</div>
+                <div className="flex flex-row items-center gap-1 w-full">
+                    <div className="text-sm truncate">{user.displayName}</div>
+                    {
+                        isAlreadyCoworker &&
+                        <div className="text-[11px] text-neutral-400">멤버</div>
+                    }
+                </div>
                 <div className="pl-[1px] truncate text-[11px] text-zinc-600">{user.email}</div>
             </div>
         </div>
