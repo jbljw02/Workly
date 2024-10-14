@@ -153,7 +153,7 @@ export default function ShareContent() {
 
     // 검색된 협업자가 존재하는지에 따라 선택된 항목과 키보드 네비게이션 모드 설정
     useEffect(() => {
-        if (emailRegex.test(targetSharingEmail) || searchedCoworkers.length > 0) {
+        if (emailRegex.test(targetSharingEmail) && searchedCoworkers.length > 0) {
             setSelectedIndex(0); // 첫번째 협업자 선택
             setIsKeyboardNav(true);
 
