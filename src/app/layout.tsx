@@ -9,6 +9,7 @@ import EmailVerifyCheck from '@/components/global/EmailVerifyCheck';
 import { usePathname } from 'next/navigation';
 import { auth } from '../../firebase/firebasedb';
 import GlobalAlert from '@/components/global/GlobalAlert';
+import NextNProgress from 'nextjs-progressbar';
 
 export default function RootLayout({
   children,
@@ -34,6 +35,12 @@ export default function RootLayout({
           }
           <EmailVerifyCheck />
           <GlobalAlert />
+          <NextNProgress
+            color="#29D"
+            startPosition={0.3}
+            stopDelayMs={200}
+            height={2.5}
+            showOnShallow={true} />
           {children}
         </Provider>
       </body>
