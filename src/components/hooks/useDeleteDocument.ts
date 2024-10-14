@@ -31,14 +31,14 @@ const useDeleteDocument = () => {
             if (document.id === documentId) {
                 router.push('/editor/home');
             }
-            // 현재 페이지가 삭제된 것이 아니라면 alert 발생
-            dispatch(showCompleteAlert(`${document.title} 삭제를 완료했습니다.`));
+            
+            dispatch(showCompleteAlert(`${document.title}의 삭제를 완료했습니다.`));
         } catch (error) {
             console.error(error);
 
             // 삭제에 실패하면 롤백
             dispatch(setDocuments(prevDocs));
-            dispatch(showWarningAlert(`${document.title} 삭제에 실패했습니다.`))
+            dispatch(showWarningAlert(`${document.title}의 삭제에 실패했습니다.`))
         }
     }
 

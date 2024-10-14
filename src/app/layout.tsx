@@ -8,6 +8,7 @@ import Aside from '@/components/aside/Aside';
 import EmailVerifyCheck from '@/components/global/EmailVerifyCheck';
 import { usePathname } from 'next/navigation';
 import { auth } from '../../firebase/firebasedb';
+import GlobalAlert from '@/components/global/GlobalAlert';
 
 export default function RootLayout({
   children,
@@ -32,6 +33,7 @@ export default function RootLayout({
             <Aside />
           }
           <EmailVerifyCheck />
+          <GlobalAlert />
           {children}
         </Provider>
       </body>

@@ -16,6 +16,7 @@ import { addDocuments, deleteDocuments, DocumentProps } from '@/redux/features/d
 import AddInputModal from '@/components/modal/AddInputModal';
 import { v4 as uuidv4 } from 'uuid';
 import HoverTooltip from '@/components/editor/child/menuBar/HoverTooltip';
+import { showCompleteAlert, showWarningAlert } from '@/redux/features/alertSlice';
 
 type FolderItemProps = {
     folder: Folder;
@@ -83,10 +84,13 @@ export default function FolderItem({ folder }: FolderItemProps) {
                     folderId: folder.id,
                 }
             });
+
+            dispatch(showCompleteAlert(`${folder.name}의 삭제를 완료했습니다.`));
         } catch (error) {
             console.error(error);
             // 삭제에 실패하면 롤백
             dispatch(setFolders(prevFolders));
+            dispatch(showWarningAlert(`${folder.name}의 삭제에 실패했습니다.`));
         }
     }
 
