@@ -46,10 +46,13 @@ export default function AddInputModal({
         })
     }
 
-    const handleKeyPress = (e: React.KeyboardEvent<HTMLFormElement>) => {
+    const handleKeyPress = async (e: React.KeyboardEvent<HTMLFormElement>) => {
         if (e.key === 'Enter') {
             e.preventDefault();
-            modalSubmit(e);
+            const isFailed = await submitFunction();
+            if (isFailed) return; // 실패 시 모달을 닫지 않음
+            setIsModalOpen(false);
+            setValue('');
         }
     }
 
@@ -78,7 +81,7 @@ export default function AddInputModal({
                 }
             }}>
             <form
-                onSubmit={modalSubmit}
+                // onSubmit={modalSubmit}
                 onKeyDown={handleKeyPress}
                 className='flex flex-col h-full justify-between'>
                 <div>
@@ -104,8 +107,8 @@ export default function AddInputModal({
                             hover: 'hover:bg-blue-700',
                         }}
                         label="만들기"
-                        value={value}
-                        onClick={modalSubmit} />
+                        value={value} 
+                        onClick={modalSubmit}/>
                     <CommonButton
                         style={{
                             px: 'px-3.5',
@@ -115,7 +118,8 @@ export default function AddInputModal({
                             bgColor: 'bg-transparent',
                             hover: 'hover:border-gray-600',
                         }}
-                        label='취소' />
+                        label='취소'
+                        onClick={closeModal} />
                 </div>
             </form>
         </Modal>

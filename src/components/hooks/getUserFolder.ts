@@ -6,11 +6,8 @@ import axios from 'axios';
 const getUserFolder = async (email: string, dispatch: AppDispatch) => {
     const response = await axios.get('/api/folder', {
         params: { email },
-        headers: {
-            "Content-Type": "application/json",
-            "Accept": "application/json"
-        },
     });
+
     dispatch(setFolders(response.data));
 }
 

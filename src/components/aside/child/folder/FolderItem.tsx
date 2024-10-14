@@ -51,12 +51,10 @@ export default function FolderItem({ folder }: FolderItemProps) {
                 setIsEditing(false);
 
                 await axios.put('/api/folder',
-                    { email: user.email, folderId: folder.id, newFolderName: folderTitle },
                     {
-                        headers: {
-                            "Content-Type": "application/json",
-                            "Accept": "application/json"
-                        },
+                        email: user.email,
+                        folderId: folder.id,
+                        newFolderName: folderTitle
                     });
             } catch (error) {
                 console.error(error);
@@ -78,16 +76,12 @@ export default function FolderItem({ folder }: FolderItemProps) {
 
         try {
             dispatch(deleteFolders(folder.id))
-            
+
             await axios.delete('/api/folder', {
                 params: {
                     email: user.email,
                     folderId: folder.id,
-                },
-                headers: {
-                    "Content-Type": "application/json",
-                    "Accept": "application/json",
-                },
+                }
             });
         } catch (error) {
             console.error(error);
@@ -105,23 +99,20 @@ export default function FolderItem({ folder }: FolderItemProps) {
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
             author: user.email,
-            folderName: folder.name,
+            folderId: folder.id,
             collaborators: [],
         }
 
         try {
             await axios.post('/api/document',
-                { email: user.email, folderId: folder.id, document: newDocument },
                 {
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Accept": "application/json"
-                    },
+                    folderId: folder.id,
+                    document: newDocument
                 });
 
             // 전체 문서 배열에 추가
             dispatch(addDocuments(newDocument));
-            // 문서 ID를 폴더에 추가
+            // 문서 ID를 기본 폴더에 추가
             dispatch(addDocumentToFolder({ folderId: folder.id, docId: newDocument.id }));
 
             setIsDocInvalidInfo(({
@@ -164,8 +155,7 @@ export default function FolderItem({ folder }: FolderItemProps) {
                                                     ${isExpanded ? 'rotate-90' : 'rotate-0'}`}
                                                 width="20" />
                                         </div> :
-                                        <FolderIcon
-                                            width="15" />
+                                        <FolderIcon width="15" />
                                 )
                         }
                     </div>

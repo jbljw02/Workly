@@ -90,18 +90,15 @@ export default function Aside() {
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
             author: user.email,
-            folderName: defaultFolder.name,
+            folderId: defaultFolder.id,
             collaborators: [],
         };
 
         try {
             await axios.post('/api/document',
-                { email: user.email, folderId: defaultFolder.id, document: newDocument },
                 {
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Accept": "application/json"
-                    },
+                    folderId: defaultFolder.id,
+                    document: newDocument
                 });
 
             // 전체 문서 배열에 추가

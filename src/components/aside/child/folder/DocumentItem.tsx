@@ -20,7 +20,7 @@ type DocumentItemProps = {
 export default function DocumentItem({ document, onClick }: DocumentItemProps) {
     const dispatch = useAppDispatch();
     const deleteDoc = useDeleteDocument();
-    
+
     const pathname = usePathname();
     const pathParts = pathname.split('/');
     const folderId = pathParts[2]; // '/editor/[folderId]/[documentId]'일 때 folderId는 2번째 인덱스
@@ -45,12 +45,6 @@ export default function DocumentItem({ document, onClick }: DocumentItemProps) {
                         email: user.email,
                         docId: document.id,
                         newDocName: docTitle,
-                    },
-                    {
-                        headers: {
-                            "Content-Type": "application/json",
-                            "Accept": "application/json"
-                        },
                     });
             } catch (error) {
                 console.error(error);
@@ -93,13 +87,16 @@ export default function DocumentItem({ document, onClick }: DocumentItemProps) {
                     <GroupHoverItem
                         Icon={EditIcon}
                         IconWidth={15}
-                        onClick={() => setIsEditing(true)} />
+                        onClick={(e) => {
+                            e.stopPropagation(); 
+                            setIsEditing(true);
+                        }} />
                 </HoverTooltip>
                 <HoverTooltip label='문서 삭제'>
                     <GroupHoverItem
                         Icon={DeleteIcon}
                         IconWidth={15}
-                        onClick={() => deleteDoc(document, documentId)} />
+                        onClick={(e) => deleteDoc(e, document, documentId)} />
                 </HoverTooltip>
             </div>
         </div>

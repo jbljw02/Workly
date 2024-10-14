@@ -30,20 +30,10 @@ export default function GoogleLoginButton() {
             if (!token) throw new Error("사용자 토큰을 생성하지 못했습니다.");
 
             // 파이어베이스 토큰 인증
-            await axios.post('/api/auth/emailToken', { token }, {
-                headers: {
-                    "Content-Type": "application/json",
-                    "Accept": "application/json"
-                },
-            });
+            await axios.post('/api/auth/emailToken', { token });
 
             // 사용자의 초기 정보를 설정
-            await axios.post('/api/auth/userInitialData', { user }, {
-                headers: {
-                    "Content-Type": "application/json",
-                    "Accept": "application/json"
-                },
-            });
+            await axios.post('/api/auth/userInitialData', { user },);
 
             if (user.displayName && user.email && user.photoURL) {
                 dispatch(setUser({

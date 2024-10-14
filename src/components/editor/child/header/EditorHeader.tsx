@@ -17,7 +17,7 @@ import PdfFileNode from '../file/PdfFileNode'
 import ReactDOMServer from 'react-dom/server';
 import WarningAlert from '@/components/alert/WarningAlert'
 import CompleteAlert from '@/components/alert/CompleteAlert'
-import { addDocuments, deleteDocuments, DocumentProps } from '@/redux/features/documentSlice'
+import { addDocuments, deleteDocuments, DocumentProps, updateDocuments } from '@/redux/features/documentSlice'
 import { v4 as uuidv4 } from 'uuid';
 import { addDocumentToFolder, Folder } from '@/redux/features/folderSlice'
 import axios from 'axios'
@@ -57,7 +57,7 @@ export default function EditorHeader({
     const folders = useAppSelector(state => state.folders);
 
     // 문서가 소속된 폴더를 찾음
-    const parentFolder = folders.find(folder => folder.name === selectedDocument.folderName);
+    const parentFolder = folders.find(folder => folder.name === selectedDocument.folderId);
 
     const [menuListOpen, setMenuListOpen] = useState(false);
     const [isMoving, setIsMoving] = useState(false); // 문서가 이동중인지
@@ -146,12 +146,9 @@ export default function EditorHeader({
                 dispatch(addDocumentToFolder({ folderId: parentFolder.id, docId: copiedDocument.id }));
 
                 await axios.post('/api/document',
-                    { email: user.email, folderId: parentFolder.id, document: copiedDocument },
                     {
-                        headers: {
-                            "Content-Type": "application/json",
-                            "Accept": "application/json"
-                        },
+                        folderId: parentFolder.id,
+                        document: copiedDocument
                     });
 
                 dispatch(showCompleteAlert(`${parentFolder?.name}에 ${selectedDocument.title} 사본이 생성되었습니다.`));
@@ -194,7 +191,7 @@ export default function EditorHeader({
             Icon: DeleteIcon,
             IconWidth: "17",
             label: "휴지통으로 이동",
-            onClick: () => deleteDoc(selectedDocument, documentId),
+            onClick: (e) => deleteDoc(e, selectedDocument, documentId),
             horizonLine: true,
         }
     ];

@@ -42,24 +42,21 @@ export default function FolderSection({ isCollapsed }: FolderSectionProps) {
 
             return true;
         }
-        const addedFolder = {
+
+        const addedFolder: Folder = {
             id: uuidv4(),
             name: newFolderTitle,
             documentIds: [],
-            author: user,
-            sharedWith: [],
+            author: user.email,
+            collaborators: [],
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
         }
 
         try {
             // 폴더 추가 요청
             await axios.post('/api/folder',
-                { email: user.email, folder: addedFolder },
-                {
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Accept": "application/json"
-                    },
-                });
+                { folder: addedFolder });
 
             dispatch(addFolders(addedFolder));
             setIsFolderInvalidInfo({
@@ -88,7 +85,6 @@ export default function FolderSection({ isCollapsed }: FolderSectionProps) {
         }
         getUserData(user.email, dispatch);
     }, [user.email, dispatch]);
-
 
     return (
         // Aside의 width에 따라 각각 다른 레이아웃 출력

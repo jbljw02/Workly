@@ -40,6 +40,7 @@ export default function ShareForm() {
                 return;
             }
 
+            // 협업자 추가 요청
             await axios.post('/api/document/coworker', {
                 email: newDoc.author,
                 docId: newDoc.id,

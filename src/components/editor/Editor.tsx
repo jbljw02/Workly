@@ -61,7 +61,7 @@ export default function Editor({ docId }: { docId: string }) {
               docId: selectedDocument.id
             }
           });
-          
+
           const { tiptapToken } = response.data as { tiptapToken: string };
 
           // Tiptap 협업 기능을 위한 프로바이더 설정
@@ -71,6 +71,7 @@ export default function Editor({ docId }: { docId: string }) {
             token: tiptapToken, // 사용자 인증을 위한 Tiptap JWT
             document: doc, // 공유할 문서 객체
           });
+
         }
       } catch (error) {
         console.error('Tiptap 초기화 오류:', error);
@@ -111,27 +112,18 @@ export default function Editor({ docId }: { docId: string }) {
     debounce(async (email, latestDoc) => {
       if (!latestDoc && email) return;
       try {
-        await axios.put(
-          '/api/document',
+        await axios.put('/api/document',
           {
             email: email,
             docId: latestDoc.id,
             newDocName: latestDoc.title,
             newDocContent: latestDoc.docContent,
-          },
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              Accept: 'application/json',
-            },
-          }
-        );
+          });
       } catch (error) {
         console.error(error);
       }
     }, 1000), // 1초의 딜레이
-    []
-  );
+    []);
 
   // 에디터의 내용이 변경될 때마다 적용
   useEffect(() => {

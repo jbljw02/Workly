@@ -95,7 +95,7 @@ const editorExtensions = (dispatch: AppDispatch, user: UserProps) => [
                             className: 'resizable-img',
                             'data-keep-ratio': true,
                         })
-                    } 
+                    }
                     // 이미지가 아닌 일반 파일일 경우
                     else {
                         currentEditor.chain().insertContentAt(pos, {
@@ -122,7 +122,9 @@ const editorExtensions = (dispatch: AppDispatch, user: UserProps) => [
         },
         showOnlyCurrent: false,
     }) as Extension,
-    Collaboration.configure({ document: doc }),
+    Collaboration.configure({
+        document: doc
+    }),
     CollaborationCursor.configure({
         provider,
         user: {

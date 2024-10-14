@@ -39,7 +39,10 @@ export default function ShareContent() {
     const getCoworkers = useCallback(async (email: string, docId: string) => {
         try {
             const response = await axios.get('/api/document/coworker', {
-                params: { email: email, docId: docId },
+                params: {
+                    email: email,
+                    docId: docId
+                },
             });
             dispatch(setCoworkerList(response.data as Collaborator[]));
         } catch (error) {
@@ -223,7 +226,9 @@ export default function ShareContent() {
                     </div>
                     {
                         coworkerList.map(coworker => (
-                            <div className='flex flex-row items-center justify-between'>
+                            <div
+                                key={coworker.email}
+                                className='flex flex-row items-center justify-between'>
                                 <UserProfile user={coworker} />
                                 <AuthorityButton
                                     targetUser={coworker}

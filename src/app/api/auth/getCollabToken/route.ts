@@ -4,7 +4,7 @@ import admin from '../../../../../firebase/firebaseAdmin';
 import { cookies } from 'next/headers';
 import firestore from '../../../../../firebase/firestore';
 import { doc, getDoc } from 'firebase/firestore';
-import { DocumentProps } from '@/redux/features/documentSlice';
+import { Collaborator, DocumentProps } from '@/redux/features/documentSlice';
 
 // Tiptap 협업을 위한 JWT 토큰을 생성
 export async function GET(req: NextRequest) {
@@ -15,7 +15,7 @@ export async function GET(req: NextRequest) {
         const authorEmail = searchParams.get('authorEmail');
         const docId = searchParams.get('docId');
 
-        if(!userEmail) return NextResponse.json({error: "접근 사용자 이메일 존재 X"}, {status: 400});
+        if (!userEmail) return NextResponse.json({ error: "접근 사용자 이메일 존재 X" }, { status: 400 });
         if (!authorEmail) return NextResponse.json({ error: "문서 관리자 이메일 존재 X" }, { status: 400 });
         if (!docId) return NextResponse.json({ error: "문서 ID 존재 X" }, { status: 400 });
 
@@ -28,8 +28,17 @@ export async function GET(req: NextRequest) {
         const documents: DocumentProps[] = userData.documents || [];
         const targetDoc = documents.find(doc => doc.id === docId);
 
+        const emailCheck = targetDoc?.collaborators.find((collaborator: Collaborator) => collaborator.email === userEmail);
+        if(emailCheck) {
+           console.log(emailCheck) 
+        }
+        else {
+            console.log("없음")
+        }
+
         // 문서 작성자이거나 협업자인 경우에만 토큰 생성
-        if (userEmail === authorEmail || targetDoc?.collaborators?.includes(userEmail)) {
+        if (userEmail === authorEmail ||
+            targetDoc?.collaborators?.some((collaborator: Collaborator) => collaborator.email === userEmail)) {
             // 쿠키 저장소에서 Firebase 인증 토큰을 가져옴
             const cookieStore = cookies();
             const firebaseToken = cookieStore.get('authToken');
@@ -43,7 +52,6 @@ export async function GET(req: NextRequest) {
                 sub: decodedFirebaseToken.uid,
                 name: decodedFirebaseToken.name,
                 email: decodedFirebaseToken.email,
-                allowedDocumentNames: ['*'],
             };
 
             // Tiptap JWT 생성

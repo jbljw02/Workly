@@ -23,13 +23,15 @@ export default function HeaderTitle() {
         dispatch(setSelectedDocument(currentDocument));
     }, [folders, documents]);
 
+    const parentFolder = folders.find(folder => folder.id === folderId);
+
     return (
         <div className='flex flex-row items-center gap-2'>
             <div className='flex items-center p-1 mr-0.5 border rounded-md'>
                 <PaperIcon width="20" />
             </div>
             <div className='flex flex-row items-center gap-1'>
-                <div className='text-sm rounded-sm hover:underline cursor-pointer'>{selectedDocument.folderName}</div>
+                <div className='text-sm rounded-sm hover:underline cursor-pointer'>{parentFolder?.name}</div>
                 <div className='text-sm font-light mx-1'>{'/'}</div>
                 <div className='text-sm font-bold'>{selectedDocument.title || '제목 없는 문서'}</div>
             </div>
