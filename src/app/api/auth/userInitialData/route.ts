@@ -38,7 +38,11 @@ export async function POST(req: NextRequest) {
             id: initialFolderId,
             name: '내 폴더',
             documentIds: [],
-            author: user.email,
+            author: {
+                email: user.email,
+                displayName: user.displayName,
+                photoURL: user.photoURL ? user.photoURL : avatarURL,
+            },
             collaborators: [],
             createdAt: serverTimestamp(),
             updatedAt: serverTimestamp(),

@@ -42,7 +42,7 @@ export async function GET(req: NextRequest) {
 
         // email과 폴더의 author가 같은 폴더들을 쿼리
         const folderQuery = query(foldersCollection,
-            where("author", "==", email),
+            where("author.email", "==", email),
             orderBy("createdAt", "asc"));
 
         // 쿼리문을 이용해 폴더 정보 가져오기
@@ -50,8 +50,11 @@ export async function GET(req: NextRequest) {
 
         const folders = querySnapshot.docs.map(doc => doc.data());
 
+        console.log("folders: ", folders);
+
         return NextResponse.json(folders, { status: 200 });
     } catch (error) {
+        console.log("error: ", error);
         return NextResponse.json({ error: "폴더 정보 요청 실패" }, { status: 500 });
     }
 }
@@ -102,7 +105,7 @@ export async function DELETE(req: NextRequest) {
         const folderData = folderDocSnap.data();
 
         // 폴더 관리자만 삭제 가능
-        if (folderData.author !== email) {
+        if (folderData.author.email !== email) {
             return NextResponse.json({ error: "폴더 삭제 권한이 없습니다" }, { status: 403 });
         }
 

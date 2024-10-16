@@ -61,7 +61,7 @@ export default function ShareContent() {
     }, []);
 
     useEffect(() => {
-        getCoworkers(selectedDocument.author, selectedDocument.id);
+        getCoworkers(selectedDocument.author.email, selectedDocument.id);
     }, [user.email, selectedDocument.id, getCoworkers]);
 
     useEffect(() => {
@@ -206,7 +206,7 @@ export default function ShareContent() {
                                     <AuthorityButton
                                         targetUser={coworker}
                                         isClickEnabled={isDropdownEnabled}
-                                        initialAuthority={coworker.email === selectedDocument.author ? '관리자' : coworker.authority}
+                                        initialAuthority={coworker.email === selectedDocument.author.email ? '관리자' : coworker.authority}
                                         isMember={coworkerList.some(user => user.email === coworker.email)} />
                                 </button>
                             ))
@@ -218,7 +218,7 @@ export default function ShareContent() {
                 <div className='text-sm font-semibold mb-4'>접근 권한이 있는 사용자</div>
                 <div className='flex flex-col gap-4 pb-4 min-h-[105px] max-h-[600px] overflow-y-scroll scrollbar-thin'>
                     <div className='flex flex-row items-center justify-between'>
-                        <UserProfile user={user} />
+                        <UserProfile user={selectedDocument.author} />
                         <AuthorityButton
                             targetUser={{ ...user, authority: '관리자' }}
                             isClickEnabled={true}

@@ -6,7 +6,7 @@ export type Folder = {
     id: string;
     name: string;
     documentIds: string[];
-    author: string;
+    author: UserProps;
     collaborators?: Collaborator[];
     createdAt: string;
     updatedAt: string;

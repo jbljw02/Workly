@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import firestore from "../../../../firebase/firestore";
 import { doc, getDoc, updateDoc, collection, addDoc, writeBatch, query, where, getDocs, orderBy, serverTimestamp } from "firebase/firestore";
 import { Folder } from "@/redux/features/folderSlice";
-import { DocumentProps } from "@/redux/features/documentSlice";
+import { Collaborator, DocumentProps } from "@/redux/features/documentSlice";
 
 // 사용자의 문서를 추가 - CREATE
 export async function POST(req: NextRequest) {
@@ -59,19 +59,27 @@ export async function GET(req: NextRequest) {
 
         if (!email) return NextResponse.json({ error: "이메일이 제공되지 않음" }, { status: 400 });
 
-        // documents 컬렉션에서 author가 email과 일치하는 문서들을 쿼리
+        // documents 컬렉션에서 모든 문서 가져오기
         const documentsCollection = collection(firestore, 'documents');
-        const documentsQuery = query(documentsCollection,
-            where("author", "==", email),
-            orderBy("createdAt", "asc"));
-        const documentsSnapshot = await getDocs(documentsQuery);
+        const documentsSnapshot = await getDocs(documentsCollection);
+        
+        // 모든 문서를 추출
+        const documents = documentsSnapshot.docs.map(doc => doc.data());
 
-        const documents = documentsSnapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data()
-        }));
+        // 변환된 문서 데이터를 필터링
+        const filteredDocuments = documents.filter(doc => {
+            // 현재 사용자가 작성자인지 확인
+            const isAuthor = doc.author.email === email;
 
-        return NextResponse.json(documents, { status: 200 });
+            // 현재 사용자가 협업자인지 확인
+            const isCollaborator = doc.collaborators.length > 0 &&
+                doc.collaborators.some((collaborator: Collaborator) => collaborator.email === email);
+
+            // 작성자이거나 협업자인 경우 해당 문서 반환
+            return isAuthor || isCollaborator;
+        });
+
+        return NextResponse.json(filteredDocuments, { status: 200 });
     } catch (error) {
         return NextResponse.json({ error: "문서 정보 요청 실패" }, { status: 500 });
     }
@@ -102,7 +110,7 @@ export async function PUT(req: NextRequest) {
 
         await updateDoc(docRef, updateData);
 
-        return NextResponse.json({ success: "문서 수정 성공" }, { status: 200 });
+        return NextResponse.json({ success: "문서 수정 성��" }, { status: 200 });
     } catch (error) {
         return NextResponse.json({ error: "문서 수정 실패" }, { status: 500 });
     }
@@ -131,7 +139,7 @@ export async function DELETE(req: NextRequest) {
         const docData = docSnap.data();
 
         // 문서 소유자 확인
-        if (docData.author !== email) {
+        if (docData.author.email !== email) {
             return NextResponse.json({ error: "문서 삭제 권한이 없습니다" }, { status: 403 });
         }
 

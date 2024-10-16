@@ -24,30 +24,30 @@ export async function GET(req: NextRequest) {
 
         if (!userDocSnap.exists()) return NextResponse.json({ error: "사용자 정보 존재 X" }, { status: 404 });
 
-        const userData = userDocSnap.data();
-        const documents: DocumentProps[] = userData.documents || [];
-        const targetDoc = documents.find(doc => doc.id === docId);
-
+        const docRef = doc(firestore, 'documents', docId);
+        const docSnap = await getDoc(docRef);
+        const targetDoc = docSnap.data() as DocumentProps;
         const emailCheck = targetDoc?.collaborators.find((collaborator: Collaborator) => collaborator.email === userEmail);
         if(emailCheck) {
-           console.log(emailCheck) 
+           console.log("있음") 
         }
         else {
             console.log("없음")
         }
 
+        if (!docSnap.exists()) return NextResponse.json({ error: "문서 정보 존재 X" }, { status: 404 });
+
+        // 쿠키 저장소에서 Firebase 인증 토큰을 가져옴
+        const cookieStore = cookies();
+        const firebaseToken = cookieStore.get('authToken');
+
+        if (!firebaseToken) return NextResponse.json({ error: "인증되지 않은 사용자" }, { status: 401 });
+
+        // Firebase 토큰을 검증하고 디코딩
+        const decodedFirebaseToken = await admin.auth().verifyIdToken(firebaseToken.value);
+
         // 문서 작성자이거나 협업자인 경우에만 토큰 생성
-        if (userEmail === authorEmail ||
-            targetDoc?.collaborators?.some((collaborator: Collaborator) => collaborator.email === userEmail)) {
-            // 쿠키 저장소에서 Firebase 인증 토큰을 가져옴
-            const cookieStore = cookies();
-            const firebaseToken = cookieStore.get('authToken');
-
-            if (!firebaseToken) return NextResponse.json({ error: "인증되지 않은 사용자" }, { status: 401 });
-
-            // Firebase 토큰을 검증하고 디코딩
-            const decodedFirebaseToken = await admin.auth().verifyIdToken(firebaseToken.value);
-
+        if (userEmail === authorEmail) {
             const tiptapJwtData = {
                 sub: decodedFirebaseToken.uid,
                 name: decodedFirebaseToken.name,

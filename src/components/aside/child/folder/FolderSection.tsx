@@ -47,10 +47,10 @@ export default function FolderSection({ isCollapsed }: FolderSectionProps) {
             id: uuidv4(),
             name: newFolderTitle,
             documentIds: [],
-            author: user.email,
+            author: user,
             collaborators: [],
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
+            createdAt: '',
+            updatedAt: '',
         }
 
         try {
@@ -76,15 +76,16 @@ export default function FolderSection({ isCollapsed }: FolderSectionProps) {
         }
     }
 
-    useEffect(() => {
-        const getUserData = async (email: string, dispatch: AppDispatch) => {
-            if (email) {
-                await getUserFolder(email, dispatch);
-                await getUserDocument(email, dispatch);
-            }
+    const getUserData = useCallback(async (email: string, dispatch: AppDispatch) => {
+        if (email) {
+            await getUserFolder(email, dispatch);
+            await getUserDocument(email, dispatch);
         }
+    }, []);
+
+    useEffect(() => {
         getUserData(user.email, dispatch);
-    }, [user.email, dispatch]);
+    }, [user.email, dispatch, getUserData]);
 
     return (
         // Aside의 width에 따라 각각 다른 레이아웃 출력

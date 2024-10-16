@@ -1,3 +1,5 @@
+'use client';
+
 import { useEditor, EditorContent, ReactNodeViewRenderer, JSONContent, Extension } from '@tiptap/react'
 import React, { CSSProperties, useCallback, useEffect, useRef, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
@@ -57,7 +59,7 @@ export default function Editor({ docId }: { docId: string }) {
           const response = await axios.get('/api/auth/getCollabToken', {
             params: {
               userEmail: user.email,
-              authorEmail: selectedDocument.author,
+              authorEmail: selectedDocument.author.email,
               docId: selectedDocument.id
             }
           });
@@ -71,6 +73,8 @@ export default function Editor({ docId }: { docId: string }) {
             token: tiptapToken, // 사용자 인증을 위한 Tiptap JWT
             document: doc, // 공유할 문서 객체
           });
+
+          console.log("토큰: ", tiptapToken);
 
         }
       } catch (error) {

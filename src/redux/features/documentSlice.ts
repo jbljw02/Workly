@@ -12,9 +12,10 @@ export type DocumentProps = {
     docContent: JSONContent | null;
     createdAt: string;
     updatedAt: string;
-    author: string;
-    collaborators: Collaborator[];
+    author: UserProps;
     folderId: string;
+    folderName: string;
+    collaborators: Collaborator[];
 }
 
 const DocumentsState: DocumentProps[] = [];
@@ -24,9 +25,14 @@ const selectedDocumentState: DocumentProps = {
     docContent: null,
     createdAt: '',
     updatedAt: '',
-    author: '',
-    collaborators: [],
+    author: {
+        email: '',
+        displayName: '',
+        photoURL: '',
+    },
     folderId: '',
+    folderName: '',
+    collaborators: [],
 }
 
 export const documentSlice = createSlice({

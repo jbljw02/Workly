@@ -135,7 +135,7 @@ export async function DELETE(req: NextRequest) {
         const docData = docSnap.data();
 
         // 문서 작성자 확인
-        if (docData.author !== authorEmail) {
+        if (docData.author.email !== authorEmail) {
             return NextResponse.json({ error: "제거 권한이 없습니다" }, { status: 403 });
         }
 

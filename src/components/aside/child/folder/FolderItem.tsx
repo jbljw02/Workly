@@ -26,7 +26,8 @@ export default function FolderItem({ folder }: FolderItemProps) {
     const dispatch = useAppDispatch();
 
     const user = useAppSelector(state => state.user);
-    const folders = useAppSelector(state => state.folders)
+    const folders = useAppSelector(state => state.folders);
+    const documents = useAppSelector(state => state.documents);
 
     const [isHovered, setIsHovered] = useState(false);
     const [isEditing, setIsEditing] = useState(false); // 폴더명 수정중
@@ -100,10 +101,11 @@ export default function FolderItem({ folder }: FolderItemProps) {
             id: uuidv4(),
             title: docTitle,
             docContent: null,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-            author: user.email,
+            createdAt: '',
+            updatedAt: '',
+            author: user,
             folderId: folder.id,
+            folderName: folder.name,
             collaborators: [],
         }
 
