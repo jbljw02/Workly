@@ -123,7 +123,7 @@ export default function AuthorityDropdown({ dropdownPosition, setIsOpen, buttonR
                     <div
                         key={index}
                         className='flex flex-col px-3 py-1.5 text-sm hover:bg-gray-100 cursor-pointer'
-                        onClick={() => updateAuthority(selectedDocument.author, targetUser.email, selectedDocument.id, authority.label as AuthorityCategory)}>
+                        onClick={() => updateAuthority(selectedDocument.author.email, targetUser.email, selectedDocument.id, authority.label as AuthorityCategory)}>
                         <div className='text-sm'>{authority.label}</div>
                         <div className='text-xs text-neutral-400 whitespace-nowrap'>{authority.description}</div>
                     </div>

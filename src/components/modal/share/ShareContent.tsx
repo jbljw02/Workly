@@ -39,7 +39,10 @@ export default function ShareContent() {
     const getCoworkers = useCallback(async (email: string, docId: string) => {
         try {
             const response = await axios.get('/api/document/coworker', {
-                params: { email: email, docId: docId },
+                params: {
+                    email: email,
+                    docId: docId
+                },
             });
             dispatch(setCoworkerList(response.data as Collaborator[]));
         } catch (error) {
@@ -58,7 +61,7 @@ export default function ShareContent() {
     }, []);
 
     useEffect(() => {
-        getCoworkers(selectedDocument.author, selectedDocument.id);
+        getCoworkers(selectedDocument.author.email, selectedDocument.id);
     }, [user.email, selectedDocument.id, getCoworkers]);
 
     useEffect(() => {
@@ -150,7 +153,7 @@ export default function ShareContent() {
 
     // 검색된 협업자가 존재하는지에 따라 선택된 항목과 키보드 네비게이션 모드 설정
     useEffect(() => {
-        if (emailRegex.test(targetSharingEmail) || searchedCoworkers.length > 0) {
+        if (emailRegex.test(targetSharingEmail) && searchedCoworkers.length > 0) {
             setSelectedIndex(0); // 첫번째 협업자 선택
             setIsKeyboardNav(true);
 
@@ -203,7 +206,7 @@ export default function ShareContent() {
                                     <AuthorityButton
                                         targetUser={coworker}
                                         isClickEnabled={isDropdownEnabled}
-                                        initialAuthority={coworker.email === selectedDocument.author ? '관리자' : coworker.authority}
+                                        initialAuthority={coworker.email === selectedDocument.author.email ? '관리자' : coworker.authority}
                                         isMember={coworkerList.some(user => user.email === coworker.email)} />
                                 </button>
                             ))
@@ -215,7 +218,7 @@ export default function ShareContent() {
                 <div className='text-sm font-semibold mb-4'>접근 권한이 있는 사용자</div>
                 <div className='flex flex-col gap-4 pb-4 min-h-[105px] max-h-[600px] overflow-y-scroll scrollbar-thin'>
                     <div className='flex flex-row items-center justify-between'>
-                        <UserProfile user={user} />
+                        <UserProfile user={selectedDocument.author} />
                         <AuthorityButton
                             targetUser={{ ...user, authority: '관리자' }}
                             isClickEnabled={true}
@@ -223,7 +226,9 @@ export default function ShareContent() {
                     </div>
                     {
                         coworkerList.map(coworker => (
-                            <div className='flex flex-row items-center justify-between'>
+                            <div
+                                key={coworker.email}
+                                className='flex flex-row items-center justify-between'>
                                 <UserProfile user={coworker} />
                                 <AuthorityButton
                                     targetUser={coworker}

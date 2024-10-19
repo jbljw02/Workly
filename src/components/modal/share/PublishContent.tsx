@@ -2,7 +2,7 @@ import WebIcon from '../../../../public/svgs/web.svg';
 
 export default function PublishContent() {
     return (
-        <div className='flex flex-col items-center justify-center h-auto'>
+        <div className='flex flex-col items-center justify-center h-auto pb-8'>
             <WebIcon width="100" />
             <div className='font-semibold mt-4 mb-2 text-[17px]'>웹 페이지로 게시</div>
             <div className='text-sm text-neutral-600 text-center'>현재 문서로 웹 사이트를 생성합니다. <br />

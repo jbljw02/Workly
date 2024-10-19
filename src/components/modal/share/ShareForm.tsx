@@ -2,13 +2,14 @@ import CommonInput from "@/components/input/CommonInput";
 import SubmitButton from "@/components/button/SubmitButton";
 import { updateDocuments, setSelectedDocument, Collaborator } from "@/redux/features/documentSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { useRef, useEffect, useMemo } from "react";
+import { useRef, useEffect, useMemo, useState } from "react";
 import CloseIcon from '../../../../public/svgs/close.svg';
 import AvatarIcon from '../../../../public/svgs/avatar.svg';
 import Image from "next/image";
 import { addCoworker, setSelectedCoworkers, setTargetSharingEmail } from "@/redux/features/shareDocumentSlice";
 import axios from "axios";
 import { showCompleteAlert, showWarningAlert } from "@/redux/features/alertSlice";
+import nProgress from "nprogress";
 
 export default function ShareForm() {
     const dispatch = useAppDispatch();
@@ -19,6 +20,8 @@ export default function ShareForm() {
     const targetSharingEmail = useAppSelector(state => state.targetSharingEmail);
     const coworkerList = useAppSelector(state => state.coworkerList);
 
+    const [isSubmitting, setIsSubmitting] = useState(false); // 현재 폼을 제출중인지
+
     // 이미 추가된 협업자들을 필터링
     const alreadyExistCoworkers = useMemo(() => selectedCoworkers.filter(selectedCoworker =>
         coworkerList.some(coworker => coworker.email === selectedCoworker.email)),
@@ -28,7 +31,11 @@ export default function ShareForm() {
     const inviteUser = async (e: React.FormEvent) => {
         e.preventDefault();
 
+        if (isSubmitting) return; // 이미 제출 중이면 함수 실행 중단
+
         try {
+            setIsSubmitting(true); // 제출 시작
+
             // 추가중인 협업자를 문서에 추가
             const newDoc = {
                 ...selectedDocument,
@@ -40,6 +47,7 @@ export default function ShareForm() {
                 return;
             }
 
+            // 협업자 추가 요청
             await axios.post('/api/document/coworker', {
                 email: newDoc.author,
                 docId: newDoc.id,
@@ -55,10 +63,10 @@ export default function ShareForm() {
 
             dispatch(setSelectedCoworkers([])); // 작업을 마쳤으니 선택된 협업자들을 초기화
         } catch (error) {
-            console.error('협업자 추가 오류: ', error);
             dispatch(showWarningAlert('선택된 사용자들을 멤버로 초대하는 데 실패했습니다.'));
+        } finally {
+            setIsSubmitting(false); // 제출 종료
         }
-
     }
 
     // 추가중인 협업자를 제거
@@ -89,7 +97,7 @@ export default function ShareForm() {
                                 key={coworker.email}
                                 // 이미 멤버로 추가된 사용자가 있다면 알림
                                 className={`flex flex-row justify-between items-center bg-gray-100 rounded-xl p-[5px] mr-2 my-0.5
-                                ${alreadyExistCoworkers.some(user => user.email === coworker.email) && 'border border-red-500 border-solid'}`}>
+                                    ${alreadyExistCoworkers.some(user => user.email === coworker.email) && 'border border-red-500 border-solid'}`}>
                                 <Image
                                     src={coworker.photoURL === 'unknown-user' ? '/svgs/avatar.svg' : coworker.photoURL}
                                     alt={coworker.displayName}

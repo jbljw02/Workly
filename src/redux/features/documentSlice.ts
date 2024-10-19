@@ -3,7 +3,7 @@ import { JSONContent } from "@tiptap/react";
 import { UserProps } from "./userSlice";
 
 export interface Collaborator extends UserProps {
-    authority: '읽기 허용' | '쓰기 허용' | '전체 허용' | '관리자' | '멤버 제거';
+    authority: '읽기 허용' | '쓰기 허용' | '전체 허용' | '관리자';
 }
 
 export type DocumentProps = {
@@ -12,9 +12,10 @@ export type DocumentProps = {
     docContent: JSONContent | null;
     createdAt: string;
     updatedAt: string;
-    author: string;
-    collaborators: Collaborator[];
+    author: UserProps;
+    folderId: string;
     folderName: string;
+    collaborators: Collaborator[];
 }
 
 const DocumentsState: DocumentProps[] = [];
@@ -24,9 +25,14 @@ const selectedDocumentState: DocumentProps = {
     docContent: null,
     createdAt: '',
     updatedAt: '',
-    author: '',
-    collaborators: [],
+    author: {
+        email: '',
+        displayName: '',
+        photoURL: '',
+    },
+    folderId: '',
     folderName: '',
+    collaborators: [],
 }
 
 export const documentSlice = createSlice({
@@ -56,7 +62,7 @@ export const documentSlice = createSlice({
         },
         setDocuments: (state, action) => {
             return action.payload;
-        }
+        },
     },
 })
 

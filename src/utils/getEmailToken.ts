@@ -6,12 +6,7 @@ const getEmailToken = async () => {
 
     if (user) {
         const token = await user.getIdToken();
-        await axios.post('/api/auth/emailToken', { token }, {
-            headers: {
-                "Content-Type": "application/json",
-                "Accept": "application/json"
-            },
-        });
+        await axios.post('/api/auth/emailToken', { token });
     }
 }
 

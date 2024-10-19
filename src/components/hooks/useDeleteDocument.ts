@@ -11,7 +11,9 @@ const useDeleteDocument = () => {
     const documents = useAppSelector(state => state.documents);
 
     // 문서 삭제 요청
-    const deleteDoc = async (document: DocumentProps, documentId: string) => {
+    const deleteDoc = async (e: React.MouseEvent, document: DocumentProps, documentId: string) => {
+        e.stopPropagation();
+        
         const prevDocs = [...documents];
 
         try {
@@ -20,29 +22,23 @@ const useDeleteDocument = () => {
             await axios.delete('/api/document', {
                 params: {
                     email: user.email,
-                    parentFolderName: document.folderName,
+                    folderId: document.folderId,
                     docId: document.id,
-                },
-                headers: {
-                    "Content-Type": "application/json",
-                    "Accept": "application/json",
-                },
+                }
             });
 
             // 현재 페이지를 삭제했다면 라우팅
             if (document.id === documentId) {
                 router.push('/editor/home');
             }
-            // 현재 페이지가 삭제된 것이 아니라면 alert 발생
-            else {
-                dispatch(showCompleteAlert(`${document.title} 삭제를 완료했습니다.`));
-            }
+            
+            dispatch(showCompleteAlert(`${document.title}의 삭제를 완료했습니다.`));
         } catch (error) {
             console.error(error);
 
             // 삭제에 실패하면 롤백
             dispatch(setDocuments(prevDocs));
-            dispatch(showWarningAlert(`${document.title} 삭제에 실패했습니다.`))
+            dispatch(showWarningAlert(`${document.title}의 삭제에 실패했습니다.`))
         }
     }
 

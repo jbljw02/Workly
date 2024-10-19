@@ -1,13 +1,15 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { DocumentProps } from "./documentSlice";
+import { Collaborator, DocumentProps } from "./documentSlice";
 import { UserProps } from "./userSlice";
 
 export type Folder = {
     id: string;
     name: string;
     documentIds: string[];
-    author: string[];
-    sharedWith?: string[];
+    author: UserProps;
+    collaborators?: Collaborator[];
+    createdAt: string;
+    updatedAt: string;
 }
 
 const foldersState: Folder[] = [];
@@ -47,7 +49,6 @@ export const foldersSlice = createSlice({
                 folder.documentIds = folder.documentIds.filter(id => id !== docId); // 문서 ID 제거
             }
         },
-
     },
 })
 

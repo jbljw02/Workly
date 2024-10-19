@@ -43,12 +43,14 @@ export default function LinkHoverSection({ editor, setIsEditing }: LinkSectionPr
                     onClick={() => setIsEditing(true)}
                     icon={<HoverTooltip label="편집">
                         <EditIcon width="12.5" />
-                    </HoverTooltip>} />
+                    </HoverTooltip>}
+                    hover="hover:bg-gray-100"/>
                 <IconButton
                     onClick={() => deleteLink(editor, linkTooltip, dispatch)}
                     icon={<HoverTooltip label="삭제">
                         <DeleteIcon width="15" />
-                    </HoverTooltip>} />
+                    </HoverTooltip>}
+                    hover="hover:bg-gray-100" />
             </div>
         </div>
     )

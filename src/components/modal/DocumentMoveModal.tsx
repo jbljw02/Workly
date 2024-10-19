@@ -46,7 +46,7 @@ export default function DocumentMoveModal({ isModalOpen, setIsModalOpen }: Modal
     // 문서의 폴더를 이동
     const moveDoc = async (folder: Folder) => {
         // 현재 폴더를 클릭하면 경고
-        if (folder.name === selectedDocument.folderName) {
+        if (folder.id === selectedDocument.folderId) {
             setVibrateFolderId(folder.id); // 진동 효과를 적용할 폴더의 ID를 설정
             setTimeout(() => {
                 setVibrateFolderId(null);
@@ -54,21 +54,19 @@ export default function DocumentMoveModal({ isModalOpen, setIsModalOpen }: Modal
         }
         else {
             // 현재 옮길 문서의 부모 폴더
-            const parentFolder = folders.find(folder => folder.name === selectedDocument.folderName);
+            const parentFolder = folders.find(folder => folder.id === selectedDocument.folderId);
 
             const newDoc: DocumentProps = {
                 ...selectedDocument,
-                folderName: folder.name,
+                folderId: folder.id,
             }
 
             try {
                 await axios.put('/api/document/move',
-                    { email: user.email, folderId: folder.id, document: selectedDocument },
                     {
-                        headers: {
-                            "Content-Type": "application/json",
-                            "Accept": "application/json"
-                        },
+                        email: user.email,
+                        folderId: folder.id,
+                        document: selectedDocument
                     });
 
                 // 전체 문서중에 변경할 문서의 폴더 이름을 변경
@@ -142,7 +140,7 @@ export default function DocumentMoveModal({ isModalOpen, setIsModalOpen }: Modal
                                                 <div className={`text-[12px] pr-3 text-neutral-500 select-none
                                                     ${vibrateFolderId === folder.id ? 'vibrate text-red-500' : ''}`}>
                                                     {
-                                                        selectedDocument.folderName === folder.name && '현재 폴더'
+                                                        selectedDocument.folderId === folder.id && '현재 폴더'
                                                     }
                                                 </div>
                                             </div>

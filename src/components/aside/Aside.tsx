@@ -18,6 +18,7 @@ import logout from "@/utils/logout";
 import UserSection from "./child/user/UserSection";
 import { addDocumentToFolder, Folder } from "@/redux/features/folderSlice";
 import axios from 'axios';
+import GroupIcon from '../../../public/svgs/group.svg';
 
 export default function Aside() {
     const dispatch = useAppDispatch();
@@ -87,21 +88,19 @@ export default function Aside() {
             id: uuidv4(),
             title: '',
             docContent: null,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-            author: user.email,
+            createdAt: '',
+            updatedAt: '',
+            author: user,
+            folderId: defaultFolder.id,
             folderName: defaultFolder.name,
             collaborators: [],
         };
 
         try {
             await axios.post('/api/document',
-                { email: user.email, folderId: defaultFolder.id, document: newDocument },
                 {
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Accept": "application/json"
-                    },
+                    folderId: defaultFolder.id,
+                    document: newDocument
                 });
 
             // 전체 문서 배열에 추가
@@ -118,7 +117,7 @@ export default function Aside() {
     return (
         <aside
             ref={sidebarRef}
-            className={`relative p-4 pt-5 flex flex-col transition-width duration-300 ease-in-out`}
+            className={`relative p-4 pt-5 flex flex-col transition-width duration-300 ease-in-out flex-shrink-0`}
             style={{
                 width: `${sidebarWidth}px`,
                 transitionProperty: 'width',
@@ -144,7 +143,7 @@ export default function Aside() {
             {/* 검색창 및 작업 추가 영역 */}
             <SearchInput isCollapsed={isCollapsed} />
             {/* 메뉴를 모아놓은 영역 */}
-            <div className="border-b border-b-neutral-300 mb-6 mt-2 pb-6">
+            <div className="border-b border-b-neutral-300 mb-6 mt-2 pb-5">
                 <SidebarItem
                     Icon={HomeIcon}
                     IconWidth="17"
@@ -156,35 +155,46 @@ export default function Aside() {
                     IconWidth="17"
                     label="문서"
                     isCollapsed={isCollapsed}
-                    onClick={() => router.push('/document')}
+                    onClick={() => router.push('/editor/document')}
                     addClick={writeDocument} />
+                <SidebarItem
+                    Icon={GroupIcon}
+                    IconWidth="18"
+                    label="공유중인 문서"
+                    isCollapsed={isCollapsed}
+                    onClick={() => router.push('/editor/shared')} />
                 <SidebarItem
                     Icon={TaskIcon}
                     IconWidth="17"
                     label="작업"
                     isCollapsed={isCollapsed} />
-                <SidebarItem
+                {/* <SidebarItem
                     Icon={ScheduleIcon}
                     IconWidth="17"
                     label="일정"
-                    isCollapsed={isCollapsed} />
+                    isCollapsed={isCollapsed} /> */}
             </div>
             {/* 폴더를 추가하고 보여주는 영역 */}
             <FolderSection isCollapsed={isCollapsed} />
             {/* 휴지통 */}
-            <SidebarItem
+            {/* <SidebarItem
                 Icon={TrashIcon}
                 IconWidth="19"
                 label="휴지통"
-                isCollapsed={isCollapsed} />
+                isCollapsed={isCollapsed} /> */}
             {/* 멤버 추가 div를 최하단에 위치하도록 여백 공간을 모두 차지 */}
             <div className="flex-grow" />
             {/* 최하단 멤버 추가 메뉴 */}
-            <SidebarItem
+            {/* <SidebarItem
                 Icon={InviteIcon}
                 IconWidth="19"
                 label="멤버 추가"
                 onClick={() => logout(router)}
+                isCollapsed={isCollapsed} /> */}
+            <SidebarItem
+                Icon={TrashIcon}
+                IconWidth="19"
+                label="휴지통"
                 isCollapsed={isCollapsed} />
         </aside>
     );

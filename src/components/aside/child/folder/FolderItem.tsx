@@ -16,6 +16,7 @@ import { addDocuments, deleteDocuments, DocumentProps } from '@/redux/features/d
 import AddInputModal from '@/components/modal/AddInputModal';
 import { v4 as uuidv4 } from 'uuid';
 import HoverTooltip from '@/components/editor/child/menuBar/HoverTooltip';
+import { showCompleteAlert, showWarningAlert } from '@/redux/features/alertSlice';
 
 type FolderItemProps = {
     folder: Folder;
@@ -25,7 +26,8 @@ export default function FolderItem({ folder }: FolderItemProps) {
     const dispatch = useAppDispatch();
 
     const user = useAppSelector(state => state.user);
-    const folders = useAppSelector(state => state.folders)
+    const folders = useAppSelector(state => state.folders);
+    const documents = useAppSelector(state => state.documents);
 
     const [isHovered, setIsHovered] = useState(false);
     const [isEditing, setIsEditing] = useState(false); // 폴더명 수정중
@@ -51,12 +53,10 @@ export default function FolderItem({ folder }: FolderItemProps) {
                 setIsEditing(false);
 
                 await axios.put('/api/folder',
-                    { email: user.email, folderId: folder.id, newFolderName: folderTitle },
                     {
-                        headers: {
-                            "Content-Type": "application/json",
-                            "Accept": "application/json"
-                        },
+                        email: user.email,
+                        folderId: folder.id,
+                        newFolderName: folderTitle
                     });
             } catch (error) {
                 console.error(error);
@@ -78,21 +78,20 @@ export default function FolderItem({ folder }: FolderItemProps) {
 
         try {
             dispatch(deleteFolders(folder.id))
-            
+
             await axios.delete('/api/folder', {
                 params: {
                     email: user.email,
                     folderId: folder.id,
-                },
-                headers: {
-                    "Content-Type": "application/json",
-                    "Accept": "application/json",
-                },
+                }
             });
+
+            dispatch(showCompleteAlert(`${folder.name}의 삭제를 완료했습니다.`));
         } catch (error) {
             console.error(error);
             // 삭제에 실패하면 롤백
             dispatch(setFolders(prevFolders));
+            dispatch(showWarningAlert(`${folder.name}의 삭제에 실패했습니다.`));
         }
     }
 
@@ -102,26 +101,24 @@ export default function FolderItem({ folder }: FolderItemProps) {
             id: uuidv4(),
             title: docTitle,
             docContent: null,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-            author: user.email,
+            createdAt: '',
+            updatedAt: '',
+            author: user,
+            folderId: folder.id,
             folderName: folder.name,
             collaborators: [],
         }
 
         try {
             await axios.post('/api/document',
-                { email: user.email, folderId: folder.id, document: newDocument },
                 {
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Accept": "application/json"
-                    },
+                    folderId: folder.id,
+                    document: newDocument
                 });
 
             // 전체 문서 배열에 추가
             dispatch(addDocuments(newDocument));
-            // 문서 ID를 폴더에 추가
+            // 문서 ID를 기본 폴더에 추가
             dispatch(addDocumentToFolder({ folderId: folder.id, docId: newDocument.id }));
 
             setIsDocInvalidInfo(({
@@ -164,8 +161,7 @@ export default function FolderItem({ folder }: FolderItemProps) {
                                                     ${isExpanded ? 'rotate-90' : 'rotate-0'}`}
                                                 width="20" />
                                         </div> :
-                                        <FolderIcon
-                                            width="15" />
+                                        <FolderIcon width="15" />
                                 )
                         }
                     </div>

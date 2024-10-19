@@ -120,10 +120,12 @@ export default function LinkEditSection({ editor, isEditing, setIsEditing }: Lin
                 <IconButton
                     onClick={() => editLink(editor, linkTooltip)}
                     icon={<SaveIcon width="15" />}
+                    hover="hover:bg-gray-100"
                     label="저장" />
                 <IconButton
                     onClick={() => deleteLinkInfo(editor, linkTooltip, dispatch)}
                     icon={<DeleteIcon width="14" />}
+                    hover="hover:bg-gray-100"
                     label="삭제" />
             </div>
         </div>

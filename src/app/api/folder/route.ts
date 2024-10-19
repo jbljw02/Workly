@@ -1,26 +1,28 @@
 import { NextRequest, NextResponse } from "next/server";
-import { arrayUnion, doc, getDoc, updateDoc } from "firebase/firestore";
-import { Folder } from "@/redux/features/folderSlice";
+import { doc, getDoc, orderBy, setDoc, updateDoc, writeBatch } from "firebase/firestore";
 import firestore from "../../../../firebase/firestore";
 import { DocumentProps } from "@/redux/features/documentSlice";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { query, where, getDocs } from "firebase/firestore";
 
 // 사용자의 DB에 폴더를 추가 - CREATE
 export async function POST(req: NextRequest) {
     try {
-        const { email, folder } = await req.json();
+        const { folder } = await req.json();
 
-        if (!email) return NextResponse.json({ error: "이메일이 제공되지 않음" }, { status: 400 });
+        if (!folder) return NextResponse.json({ error: "폴더 정보가 제공되지 않음" }, { status: 400 });
 
-        const userDocRef = doc(firestore, 'users', email);
-        const userDocSnap = await getDoc(userDocRef);
+        // folders 컬렉션에 새로운 문서 참조 생성
+        const newFolderRef = doc(firestore, 'folders', folder.id);
 
-        if (!userDocSnap.exists()) {
-            return NextResponse.json({ error: "사용자 정보 존재 X" }, { status: 404 });
-        }
+        const newFolder = {
+            ...folder,
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp()
+        };
 
-        await updateDoc(userDocRef, {
-            folders: arrayUnion(folder)
-        });
+        // 문서 저장
+        await setDoc(newFolderRef, newFolder);
 
         return NextResponse.json({ success: "폴더 추가 성공" }, { status: 200 });
     } catch (error) {
@@ -36,18 +38,23 @@ export async function GET(req: NextRequest) {
 
         if (!email) return NextResponse.json({ error: "이메일이 제공되지 않음" }, { status: 400 });
 
-        const userDocRef = doc(firestore, 'users', email);
-        const userDocSnap = await getDoc(userDocRef);
+        const foldersCollection = collection(firestore, 'folders');
 
-        if (!userDocSnap.exists()) {
-            return NextResponse.json({ error: "사용자 정보 존재 X" }, { status: 404 });
-        }
+        // email과 폴더의 author가 같은 폴더들을 쿼리
+        const folderQuery = query(foldersCollection,
+            where("author.email", "==", email),
+            orderBy("createdAt", "asc"));
 
-        const userData = userDocSnap.data();
-        const folders = userData?.folders || [];
+        // 쿼리문을 이용해 폴더 정보 가져오기
+        const querySnapshot = await getDocs(folderQuery);
+
+        const folders = querySnapshot.docs.map(doc => doc.data());
+
+        console.log("folders: ", folders);
 
         return NextResponse.json(folders, { status: 200 });
     } catch (error) {
+        console.log("error: ", error);
         return NextResponse.json({ error: "폴더 정보 요청 실패" }, { status: 500 });
     }
 }
@@ -55,33 +62,21 @@ export async function GET(req: NextRequest) {
 // 폴더명 수정 - UPDATE
 export async function PUT(req: NextRequest) {
     try {
-        const { email, folderId, newFolderName } = await req.json();
+        const { folderId, newFolderName } = await req.json();
 
-        if (!email) return NextResponse.json({ error: "이메일이 제공되지 않음" }, { status: 400 });
         if (!folderId) return NextResponse.json({ error: "폴더 아이디가 제공되지 않음" }, { status: 400 });
         if (!newFolderName) return NextResponse.json({ error: "폴더명이 제공되지 않음" }, { status: 400 });
 
-        const userDocRef = doc(firestore, 'users', email);
-        const userDocSnap = await getDoc(userDocRef);
+        const folderDocRef = doc(firestore, 'folders', folderId);
+        const folderDocSnap = await getDoc(folderDocRef);
 
-        if (!userDocSnap.exists()) {
-            return NextResponse.json({ error: "사용자 정보 존재 X" }, { status: 404 });
+        if (!folderDocSnap.exists()) {
+            return NextResponse.json({ error: "폴더가 존재하지 않습니다" }, { status: 404 });
         }
 
-        const userData = userDocSnap.data();
-        const folders = userData.folders || [];
-
-        const updatedFolders = folders.map((folder: Folder) => {
-            if (folder.id === folderId) {
-                return {
-                    ...folder,
-                    name: newFolderName,
-                }
-            }
-            return folder;
+        await updateDoc(folderDocRef, {
+            name: newFolderName,
         });
-
-        await updateDoc(userDocRef, { folders: updatedFolders });
 
         return NextResponse.json({ success: "폴더 수정 성공" }, { status: 200 });
     } catch (error) {
@@ -100,37 +95,53 @@ export async function DELETE(req: NextRequest) {
         if (!email) return NextResponse.json({ error: "이메일이 제공되지 않음" }, { status: 400 });
         if (!folderId) return NextResponse.json({ error: "폴더 아이디가 제공되지 않음" }, { status: 400 });
 
-        const userDocRef = doc(firestore, 'users', email);
-        const userDocSnap = await getDoc(userDocRef);
+        const folderDocRef = doc(firestore, 'folders', folderId);
+        const folderDocSnap = await getDoc(folderDocRef);
 
-        if (!userDocSnap.exists()) {
-            return NextResponse.json({ error: "사용자 정보 존재 X" }, { status: 404 });
-        }
-
-        const userData = userDocSnap.data();
-        const folders: Folder[] = userData.folders || [];
-        const documents: DocumentProps[] = userData.documents || [];
-
-        // 삭제할 폴더를 찾아서 그 폴더의 documentIds 가져옴
-        const targetFolder = folders.find((folder: Folder) => folder.id === folderId);
-        if (!targetFolder) {
+        if (!folderDocSnap.exists()) {
             return NextResponse.json({ error: "폴더를 찾을 수 없음" }, { status: 404 });
         }
-        const documentIdsToDelete = targetFolder.documentIds || [];
 
-        // 폴더 안에 있는 documentIds에 해당하는 문서를 삭제한 나머지 문서 목록
-        const updatedDocuments = documents.filter(doc => !documentIdsToDelete.includes(doc.id));
+        const folderData = folderDocSnap.data();
 
-        // 삭제할 폴더를 제외한 나머지 폴더로 목록을 재생성
-        const updatedFolders = folders.filter((folder: Folder) => folder.id !== folderId);
+        // 폴더 관리자만 삭제 가능
+        if (folderData.author.email !== email) {
+            return NextResponse.json({ error: "폴더 삭제 권한이 없습니다" }, { status: 403 });
+        }
 
-        await updateDoc(userDocRef, {
-            folders: updatedFolders,
-            documents: updatedDocuments,
+        // 배치 작업 시작
+        const batch = writeBatch(firestore);
+
+        // 폴더를 trash-folders 컬렉션으로 이동
+        const trashFolderRef = doc(firestore, 'trash-folders', folderId);
+        batch.set(trashFolderRef, {
+            ...folderData,
         });
 
-        return NextResponse.json({ success: "폴더 삭제 성공" }, { status: 200 });
+        // 원본 폴더 삭제
+        batch.delete(folderDocRef);
+
+        // 폴더 내 문서들도 trash-documents 컬렉션으로 이동
+        const documentIds = folderData.documentIds || [];
+        for (const docId of documentIds) {
+            const docRef = doc(firestore, 'documents', docId);
+            const docSnap = await getDoc(docRef);
+
+            if (docSnap.exists()) {
+                const docData = docSnap.data();
+                const trashDocRef = doc(firestore, 'trash-documents', docId);
+                batch.set(trashDocRef, {
+                    ...docData
+                });
+                batch.delete(docRef);
+            }
+        }
+
+        // 배치 작업 실행
+        await batch.commit();
+
+        return NextResponse.json({ success: "폴더 및 관련 문서를 휴지통으로 이동" }, { status: 200 });
     } catch (error) {
-        return NextResponse.json({ error: "폴더명 삭제 실패" }, { status: 500 });
+        return NextResponse.json({ error: "폴더 삭제 실패" }, { status: 500 });
     }
 }

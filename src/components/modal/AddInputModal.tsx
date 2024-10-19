@@ -27,13 +27,21 @@ export default function AddInputModal({
     isInvalidInfo,
     setIsInvalidInfo,
     placeholder }: AddInputModal) {
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
     const modalSubmit = async (e: React.FormEvent) => {
         e.preventDefault(); // 폼 제출 시 페이지 리로드 방지
-        if (value) {
-            const isFailed = await submitFunction();
-            if (isFailed) return; // 실패 시 모달을 닫지 않음
-            setIsModalOpen(false);
-            setValue('');
+        // 중복 제출을 방지하기 위해 제출 중일 때는 무시
+        if (value && !isSubmitting) {
+            setIsSubmitting(true); // 현재 제출중
+            try {
+                const isFailed = await submitFunction();
+                if (isFailed) return; // 실패 시 모달을 닫지 않음
+                setIsModalOpen(false);
+                setValue('');
+            } finally {
+                setIsSubmitting(false);
+            }
         }
     }
 
@@ -46,10 +54,10 @@ export default function AddInputModal({
         })
     }
 
-    const handleKeyPress = (e: React.KeyboardEvent<HTMLFormElement>) => {
+    const keyPressSubmit = async (e: React.KeyboardEvent<HTMLFormElement>) => {
         if (e.key === 'Enter') {
             e.preventDefault();
-            modalSubmit(e);
+            await modalSubmit(e);
         }
     }
 
@@ -79,7 +87,7 @@ export default function AddInputModal({
             }}>
             <form
                 onSubmit={modalSubmit}
-                onKeyDown={handleKeyPress}
+                onKeyDown={keyPressSubmit}
                 className='flex flex-col h-full justify-between'>
                 <div>
                     <ModalHeader
@@ -104,8 +112,7 @@ export default function AddInputModal({
                             hover: 'hover:bg-blue-700',
                         }}
                         label="만들기"
-                        value={value}
-                        onClick={modalSubmit} />
+                        value={value} />
                     <CommonButton
                         style={{
                             px: 'px-3.5',
@@ -115,7 +122,8 @@ export default function AddInputModal({
                             bgColor: 'bg-transparent',
                             hover: 'hover:border-gray-600',
                         }}
-                        label='취소' />
+                        label='취소'
+                        onClick={closeModal} />
                 </div>
             </form>
         </Modal>
