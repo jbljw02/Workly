@@ -14,6 +14,7 @@ import { useMemo } from 'react';
 import MenuIcon from '../../../public/svgs/editor/menu-vertical.svg'
 import Image from 'next/image';
 import IconButton from '../button/IconButton';
+import formatTimeDiff from '@/utils/formatTimeDiff';
 
 export default function SharedDocument() {
     const router = useRouter();
@@ -24,6 +25,8 @@ export default function SharedDocument() {
     const sharedDocuments = useMemo(() => {
         return documents.filter(document => document.collaborators.length > 0);
     }, [documents]);
+
+    console.log(sharedDocuments);
 
     return (
         <div className="flex flex-col w-full gap-5">
@@ -71,7 +74,7 @@ export default function SharedDocument() {
                             <IconButton
                                 icon={<SortIcon width="23" />}
                                 hover="hover:bg-gray-100"
-                                onClick={() => console.log('정렬 버튼')}/>
+                                onClick={() => console.log('정렬 버튼')} />
                         </div>
                     </div>
                 </div>
@@ -99,7 +102,7 @@ export default function SharedDocument() {
                                             <span className='bg-gray-100 group-hover:bg-gray-200 rounded px-1.5 py-0.5 truncate transition-colors duration-150'>
                                                 {document.author.displayName}에 의해 공유됨
                                             </span>
-                                            <span>22시간 전 편집</span>
+                                            <span>{formatTimeDiff(document.updatedAt)}</span>
                                         </div>
                                     </div>
                                     <div className='justify-end items-center'>

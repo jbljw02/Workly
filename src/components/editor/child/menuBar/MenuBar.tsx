@@ -30,6 +30,9 @@ import ColorPicker from './ColorPicker'
 import { setTextColor } from '@/redux/features/textColorSlice'
 import VerticalDivider from '../divider/VerticalDivider'
 import WarningAlert from '@/components/alert/WarningAlert'
+import { SetResizableImageProps } from '../../../../../lib/ImageNode'
+import uploadImage from '@/utils/uploadImage'
+import uploadFile from '@/utils/uploadFile'
 
 export default function MenuBar({ editor }: { editor: Editor }) {
     const dispatch = useAppDispatch();
@@ -128,28 +131,12 @@ export default function MenuBar({ editor }: { editor: Editor }) {
 
                     // 이미지 파일일 경우
                     if (file.type.startsWith('image/')) {
-                        editor.commands.setResizableImage({
-                            src: src,
-                            alt: '',
-                            title: file.name,
-                            className: 'resizable-img',
-                            'data-keep-ratio': true,
-                        });
-                        setSelectedImage(src);
+                        uploadImage(editor, file, src)
                     }
                     else {
                         // 이미지가 아닌 일반 파일일 경우
                         const pos = editor.state.selection.anchor; // 현재 커서 위치
-                        editor.chain().insertContentAt(pos, {
-                            type: 'file',
-                            attrs: {
-                                id: fileId,
-                                href: blobUrl,
-                                title: file.name,
-                                mimeType: file.type,
-                                size: file.size,
-                            },
-                        }).focus().run();
+                        uploadFile(editor, file, blobUrl, pos)
                     }
                 };
 
@@ -296,13 +283,15 @@ export default function MenuBar({ editor }: { editor: Editor }) {
                         Icon={LinkIcon}
                         iconWidth={20} />
                 </HoverTooltip>
+                {/* 링크를 추가하는 영역 */}
                 {
-                    // 링크를 추가하는 영역 열기
-                    addingLink &&
-                    <AddLinkSection
-                        editor={editor}
-                        position={selectionPos}
-                        setAddingLink={setAddingLink} />
+                    addingLink && (
+                        <AddLinkSection
+                            editor={editor}
+                            position={selectionPos}
+                            setAddingLink={setAddingLink}
+                            isOpen={addingLink} />
+                    )
                 }
                 <WarningAlert
                     isModalOpen={linkNoticeModal}

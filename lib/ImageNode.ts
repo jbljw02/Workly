@@ -1,14 +1,46 @@
 import { ReactNodeViewRenderer } from "@tiptap/react";
-import { ResizableImage } from "tiptap-extension-resizable-image";
+import { ResizableImage, ResizableImageHTMLAttributes } from "tiptap-extension-resizable-image";
 import { Plugin, PluginKey } from "prosemirror-state"; // Plugin을 prosemirror-state에서 가져옴
 import ImageNodeView from "@/components/editor/child/image/ImageNodeView";
+
+// ResizableImageHTMLAttributes 타입을 ID를 포함하여 확장
+export interface IdIncluededResizableImagAttrs extends ResizableImageHTMLAttributes {
+  id: string;
+  textAlign: string;
+}
+
+// 확장된 인터페이스를 적용하여 SetResizableImageProps 타입 재정의
+export type SetResizableImageProps = (
+  attrs: IdIncluededResizableImagAttrs,
+  position?: number | Range,
+) => boolean;
+
+export type ImageAttrs = {
+  id: string;
+  alt: string;
+  className: string;
+  'data-keep-ratio': boolean;
+  width: string;
+  height: string;
+  src: string;
+  title: string;
+  textAlign: string;
+}
 
 const ImageNode = ResizableImage.extend({
   draggable: true,
 
+  addAttributes() {
+    return {
+      ...this.parent?.(),
+      id: {
+        default: null,
+      },
+    };
+  },
+
   addNodeView() {
     return ReactNodeViewRenderer(ImageNodeView as any);
-
   },
 
   addProseMirrorPlugins() {
@@ -25,7 +57,6 @@ const ImageNode = ResizableImage.extend({
               return false; // 기본 동작을 막지 않음
             },
             drop: (view, event) => {
-              console.log("DBB");
               // 드롭 시 복사 방지
               event.preventDefault(); // 기본 드롭 동작을 막음
               return false;

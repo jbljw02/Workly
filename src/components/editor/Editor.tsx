@@ -16,6 +16,7 @@ import * as Y from 'yjs'
 import { TiptapCollabProvider } from '@hocuspocus/provider'
 import MenuBar from './child/menuBar/MenuBar'
 import editorExtensions from '../../../lib/editorExtension'
+import useUploadContent from '../hooks/useUploadContent';
 
 const doc = new Y.Doc();
 const appId = process.env.NEXT_PUBLIC_TIPTAP_APP_ID;
@@ -23,6 +24,8 @@ const appId = process.env.NEXT_PUBLIC_TIPTAP_APP_ID;
 export default function Editor({ docId }: { docId: string }) {
   const dispatch = useAppDispatch();
   const user = useAppSelector(state => state.user);
+  
+  const { uploadContent } = useUploadContent();
 
   const editor = useEditor({
     extensions: editorExtensions(dispatch, user),
@@ -32,6 +35,7 @@ export default function Editor({ docId }: { docId: string }) {
       },
     },
   });
+
 
   const openColorPicker = useAppSelector(state => state.openColorPicker);
   const documents = useAppSelector(state => state.documents);
@@ -74,8 +78,6 @@ export default function Editor({ docId }: { docId: string }) {
             document: doc, // 공유할 문서 객체
           });
 
-          console.log("토큰: ", tiptapToken);
-
         }
       } catch (error) {
         console.error('Tiptap 초기화 오류:', error);
@@ -90,6 +92,7 @@ export default function Editor({ docId }: { docId: string }) {
       }
     };
   }, [selectedDocument.id, selectedDocument.author, user.email, docId]);
+
 
   // editor의 값을 state의 값과 동기화
   useEffect(() => {
@@ -110,34 +113,20 @@ export default function Editor({ docId }: { docId: string }) {
     }
   }, [documents, docId]);
 
-  // 에디터의 값을 DB에 저장하기 위해 서버로 요청 전송
-  // 디바운싱을 이용하여 과도한 요청 방지
-  const editorUpdatedRequest = useCallback(
-    debounce(async (email, latestDoc) => {
-      if (!latestDoc && email) return;
-      try {
-        await axios.put('/api/document',
-          {
-            email: email,
-            docId: latestDoc.id,
-            newDocName: latestDoc.title,
-            newDocContent: latestDoc.docContent,
-          });
-      } catch (error) {
-        console.error(error);
-      }
-    }, 1000), // 1초의 딜레이
-    []);
-
   // 에디터의 내용이 변경될 때마다 적용
   useEffect(() => {
-    const updateDocument = () => {
+    const updateDocument = async () => {
       if (editor && latestDocRef.current) {
-        const updatedDoc = {
+        const content = editor.getJSON();
+
+        const updatedDoc: DocumentProps = {
           ...latestDocRef.current,
           title: docTitle,
-          docContent: editor.getJSON(),
-          updatedAt: new Date().toISOString(),
+          docContent: content,
+          updatedAt: {
+            seconds: Math.floor(Date.now() / 1000),
+            nanoseconds: (Date.now() % 1000) * 1000000,
+          },
         };
 
         dispatch(updateDocuments({ docId: updatedDoc.id, updatedData: updatedDoc }));
@@ -145,7 +134,7 @@ export default function Editor({ docId }: { docId: string }) {
         setLastUpdatedTime(formatTimeDiff(updatedDoc.updatedAt));
 
         if (updatedDoc && user.email) {
-          editorUpdatedRequest(user.email, updatedDoc);
+          uploadContent(user.email, updatedDoc);
         }
       }
     };
@@ -173,7 +162,7 @@ export default function Editor({ docId }: { docId: string }) {
       setLastUpdatedTime(formatTimeDiff(updatedDoc.updatedAt));
 
       if (updatedDoc && user.email) {
-        editorUpdatedRequest(user.email, updatedDoc);
+        uploadContent(user.email, updatedDoc);
       }
     }
   }
@@ -200,8 +189,8 @@ export default function Editor({ docId }: { docId: string }) {
           placeholder="제목을 입력해주세요"
           className="editor-title text-[40px] pl-5 pb-4 font-bold outline-none w-full"
           onKeyDown={(e) => {
-            // Enter 키를 눌렀을 때 editor로 포커스를 이동
-            if (e.key === 'Enter') {
+            // Enter 키를 누르거나 방향키 아래를 눌렀을 때 editor로 포커스를 이동
+            if (e.key === 'Enter' || e.key === 'ArrowDown') {
               editor.commands.focus();
             }
           }} />

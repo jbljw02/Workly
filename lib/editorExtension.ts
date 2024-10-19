@@ -17,13 +17,17 @@ import FileNode from './fileNode'
 import LinkNode from './linkNode'
 import FileHandler from '@tiptap-pro/extension-file-handler'
 import { v4 as uuidv4 } from 'uuid'
-import { Extension } from '@tiptap/react'
+import { Editor, Extension } from '@tiptap/react'
 import * as Y from 'yjs'
 import { TiptapCollabProvider } from '@hocuspocus/provider'
 import { setLinkTooltip } from '@/redux/features/linkSlice'
 import ImageNodeView from '@/components/editor/child/image/ImageNodeView'
 import { UserProps } from '@/redux/features/userSlice'
 import { AppDispatch } from '@/redux/store'
+import { SetResizableImageProps } from './ImageNode'
+import uploadImageToStorage from '@/utils/image/uploadImageToStorage'
+import uploadImage from '@/utils/uploadImage'
+import uploadFile from '@/utils/uploadFile'
 
 const doc = new Y.Doc()
 const room = `room.${new Date().getFullYear().toString().slice(-2)}${new Date().getMonth() + 1}${new Date().getDate()}`
@@ -79,35 +83,20 @@ const editorExtensions = (dispatch: AppDispatch, user: UserProps) => [
     }),
     FileNode,
     FileHandler.configure({
-        onDrop: (currentEditor: any, files: File[], pos: number) => {
+        onDrop: (currentEditor: Editor, files: File[], pos: number) => {
             files.forEach(file => {
                 const fileReader = new FileReader()
-                fileReader.onload = () => {
+                fileReader.onload = async () => {
                     const src = fileReader.result as string
                     const blobUrl = URL.createObjectURL(file);
-                    const fileId = uuidv4(); // 파일의 고유 ID 생성
+
                     // 이미지 파일일 경우
                     if (file.type.startsWith('image/')) {
-                        currentEditor.commands.setResizableImage({
-                            src: src,
-                            alt: '',
-                            title: file.name,
-                            className: 'resizable-img',
-                            'data-keep-ratio': true,
-                        })
+                        uploadImage(currentEditor, file, src)
                     }
                     // 이미지가 아닌 일반 파일일 경우
                     else {
-                        currentEditor.chain().insertContentAt(pos, {
-                            type: 'file',
-                            attrs: {
-                                id: fileId,
-                                href: blobUrl,
-                                title: file.name,
-                                mimeType: file.type,
-                                size: file.size,
-                            },
-                        }).focus().run()
+                        uploadFile(currentEditor, file, blobUrl, pos)
                     }
                 }
                 fileReader.readAsDataURL(file)

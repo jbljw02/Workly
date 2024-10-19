@@ -1,6 +1,9 @@
-export default function formatTimeDiff(updatedAt: string) {
+export default function formatTimeDiff(updatedAt: { seconds: number, nanoseconds: number }) {
     const now = new Date(); // 현재 시간
-    const updatedAtUtc = new Date(updatedAt); // updatedAt을 ISO 형식에서 UTC로 변환(로컬 시간 반영)
+
+    // 타임스탬프의 seconds와 nanoseconds를 밀리초로 변환하여 합침
+    const updatedAtMs = updatedAt.seconds * 1000 + updatedAt.nanoseconds / 1000000;
+    const updatedAtUtc = new Date(updatedAtMs); // 밀리초를 사용하여 Date 객체 생성
 
     const diffMs = now.getTime() - updatedAtUtc.getTime(); // 시간 차이를 밀리초로 계산
 

@@ -110,8 +110,9 @@ export async function PUT(req: NextRequest) {
 
         await updateDoc(docRef, updateData);
 
-        return NextResponse.json({ success: "문서 수정 성��" }, { status: 200 });
+        return NextResponse.json({ success: "문서 수정 성공" }, { status: 200 });
     } catch (error) {
+        console.error(error);
         return NextResponse.json({ error: "문서 수정 실패" }, { status: 500 });
     }
 }

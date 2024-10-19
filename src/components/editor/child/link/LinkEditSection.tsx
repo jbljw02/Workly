@@ -88,6 +88,7 @@ export default function LinkEditSection({ editor, isEditing, setIsEditing }: Lin
     }
 
     useClickOutside(sectionRef, () => setIsEditing(false));
+    
     return (
         <div
             ref={sectionRef}

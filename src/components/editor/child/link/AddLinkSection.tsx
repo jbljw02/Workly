@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { useClickOutside } from "@/components/hooks/useClickOutside";
 import { v4 as uuidv4 } from 'uuid';
 import { LinkAttributes } from "../../../../../lib/linkNode";
+import { useAppSelector } from "@/redux/hooks";
 
 export type SelectionPosition = {
     top: number;
@@ -15,6 +16,7 @@ export type AddLinkSectionProps = {
     editor: Editor;
     position: SelectionPosition;
     setAddingLink: React.Dispatch<React.SetStateAction<boolean>>;
+    isOpen: boolean;
 }
 
 type FolderItem = {
@@ -34,9 +36,11 @@ function FolderItem({ onClick, label }: FolderItem) {
     );
 }
 
-export default function AddLinkSection({ editor, position, setAddingLink }: AddLinkSectionProps) {
+export default function AddLinkSection({ editor, position, setAddingLink, isOpen }: AddLinkSectionProps) {
     const [link, setLink] = useState<string>('');
     const containerRef = useRef<HTMLDivElement>(null);
+
+    const folders = useAppSelector(state => state.folders);
 
     // 컴포넌트가 열리면 input으로 포커스하고 드래그된 텍스트를 표시
     useEffect(() => {
@@ -105,12 +109,14 @@ export default function AddLinkSection({ editor, position, setAddingLink }: AddL
             <div className="ml-1 mt-4 w-full text-[13px]">
                 <div className="mb-1 w-full font-bold">내 폴더</div>
                 <div className="w-full -ml-1">
-                    <FolderItem
-                        label="내 폴더" />
-                    <FolderItem
-                        label="미국 여행" />
-                    <FolderItem
-                        label="베트남 여행" />
+                    {
+                        folders.map(folder => (
+                            <FolderItem
+                                key={folder.id}
+                                label={folder.name}
+                                onClick={() => console.log('폴더 클릭')} />
+                        ))
+                    }
                 </div>
             </div>
         </div>
