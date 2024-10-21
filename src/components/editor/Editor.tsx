@@ -17,18 +17,29 @@ import { TiptapCollabProvider } from '@hocuspocus/provider'
 import MenuBar from './child/menuBar/MenuBar'
 import editorExtensions from '../../../lib/editorExtension'
 import useUploadContent from '../hooks/useUploadContent';
+import { WebrtcProvider } from 'y-webrtc'
+import { HocuspocusProvider } from '@hocuspocus/provider'
 
 const doc = new Y.Doc();
 const appId = process.env.NEXT_PUBLIC_TIPTAP_APP_ID;
+const room = `room.${new Date().getFullYear().toString().slice(-2)}${new Date().getMonth() + 1}${new Date().getDate()}`
+
+
 
 export default function Editor({ docId }: { docId: string }) {
   const dispatch = useAppDispatch();
   const user = useAppSelector(state => state.user);
   
+  const provider = new HocuspocusProvider({
+    url: 'ws://127.0.0.1:1234',
+    name: docId,
+    document: doc,
+  })
+
   const { uploadContent } = useUploadContent();
 
   const editor = useEditor({
-    extensions: editorExtensions(dispatch, user),
+    extensions: editorExtensions(dispatch, user, provider),
     editorProps: {
       attributes: {
         class: 'prose prose-sm sm:prose lg:prose-lg xl:prose-xl m-4 focus:outline-none',

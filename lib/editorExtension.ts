@@ -19,7 +19,7 @@ import FileHandler from '@tiptap-pro/extension-file-handler'
 import { v4 as uuidv4 } from 'uuid'
 import { Editor, Extension } from '@tiptap/react'
 import * as Y from 'yjs'
-import { TiptapCollabProvider } from '@hocuspocus/provider'
+import { HocuspocusProvider, TiptapCollabProvider } from '@hocuspocus/provider'
 import { setLinkTooltip } from '@/redux/features/linkSlice'
 import ImageNodeView from '@/components/editor/child/image/ImageNodeView'
 import { UserProps } from '@/redux/features/userSlice'
@@ -29,17 +29,11 @@ import uploadImageToStorage from '@/utils/image/uploadImageToStorage'
 import uploadImage from '@/utils/uploadImage'
 import uploadFile from '@/utils/uploadFile'
 
-const doc = new Y.Doc()
-const room = `room.${new Date().getFullYear().toString().slice(-2)}${new Date().getMonth() + 1}${new Date().getDate()}`
-const appId = process.env.NEXT_PUBLIC_TIPTAP_APP_ID;
-
-const provider = new TiptapCollabProvider({
-    appId: appId!,
-    name: room,
-    document: doc,
-})
-
-const editorExtensions = (dispatch: AppDispatch, user: UserProps) => [
+const editorExtensions = (dispatch: AppDispatch, user: UserProps, provider: HocuspocusProvider) => {
+    console.log('user', user)
+    console.log('provider', provider.document)
+  
+  return [
     StarterKit.configure({
         bulletList: {
             keepMarks: true,
@@ -112,15 +106,16 @@ const editorExtensions = (dispatch: AppDispatch, user: UserProps) => [
         showOnlyCurrent: false,
     }) as Extension,
     Collaboration.configure({
-        document: doc
+        document: provider.document,
     }),
     CollaborationCursor.configure({
         provider,
         user: {
-            name: user.displayName,
+            name: user.displayName || '익며',
             color: '#f783ac',
         },
     }),
-]
+  ]
+}
 
 export default editorExtensions;
