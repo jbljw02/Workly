@@ -54,25 +54,31 @@ export default function useEditorExtension({ docId }: { docId: string }) {
         onClose(data) {
             console.log('프로바이더가 닫힘', data)
         },
-        onAwarenessUpdate(data) {
-            console.log('현재 접속 중인 사용자:', Array.from(provider?.awareness?.getStates().values() || []));
-            setConnectedUsers(Array.from(provider?.awareness?.getStates().values() || []).map(user => user.user?.name || '알 수 없음'));
+        onAwarenessUpdate({ states }) {
+            const connectedUsers = Array.from(states.values())
+                .map(state => state.user?.name || '알 수 없음')
+            console.log('현재 접속 중인 사용자:', connectedUsers);
+            setConnectedUsers(connectedUsers);
         },
     }), [docId]);
 
     useEffect(() => {
         if (user.displayName && provider.awareness) {
-            console.log("유저: ", user.displayName)
-            provider.awareness.setLocalStateField('user', {
-                name: user.displayName,
-                color: '#f783ac',
-            });
-        }
-    }, [user, provider]);
+            const updateUserInfo = () => {
+                provider.awareness?.setLocalStateField('user', {
+                    name: user.displayName,
+                    color: '#f783ac',
+                });
+            };
 
-    // provider.on('awarenessChange', ({ states }) => {
-    //     console.log("states: ", Array.from(states.entries()))
-    // })
+            updateUserInfo(); // 초기 설정
+            provider.on('connect', updateUserInfo); // 재연결 시 업데이트
+
+            return () => {
+                provider.off('connect', updateUserInfo);
+            };
+        }
+    }, [user.displayName, provider]);
 
     const extensions = useMemo(() => [
         StarterKit.configure({
