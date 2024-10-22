@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@hocuspocus/provider": "^2.13.7",
+    "@hocuspocus/server": "^2.13.7",
     "@next/font": "^14.2.5",
     "@reduxjs/toolkit": "^2.2.7",
     "@svgr/webpack": "^8.1.0",

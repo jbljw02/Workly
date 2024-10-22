@@ -1,7 +1,7 @@
 'use client';
 
 import { useEditor, EditorContent, ReactNodeViewRenderer, JSONContent, Extension } from '@tiptap/react'
-import React, { CSSProperties, useCallback, useEffect, useRef, useState } from 'react'
+import React, { CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import 'tiptap-extension-resizable-image/styles.css';
 import '@/styles/editor.css';
@@ -19,34 +19,28 @@ import editorExtensions from '../../../lib/editorExtension'
 import useUploadContent from '../hooks/useUploadContent';
 import { WebrtcProvider } from 'y-webrtc'
 import { HocuspocusProvider } from '@hocuspocus/provider'
+import useEditorExtension from '../hooks/useEditorExtension';
 
 const doc = new Y.Doc();
 const appId = process.env.NEXT_PUBLIC_TIPTAP_APP_ID;
 const room = `room.${new Date().getFullYear().toString().slice(-2)}${new Date().getMonth() + 1}${new Date().getDate()}`
 
-
-
 export default function Editor({ docId }: { docId: string }) {
   const dispatch = useAppDispatch();
   const user = useAppSelector(state => state.user);
-  
-  const provider = new HocuspocusProvider({
-    url: 'ws://127.0.0.1:1234',
-    name: docId,
-    document: doc,
-  })
+
+  const editorExtension = useEditorExtension({ docId });
 
   const { uploadContent } = useUploadContent();
 
   const editor = useEditor({
-    extensions: editorExtensions(dispatch, user, provider),
+    extensions: editorExtension,
     editorProps: {
       attributes: {
         class: 'prose prose-sm sm:prose lg:prose-lg xl:prose-xl m-4 focus:outline-none',
       },
     },
   });
-
 
   const openColorPicker = useAppSelector(state => state.openColorPicker);
   const documents = useAppSelector(state => state.documents);
@@ -62,47 +56,6 @@ export default function Editor({ docId }: { docId: string }) {
   useEffect(() => {
     latestDocRef.current = selectedDocument;
   }, [selectedDocument]);
-
-  // 에디터 초기 마운트 시에 JWT 발급 및 접근 권한 여부 확인
-  useEffect(() => {
-    let provider: TiptapCollabProvider | null = null;
-
-    const tiptapCollabCheck = async () => {
-      try {
-        // Tiptap JWT 토큰 가져오기
-        if (user.email && selectedDocument.author && selectedDocument.id) {
-          const response = await axios.get('/api/auth/getCollabToken', {
-            params: {
-              userEmail: user.email,
-              authorEmail: selectedDocument.author.email,
-              docId: selectedDocument.id
-            }
-          });
-
-          const { tiptapToken } = response.data as { tiptapToken: string };
-
-          // Tiptap 협업 기능을 위한 프로바이더 설정
-          provider = new TiptapCollabProvider({
-            name: docId, // 문서의 고유 식별자
-            appId: appId!,
-            token: tiptapToken, // 사용자 인증을 위한 Tiptap JWT
-            document: doc, // 공유할 문서 객체
-          });
-
-        }
-      } catch (error) {
-        console.error('Tiptap 초기화 오류:', error);
-      }
-    }
-
-    tiptapCollabCheck();
-
-    return () => {
-      if (provider) {
-        provider.destroy();
-      }
-    };
-  }, [selectedDocument.id, selectedDocument.author, user.email, docId]);
 
 
   // editor의 값을 state의 값과 동기화
