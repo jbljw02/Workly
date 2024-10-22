@@ -1,5 +1,5 @@
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import * as Y from 'yjs'
 import { TiptapCollabProvider } from "@hocuspocus/provider";
 import StarterKit from '@tiptap/starter-kit'
@@ -33,6 +33,8 @@ export default function useEditorExtension({ docId }: { docId: string }) {
     const dispatch = useAppDispatch();
 
     const user = useAppSelector(state => state.user);
+    const [connectedUsers, setConnectedUsers] = useState<string[]>([]);
+    console.log("connectedUsers: ", connectedUsers)
 
     const provider = useMemo(() => new TiptapCollabProvider({
         appId: 'rm8veqko',
@@ -53,7 +55,8 @@ export default function useEditorExtension({ docId }: { docId: string }) {
             console.log('프로바이더가 닫힘', data)
         },
         onAwarenessUpdate(data) {
-            console.log('awareness 업데이트:', data)
+            console.log('현재 접속 중인 사용자:', Array.from(provider?.awareness?.getStates().values() || []));
+            setConnectedUsers(Array.from(provider?.awareness?.getStates().values() || []).map(user => user.user?.name || '알 수 없음'));
         },
     }), [docId]);
 
