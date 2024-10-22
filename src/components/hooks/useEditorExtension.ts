@@ -38,10 +38,19 @@ export default function useEditorExtension({ docId }: { docId: string }) {
         token: '',
         document: new Y.Doc(),
         onOpen() {
-            console.log('WebSocket 연결이 열렸습니다.')
+            console.log('WebSocket 연결 열림')
         },
         onConnect() {
-            console.log('서버에 연결되었습니다.')
+            console.log('서버에 연결됨')
+        },
+        onDisconnect(data) {
+            console.log('서버 연결이 끊김', data)
+        },
+        onClose(data) {
+            console.log('프로바이더가 닫힘', data)
+        },
+        onAwarenessUpdate(data) {
+            console.log('awareness 업데이트:', data)
         },
     }), [docId]);
 

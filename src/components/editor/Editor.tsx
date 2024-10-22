@@ -15,7 +15,6 @@ import axios from 'axios'
 import * as Y from 'yjs'
 import { TiptapCollabProvider } from '@hocuspocus/provider'
 import MenuBar from './child/menuBar/MenuBar'
-import editorExtensions from '../../../lib/editorExtension'
 import useUploadContent from '../hooks/useUploadContent';
 import { WebrtcProvider } from 'y-webrtc'
 import { HocuspocusProvider } from '@hocuspocus/provider'
