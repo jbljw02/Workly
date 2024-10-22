@@ -27,6 +27,8 @@ import FileNode from "../../../lib/fileNode";
 import { Editor } from "@tiptap/react";
 import '@/styles/editor.css'
 
+const ydoc = new Y.Doc()
+
 export default function useEditorExtension({ docId }: { docId: string }) {
     const dispatch = useAppDispatch();
 
@@ -36,7 +38,8 @@ export default function useEditorExtension({ docId }: { docId: string }) {
         appId: 'rm8veqko',
         name: docId,
         token: '',
-        document: new Y.Doc(),
+        document: ydoc,
+        baseUrl: process.env.NEXT_PUBLIC_WEBSOCKET_URL,
         onOpen() {
             console.log('WebSocket 연결 열림')
         },
@@ -64,9 +67,9 @@ export default function useEditorExtension({ docId }: { docId: string }) {
         }
     }, [user, provider]);
 
-    provider.on('awarenessChange', ({ states }) => {
-        console.log("states: ", Array.from(states.entries()))
-    })
+    // provider.on('awarenessChange', ({ states }) => {
+    //     console.log("states: ", Array.from(states.entries()))
+    // })
 
     const extensions = useMemo(() => [
         StarterKit.configure({
@@ -138,7 +141,7 @@ export default function useEditorExtension({ docId }: { docId: string }) {
             showOnlyCurrent: false,
         }),
         Collaboration.configure({
-            document: provider.document,
+            document: ydoc,
         }),
         CollaborationCursor.configure({
             provider,
