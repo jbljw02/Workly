@@ -1,4 +1,4 @@
-import ShareDocument from "@/components/shared/SharedDocument";
+import ShareDocument from "@/components/shared/SharedDocuments";
 
 export default function Page() {
     return (

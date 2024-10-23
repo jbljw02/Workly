@@ -1,5 +1,5 @@
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import * as Y from 'yjs'
 import { TiptapCollabProvider } from "@hocuspocus/provider";
 import StarterKit from '@tiptap/starter-kit'
@@ -27,20 +27,17 @@ import FileNode from "../../../lib/fileNode";
 import { Editor } from "@tiptap/react";
 import '@/styles/editor.css'
 
-const ydoc = new Y.Doc()
+const doc = new Y.Doc()
 
 export default function useEditorExtension({ docId }: { docId: string }) {
     const dispatch = useAppDispatch();
-
     const user = useAppSelector(state => state.user);
     const [connectedUsers, setConnectedUsers] = useState<string[]>([]);
-    console.log("connectedUsers: ", connectedUsers)
 
     const provider = useMemo(() => new TiptapCollabProvider({
         appId: 'rm8veqko',
         name: docId,
-        token: '',
-        document: ydoc,
+        document: doc,
         baseUrl: process.env.NEXT_PUBLIC_WEBSOCKET_URL,
         onOpen() {
             console.log('WebSocket 연결 열림')
@@ -62,23 +59,24 @@ export default function useEditorExtension({ docId }: { docId: string }) {
         },
     }), [docId]);
 
-    useEffect(() => {
-        if (user.displayName && provider.awareness) {
-            const updateUserInfo = () => {
-                provider.awareness?.setLocalStateField('user', {
-                    name: user.displayName,
-                    color: '#f783ac',
-                });
-            };
+    // useEffect(() => {
+    //     if (user.displayName && provider.awareness) {
+    //         provider.setAwarenessField('user', {
+    //             name: user.displayName,
+    //             color: '#' + Math.floor(Math.random() * 16777215).toString(16), // 랜덤 색상
+    //         })
+    //     }
+    // }, [user.displayName, provider]);
 
-            updateUserInfo(); // 초기 설정
-            provider.on('connect', updateUserInfo); // 재연결 시 업데이트
-
-            return () => {
-                provider.off('connect', updateUserInfo);
-            };
-        }
-    }, [user.displayName, provider]);
+    document.addEventListener('mousemove', (event) => {
+        // Share any information you like
+        provider.setAwarenessField('user', {
+            name: user.displayName,
+            color: '#ffcc00',
+            mouseX: event.clientX,
+            mouseY: event.clientY,
+        })
+    })
 
     const extensions = useMemo(() => [
         StarterKit.configure({
@@ -90,7 +88,6 @@ export default function useEditorExtension({ docId }: { docId: string }) {
                 keepMarks: true,
                 keepAttributes: true,
             },
-            history: false,
         }),
         Document,
         Underline,
@@ -149,14 +146,14 @@ export default function useEditorExtension({ docId }: { docId: string }) {
             },
             showOnlyCurrent: false,
         }),
-        Collaboration.configure({
-            document: ydoc,
+        Collaboration.extend().configure({
+            document: doc,
         }),
-        CollaborationCursor.configure({
-            provider,
+        CollaborationCursor.extend().configure({
+            provider: provider,
             user: {
                 name: user.displayName,
-                color: '#f783ac',
+                color: '#ffcc00',
             },
         }),
     ], [dispatch, user, provider]);
