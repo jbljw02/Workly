@@ -1,7 +1,7 @@
 'use client';
 
 import { useEditor, EditorContent, ReactNodeViewRenderer, JSONContent, Extension } from '@tiptap/react'
-import React, { CSSProperties, useCallback, useEffect, useRef, useState } from 'react'
+import React, { CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import 'tiptap-extension-resizable-image/styles.css';
 import '@/styles/editor.css';
@@ -15,17 +15,25 @@ import axios from 'axios'
 import * as Y from 'yjs'
 import { TiptapCollabProvider } from '@hocuspocus/provider'
 import MenuBar from './child/menuBar/MenuBar'
-import editorExtensions from '../../../lib/editorExtension'
+import useUploadContent from '../hooks/useUploadContent';
+import { WebrtcProvider } from 'y-webrtc'
+import { HocuspocusProvider } from '@hocuspocus/provider'
+import useEditorExtension from '../hooks/useEditorExtension';
 
 const doc = new Y.Doc();
 const appId = process.env.NEXT_PUBLIC_TIPTAP_APP_ID;
+const room = `room.${new Date().getFullYear().toString().slice(-2)}${new Date().getMonth() + 1}${new Date().getDate()}`
 
 export default function Editor({ docId }: { docId: string }) {
   const dispatch = useAppDispatch();
   const user = useAppSelector(state => state.user);
 
+  const editorExtension = useEditorExtension({ docId });
+
+  const { uploadContent } = useUploadContent();
+
   const editor = useEditor({
-    extensions: editorExtensions(dispatch, user),
+    extensions: editorExtension,
     editorProps: {
       attributes: {
         class: 'prose prose-sm sm:prose lg:prose-lg xl:prose-xl m-4 focus:outline-none',
@@ -48,48 +56,6 @@ export default function Editor({ docId }: { docId: string }) {
     latestDocRef.current = selectedDocument;
   }, [selectedDocument]);
 
-  // 에디터 초기 마운트 시에 JWT 발급 및 접근 권한 여부 확인
-  useEffect(() => {
-    let provider: TiptapCollabProvider | null = null;
-
-    const tiptapCollabCheck = async () => {
-      try {
-        // Tiptap JWT 토큰 가져오기
-        if (user.email && selectedDocument.author && selectedDocument.id) {
-          const response = await axios.get('/api/auth/getCollabToken', {
-            params: {
-              userEmail: user.email,
-              authorEmail: selectedDocument.author.email,
-              docId: selectedDocument.id
-            }
-          });
-
-          const { tiptapToken } = response.data as { tiptapToken: string };
-
-          // Tiptap 협업 기능을 위한 프로바이더 설정
-          provider = new TiptapCollabProvider({
-            name: docId, // 문서의 고유 식별자
-            appId: appId!,
-            token: tiptapToken, // 사용자 인증을 위한 Tiptap JWT
-            document: doc, // 공유할 문서 객체
-          });
-
-          console.log("토큰: ", tiptapToken);
-
-        }
-      } catch (error) {
-        console.error('Tiptap 초기화 오류:', error);
-      }
-    }
-
-    tiptapCollabCheck();
-
-    return () => {
-      if (provider) {
-        provider.destroy();
-      }
-    };
-  }, [selectedDocument.id, selectedDocument.author, user.email, docId]);
 
   // editor의 값을 state의 값과 동기화
   useEffect(() => {
@@ -110,34 +76,20 @@ export default function Editor({ docId }: { docId: string }) {
     }
   }, [documents, docId]);
 
-  // 에디터의 값을 DB에 저장하기 위해 서버로 요청 전송
-  // 디바운싱을 이용하여 과도한 요청 방지
-  const editorUpdatedRequest = useCallback(
-    debounce(async (email, latestDoc) => {
-      if (!latestDoc && email) return;
-      try {
-        await axios.put('/api/document',
-          {
-            email: email,
-            docId: latestDoc.id,
-            newDocName: latestDoc.title,
-            newDocContent: latestDoc.docContent,
-          });
-      } catch (error) {
-        console.error(error);
-      }
-    }, 1000), // 1초의 딜레이
-    []);
-
   // 에디터의 내용이 변경될 때마다 적용
   useEffect(() => {
-    const updateDocument = () => {
+    const updateDocument = async () => {
       if (editor && latestDocRef.current) {
-        const updatedDoc = {
+        const content = editor.getJSON();
+
+        const updatedDoc: DocumentProps = {
           ...latestDocRef.current,
           title: docTitle,
-          docContent: editor.getJSON(),
-          updatedAt: new Date().toISOString(),
+          docContent: content,
+          updatedAt: {
+            seconds: Math.floor(Date.now() / 1000),
+            nanoseconds: (Date.now() % 1000) * 1000000,
+          },
         };
 
         dispatch(updateDocuments({ docId: updatedDoc.id, updatedData: updatedDoc }));
@@ -145,7 +97,7 @@ export default function Editor({ docId }: { docId: string }) {
         setLastUpdatedTime(formatTimeDiff(updatedDoc.updatedAt));
 
         if (updatedDoc && user.email) {
-          editorUpdatedRequest(user.email, updatedDoc);
+          uploadContent(user.email, updatedDoc);
         }
       }
     };
@@ -173,7 +125,7 @@ export default function Editor({ docId }: { docId: string }) {
       setLastUpdatedTime(formatTimeDiff(updatedDoc.updatedAt));
 
       if (updatedDoc && user.email) {
-        editorUpdatedRequest(user.email, updatedDoc);
+        uploadContent(user.email, updatedDoc);
       }
     }
   }
@@ -200,8 +152,8 @@ export default function Editor({ docId }: { docId: string }) {
           placeholder="제목을 입력해주세요"
           className="editor-title text-[40px] pl-5 pb-4 font-bold outline-none w-full"
           onKeyDown={(e) => {
-            // Enter 키를 눌렀을 때 editor로 포커스를 이동
-            if (e.key === 'Enter') {
+            // Enter 키를 누르거나 방향키 아래를 눌렀을 때 editor로 포커스를 이동
+            if (e.key === 'Enter' || e.key === 'ArrowDown') {
               editor.commands.focus();
             }
           }} />

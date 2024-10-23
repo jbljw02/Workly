@@ -11,7 +11,8 @@
     "vercel-build": "npm config set @tiptap-pro:registry https://registry.tiptap.dev/ && npm config set //registry.tiptap.dev/:_authToken $TIPTAP_PRO_TOKEN && npm install && npm run build"
   },
   "dependencies": {
-    "@hocuspocus/provider": "^2.13.6",
+    "@hocuspocus/provider": "^2.13.7",
+    "@hocuspocus/server": "^2.13.7",
     "@next/font": "^14.2.5",
     "@reduxjs/toolkit": "^2.2.7",
     "@svgr/webpack": "^8.1.0",
@@ -74,7 +75,7 @@
     "y-prosemirror": "^1.2.12",
     "y-protocols": "^1.0.6",
     "y-webrtc": "^10.3.0",
-    "yjs": "^13.6.19"
+    "yjs": "^13.6.20"
   },
   "devDependencies": {
     "@types/axios": "^0.9.36",

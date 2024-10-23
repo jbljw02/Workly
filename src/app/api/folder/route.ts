@@ -50,8 +50,6 @@ export async function GET(req: NextRequest) {
 
         const folders = querySnapshot.docs.map(doc => doc.data());
 
-        console.log("folders: ", folders);
-
         return NextResponse.json(folders, { status: 200 });
     } catch (error) {
         console.log("error: ", error);

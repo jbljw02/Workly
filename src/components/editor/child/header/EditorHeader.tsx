@@ -63,7 +63,6 @@ export default function EditorHeader({
     const [isMoving, setIsMoving] = useState(false); // 문서가 이동중인지
     const [isShareModal, setIsShareModal] = useState(false); // 문서가 공유됐는지
 
-
     // 에디터 내용을 PDF로 변환하고 다운로드하는 함수
     const downloadPDF = async () => {
         try {

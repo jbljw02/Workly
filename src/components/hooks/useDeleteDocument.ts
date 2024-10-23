@@ -4,7 +4,7 @@ import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { deleteDocuments, DocumentProps, setDocuments } from '@/redux/features/documentSlice';
 import { showCompleteAlert, showWarningAlert } from '@/redux/features/alertSlice';
 
-const useDeleteDocument = () => {
+export default function useDeleteDocument() {
     const dispatch = useAppDispatch();
     const router = useRouter();
     const user = useAppSelector(state => state.user);
@@ -44,5 +44,3 @@ const useDeleteDocument = () => {
 
     return deleteDoc;
 }
-
-export default useDeleteDocument;

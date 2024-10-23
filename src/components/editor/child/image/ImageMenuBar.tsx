@@ -13,6 +13,8 @@ import { ResizableImageNodeViewRendererProps } from "tiptap-extension-resizable-
 import FileFullModal from "@/components/modal/FileFullModal";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { setOpenFullModal } from "@/redux/features/editorImageSlice";
+import { showWarningAlert } from "@/redux/features/alertSlice";
+import { deleteObject, getStorage, ref } from "firebase/storage";
 
 type ImageMenuBarProps = {
     nodeViewRef: RefObject<HTMLDivElement>;
@@ -22,7 +24,6 @@ type ImageMenuBarProps = {
 
 export default function ImageMenuBar({ nodeViewRef, cropStart, resizableImgProps }: ImageMenuBarProps) {
     const dispatch = useAppDispatch();
-
     const editor = resizableImgProps.editor;
 
     const openFullModal = useAppSelector(state => state.openFullModal);
@@ -36,8 +37,23 @@ export default function ImageMenuBar({ nodeViewRef, cropStart, resizableImgProps
         }
     };
 
-    const deleteImage = () => {
-        editor.chain().focus().deleteSelection().run();
+    const deleteImage = async () => {
+        const imageNode = resizableImgProps.node;
+        const imageId = imageNode.attrs.id;
+
+        try {
+            // 스토리지 내부 이미지 삭제
+            const storage = getStorage();
+            const imageRef = ref(storage, `images/${imageId}`);
+
+            await deleteObject(imageRef);
+
+            // 에디터에서 이미지 삭제
+            editor.chain().focus().deleteSelection().run();
+        } catch (error) {
+            console.error(error);
+            dispatch(showWarningAlert('이미지 삭제에 실패했습니다.'));
+        }
     }
 
     return (
@@ -104,11 +120,6 @@ export default function ImageMenuBar({ nodeViewRef, cropStart, resizableImgProps
                             }} />
                     </FileFullModal>
                 }
-                <HoverTooltip label='설명 추가'>
-                    <ToolbarButton
-                        Icon={CaptionIcon}
-                        iconWidth={25} />
-                </HoverTooltip>
             </div>
         </div>
     )

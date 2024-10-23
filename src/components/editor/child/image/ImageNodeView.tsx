@@ -8,6 +8,9 @@ import ImageCropper from './ImageCropper';
 import ImageCropBar from './ImageCropBar';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { setCrop, setImageDimension } from '@/redux/features/editorImageSlice';
+import uploadImage from '@/utils/image/uploadImageToStorage';
+import cropImage from '@/utils/image/cropImage';
+import { showWarningAlert } from '@/redux/features/alertSlice';
 
 const NodeView = (resizableImgProps: ResizableImageNodeViewRendererProps) => {
   const dispatch = useAppDispatch();
@@ -47,29 +50,54 @@ const NodeView = (resizableImgProps: ResizableImageNodeViewRendererProps) => {
 
       const ctx = canvas.getContext('2d');
       if (ctx) {
-        ctx.drawImage(
-          imgRef.current,
-          crop.x * scaleX,
-          crop.y * scaleY,
-          crop.width * scaleX,
-          crop.height * scaleY,
-          0,
-          0,
-          canvas.width,
-          canvas.height,
-        );
-        const base64Image = canvas.toDataURL('image/jpeg', 1.0);
-        editor.chain().focus().deleteSelection().run();
-        editor.commands.setResizableImage({
-          src: base64Image,
-          alt: '',
-          title: '',
-          width: crop.width,
-          height: crop.height,
-          className: 'resizable-img',
-          'data-keep-ratio': true,
-        });
-        setCropMode(false);
+        const img = new Image();
+        img.crossOrigin = "anonymous"; // 파이어베이스 스토리에 저장하기 위해 cors 설정
+
+        img.onload = async () => {
+          ctx.drawImage(
+            img,
+            crop.x * scaleX,
+            crop.y * scaleY,
+            crop.width * scaleX,
+            crop.height * scaleY,
+            0,
+            0,
+            canvas.width,
+            canvas.height,
+          );
+          const croppedImage = canvas.toDataURL('image/jpeg', 1.0);
+
+          // editor 내부에서 이미지 자르기 적용
+          editor.chain().focus().deleteSelection().run();
+          editor.commands.setResizableImage({
+            src: croppedImage,
+            alt: '',
+            title: '',
+            width: crop.width,
+            height: crop.height,
+            className: 'resizable-img',
+            'data-keep-ratio': true,
+          });
+
+          try {
+            await cropImage({
+              id: resizableImgProps.node.attrs.id,
+              src: croppedImage,
+              alt: resizableImgProps.node.attrs.alt || '',
+              title: resizableImgProps.node.attrs.title || '',
+              width: String(crop.width),
+              height: String(crop.height),
+              className: 'resizable-img',
+              'data-keep-ratio': true,
+              textAlign: resizableImgProps.node.attrs.textAlign,
+            });
+          } catch (error) {
+            dispatch(showWarningAlert('이미지를 자르지 못했습니다.'));
+          }
+
+          setCropMode(false);
+        };
+        img.src = imgRef.current.src;
       }
     }
   };
@@ -124,11 +152,32 @@ const NodeView = (resizableImgProps: ResizableImageNodeViewRendererProps) => {
     }
   }, []);
 
+  // 이미지의 크기가 변경되면 스토리지에 업데이트
+  useEffect(() => {
+    if (resizableImgProps.node.attrs.width &&
+      resizableImgProps.node.attrs.height &&
+      resizableImgProps.node.attrs.src &&
+      resizableImgProps.node.attrs.title &&
+      resizableImgProps.node.attrs.className) {
+      uploadImage({
+        id: resizableImgProps.node.attrs.id,
+        src: resizableImgProps.node.attrs.src,
+        alt: resizableImgProps.node.attrs.alt || '',
+        title: resizableImgProps.node.attrs.title,
+        width: String(resizableImgProps.node.attrs.width),
+        height: String(resizableImgProps.node.attrs.height),
+        className: resizableImgProps.node.attrs.className,
+        'data-keep-ratio': true,
+        textAlign: resizableImgProps.node.attrs.textAlign,
+      });
+    }
+  }, [resizableImgProps.node.attrs.width, resizableImgProps.node.attrs.height]);
+
   return (
     <NodeViewWrapper
       ref={nodeViewRef}
       as="figure"
-      className="relative image-component flex"
+      className="relative image-component"
       data-drag-handle
       style={{ justifyContent: alignment }}
       draggable={true}>
@@ -140,7 +189,6 @@ const NodeView = (resizableImgProps: ResizableImageNodeViewRendererProps) => {
               resizableImgProps={resizableImgProps} />
           ) :
             (
-
               <div
                 onClick={() => setShowMenu(true)}
                 className="flex cursor-pointer">
@@ -169,6 +217,17 @@ const NodeView = (resizableImgProps: ResizableImageNodeViewRendererProps) => {
 };
 
 const ImageNodeView = ResizableImage.extend({
+  addAttributes() {
+    return {
+      ...this.parent?.(),
+      id: {
+        default: null,
+      },
+      textAlign: {
+        default: 'left',
+      },
+    };
+  },
   addNodeView() {
     return ReactNodeViewRenderer(NodeView as React.ComponentType<any>);
   },
