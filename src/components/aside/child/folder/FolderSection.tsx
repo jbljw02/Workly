@@ -1,17 +1,14 @@
 import SidebarItem from "../SidebarItem";
 import FolderIcon from '../../../../../public/svgs/folder.svg';
 import PlusIcon from '../../../../../public/svgs/add-folder.svg';
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import AddInputModal from "@/components/modal/AddInputModal";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { addFolders, deleteFolders, Folder, setFolders } from "@/redux/features/folderSlice";
-import { v4 as uuidv4 } from 'uuid';
-import axios from 'axios';
 import FolderItem from "./FolderItem";
 import getUserFolder from "@/components/hooks/getUserFolder";
-import DocumentSection from "./DocumentSection";
 import getUserDocument from "@/components/hooks/getUserDocument";
 import { AppDispatch } from "@/redux/store";
+import useAddFolder from "@/components/hooks/useAddFolder";
 
 type FolderSectionProps = {
     isCollapsed: boolean;
@@ -27,54 +24,10 @@ export default function FolderSection({ isCollapsed }: FolderSectionProps) {
         msg: '',
     });
 
+    const addNewFolder = useAddFolder();
+
     const user = useAppSelector(state => state.user);
     const folders = useAppSelector(state => state.folders);
-
-    // 폴더 추가
-    const addNewFolder = async () => {
-        const folderNameDuplicated = folders.find((folder: Folder) => folder.name === newFolderTitle);
-
-        if (folderNameDuplicated) {
-            setIsFolderInvalidInfo(({
-                msg: '이미 존재하는 폴더명입니다.',
-                isInvalid: true,
-            }));
-
-            return true;
-        }
-
-        const addedFolder: Folder = {
-            id: uuidv4(),
-            name: newFolderTitle,
-            documentIds: [],
-            author: user,
-            collaborators: [],
-            createdAt: '',
-            updatedAt: '',
-        }
-
-        try {
-            // 폴더 추가 요청
-            await axios.post('/api/folder',
-                { folder: addedFolder });
-
-            dispatch(addFolders(addedFolder));
-            setIsFolderInvalidInfo({
-                msg: '',
-                isInvalid: false,
-            });
-
-            return false;
-        } catch (error) {
-            console.error("폴더 추가 실패: ", error);
-            setIsFolderInvalidInfo(({
-                msg: '폴더 추가에 실패했습니다. 잠시 후 다시 시도해주세요.',
-                isInvalid: true,
-            }));
-
-            return true;
-        }
-    }
 
     const getUserData = useCallback(async (email: string, dispatch: AppDispatch) => {
         if (email) {
@@ -116,7 +69,7 @@ export default function FolderSection({ isCollapsed }: FolderSectionProps) {
                     title='새 폴더 만들기'
                     value={newFolderTitle}
                     setValue={setNewFolderTitle}
-                    submitFunction={addNewFolder}
+                    submitFunction={() => addNewFolder(newFolderTitle, setIsFolderInvalidInfo)}
                     isInvalidInfo={isFolderInvalidInfo}
                     setIsInvalidInfo={setIsFolderInvalidInfo}
                     placeholder="새 폴더의 이름을 입력해주세요" />

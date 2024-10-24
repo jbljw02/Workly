@@ -1,15 +1,52 @@
 'use client';
 
-import { useRouter } from "next/navigation";
+import { useState } from "react";
 import CommonButton from "../button/CommonButton";
+import AddInputModal from "../modal/AddInputModal";
+import useAddDocument from "../hooks/useAddDocument";
+import useAddFolder from "../hooks/useAddFolder";
+import { useAppSelector } from "@/redux/hooks";
+import useCopyDocument from "../hooks/useCopyDocument";
+import { useCopyURL } from "../hooks/useCopyURL";
+import useDownloadPDF from "../hooks/useDownloadPDF";
 
 type DocumentHeaderProps = {
     title: string;
     description: string;
 }
 
+type ModalType = 'document' | 'folder' | null;
+
 export default function DocumentHeader({ title, description }: DocumentHeaderProps) {
-    const router = useRouter();
+    const folders = useAppSelector(state => state.folders);
+
+    const addDocToFolder = useAddDocument();
+    const addNewFolder = useAddFolder();
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [modalType, setModalType] = useState<ModalType>(null);
+    const [inputValue, setInputValue] = useState("");
+    const [isInvalidInfo, setIsInvalidInfo] = useState({
+        isInvalid: false,
+        msg: ''
+    });
+
+    const modalProps = {
+        document: {
+            title: '폴더에 문서 추가하기',
+            placeholder: "추가할 문서의 이름을 입력해주세요"
+        },
+        folder: {
+            title: '새 폴더 추가하기',
+            placeholder: "추가할 폴더의 이름을 입력해주세요"
+        }
+    };
+
+    const openModal = (type: ModalType) => {
+        setModalType(type);
+        setIsModalOpen(true);
+    };
+
     return (
         <header className="flex flex-row justify-between items-start pt-10 px-12 pb-6 mb-5 gap-2">
             <div className="flex flex-col items-start gap-2">
@@ -27,7 +64,7 @@ export default function DocumentHeader({ title, description }: DocumentHeaderPro
                         hover: 'hover:bg-gray-100'
                     }}
                     label="새 문서"
-                    onClick={() => console.log('문의 남기기')} />
+                    onClick={() => openModal('document')} />
                 <CommonButton
                     style={{
                         px: 'px-4',
@@ -38,7 +75,23 @@ export default function DocumentHeader({ title, description }: DocumentHeaderPro
                         hover: 'hover:bg-zinc-800'
                     }}
                     label="새 폴더"
-                    onClick={() => router.push('/editor')} />
+                    onClick={() => openModal('folder')} />
+                {
+                    modalType && (
+                        <AddInputModal
+                            isModalOpen={isModalOpen}
+                            setIsModalOpen={setIsModalOpen}
+                            title={modalProps[modalType].title}
+                            value={inputValue}
+                            setValue={setInputValue}
+                            submitFunction={modalType === 'document' ?
+                                () => addDocToFolder(inputValue, folders[0], setIsInvalidInfo) :
+                                () => addNewFolder(inputValue, setIsInvalidInfo)}
+                            isInvalidInfo={isInvalidInfo}
+                            setIsInvalidInfo={setIsInvalidInfo}
+                            placeholder={modalProps[modalType].placeholder} />
+                    )
+                }
             </div>
         </header>
     )

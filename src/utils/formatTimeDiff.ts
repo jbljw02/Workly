@@ -1,4 +1,4 @@
-export default function formatTimeDiff(updatedAt: { seconds: number, nanoseconds: number }) {
+const formatTimeDiff = (updatedAt: { seconds: number, nanoseconds: number }) => {
     const now = new Date(); // 현재 시간
 
     // 타임스탬프의 seconds와 nanoseconds를 밀리초로 변환하여 합침
@@ -25,4 +25,6 @@ export default function formatTimeDiff(updatedAt: { seconds: number, nanoseconds
     else {
         return `${diffDays}일 전 편집`;
     }
-}
+};
+
+export default formatTimeDiff;

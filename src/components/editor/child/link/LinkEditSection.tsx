@@ -9,8 +9,8 @@ import SaveIcon from '../../../../../public/svgs/editor/save.svg'
 import DeleteIcon from '../../../../../public/svgs/trash.svg'
 import deleteLink from "@/components/hooks/deleteLink";
 import { AppDispatch } from "@/redux/store";
-import IconButton from "@/components/button/IconButton";
 import LinkInput from "@/components/input/LinkInput";
+import LabelButton from "@/components/button/LabelButton";
 
 export default function LinkEditSection({ editor, isEditing, setIsEditing }: LinkSectionProps) {
     const dispatch = useAppDispatch();
@@ -88,7 +88,7 @@ export default function LinkEditSection({ editor, isEditing, setIsEditing }: Lin
     }
 
     useClickOutside(sectionRef, () => setIsEditing(false));
-    
+
     return (
         <div
             ref={sectionRef}
@@ -118,14 +118,16 @@ export default function LinkEditSection({ editor, isEditing, setIsEditing }: Lin
                 </div>
             </div>
             <div className="flex flex-row items-center w-full justify-end text-[13px] mt-4">
-                <IconButton
+                <LabelButton
                     onClick={() => editLink(editor, linkTooltip)}
-                    icon={<SaveIcon width="15" />}
+                    Icon={SaveIcon}
+                    iconWidth={15}
                     hover="hover:bg-gray-100"
                     label="저장" />
-                <IconButton
+                <LabelButton
                     onClick={() => deleteLinkInfo(editor, linkTooltip, dispatch)}
-                    icon={<DeleteIcon width="14" />}
+                    Icon={DeleteIcon}
+                    iconWidth={14}
                     hover="hover:bg-gray-100"
                     label="삭제" />
             </div>

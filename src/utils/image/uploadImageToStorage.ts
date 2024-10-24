@@ -2,7 +2,7 @@ import { getStorage, ref, getMetadata, updateMetadata, uploadString, getDownload
 import { ImageAttrs } from '../../../lib/ImageNode';
 
 // 단일 이미지 업로드
-export default async function uploadImageToStorage(imageAttrs: ImageAttrs) {
+const uploadImageToStorage = async (imageAttrs: ImageAttrs) => {
     const storage = getStorage();
 
     const imageRef = ref(storage, `images/${imageAttrs.id}`);
@@ -48,3 +48,5 @@ export default async function uploadImageToStorage(imageAttrs: ImageAttrs) {
         textAlign: imageAttrs.textAlign,
     }
 }
+
+export default uploadImageToStorage;

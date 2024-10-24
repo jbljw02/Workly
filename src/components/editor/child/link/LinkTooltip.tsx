@@ -5,7 +5,7 @@ import LinkEditSection from './LinkEditSection';
 import { SelectionPosition } from './AddLinkSection';
 import { useClickOutside } from '@/components/hooks/useClickOutside';
 import deleteLink from '@/components/hooks/deleteLink';
-import IconButton from '@/components/button/IconButton';
+import IconButton from '@/components/button/LabelButton';
 import LinkHoverSection from './LinkHoverSection';
 
 export default function LinkTooltip({ editor }: { editor: Editor }) {

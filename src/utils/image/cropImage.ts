@@ -2,7 +2,7 @@ import { getStorage, ref, getMetadata, updateMetadata, uploadString, getDownload
 import { ImageAttrs } from '../../../lib/ImageNode';
 
 // 이미지 자르기 후 업로드
-export default async function cropImage(imageAttrs: ImageAttrs) {
+const cropImage = async (imageAttrs: ImageAttrs) => {
     const storage = getStorage();
 
     const imageRef = ref(storage, `images/${imageAttrs.id}`);
@@ -20,3 +20,5 @@ export default async function cropImage(imageAttrs: ImageAttrs) {
     await uploadString(imageRef, imageAttrs.src, 'data_url');
     await updateMetadata(imageRef, { customMetadata: currentMetadata });
 }
+
+export default cropImage;

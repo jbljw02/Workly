@@ -7,15 +7,16 @@ import FolderIcon from '../../../public/svgs/folder.svg';
 import CloseIcon from '../../../public/svgs/close.svg';
 import { addDocumentToFolder, Folder, removeDocumentFromFolder } from "@/redux/features/folderSlice";
 import axios from 'axios';
-import { DocumentProps, setSelectedDocument, updateDocuments } from "@/redux/features/documentSlice";
+import { DocumentProps, updateDocuments } from "@/redux/features/documentSlice";
 import ModalHeader from "./ModalHeader";
 import InputLabelContainer from "./InputLabelContainer";
 import { showCompleteAlert, showWarningAlert } from "@/redux/features/alertSlice";
 
-export default function DocumentMoveModal({ isModalOpen, setIsModalOpen }: ModalProps) {
+export default function DocumentMoveModal({ isModalOpen, setIsModalOpen, selectedDoc }: WorkingDocModalProps) {
     const dispatch = useAppDispatch();
 
-    const selectedDocument = useAppSelector(state => state.selectedDocument);
+    if (!selectedDoc) return null;
+
     const folders = useAppSelector(state => state.folders);
     const user = useAppSelector(state => state.user);
 
@@ -44,44 +45,42 @@ export default function DocumentMoveModal({ isModalOpen, setIsModalOpen }: Modal
     }, [targetFolder, folders]);
 
     // 문서의 폴더를 이동
-    const moveDoc = async (folder: Folder) => {
+    const moveDoc = async (targetFolder: Folder) => {
         // 현재 폴더를 클릭하면 경고
-        if (folder.id === selectedDocument.folderId) {
-            setVibrateFolderId(folder.id); // 진동 효과를 적용할 폴더의 ID를 설정
+        if (targetFolder.id === selectedDoc.folderId) {
+            setVibrateFolderId(targetFolder.id); // 진동 효과를 적용할 폴더의 ID를 설정
             setTimeout(() => {
                 setVibrateFolderId(null);
             }, 1000);
         }
         else {
-            // 현재 옮길 문서의 부모 폴더
-            const parentFolder = folders.find(folder => folder.id === selectedDocument.folderId);
-
+            // 나머지 값은 유지하고, 폴더 이름과 ID만 변경
             const newDoc: DocumentProps = {
-                ...selectedDocument,
-                folderId: folder.id,
+                ...selectedDoc,
+                folderName: targetFolder.name,
+                folderId: targetFolder.id,
             }
 
             try {
                 await axios.put('/api/document/move',
                     {
-                        email: user.email,
-                        folderId: folder.id,
-                        document: selectedDocument
+                        folderId: targetFolder.id,
+                        document: selectedDoc
                     });
 
                 // 전체 문서중에 변경할 문서의 폴더 이름을 변경
-                dispatch(updateDocuments({ docId: selectedDocument.id, ...newDoc }));
+                dispatch(updateDocuments({ docId: selectedDoc.id, ...newDoc }));
 
                 // 기존 폴더에서 문서 ID를 삭제하고, 새 폴더에 문서 ID를 추가
-                dispatch(removeDocumentFromFolder({ folderId: parentFolder?.id, docId: newDoc.id }));
-                dispatch(addDocumentToFolder({ folderId: folder.id, docId: newDoc.id }));
+                dispatch(removeDocumentFromFolder({ folderId: selectedDoc.folderId, docId: newDoc.id }));
+                dispatch(addDocumentToFolder({ folderId: targetFolder.id, docId: newDoc.id }));
 
                 // 문서 이동이 성공했다는 Alert를 띄우고 모달 닫기
-                dispatch(showCompleteAlert(`${selectedDocument.title}를 ${folder.name}로 옮겼습니다.`))
+                dispatch(showCompleteAlert(`${selectedDoc.title}를 ${targetFolder.name}로 옮겼습니다.`))
                 setIsModalOpen(false);
             } catch (error) {
                 console.error(error);
-                dispatch(showWarningAlert(`${selectedDocument.title}를 이동하는 데에 실패했습니다.`))
+                dispatch(showWarningAlert(`${selectedDoc.title}를 이동하는 데에 실패했습니다.`))
             }
         }
     }
@@ -113,7 +112,7 @@ export default function DocumentMoveModal({ isModalOpen, setIsModalOpen }: Modal
             }}>
             <div className='flex flex-col h-full'>
                 <ModalHeader
-                    label={<div className="font-normal text-[17px]"><b>{selectedDocument.title || '제목 없는 문서'}</b>를 어디로 옮길까요?</div>}
+                    label={<div className="font-normal text-[17px]"><b>{selectedDoc.title || '제목 없는 문서'}</b>를 어디로 옮길까요?</div>}
                     closeModal={closeModal} />
                 <InputLabelContainer
                     label="폴더"
@@ -140,7 +139,7 @@ export default function DocumentMoveModal({ isModalOpen, setIsModalOpen }: Modal
                                                 <div className={`text-[12px] pr-3 text-neutral-500 select-none
                                                     ${vibrateFolderId === folder.id ? 'vibrate text-red-500' : ''}`}>
                                                     {
-                                                        selectedDocument.folderId === folder.id && '현재 폴더'
+                                                        selectedDoc.folderId === folder.id && '현재 폴더'
                                                     }
                                                 </div>
                                             </div>

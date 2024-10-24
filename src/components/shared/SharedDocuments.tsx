@@ -23,7 +23,9 @@ export default function SharedDocuments() {
             {/* 목록의 헤더 */}
             <DocumentListHeader />
             {/* 공유중인 문서 목록 나열 */}
-            <DocumentList documents={sharedDocuments} />
+            <DocumentList 
+            documents={sharedDocuments}
+            isShared />
         </div>
     )
 }

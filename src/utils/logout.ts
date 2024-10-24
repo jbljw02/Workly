@@ -3,7 +3,7 @@ import { signOut } from "firebase/auth";
 import { auth } from "../../firebase/firebasedb";
 import { useRouter } from "next/navigation";
 
-export default async function logout(router: ReturnType<typeof useRouter>) {
+const logout = async (router: ReturnType<typeof useRouter>) => {
     try {
         await signOut(auth);
         await axios.post('/api/auth/logout', null, {
@@ -17,3 +17,5 @@ export default async function logout(router: ReturnType<typeof useRouter>) {
         throw error;
     }
 }
+
+export default logout;

@@ -10,19 +10,9 @@ import DragHandle from '@tiptap-pro/extension-drag-handle-react'
 import MenuIcon from '../../../public/svgs/editor/menu-vertical.svg'
 import { DocumentProps, renameDocuments, setSelectedDocument, updateDocuments } from '@/redux/features/documentSlice'
 import formatTimeDiff from '@/utils/formatTimeDiff'
-import { debounce } from "lodash";
-import axios from 'axios'
-import * as Y from 'yjs'
-import { TiptapCollabProvider } from '@hocuspocus/provider'
 import MenuBar from './child/menuBar/MenuBar'
 import useUploadContent from '../hooks/useUploadContent';
-import { WebrtcProvider } from 'y-webrtc'
-import { HocuspocusProvider } from '@hocuspocus/provider'
 import useEditorExtension from '../hooks/useEditorExtension';
-
-const doc = new Y.Doc();
-const appId = process.env.NEXT_PUBLIC_TIPTAP_APP_ID;
-const room = `room.${new Date().getFullYear().toString().slice(-2)}${new Date().getMonth() + 1}${new Date().getDate()}`
 
 export default function Editor({ docId }: { docId: string }) {
   const dispatch = useAppDispatch();
@@ -30,7 +20,7 @@ export default function Editor({ docId }: { docId: string }) {
 
   const editorExtension = useEditorExtension({ docId });
 
-  const { uploadContent } = useUploadContent();
+  const uploadContent = useUploadContent();
 
   const editor = useEditor({
     extensions: editorExtension,

@@ -17,6 +17,7 @@ import AddInputModal from '@/components/modal/AddInputModal';
 import { v4 as uuidv4 } from 'uuid';
 import HoverTooltip from '@/components/editor/child/menuBar/HoverTooltip';
 import { showCompleteAlert, showWarningAlert } from '@/redux/features/alertSlice';
+import useAddDocument from '@/components/hooks/useAddDocument';
 
 type FolderItemProps = {
     folder: Folder;
@@ -27,7 +28,6 @@ export default function FolderItem({ folder }: FolderItemProps) {
 
     const user = useAppSelector(state => state.user);
     const folders = useAppSelector(state => state.folders);
-    const documents = useAppSelector(state => state.documents);
 
     const [isHovered, setIsHovered] = useState(false);
     const [isEditing, setIsEditing] = useState(false); // 폴더명 수정중
@@ -41,6 +41,8 @@ export default function FolderItem({ folder }: FolderItemProps) {
         isInvalid: false,
         msg: '문서 추가에 실패했습니다. 잠시 후 다시 시도해주세요.',
     });
+
+    const addDocToFolder = useAddDocument();
 
     // 폴더명 수정 요청
     const completeEdit = async (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -86,55 +88,12 @@ export default function FolderItem({ folder }: FolderItemProps) {
                 }
             });
 
-            dispatch(showCompleteAlert(`${folder.name}의 삭제를 완료했습니다.`));
+            dispatch(showCompleteAlert(`${folder.name}를 성공적으로 삭제했습니다.`));
         } catch (error) {
             console.error(error);
             // 삭제에 실패하면 롤백
             dispatch(setFolders(prevFolders));
             dispatch(showWarningAlert(`${folder.name}의 삭제에 실패했습니다.`));
-        }
-    }
-
-    // 선택된 폴더에 문서 추가
-    const addDocToFolder = async () => {
-        const newDocument: DocumentProps = {
-            id: uuidv4(),
-            title: docTitle,
-            docContent: null,
-            createdAt: { seconds: 0, nanoseconds: 0 },
-            updatedAt: { seconds: 0, nanoseconds: 0 },
-            author: user,
-            folderId: folder.id,
-            folderName: folder.name,
-            collaborators: [],
-        }
-
-        try {
-            await axios.post('/api/document',
-                {
-                    folderId: folder.id,
-                    document: newDocument
-                });
-
-            // 전체 문서 배열에 추가
-            dispatch(addDocuments(newDocument));
-            // 문서 ID를 기본 폴더에 추가
-            dispatch(addDocumentToFolder({ folderId: folder.id, docId: newDocument.id }));
-
-            setIsDocInvalidInfo(({
-                msg: '',
-                isInvalid: false,
-            }));
-
-            return false;
-        } catch (error) {
-            console.error(error);
-            setIsDocInvalidInfo(({
-                msg: '문서 추가에 실패했습니다. 잠시 후 다시 시도해주세요.',
-                isInvalid: true,
-            }));
-
-            return true;
         }
     }
 
@@ -223,7 +182,7 @@ export default function FolderItem({ folder }: FolderItemProps) {
                 title='폴더에 문서 추가하기'
                 value={docTitle}
                 setValue={setDocTitle}
-                submitFunction={addDocToFolder}
+                submitFunction={() => addDocToFolder(docTitle, folder, setIsDocInvalidInfo)}
                 isInvalidInfo={isDocInvalidInfo}
                 setIsInvalidInfo={setIsDocInvalidInfo}
                 placeholder="추가할 문서의 이름을 입력해주세요" />

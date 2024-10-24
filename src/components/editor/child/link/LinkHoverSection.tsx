@@ -1,4 +1,3 @@
-import IconButton from '@/components/button/IconButton';
 import deleteLink from '@/components/hooks/deleteLink';
 import InputControlSpan from '@/components/input/InputControlSpan';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
@@ -7,6 +6,8 @@ import WorldIcon from '../../../../../public/svgs/editor/world.svg';
 import EditIcon from '../../../../../public/svgs/editor/pencil-edit.svg';
 import DeleteIcon from '../../../../../public/svgs/trash.svg';
 import HoverTooltip from '../menuBar/HoverTooltip';
+import ToolbarButton from '../menuBar/ToolbarButton';
+import LabelButton from '@/components/button/LabelButton';
 
 export default function LinkHoverSection({ editor, setIsEditing }: LinkSectionProps) {
     const dispatch = useAppDispatch();
@@ -21,7 +22,7 @@ export default function LinkHoverSection({ editor, setIsEditing }: LinkSectionPr
             inputRef.current.style.width = `${spanRef.current.offsetWidth}px`;
         }
     }, [linkTooltip]);
-    
+
     return (
         <div className={`relative flex flex-row items-center mt-2 px-2 py-1.5 border border-neutral-300 bg-white rounded-md shadow-[0px_4px_10px_rgba(0,0,0,0.25)] transition-opacity ease-in-out duration-300
             ${linkTooltip.visible ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
@@ -39,18 +40,20 @@ export default function LinkHoverSection({ editor, setIsEditing }: LinkSectionPr
             </div>
             {/* 편집 및 삭제 아이콘 */}
             <div className='flex flex-row items-center justify-end ml-1'>
-                <IconButton
-                    onClick={() => setIsEditing(true)}
-                    icon={<HoverTooltip label="편집">
-                        <EditIcon width="12.5" />
-                    </HoverTooltip>}
-                    hover="hover:bg-gray-100"/>
-                <IconButton
-                    onClick={() => deleteLink(editor, linkTooltip, dispatch)}
-                    icon={<HoverTooltip label="삭제">
-                        <DeleteIcon width="15" />
-                    </HoverTooltip>}
-                    hover="hover:bg-gray-100" />
+                <HoverTooltip label="편집">
+                    <LabelButton
+                        onClick={() => setIsEditing(true)}
+                        Icon={EditIcon}
+                        iconWidth={12.5}
+                        hover="hover:bg-gray-100" />
+                </HoverTooltip>
+                <HoverTooltip label="삭제">
+                    <LabelButton
+                        onClick={() => deleteLink(editor, linkTooltip, dispatch)}
+                        Icon={DeleteIcon}
+                        iconWidth={15}
+                        hover="hover:bg-gray-100" />
+                </HoverTooltip>
             </div>
         </div>
     )

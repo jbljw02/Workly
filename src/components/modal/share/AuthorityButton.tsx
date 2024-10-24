@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import ArrowIcon from '../../../../public/svgs/down-arrow.svg';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
-import { Collaborator } from '@/redux/features/documentSlice';
+import { Collaborator, DocumentProps } from '@/redux/features/documentSlice';
 import AuthorityDropdown from './AuthorityDropdown';
 import { setSelectedCoworkers } from '@/redux/features/shareDocumentSlice';
 
@@ -11,11 +11,18 @@ export type AuthorityCategory = '전체 허용' | '쓰기 허용' | '읽기 허�
 type AuthorityButtonProps = {
     initialAuthority: AuthorityCategory;
     targetUser: Collaborator;
+    selectedDoc: DocumentProps;
     isClickEnabled?: boolean;
     isMember?: boolean;
 }
 
-export default function AuthorityButton({ initialAuthority, targetUser, isClickEnabled, isMember }: AuthorityButtonProps) {
+export default function AuthorityButton({
+    initialAuthority,
+    targetUser,
+    selectedDoc,
+    isClickEnabled,
+    isMember
+}: AuthorityButtonProps) {
     const buttonRef = useRef<HTMLDivElement>(null);
     const coworkerList = useAppSelector(state => state.coworkerList);
 
@@ -97,6 +104,7 @@ export default function AuthorityButton({ initialAuthority, targetUser, isClickE
                     <AuthorityDropdown
                         dropdownPosition={dropdownPosition}
                         setIsOpen={setIsOpen}
+                        selectedDoc={selectedDoc}
                         buttonRef={buttonRef}
                         targetUser={targetUser}
                         isMember={isMember}

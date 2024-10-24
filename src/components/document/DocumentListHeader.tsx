@@ -1,4 +1,4 @@
-import IconButton from "../button/IconButton";
+import LabelButton from "../button/LabelButton";
 import SortIcon from '../../../public/svgs/sort.svg'
 
 export default function DocumentListHeader() {
@@ -12,8 +12,9 @@ export default function DocumentListHeader() {
             </div>
             <div className="border-b text-left">
                 <div className="flex justify-end">
-                    <IconButton
-                        icon={<SortIcon width="23" />}
+                    <LabelButton
+                        Icon={SortIcon}
+                        iconWidth={23}
                         hover="hover:bg-gray-100"
                         onClick={() => console.log('정렬 버튼')} />
                 </div>

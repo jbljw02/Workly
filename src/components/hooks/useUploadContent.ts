@@ -34,5 +34,5 @@ export default function useUploadContent() {
         }
     }, [editorUpdatedRequest]);
 
-    return { uploadContent };
+    return uploadContent;
 }

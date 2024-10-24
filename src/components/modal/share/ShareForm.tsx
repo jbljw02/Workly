@@ -1,6 +1,6 @@
 import CommonInput from "@/components/input/CommonInput";
 import SubmitButton from "@/components/button/SubmitButton";
-import { updateDocuments, setSelectedDocument, Collaborator } from "@/redux/features/documentSlice";
+import { updateDocuments, setSelectedDocument, Collaborator, DocumentProps } from "@/redux/features/documentSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { useRef, useEffect, useMemo, useState } from "react";
 import CloseIcon from '../../../../public/svgs/close.svg';
@@ -9,13 +9,15 @@ import Image from "next/image";
 import { addCoworker, setSelectedCoworkers, setTargetSharingEmail } from "@/redux/features/shareDocumentSlice";
 import axios from "axios";
 import { showCompleteAlert, showWarningAlert } from "@/redux/features/alertSlice";
-import nProgress from "nprogress";
 
-export default function ShareForm() {
+type ShareFormProps = {
+    selectedDoc: DocumentProps;
+}
+
+export default function ShareForm({ selectedDoc }: ShareFormProps) {
     const dispatch = useAppDispatch();
     const inputRef = useRef<HTMLInputElement | null>(null);
 
-    const selectedDocument = useAppSelector(state => state.selectedDocument);
     const selectedCoworkers = useAppSelector(state => state.selectedCoworkers);
     const targetSharingEmail = useAppSelector(state => state.targetSharingEmail);
     const coworkerList = useAppSelector(state => state.coworkerList);
@@ -38,8 +40,8 @@ export default function ShareForm() {
 
             // 추가중인 협업자를 문서에 추가
             const newDoc = {
-                ...selectedDocument,
-                collaborators: [...selectedDocument.collaborators, ...selectedCoworkers],
+                ...selectedDoc,
+                collaborators: [...selectedDoc.collaborators, ...selectedCoworkers],
             }
 
             if (alreadyExistCoworkers.length > 0) {

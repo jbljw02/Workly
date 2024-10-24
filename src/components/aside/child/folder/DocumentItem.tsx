@@ -27,11 +27,11 @@ export default function DocumentItem({ document, onClick }: DocumentItemProps) {
     const documentId = pathParts[3]; // documentId는 3번째 인덱스
 
     const user = useAppSelector(state => state.user);
-    const documents = useAppSelector(state => state.documents);
 
     const [isEditing, setIsEditing] = useState(false);
     const [docTitle, setDocTitle] = useState(document.title);
 
+    // 문서명 수정
     const completeEdit = async (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter') {
             const prevDoc = document;

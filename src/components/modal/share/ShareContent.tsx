@@ -1,7 +1,7 @@
 import UserProfile from '@/components/aside/child/user/UserProfile';
 import SubmitButton from '@/components/button/SubmitButton';
 import CommonInput from '@/components/input/CommonInput';
-import { updateDocuments, setSelectedDocument, Collaborator } from '@/redux/features/documentSlice';
+import { updateDocuments, Collaborator } from '@/redux/features/documentSlice';
 import { setAllUsers, UserProps } from '@/redux/features/userSlice';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { useState, useCallback, useEffect, useMemo } from 'react';
@@ -11,12 +11,17 @@ import AuthorityButton, { AuthorityCategory } from './AuthorityButton';
 import ShareForm from './ShareForm';
 import { setCoworkerList, setSearchedCoworkers, setSelectedCoworkers, setTargetSharingEmail } from '@/redux/features/shareDocumentSlice';
 import { emailRegex } from '@/components/auth/SignUp';
+import { WorkingDocModalProps } from '@/types/workingDocModalProps';
+import { DocumentProps } from '@/redux/features/documentSlice';
 
-export default function ShareContent() {
+type ShareContentProps = {
+    selectedDoc: DocumentProps;
+}
+
+export default function ShareContent({ selectedDoc }: ShareContentProps) {
     const dispatch = useAppDispatch();
 
     const user = useAppSelector(state => state.user);
-    const selectedDocument = useAppSelector(state => state.selectedDocument);
     const allUsers = useAppSelector(state => state.allUsers); // 모든 사용자
     const coworkerList = useAppSelector(state => state.coworkerList); // 현재 문서의 협업자들
     const selectedCoworkers = useAppSelector(state => state.selectedCoworkers); // 선택된 협업자들
@@ -61,8 +66,8 @@ export default function ShareContent() {
     }, []);
 
     useEffect(() => {
-        getCoworkers(selectedDocument.author.email, selectedDocument.id);
-    }, [user.email, selectedDocument.id, getCoworkers]);
+        getCoworkers(selectedDoc.author.email, selectedDoc.id);
+    }, [user.email, selectedDoc.id, getCoworkers]);
 
     useEffect(() => {
         getAllUsers();
@@ -183,7 +188,7 @@ export default function ShareContent() {
     return (
         <div className="relative">
             {/* 사용자를 초대하는 작업을 처리하는 폼 */}
-            <ShareForm />
+            <ShareForm selectedDoc={selectedDoc} />
             {
                 // 사용자 배열의 값이 초기값이 아닐 때
                 searchedCoworkers.length > 0 && searchedCoworkers[0].email && (
@@ -206,7 +211,8 @@ export default function ShareContent() {
                                     <AuthorityButton
                                         targetUser={coworker}
                                         isClickEnabled={isDropdownEnabled}
-                                        initialAuthority={coworker.email === selectedDocument.author.email ? '관리자' : coworker.authority}
+                                        initialAuthority={coworker.email === selectedDoc.author.email ? '관리자' : coworker.authority}
+                                        selectedDoc={selectedDoc}
                                         isMember={coworkerList.some(user => user.email === coworker.email)} />
                                 </button>
                             ))
@@ -218,11 +224,12 @@ export default function ShareContent() {
                 <div className='text-sm font-semibold mb-4'>접근 권한이 있는 사용자</div>
                 <div className='flex flex-col gap-4 pb-4 min-h-[105px] max-h-[600px] overflow-y-scroll scrollbar-thin'>
                     <div className='flex flex-row items-center justify-between'>
-                        <UserProfile user={selectedDocument.author} />
+                        <UserProfile user={selectedDoc.author} />
                         <AuthorityButton
                             targetUser={{ ...user, authority: '관리자' }}
                             isClickEnabled={true}
-                            initialAuthority='관리자' />
+                            initialAuthority='관리자'
+                            selectedDoc={selectedDoc} />
                     </div>
                     {
                         coworkerList.map(coworker => (
@@ -234,7 +241,8 @@ export default function ShareContent() {
                                     targetUser={coworker}
                                     isClickEnabled={true}
                                     initialAuthority={coworker.authority}
-                                    isMember={true} />
+                                    isMember={true}
+                                    selectedDoc={selectedDoc} />
                             </div>
                         ))
                     }

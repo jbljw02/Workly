@@ -1,4 +1,4 @@
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import axios from 'axios';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { deleteDocuments, DocumentProps, setDocuments } from '@/redux/features/documentSlice';
@@ -10,8 +10,13 @@ export default function useDeleteDocument() {
     const user = useAppSelector(state => state.user);
     const documents = useAppSelector(state => state.documents);
 
+    const pathname = usePathname();
+    const pathParts = pathname.split('/');
+    const folderId = pathParts[2]; 
+    const documentId = pathParts[3];
+
     // 문서 삭제 요청
-    const deleteDoc = async (e: React.MouseEvent, document: DocumentProps, documentId: string) => {
+    const deleteDoc = async (e: React.MouseEvent, document: DocumentProps) => {
         e.stopPropagation();
         
         const prevDocs = [...documents];
@@ -27,7 +32,7 @@ export default function useDeleteDocument() {
                 }
             });
 
-            // 현재 페이지를 삭제했다면 라우팅
+            // 현재 페이지를 삭제했다면 홈으로 라우팅
             if (document.id === documentId) {
                 router.push('/editor/home');
             }

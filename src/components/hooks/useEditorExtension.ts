@@ -26,38 +26,110 @@ import LinkNode from "../../../lib/linkNode";
 import FileNode from "../../../lib/fileNode";
 import { Editor } from "@tiptap/react";
 import '@/styles/editor.css'
+import axios from "axios";
 
-const doc = new Y.Doc()
+const doc = new Y.Doc();
+const appId = process.env.NEXT_PUBLIC_TIPTAP_APP_ID;
+const wsUrl = process.env.NEXT_PUBLIC_WEBSOCKET_URL;
+// const room = `room.${new Date().getFullYear().toString().slice(-2)}${new Date().getMonth() + 1}${new Date().getDate()}`
 
 export default function useEditorExtension({ docId }: { docId: string }) {
     const dispatch = useAppDispatch();
     const user = useAppSelector(state => state.user);
     const [connectedUsers, setConnectedUsers] = useState<string[]>([]);
+    const selectedDocument = useAppSelector(state => state.selectedDocument);
+
+    const [token, setToken] = useState<string>('');
+
+    const tiptapCollabCheck = async () => {
+        try {
+            // Tiptap JWT 토큰 가져오기
+            if (user.email && selectedDocument.author && selectedDocument.id) {
+                const response = await axios.get('/api/auth/getCollabToken', {
+                    params: {
+                        userEmail: user.email,
+                        authorEmail: selectedDocument.author.email,
+                        docId: selectedDocument.id
+                    }
+                });
+
+                console.log("response", response.data)
+
+                const { tiptapToken } = response.data as { tiptapToken: string };
+
+                setToken(tiptapToken);
+                // console.log("토큰: ", tiptapToken);
+
+            }
+        } catch (error) {
+            console.error('Tiptap 초기화 오류:', error);
+        }
+    }
+
+    // 에디터 초기 마운트 시에 JWT 발급 및 접근 권한 여부 확인
+    useEffect(() => {
+        tiptapCollabCheck();
+    }, [selectedDocument.id, selectedDocument.author, user.email, docId]);
 
     const provider = useMemo(() => new TiptapCollabProvider({
-        appId: 'rm8veqko',
+        appId: appId,
         name: docId,
         document: doc,
-        baseUrl: process.env.NEXT_PUBLIC_WEBSOCKET_URL,
-        onOpen() {
-            console.log('WebSocket 연결 열림')
-        },
-        onConnect() {
-            console.log('서버에 연결됨')
-        },
-        onDisconnect(data) {
-            console.log('서버 연결이 끊김', data)
-        },
-        onClose(data) {
-            console.log('프로바이더가 닫힘', data)
-        },
-        onAwarenessUpdate({ states }) {
-            const connectedUsers = Array.from(states.values())
-                .map(state => state.user?.name || '알 수 없음')
-            console.log('현재 접속 중인 사용자:', connectedUsers);
-            setConnectedUsers(connectedUsers);
-        },
-    }), [docId]);
+        token: token,
+        baseUrl: wsUrl!,
+        // onOpen() {
+        //     console.log('WebSocket 연결 열림')
+        // },
+        // onConnect() {
+        //     console.log('서버에 연결됨')
+        // },
+        // onDisconnect(data) {
+        //     console.log('서버 연결이 끊김', data)
+        // },
+        // onClose(data) {
+        //     console.log('프로바이더가 닫힘', data)
+        // },
+        // onMessage(data) {
+        // console.log('메시지 수신', data)
+        // },
+        // onAwarenessUpdate({ states }) {
+        // const connectedUsers = Array.from(states.values())
+        //     .map(state => {
+        //         // console.log("state", state)
+        //         return state.user?.name || '알 수 없음'
+        //     })
+        // setConnectedUsers(connectedUsers);
+        // },
+    }), [docId, token]);
+
+    // provider.on('awarenessChange', ({ states }: { states: any }) => {
+    //     console.log("awarenessChange", states)
+    // })
+
+    // provider.on('authenticationFailed', ({ reason }: { reason: any }) => {
+    //     console.error('Authentication failed:', reason)
+    // })
+    // provider.on('authenticated', () => {
+    //     console.log('Authentication successful:')
+    // })
+    // provider.on('synced', () => {
+    //     console.log('Document synced.')
+    // })
+    // provider.on('open', () => {
+    //     console.log('메시지 전송',)
+    // })
+
+    // provider.on('synced', () => {
+    //     console.log('Document synced.')
+    // })
+
+    // provider.on('outgoingMessage', (message: any) => {
+    //     console.log('메시지 전송', user.displayName, message)
+    // })
+    // provider.on('message', (message: any) => {
+    //     console.log('메시지 수신', user.displayName, message)
+    // })
+
 
     // useEffect(() => {
     //     if (user.displayName && provider.awareness) {
@@ -68,15 +140,15 @@ export default function useEditorExtension({ docId }: { docId: string }) {
     //     }
     // }, [user.displayName, provider]);
 
-    document.addEventListener('mousemove', (event) => {
-        // Share any information you like
-        provider.setAwarenessField('user', {
-            name: user.displayName,
-            color: '#ffcc00',
-            mouseX: event.clientX,
-            mouseY: event.clientY,
-        })
-    })
+    // document.addEventListener('mousemove', (event) => {
+    //     // Share any information you like
+    //     provider.setAwarenessField('user', {
+    //         name: user.displayName,
+    //         color: '#ffcc00',
+    //         mouseX: event.clientX,
+    //         mouseY: event.clientY,
+    //     })
+    // })
 
     const extensions = useMemo(() => [
         StarterKit.configure({
@@ -146,17 +218,17 @@ export default function useEditorExtension({ docId }: { docId: string }) {
             },
             showOnlyCurrent: false,
         }),
-        Collaboration.extend().configure({
+        Collaboration.configure({
             document: doc,
         }),
-        CollaborationCursor.extend().configure({
+        CollaborationCursor.configure({
             provider: provider,
             user: {
                 name: user.displayName,
                 color: '#ffcc00',
             },
         }),
-    ], [dispatch, user, provider]);
+    ], [dispatch, user]);
 
     return extensions;
 }
