@@ -90,6 +90,7 @@ export default function EditorHeader({
         // 1분마다 문서의 마지막 편집 시간이 언제인지 확인
         const updatedTimeInterval = setInterval(() => {
             const updatedTime = formatTimeDiff(selectedDocument.updatedAt);
+            console.log("updatedTime: ", updatedTime);
             setLastUpdatedTime(updatedTime);
         }, 60000);
 

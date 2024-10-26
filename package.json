@@ -58,6 +58,7 @@
     "next-auth": "^4.24.7",
     "next-redux-wrapper": "^8.1.0",
     "nextjs-progressbar": "^0.0.16",
+    "npm-check-updates": "^17.1.6",
     "pdfjs-dist": "^4.5.136",
     "puppeteer": "^23.4.1",
     "react": "^18",

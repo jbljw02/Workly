@@ -11,26 +11,24 @@ import { DocumentProps, updateDocuments } from "@/redux/features/documentSlice";
 import ModalHeader from "./ModalHeader";
 import InputLabelContainer from "./InputLabelContainer";
 import { showCompleteAlert, showWarningAlert } from "@/redux/features/alertSlice";
+import { WorkingDocModalProps } from "@/types/workingDocModalProps";
 
 export default function DocumentMoveModal({ isModalOpen, setIsModalOpen, selectedDoc }: WorkingDocModalProps) {
     const dispatch = useAppDispatch();
 
-    if (!selectedDoc) return null;
-
     const folders = useAppSelector(state => state.folders);
-    const user = useAppSelector(state => state.user);
-
+    
     // 검색을 통해 필터링 된 폴더들
     const [searchedFolders, setSearchedFolders] = useState<Folder[]>(folders);
     const [targetFolder, setTargetFolder] = useState(''); // 검색 input값
     // 어떤 폴더에 진동 효과를 줄지 
     const [vibrateFolderId, setVibrateFolderId] = useState<string | null>(null);
-
+    
     const closeModal = () => {
         setTargetFolder('');
         setIsModalOpen(false);
     }
-
+    
     // 문서 검색 필터링
     useEffect(() => {
         if (targetFolder) {
@@ -43,7 +41,7 @@ export default function DocumentMoveModal({ isModalOpen, setIsModalOpen, selecte
             setSearchedFolders(folders);
         }
     }, [targetFolder, folders]);
-
+    
     // 문서의 폴더를 이동
     const moveDoc = async (targetFolder: Folder) => {
         // 현재 폴더를 클릭하면 경고
@@ -60,33 +58,35 @@ export default function DocumentMoveModal({ isModalOpen, setIsModalOpen, selecte
                 folderName: targetFolder.name,
                 folderId: targetFolder.id,
             }
-
+            
             try {
                 await axios.put('/api/document/move',
                     {
                         folderId: targetFolder.id,
                         document: selectedDoc
                     });
-
-                // 전체 문서중에 변경할 문서의 폴더 이름을 변경
-                dispatch(updateDocuments({ docId: selectedDoc.id, ...newDoc }));
-
-                // 기존 폴더에서 문서 ID를 삭제하고, 새 폴더에 문서 ID를 추가
-                dispatch(removeDocumentFromFolder({ folderId: selectedDoc.folderId, docId: newDoc.id }));
-                dispatch(addDocumentToFolder({ folderId: targetFolder.id, docId: newDoc.id }));
-
-                // 문서 이동이 성공했다는 Alert를 띄우고 모달 닫기
-                dispatch(showCompleteAlert(`${selectedDoc.title}를 ${targetFolder.name}로 옮겼습니다.`))
-                setIsModalOpen(false);
-            } catch (error) {
-                console.error(error);
-                dispatch(showWarningAlert(`${selectedDoc.title}를 이동하는 데에 실패했습니다.`))
+                    
+                    // 전체 문서중에 변경할 문서의 폴더 이름을 변경
+                    dispatch(updateDocuments({ docId: selectedDoc.id, ...newDoc }));
+                    
+                    // 기존 폴더에서 문서 ID를 삭제하고, 새 폴더에 문서 ID를 추가
+                    dispatch(removeDocumentFromFolder({ folderId: selectedDoc.folderId, docId: newDoc.id }));
+                    dispatch(addDocumentToFolder({ folderId: targetFolder.id, docId: newDoc.id }));
+                    
+                    // 문서 이동이 성공했다는 Alert를 띄우고 모달 닫기
+                    dispatch(showCompleteAlert(`${selectedDoc.title}를 ${targetFolder.name}로 옮겼습니다.`))
+                    setIsModalOpen(false);
+                } catch (error) {
+                    console.error(error);
+                    dispatch(showWarningAlert(`${selectedDoc.title}를 이동하는 데에 실패했습니다.`))
+                }
             }
         }
-    }
 
-    return (
-        <Modal
+        if (!selectedDoc) return null;
+        
+        return (
+            <Modal
             isOpen={isModalOpen}
             style={{
                 overlay: {

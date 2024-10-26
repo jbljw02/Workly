@@ -46,7 +46,6 @@ export default function Editor({ docId }: { docId: string }) {
     latestDocRef.current = selectedDocument;
   }, [selectedDocument]);
 
-
   // editor의 값을 state의 값과 동기화
   useEffect(() => {
     // selectedDocument.id를 의존성 배열에 넣음으로써 초기화 시에만 실행 되도록 함
@@ -78,7 +77,7 @@ export default function Editor({ docId }: { docId: string }) {
           docContent: content,
           updatedAt: {
             seconds: Math.floor(Date.now() / 1000),
-            nanoseconds: (Date.now() % 1000) * 1000000,
+            nanoseconds: Math.floor(Date.now() % 1000) * 1000000,
           },
         };
 
@@ -107,6 +106,10 @@ export default function Editor({ docId }: { docId: string }) {
       const updatedDoc = {
         ...selectedDocument,
         title: e.target.value,
+        updatedAt: {
+          seconds: Math.floor(Date.now() / 1000),
+          nanoseconds: Math.floor(Date.now() % 1000) * 1000000,
+        },
       };
 
       setDocTitle(e.target.value);

@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import axios from "axios";
 import { addDocumentToFolder, Folder } from "@/redux/features/folderSlice";
 import { showCompleteAlert } from "@/redux/features/alertSlice";
+import { SetInvalidInfo } from "@/types/invalidInfoProps";
 
 export default function useAddDocument() {
     const dispatch = useAppDispatch();
@@ -16,8 +17,14 @@ export default function useAddDocument() {
             id: uuidv4(),
             title: docTitle,
             docContent: null,
-            createdAt: { seconds: 0, nanoseconds: 0 },
-            updatedAt: { seconds: 0, nanoseconds: 0 },
+            createdAt: {
+                seconds: Math.floor(Date.now() / 1000),
+                nanoseconds: Math.floor((Date.now() % 1000) * 1000000),
+            },
+            updatedAt: {
+                seconds: Math.floor(Date.now() / 1000),
+                nanoseconds: Math.floor((Date.now() % 1000) * 1000000),
+            },
             author: user,
             folderId: folder.id,
             folderName: folder.name,

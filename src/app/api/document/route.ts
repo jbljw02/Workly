@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
         const newDocument = {
             ...document,
             createdAt: serverTimestamp(),
-            updatedAt: serverTimestamp()
+            updatedAt: serverTimestamp(),
         };
         batch.set(newDocRef, newDocument);
 
@@ -85,7 +85,7 @@ export async function GET(req: NextRequest) {
     }
 }
 
-// 문서명을 수정 - UPDATE
+// 문서 수정 - UPDATE
 export async function PUT(req: NextRequest) {
     try {
         const { email, docId, newDocName, newDocContent } = await req.json();
@@ -103,7 +103,7 @@ export async function PUT(req: NextRequest) {
 
         // 문서명, 문서 내용, 수정 시간 업데이트
         const updateData = {
-            updatedAt: new Date(),
+            updatedAt: serverTimestamp(),
             ...(newDocName !== undefined && { title: newDocName }),
             ...(newDocContent !== undefined && { docContent: newDocContent })
         };
