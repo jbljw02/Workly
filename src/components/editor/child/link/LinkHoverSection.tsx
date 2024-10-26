@@ -8,6 +8,7 @@ import DeleteIcon from '../../../../../public/svgs/trash.svg';
 import HoverTooltip from '../menuBar/HoverTooltip';
 import ToolbarButton from '../menuBar/ToolbarButton';
 import LabelButton from '@/components/button/LabelButton';
+import { LinkSectionProps } from '@/types/linkSectionProps';
 
 export default function LinkHoverSection({ editor, setIsEditing }: LinkSectionProps) {
     const dispatch = useAppDispatch();

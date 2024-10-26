@@ -1,5 +1,6 @@
 import { Folder, addFolders } from "@/redux/features/folderSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { SetInvalidInfo } from "@/types/invalidInfoProps";
 import axios from "axios";
 import { Dispatch, SetStateAction, useState } from "react";
 import { v4 as uuidv4 } from 'uuid';
