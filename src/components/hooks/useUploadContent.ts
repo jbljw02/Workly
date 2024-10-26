@@ -13,6 +13,7 @@ export default function useUploadContent() {
     const editorUpdatedRequest = useCallback(
         debounce(async (latestDoc) => {
             if (!latestDoc) return;
+            console.log("latestDoc: ", latestDoc);
             try {
                 console.log("업로드 요청", latestDoc);
                 await axios.put('/api/document',
@@ -29,6 +30,7 @@ export default function useUploadContent() {
         try {
             editorUpdatedRequest(latestDoc);
         } catch (error) {
+            console.error(error);
             dispatch(showWarningAlert('변경사항 저장에 실패하였습니다.'));
         }
     }, [editorUpdatedRequest]);

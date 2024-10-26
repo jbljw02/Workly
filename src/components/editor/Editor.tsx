@@ -74,7 +74,7 @@ export default function Editor({ docId }: { docId: string }) {
       dispatch(renameDocuments({ docId: updatedDoc.id, newTitle: updatedDoc.title }));
       setLastUpdatedTime(formatTimeDiff(updatedDoc.updatedAt));
 
-      if (updatedDoc) {
+      if (updatedDoc.id && updatedDoc.title) {
         uploadContent(updatedDoc);
       }
     }
