@@ -16,7 +16,6 @@ export default function useAddDocument() {
         const newDocument: DocumentProps = {
             id: uuidv4(),
             title: docTitle,
-            docContent: null,
             createdAt: {
                 seconds: Math.floor(Date.now() / 1000),
                 nanoseconds: Math.floor((Date.now() % 1000) * 1000000),

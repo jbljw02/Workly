@@ -1,5 +1,5 @@
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState, useRef } from "react";
 import * as Y from 'yjs'
 import { TiptapCollabProvider } from "@hocuspocus/provider";
 import StarterKit from '@tiptap/starter-kit'
@@ -33,35 +33,34 @@ const appId = process.env.NEXT_PUBLIC_TIPTAP_APP_ID;
 const wsUrl = process.env.NEXT_PUBLIC_WEBSOCKET_URL;
 // const room = `room.${new Date().getFullYear().toString().slice(-2)}${new Date().getMonth() + 1}${new Date().getDate()}`
 const colors = [
-    '#958DF1',
-    '#F98181',
-    '#FBBC88',
-    '#FAF594',
-    '#70CFF8',
-    '#94FADB',
-    '#B9F18D',
-    '#C3E2C2',
-    '#EAECCC',
-    '#AFC8AD',
-    '#EEC759',
-    '#9BB8CD',
-    '#FF90BC',
-    '#FFC0D9',
-    '#DC8686',
-    '#7ED7C1',
-    '#F3EEEA',
-    '#89B9AD',
-    '#D0BFFF',
-    '#FFF8C9',
-    '#CBFFA9',
-    '#9BABB8',
-    '#E3F4F4',
-]
+    '#958DF1', // 보라색
+    '#F98181', // 빨간색
+    '#FBBC88', // 주황색
+    '#FAF594', // 노란색
+    '#70CFF8', // 하늘색
+    '#94FADB', // 민트색
+    '#B9F18D', // 연두색
+    '#C3E2C2', // 연한 녹색
+    '#EAECCC', // 연한 노란색
+    '#AFC8AD', // 연한 녹색
+    '#EEC759', // 금색
+    '#9BB8CD', // 연한 파란색
+    '#FF90BC', // 분홍색
+    '#FFC0D9', // 연한 분홍색
+    '#DC8686', // 갈색
+    '#7ED7C1', // 청록색
+    '#F3EEEA', // 연한 회색
+    '#89B9AD', // 연한 청록색
+    '#D0BFFF', // 연한 보라색
+    '#FFF8C9', // 연한 노란색
+    '#CBFFA9', // 연한 연두색
+    '#9BABB8', // 연한 회색
+    '#E3F4F4', // 연한 청록색
+  ]
 
-export default function useEditorExtension({ docId }: { docId: string }) {
+export default function useEditorExtension({ doc, docId }: { doc: Y.Doc, docId: string }) {
     const dispatch = useAppDispatch();
     const user = useAppSelector(state => state.user);
-    const [connectedUsers, setConnectedUsers] = useState<Set<string>>(new Set());
 
     // 웹소켓 서버에 연결
     const provider = useMemo(() => new TiptapCollabProvider({
@@ -69,31 +68,26 @@ export default function useEditorExtension({ docId }: { docId: string }) {
         appId: appId!,
         document: doc,
         onConnect: () => {
-                console.log('connected')
+            console.log('connected')
         }
-    }), [])
+    }), [docId, doc])
 
     useEffect(() => {
         return () => {
             provider.destroy();
         };
-    }, []);
+    }, [docId, doc]);
+
+    // 사용자의 커서 색상을 지정
+    const userColor = useMemo(() => colors[Math.floor(Math.random() * colors.length)], []);
 
     // 현재 사용자의 정보를 필드에 할당
-    const setUserAwarness = useCallback(() => {
+    useEffect(() => {
         provider.setAwarenessField('user', {
             name: user.displayName,
-            color: '#ffcc00',
+            color: userColor,
         });
-    }, [provider, user.displayName]);
-
-    useEffect(() => {
-        provider.awareness?.on('change', setUserAwarness);
-
-        return () => {
-            provider.awareness?.off('change', setUserAwarness);
-        };
-    }, [setUserAwarness]);
+    }, [user.displayName, userColor, provider]);
 
     const extensions = [
         StarterKit.configure({
@@ -160,7 +154,7 @@ export default function useEditorExtension({ docId }: { docId: string }) {
             placeholder: ({ node, editor }) => {
                 const { from, to } = editor.state.selection
                 const isSelected = from === to && editor.state.selection.$from.parent === node
-                return node.type.name === 'paragraph' && isSelected ? "명령어를 사용하려면 '/' 키를 누르세요." : ''
+                return node.type.name === 'paragraph' && isSelected ? "명령어를 사용하려 '/' 키를 누르세요." : ''
             },
             showOnlyCurrent: false,
         }),
@@ -171,7 +165,6 @@ export default function useEditorExtension({ docId }: { docId: string }) {
             provider,
             user: {
                 name: user.displayName,
-                color: '#ffcc00',
             },
         }),
     ];

@@ -96,7 +96,7 @@ export default function DocumentItem({ document, onClick }: DocumentItemProps) {
                     <GroupHoverItem
                         Icon={DeleteIcon}
                         IconWidth={15}
-                        onClick={(e) => deleteDoc(e, document, documentId)} />
+                        onClick={(e) => deleteDoc(e, document)} />
                 </HoverTooltip>
             </div>
         </div>

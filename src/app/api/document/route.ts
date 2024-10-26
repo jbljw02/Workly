@@ -62,7 +62,7 @@ export async function GET(req: NextRequest) {
         // documents 컬렉션에서 모든 문서 가져오기
         const documentsCollection = collection(firestore, 'documents');
         const documentsSnapshot = await getDocs(documentsCollection);
-        
+
         // 모든 문서를 추출
         const documents = documentsSnapshot.docs.map(doc => doc.data());
 
@@ -88,10 +88,10 @@ export async function GET(req: NextRequest) {
 // 문서 수정 - UPDATE
 export async function PUT(req: NextRequest) {
     try {
-        const { email, docId, newDocName, newDocContent } = await req.json();
+        const { docId, newDocName } = await req.json();
 
-        if (!email) return NextResponse.json({ error: "이메일이 제공되지 않음" }, { status: 400 });
         if (!docId) return NextResponse.json({ error: "문서 아이디가 제공되지 않음" }, { status: 400 });
+        if (!newDocName) return NextResponse.json({ error: "문서명이 제공되지 않음" }, { status: 400 });
 
         // 문서 참조 가져오기
         const docRef = doc(firestore, 'documents', docId);
@@ -105,7 +105,6 @@ export async function PUT(req: NextRequest) {
         const updateData = {
             updatedAt: serverTimestamp(),
             ...(newDocName !== undefined && { title: newDocName }),
-            ...(newDocContent !== undefined && { docContent: newDocContent })
         };
 
         await updateDoc(docRef, updateData);
