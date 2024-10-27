@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import admin from '../../../../../firebase/firebaseAdmin';
+import admin from '../../../../firebase/firebaseAdmin';
 
 // POST 요청을 받아 토큰을 검증하고, 쿠키에 저장
 export async function POST(req: NextRequest) {

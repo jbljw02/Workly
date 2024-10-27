@@ -83,7 +83,6 @@ export default function ShareForm({ selectedDoc }: ShareFormProps) {
         }
     }, [inputRef]);
 
-
     return (
         <form
             onSubmit={inviteUser}

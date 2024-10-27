@@ -1,6 +1,6 @@
 import { collection, getDocs } from "firebase/firestore";
 import { NextRequest, NextResponse } from "next/server";
-import fireStore from "../../../../firebase/firestore";
+import fireStore from "../../../firebase/firestore";
 
 // 사용자 가져오기 - READ
 export async function GET(req: NextRequest) {

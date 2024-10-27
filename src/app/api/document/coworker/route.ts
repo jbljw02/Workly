@@ -1,6 +1,6 @@
 import { doc, getDoc, updateDoc, arrayUnion } from "firebase/firestore";
 import { NextApiRequest, NextApiResponse } from "next";
-import firestore from "../../../../../firebase/firestore";
+import firestore from "../../../../firebase/firestore";
 import { NextRequest, NextResponse } from "next/server";
 import { Collaborator, DocumentProps } from "@/redux/features/documentSlice";
 import { getDownloadURL, getStorage, ref } from "firebase/storage";

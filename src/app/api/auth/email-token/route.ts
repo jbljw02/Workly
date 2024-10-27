@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import cookie from 'cookie';
-import admin from '../../../../../firebase/firebaseAdmin';
+import admin from '../../../../firebase/firebaseAdmin';
 import jwt from 'jsonwebtoken';
 
 // 이메일로 로그인시 생성된 토큰을 검증

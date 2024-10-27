@@ -1,7 +1,7 @@
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import router from 'next/router';
 import GoogleIcon from '../../../public/svgs/google.svg';
-import { auth } from '../../../firebase/firebasedb';
+import { auth } from '../../firebase/firebasedb';
 import { useAppDispatch } from '@/redux/hooks';
 import { setUser } from '@/redux/features/userSlice';
 import axios from 'axios';
@@ -30,10 +30,10 @@ export default function GoogleLoginButton() {
             if (!token) throw new Error("사용자 토큰을 생성하지 못했습니다.");
 
             // 파이어베이스 토큰 인증
-            await axios.post('/api/auth/emailToken', { token });
+            await axios.post('/api/auth/email-token', { token });
 
             // 사용자의 초기 정보를 설정
-            await axios.post('/api/auth/userInitialData', { user });
+            await axios.post('/api/auth/user-initial-data', { user });
 
             if (user.displayName && user.email && user.photoURL) {
                 dispatch(setUser({

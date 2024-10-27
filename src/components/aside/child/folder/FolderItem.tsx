@@ -15,7 +15,7 @@ import EditInput from './EditInput';
 import { addDocuments, deleteDocuments, DocumentProps } from '@/redux/features/documentSlice';
 import AddInputModal from '@/components/modal/AddInputModal';
 import { v4 as uuidv4 } from 'uuid';
-import HoverTooltip from '@/components/editor/child/menuBar/HoverTooltip';
+import HoverTooltip from '@/components/editor/child/menu-bar/HoverTooltip';
 import { showCompleteAlert, showWarningAlert } from '@/redux/features/alertSlice';
 import useAddDocument from '@/components/hooks/useAddDocument';
 

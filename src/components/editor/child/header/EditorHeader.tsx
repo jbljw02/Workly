@@ -15,8 +15,8 @@ import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import HeaderTitle from './HeaderTitle'
 import DocumentMoveModal from '@/components/modal/DocumentMoveModal'
 import { usePathname } from 'next/navigation'
-import HoverTooltip from '../menuBar/HoverTooltip'
-import ToolbarButton from '../menuBar/ToolbarButton'
+import HoverTooltip from '../menu-bar/HoverTooltip'
+import ToolbarButton from '../menu-bar/ToolbarButton'
 import ShareDocumentModal from '@/components/modal/share/ShareDocumentModal'
 import useDeleteDocument from '@/components/hooks/useDeleteDocument'
 import { useCopyURL } from '@/components/hooks/useCopyURL'
@@ -39,12 +39,12 @@ export default function EditorHeader({
     const copyDoc = useCopyDocument();
     const copyURL = useCopyURL();
     const downloadPDF = useDownloadPDF();
-    
+
     const pathname = usePathname();
     const pathParts = pathname.split('/');
     const folderId = pathParts[2]; // '/editor/[folderId]/[documentId]'일 때 folderId는 2번째 인덱스
     const documentId = pathParts[3]; // documentId는 3번째 인덱스
-    
+
     const optionRef = useRef<HTMLDivElement>(null);
     const selectedDocument = useAppSelector(state => state.selectedDocument);
 

@@ -1,6 +1,6 @@
 import axios from "axios";
 import { signOut } from "firebase/auth";
-import { auth } from "../../firebase/firebasedb";
+import { auth } from "../firebase/firebasedb";
 import { useRouter } from "next/navigation";
 
 const logout = async (router: ReturnType<typeof useRouter>) => {

@@ -10,13 +10,16 @@ import DragHandle from '@tiptap-pro/extension-drag-handle-react'
 import MenuIcon from '../../../public/svgs/editor/menu-vertical.svg'
 import { DocumentProps, renameDocuments, setSelectedDocument, updateDocuments } from '@/redux/features/documentSlice'
 import formatTimeDiff from '@/utils/formatTimeDiff'
-import MenuBar from './child/menuBar/MenuBar'
+import MenuBar from './child/menu-bar/MenuBar'
 import useUploadContent from '../hooks/useUploadContent';
 import useEditorExtension from '../hooks/useEditorExtension';
+import { GetServerSideProps, GetServerSidePropsContext } from 'next';
+import { useRouter } from 'next/navigation';
 
 export default function Editor({ docId }: { docId: string }) {
   const dispatch = useAppDispatch();
   const extensions = useEditorExtension({ docId });
+  const router = useRouter();
 
   const uploadContent = useUploadContent();
 
@@ -158,3 +161,4 @@ export default function Editor({ docId }: { docId: string }) {
     </div>
   )
 }
+

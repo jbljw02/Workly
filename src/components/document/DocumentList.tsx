@@ -20,7 +20,7 @@ import DeleteIcon from '../../../public/svgs/trash.svg'
 import LinkCopyIcon from '../../../public/svgs/editor/link.svg'
 import useDeleteDocument from "../hooks/useDeleteDocument";
 import MenuList from "../editor/child/MenuList";
-import HoverTooltip from "../editor/child/menuBar/HoverTooltip";
+import HoverTooltip from "../editor/child/menu-bar/HoverTooltip";
 import { useClickOutside } from "../hooks/useClickOutside";
 import LabelButton from "../button/LabelButton";
 import ShareIcon from '../../../public/svgs/group.svg';

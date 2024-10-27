@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import firestore from "../../../../../firebase/firestore";
+import firestore from "../../../../firebase/firestore";
 import { doc, getDoc, serverTimestamp, setDoc, writeBatch } from "firebase/firestore";
 import { v4 as uuidv4 } from 'uuid';
 import { getStorage, ref, getDownloadURL } from "firebase/storage";

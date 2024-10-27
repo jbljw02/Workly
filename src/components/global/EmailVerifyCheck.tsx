@@ -2,7 +2,7 @@ import { clearUser, setUser } from "@/redux/features/userSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks"
 import { onAuthStateChanged } from "firebase/auth";
 import { useEffect } from "react";
-import { auth } from "../../../firebase/firebasedb";
+import { auth } from "../../firebase/firebasedb";
 import getEmailToken from "@/utils/getEmailToken";
 import logout from "@/utils/logout";
 import { useRouter } from "next/navigation";
