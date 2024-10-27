@@ -1,6 +1,6 @@
 type ToolbarButtonProps = {
     Icon: React.ElementType;
-    onClick: () => void;
+    onClick?: () => void;
     iconWidth: number;
     hover?: string;
     isActive?: boolean;

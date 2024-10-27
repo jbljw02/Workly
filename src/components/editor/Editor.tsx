@@ -18,10 +18,20 @@ import { useRouter } from 'next/navigation';
 
 export default function Editor({ docId }: { docId: string }) {
   const dispatch = useAppDispatch();
-  const extensions = useEditorExtension({ docId });
-  const router = useRouter();
 
+  const extensions = useEditorExtension({ docId });
   const uploadContent = useUploadContent();
+
+  const openColorPicker = useAppSelector(state => state.openColorPicker);
+  const documents = useAppSelector(state => state.documents);
+  // 문서들 중에 현재 편집 중인 문서를 선택
+  const selectedDocument = useAppSelector(state => state.selectedDocument);
+  const editorPermission = useAppSelector(state => state.editorPermission);
+
+  const [docTitle, setDocTitle] = useState<string>(selectedDocument.title); // 문서 제목
+  const [lastUpdatedTime, setLastUpdatedTime] = useState<string>('현재 편집 중'); // 문서의 마지막 편집 시간에 따른 출력값
+
+  const latestDocRef = useRef(selectedDocument);
 
   const editor = useEditor({
     extensions: extensions,
@@ -30,17 +40,9 @@ export default function Editor({ docId }: { docId: string }) {
         class: 'prose prose-sm sm:prose lg:prose-lg xl:prose-xl m-4 focus:outline-none',
       },
     },
+    editable: editorPermission !== '읽기 허용',
   });
 
-  const openColorPicker = useAppSelector(state => state.openColorPicker);
-  const documents = useAppSelector(state => state.documents);
-  // 문서들 중에 현재 편집 중인 문서를 선택
-  const selectedDocument = useAppSelector(state => state.selectedDocument);
-
-  const [docTitle, setDocTitle] = useState<string>(selectedDocument.title); // 문서 제목
-  const [lastUpdatedTime, setLastUpdatedTime] = useState<string>('현재 편집 중'); // 문서의 마지막 편집 시간에 따른 출력값
-
-  const latestDocRef = useRef(selectedDocument);
 
   // ref를 사용하여 최신 값을 참조해서 담음
   useEffect(() => {
@@ -95,7 +97,7 @@ export default function Editor({ docId }: { docId: string }) {
 
   // 문서명이 변경되었을 때
   const docTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (latestDocRef.current) {
+    if (latestDocRef.current && editorPermission && editorPermission !== '읽기 허용') {
       const updatedDoc = {
         ...latestDocRef.current,
         title: e.target.value,

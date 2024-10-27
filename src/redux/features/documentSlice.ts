@@ -63,6 +63,33 @@ export const documentSlice = createSlice({
         setDocuments: (state, action) => {
             return action.payload;
         },
+        // 협업자의 권한을 변경
+        updateCollaboratorAuthority: (state, action) => {
+            const { docId, email, newAuthority } = action.payload;
+            const document = state.find(doc => doc.id === docId);
+            if (document) {
+                const collaborator = document.collaborators.find(collab => collab.email === email);
+                if (collaborator) {
+                    collaborator.authority = newAuthority;
+                }
+            }
+        },
+        // 협업자를 추가
+        addCollaborator: (state, action) => {
+            const { docId, collaborators } = action.payload;
+            const document = state.find(doc => doc.id === docId);
+            if (document) {
+                document.collaborators.push(...collaborators);
+            }
+        },
+        // 협업자를 삭제
+        deleteCollaborator: (state, action) => {
+            const { docId, email } = action.payload;
+            const document = state.find(doc => doc.id === docId);
+            if (document) {
+                document.collaborators = document.collaborators.filter(collab => collab.email !== email);
+            }
+        },
     },
 })
 
@@ -76,7 +103,7 @@ export const selectedDocument = createSlice({
     }
 })
 
-export const { addDocuments, updateDocuments, renameDocuments, deleteDocuments, setDocuments } = documentSlice.actions;
+export const { addDocuments, updateDocuments, renameDocuments, deleteDocuments, updateCollaboratorAuthority, addCollaborator,deleteCollaborator, setDocuments } = documentSlice.actions;
 export const { setSelectedDocument } = selectedDocument.actions;
 
 const reducers = {

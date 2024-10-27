@@ -25,7 +25,3 @@ export async function GET(req: NextRequest) {
         return NextResponse.json({ error: "협업자 가져오기 실패" }, { status: 500 });
     }
 }
-
-export async function PUT(req: NextRequest) {
-
-}

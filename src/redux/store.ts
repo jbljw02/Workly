@@ -32,6 +32,7 @@ const combinedReducer = combineReducers({
     searchedCoworkers: shareDocumentReducers.searchedCoworkers,
     selectedCoworkers: shareDocumentReducers.selectedCoworkers,
     targetSharingEmail: shareDocumentReducers.targetSharingEmail,
+    editorPermission: shareDocumentReducers.editorPermission,
 })
 
 // RootState가 Redux 스토어의 상태 타입임을 나타냄

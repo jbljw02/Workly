@@ -140,11 +140,6 @@ export async function DELETE(req: NextRequest) {
 
         const docData = docSnap.data();
 
-        // 문서 소유자 확인
-        if (docData.author.email !== email) {
-            return NextResponse.json({ error: "문서 삭제 권한이 없습니다" }, { status: 403 });
-        }
-
         // 폴더 참조 가져오기
         const folderRef = doc(firestore, 'folders', folderId);
         const folderSnap = await getDoc(folderRef);
