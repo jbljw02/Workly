@@ -26,17 +26,18 @@ export default function useDeleteDocument() {
 
         try {
             dispatch(deleteDocuments(document.id));
-            console.log("document.id: ", document.id);
-            console.log("tiptapCloudSecret: ", tiptapCloudSecret);
-            console.log("wsUrl: ", wsUrl);
 
-            // tiptap cloud의 문서 삭제
-            const res = await axios.delete(`${wsUrl}/api/documents/${document.id}`, {
-                headers: {
-                    Authorization: tiptapCloudSecret,
-                },
+            // 현재 페이지를 삭제했다면 홈으로 라우팅
+            if (document.id === documentId) {
+                router.push('/editor/home');
+            }
+
+            // tiptap cloud 서버에서 문서 삭제
+            await axios.delete('/api/tiptap-document', {
+                params: {
+                    docName: document.id,
+                }
             });
-            console.log("res: ", res);
 
             // 파이어베이스의 문서 삭제
             await axios.delete('/api/document', {
@@ -47,18 +48,13 @@ export default function useDeleteDocument() {
                 }
             });
 
-            // 현재 페이지를 삭제했다면 홈으로 라우팅
-            if (document.id === documentId) {
-                router.push('/editor/home');
-            }
-
-            dispatch(showCompleteAlert(`${document.title}의 삭제를 완료했습니다.`));
+            dispatch(showCompleteAlert(`${document.title || '제목 없는 문서'}의 삭제를 완료했습니다.`));
         } catch (error) {
             console.error(error);
 
             // 삭제에 실패하면 롤백
             dispatch(setDocuments(prevDocs));
-            dispatch(showWarningAlert(`${document.title}의 삭제에 실패했습니다.`))
+            dispatch(showWarningAlert(`${document.title || '제목 없는 문서'}의 삭제에 실패했습니다.`))
         }
     }
 

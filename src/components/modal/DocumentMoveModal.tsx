@@ -74,7 +74,7 @@ export default function DocumentMoveModal({ isModalOpen, setIsModalOpen, selecte
                     dispatch(addDocumentToFolder({ folderId: targetFolder.id, docId: newDoc.id }));
                     
                     // 문서 이동이 성공했다는 Alert를 띄우고 모달 닫기
-                    dispatch(showCompleteAlert(`${selectedDoc.title}를 ${targetFolder.name}로 옮겼습니다.`))
+                    dispatch(showCompleteAlert(`${selectedDoc.title || '제목 없는 문서'}를 ${targetFolder.name}로 옮겼습니다.`))
                     setIsModalOpen(false);
                 } catch (error) {
                     console.error(error);

@@ -16,6 +16,7 @@ export default function useAddDocument() {
         const newDocument: DocumentProps = {
             id: uuidv4(),
             title: docTitle,
+            docContent: null,
             createdAt: {
                 seconds: Math.floor(Date.now() / 1000),
                 nanoseconds: Math.floor((Date.now() % 1000) * 1000000),
@@ -31,6 +32,13 @@ export default function useAddDocument() {
         }
 
         try {
+            // tiptap cloud 서버에 문서 생성
+            await axios.post('/api/tiptap-document',
+                {
+                    docName: newDocument.id,
+                });
+
+            // 파이어베이스에 문서 추가
             await axios.post('/api/document',
                 {
                     folderId: folder.id,

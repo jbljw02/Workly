@@ -88,10 +88,11 @@ export async function GET(req: NextRequest) {
 // 문서 수정 - UPDATE
 export async function PUT(req: NextRequest) {
     try {
-        const { docId, newDocName } = await req.json();
+        const { docId, newDocName, newDocContent } = await req.json();
 
         if (!docId) return NextResponse.json({ error: "문서 아이디가 제공되지 않음" }, { status: 400 });
         if (!newDocName) return NextResponse.json({ error: "문서명이 제공되지 않음" }, { status: 400 });
+        if (!newDocContent) return NextResponse.json({ error: "문서 내용이 제공되지 않음" }, { status: 400 });
 
         // 문서 참조 가져오기
         const docRef = doc(firestore, 'documents', docId);
@@ -105,6 +106,7 @@ export async function PUT(req: NextRequest) {
         const updateData = {
             updatedAt: serverTimestamp(),
             ...(newDocName !== undefined && { title: newDocName }),
+            ...(newDocContent !== undefined && { docContent: newDocContent }),
         };
 
         await updateDoc(docRef, updateData);

@@ -28,10 +28,9 @@ import { Editor } from "@tiptap/react";
 import '@/styles/editor.css'
 import axios from "axios";
 
-const doc = new Y.Doc();
 const appId = process.env.NEXT_PUBLIC_TIPTAP_APP_ID;
 const wsUrl = process.env.NEXT_PUBLIC_WEBSOCKET_URL;
-// const room = `room.${new Date().getFullYear().toString().slice(-2)}${new Date().getMonth() + 1}${new Date().getDate()}`
+
 const colors = [
     '#958DF1', // 보라색
     '#F98181', // 빨간색
@@ -56,11 +55,22 @@ const colors = [
     '#CBFFA9', // 연한 연두색
     '#9BABB8', // 연한 회색
     '#E3F4F4', // 연한 청록색
-  ]
+]
 
-export default function useEditorExtension({ doc, docId }: { doc: Y.Doc, docId: string }) {
+// docId를 키로 가지는 Y.Doc 인스턴스를 저장하는 맵
+const docMap = new Map<string, Y.Doc>();
+
+export default function useEditorExtension({ docId }: { docId: string }) {
     const dispatch = useAppDispatch();
     const user = useAppSelector(state => state.user);
+
+    // docId에 해당하는 Y.Doc 인스턴스를 가져오거나 새로 생성
+    const doc = useMemo(() => {
+        if (!docMap.has(docId)) {
+            docMap.set(docId, new Y.Doc());
+        }
+        return docMap.get(docId)!;
+    }, [docId]);
 
     // 웹소켓 서버에 연결
     const provider = useMemo(() => new TiptapCollabProvider({
@@ -69,7 +79,7 @@ export default function useEditorExtension({ doc, docId }: { doc: Y.Doc, docId: 
         document: doc,
         onConnect: () => {
             console.log('connected')
-        }
+        },
     }), [docId, doc])
 
     useEffect(() => {
@@ -154,7 +164,7 @@ export default function useEditorExtension({ doc, docId }: { doc: Y.Doc, docId: 
             placeholder: ({ node, editor }) => {
                 const { from, to } = editor.state.selection
                 const isSelected = from === to && editor.state.selection.$from.parent === node
-                return node.type.name === 'paragraph' && isSelected ? "명령어를 사용하려 '/' 키를 누르세요." : ''
+                return node.type.name === 'paragraph' && isSelected ? "명령어를 사용하려면 '/' 키를 누르세요." : ''
             },
             showOnlyCurrent: false,
         }),

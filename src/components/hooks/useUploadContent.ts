@@ -4,6 +4,7 @@ import axios from "axios";
 import { DocumentProps } from "@/redux/features/documentSlice";
 import { showWarningAlert } from "@/redux/features/alertSlice";
 import { useAppDispatch } from "@/redux/hooks";
+import { connectStorageEmulator } from "firebase/storage";
 
 export default function useUploadContent() {
     const dispatch = useAppDispatch();
@@ -13,13 +14,13 @@ export default function useUploadContent() {
     const editorUpdatedRequest = useCallback(
         debounce(async (latestDoc) => {
             if (!latestDoc) return;
-            console.log("latestDoc: ", latestDoc);
+
             try {
-                console.log("업로드 요청", latestDoc);
                 await axios.put('/api/document',
                     {
                         docId: latestDoc.id,
                         newDocName: latestDoc.title,
+                        newDocContent: latestDoc.docContent
                     });
             } catch (error) {
                 console.error(error);

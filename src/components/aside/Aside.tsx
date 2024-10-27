@@ -87,6 +87,7 @@ export default function Aside() {
         const newDocument: DocumentProps = {
             id: uuidv4(),
             title: '',
+            docContent: null,
             createdAt: { seconds: 0, nanoseconds: 0 },
             updatedAt: { seconds: 0, nanoseconds: 0 },
             author: user,

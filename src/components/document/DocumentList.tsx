@@ -91,8 +91,6 @@ export default function DocumentList({ documents, isShared }: DocumentListProps)
 
     useClickOutside(optionRef, () => setOpenMenuId(null));
 
-    console.log("문서 목록 렌더링", documents)
-
     return (
         <div className='flex flex-col w-full h-full'>
             {
