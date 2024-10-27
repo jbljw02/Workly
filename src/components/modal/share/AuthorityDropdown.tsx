@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from "react";
 import { useClickOutside } from "@/components/hooks/useClickOutside";
-import { Collaborator } from "@/redux/features/documentSlice";
+import { Collaborator, DocumentProps } from "@/redux/features/documentSlice";
 import { deleteCoworker, setCoworkerList, updateCoworkerAuthority, updateSearchedCoworkerAuthority } from "@/redux/features/shareDocumentSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import axios from "axios";
@@ -10,18 +10,26 @@ import { showCompleteAlert, showWarningAlert } from "@/redux/features/alertSlice
 type AuthorityDropdownProps = {
     dropdownPosition: { top: number, left: number };
     setIsOpen: (isOpen: boolean) => void;
+    selectedDoc: DocumentProps;
     buttonRef: React.RefObject<HTMLDivElement>;
     targetUser: Collaborator;
     isMember?: boolean;
     setCurrentAuthority: (authority: AuthorityCategory) => void;
 }
 
-export default function AuthorityDropdown({ dropdownPosition, setIsOpen, buttonRef, targetUser, isMember, setCurrentAuthority }: AuthorityDropdownProps) {
+export default function AuthorityDropdown({
+    dropdownPosition,
+    setIsOpen,
+    selectedDoc,
+    buttonRef,
+    targetUser,
+    isMember,
+    setCurrentAuthority
+}: AuthorityDropdownProps) {
     const dispatch = useAppDispatch();
     const dropdownRef = useRef<HTMLDivElement>(null);
 
     const coworkerList = useAppSelector(state => state.coworkerList);
-    const selectedDocument = useAppSelector(state => state.selectedDocument);
 
     const authorityList = [
         {
@@ -123,7 +131,7 @@ export default function AuthorityDropdown({ dropdownPosition, setIsOpen, buttonR
                     <div
                         key={index}
                         className='flex flex-col px-3 py-1.5 text-sm hover:bg-gray-100 cursor-pointer'
-                        onClick={() => updateAuthority(selectedDocument.author.email, targetUser.email, selectedDocument.id, authority.label as AuthorityCategory)}>
+                        onClick={() => updateAuthority(selectedDoc.author.email, targetUser.email, selectedDoc.id, authority.label as AuthorityCategory)}>
                         <div className='text-sm'>{authority.label}</div>
                         <div className='text-xs text-neutral-400 whitespace-nowrap'>{authority.description}</div>
                     </div>

@@ -1,7 +1,7 @@
 import CloseIcon from '../../../public/svgs/editor/close.svg'
 import { useEffect, useRef, useState } from "react";
 import { useClickOutside } from "../hooks/useClickOutside";
-import CompleteIcon from '../../../public/svgs/write/task.svg';
+import CompleteIcon from '../../../public/svgs/complete.svg';
 import { NoticeModalProps } from '@/types/noticeModalProps';
 
 export default function CompleteAlert({ isModalOpen, setIsModalOpen, label }: NoticeModalProps) {

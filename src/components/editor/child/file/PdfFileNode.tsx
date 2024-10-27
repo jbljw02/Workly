@@ -1,11 +1,11 @@
 import FileInfoIcon from '../../../../../public/svgs/editor/file-info.svg';
 
-type PdfFileNode = {
+export type PdfFileNodeProps = {
     fileTitle: string;
     fileUrl: string;
 }
 
-export default function PdfFileNode({ fileTitle, fileUrl }: PdfFileNode) {
+export default function PdfFileNode({ fileTitle, fileUrl }: PdfFileNodeProps) {
     return (
         <a
             href={fileUrl}

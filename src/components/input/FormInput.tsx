@@ -1,4 +1,4 @@
-import { InputProps } from "@/types/commonInput";
+import { InputProps } from "@/types/commonInputProps";
 import { useEffect, useRef } from "react"
 
 interface FormInputProps extends InputProps {

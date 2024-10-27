@@ -1,8 +1,9 @@
 type ToolbarButtonProps = {
-    onClick?: () => void;
-    isActive?: boolean;
     Icon: React.ElementType;
+    onClick: () => void;
     iconWidth: number;
+    hover?: string;
+    isActive?: boolean;
     iconFill?: string;
 }
 
@@ -19,7 +20,7 @@ export default function ToolbarButton({ onClick, isActive, Icon, iconWidth, icon
             }}>
             <Icon
                 width={iconWidth}
-                height="auto"
+                height={iconWidth}
                 {...(iconFill && { style: { color: iconFill } })} />
         </button>
     )

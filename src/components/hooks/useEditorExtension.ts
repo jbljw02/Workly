@@ -1,5 +1,5 @@
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState, useRef } from "react";
 import * as Y from 'yjs'
 import { TiptapCollabProvider } from "@hocuspocus/provider";
 import StarterKit from '@tiptap/starter-kit'
@@ -26,59 +26,80 @@ import LinkNode from "../../../lib/linkNode";
 import FileNode from "../../../lib/fileNode";
 import { Editor } from "@tiptap/react";
 import '@/styles/editor.css'
+import axios from "axios";
 
-const doc = new Y.Doc()
+const appId = process.env.NEXT_PUBLIC_TIPTAP_APP_ID;
+const wsUrl = process.env.NEXT_PUBLIC_WEBSOCKET_URL;
+
+const colors = [
+    '#958DF1', // 보라색
+    '#F98181', // 빨간색
+    '#FBBC88', // 주황색
+    '#FAF594', // 노란색
+    '#70CFF8', // 하늘색
+    '#94FADB', // 민트색
+    '#B9F18D', // 연두색
+    '#C3E2C2', // 연한 녹색
+    '#EAECCC', // 연한 노란색
+    '#AFC8AD', // 연한 녹색
+    '#EEC759', // 금색
+    '#9BB8CD', // 연한 파란색
+    '#FF90BC', // 분홍색
+    '#FFC0D9', // 연한 분홍색
+    '#DC8686', // 갈색
+    '#7ED7C1', // 청록색
+    '#F3EEEA', // 연한 회색
+    '#89B9AD', // 연한 청록색
+    '#D0BFFF', // 연한 보라색
+    '#FFF8C9', // 연한 노란색
+    '#CBFFA9', // 연한 연두색
+    '#9BABB8', // 연한 회색
+    '#E3F4F4', // 연한 청록색
+]
+
+// docId를 키로 가지는 Y.Doc 인스턴스를 저장하는 맵
+const docMap = new Map<string, Y.Doc>();
 
 export default function useEditorExtension({ docId }: { docId: string }) {
     const dispatch = useAppDispatch();
     const user = useAppSelector(state => state.user);
-    const [connectedUsers, setConnectedUsers] = useState<string[]>([]);
 
+    // docId에 해당하는 Y.Doc 인스턴스를 가져오거나 새로 생성
+    const doc = useMemo(() => {
+        if (!docMap.has(docId)) {
+            docMap.set(docId, new Y.Doc());
+        }
+        return docMap.get(docId)!;
+    }, [docId]);
+
+    // 웹소켓 서버에 연결
     const provider = useMemo(() => new TiptapCollabProvider({
-        appId: 'rm8veqko',
         name: docId,
+        appId: appId!,
         document: doc,
-        baseUrl: process.env.NEXT_PUBLIC_WEBSOCKET_URL,
-        onOpen() {
-            console.log('WebSocket 연결 열림')
+        onConnect: () => {
+            console.log('connected')
         },
-        onConnect() {
-            console.log('서버에 연결됨')
-        },
-        onDisconnect(data) {
-            console.log('서버 연결이 끊김', data)
-        },
-        onClose(data) {
-            console.log('프로바이더가 닫힘', data)
-        },
-        onAwarenessUpdate({ states }) {
-            const connectedUsers = Array.from(states.values())
-                .map(state => state.user?.name || '알 수 없음')
-            console.log('현재 접속 중인 사용자:', connectedUsers);
-            setConnectedUsers(connectedUsers);
-        },
-    }), [docId]);
+    }), [docId, doc])
 
-    // useEffect(() => {
-    //     if (user.displayName && provider.awareness) {
-    //         provider.setAwarenessField('user', {
-    //             name: user.displayName,
-    //             color: '#' + Math.floor(Math.random() * 16777215).toString(16), // 랜덤 색상
-    //         })
-    //     }
-    // }, [user.displayName, provider]);
+    useEffect(() => {
+        return () => {
+            provider.destroy();
+        };
+    }, [docId, doc]);
 
-    document.addEventListener('mousemove', (event) => {
-        // Share any information you like
+    // 사용자의 커서 색상을 지정
+    const userColor = useMemo(() => colors[Math.floor(Math.random() * colors.length)], []);
+
+    // 현재 사용자의 정보를 필드에 할당
+    useEffect(() => {
         provider.setAwarenessField('user', {
             name: user.displayName,
-            color: '#ffcc00',
-            mouseX: event.clientX,
-            mouseY: event.clientY,
-        })
-    })
+            color: userColor,
+        });
+    }, [user.displayName, userColor, provider]);
 
-    const extensions = useMemo(() => [
+    const extensions = [
         StarterKit.configure({
             bulletList: {
                 keepMarks: true,
@@ -88,6 +109,7 @@ export default function useEditorExtension({ docId }: { docId: string }) {
                 keepMarks: true,
                 keepAttributes: true,
             },
+            history: false,
         }),
         Document,
         Underline,
@@ -146,17 +168,16 @@ export default function useEditorExtension({ docId }: { docId: string }) {
             },
             showOnlyCurrent: false,
         }),
-        Collaboration.extend().configure({
+        Collaboration.configure({
             document: doc,
         }),
-        CollaborationCursor.extend().configure({
-            provider: provider,
+        CollaborationCursor.configure({
+            provider,
             user: {
                 name: user.displayName,
-                color: '#ffcc00',
             },
         }),
-    ], [dispatch, user, provider]);
+    ];
 
     return extensions;
 }

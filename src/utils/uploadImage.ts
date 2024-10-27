@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import uploadImageToStorage from './image/uploadImageToStorage';
 import { SetResizableImageProps } from '../../lib/ImageNode';
 
-export default async function uploadImage(editor: Editor, file: File, src: string) {
+const uploadImage = async (editor: Editor, file: File, src: string) => {
     const imgAttrs = await uploadImageToStorage({
         id: uuidv4(),
         src: src,
@@ -28,3 +28,5 @@ export default async function uploadImage(editor: Editor, file: File, src: strin
         textAlign: 'left',
     })
 }
+
+export default uploadImage;

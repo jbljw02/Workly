@@ -2,12 +2,8 @@ import { ModalProps } from '@/types/modalProps';
 import { useEffect, useMemo, useRef, useState, useCallback } from 'react';
 import Modal from 'react-modal';
 import CommonInput from '../../input/CommonInput';
-import SubmitButton from '../../button/SubmitButton';
 import CommonButton from '../../button/CommonButton';
 import ModalHeader from '../ModalHeader';
-import UserProfile from '../../aside/child/user/UserProfile';
-import ArrowIcon from '../../../../public/svgs/down-arrow.svg';
-import WebIcon from '../../../../public/svgs/web.svg';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { showCompleteAlert } from '@/redux/features/alertSlice';
 import { useCopyURL } from '../../hooks/useCopyURL';
@@ -15,10 +11,11 @@ import { UserProps } from '@/redux/features/userSlice';
 import PublishContent from './PublishContent';
 import ShareContent from './ShareContent';
 import { setTargetSharingEmail } from '@/redux/features/shareDocumentSlice';
+import { WorkingDocModalProps } from '@/types/workingDocModalProps';
 
-export default function ShareDocumentModal({ isModalOpen, setIsModalOpen }: ModalProps) {
+export default function ShareDocumentModal({ isModalOpen, setIsModalOpen, selectedDoc }: WorkingDocModalProps) {
     const dispatch = useAppDispatch();
-    const { copyURL } = useCopyURL();
+    const copyURL = useCopyURL();
 
     const [workCategory, setWorkCategory] = useState<'공유' | '게시'>('공유');
 
@@ -72,7 +69,7 @@ export default function ShareDocumentModal({ isModalOpen, setIsModalOpen }: Moda
                     {
                         workCategory === '공유' ?
                             // 다른 사용자의 이메일을 입력하고 초대를 전송하는 영역
-                            <ShareContent/> :
+                            <ShareContent selectedDoc={selectedDoc} /> :
                             // 문서를 웹 페이지로 게시하는 영역
                             <PublishContent />
                     }
@@ -91,7 +88,7 @@ export default function ShareDocumentModal({ isModalOpen, setIsModalOpen }: Moda
                                     hover: 'hover:bg-blue-700',
                                 }}
                                 label="링크 복사"
-                                onClick={copyURL} />
+                                onClick={() => copyURL(selectedDoc.folderId, selectedDoc.id)} />
                         </div> :
                         <div className='flex justify-center w-full text-sm p-5 border-t'>
                             <CommonButton

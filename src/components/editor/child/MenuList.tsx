@@ -1,7 +1,5 @@
-import { useRef } from "react";
 import MenuItem from "./MenuItem";
 import { MenuItemProps } from "./MenuItem";
-import { useClickOutside } from "@/components/hooks/useClickOutside";
 import HorizontalDivider from "./divider/HorizontalDivider";
 
 type ListPosition = {
@@ -22,11 +20,11 @@ type MenuListProps = {
 export default function MenuList({ isOpen, menuList, setListOpen, listPositon }: MenuListProps) {
     return (
         <div
-            className={`absolute bg-white rounded py-1.5 z-10 border border-neutral-300 shadow-[0px_4px_10px_rgba(0,0,0,0.25)] 
+            className={`absolute bg-white rounded py-1.5 z-20 border border-neutral-300 shadow-[0px_4px_10px_rgba(0,0,0,0.25)] 
                 transition-opacity duration-200 ease-in-out
                 ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
             style={{ top: listPositon.top, right: listPositon.right }}>
-            <ul className="list-none text-sm m-0 p-0">
+            <li className="list-none text-sm m-0 p-0">
                 {
                     menuList.map((item, index) => (
                         <>
@@ -46,7 +44,7 @@ export default function MenuList({ isOpen, menuList, setListOpen, listPositon }:
                         </>
                     ))
                 }
-            </ul>
+            </li>
         </div>
     )
 }

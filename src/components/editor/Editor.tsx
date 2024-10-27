@@ -10,30 +10,18 @@ import DragHandle from '@tiptap-pro/extension-drag-handle-react'
 import MenuIcon from '../../../public/svgs/editor/menu-vertical.svg'
 import { DocumentProps, renameDocuments, setSelectedDocument, updateDocuments } from '@/redux/features/documentSlice'
 import formatTimeDiff from '@/utils/formatTimeDiff'
-import { debounce } from "lodash";
-import axios from 'axios'
-import * as Y from 'yjs'
-import { TiptapCollabProvider } from '@hocuspocus/provider'
 import MenuBar from './child/menuBar/MenuBar'
 import useUploadContent from '../hooks/useUploadContent';
-import { WebrtcProvider } from 'y-webrtc'
-import { HocuspocusProvider } from '@hocuspocus/provider'
 import useEditorExtension from '../hooks/useEditorExtension';
-
-const doc = new Y.Doc();
-const appId = process.env.NEXT_PUBLIC_TIPTAP_APP_ID;
-const room = `room.${new Date().getFullYear().toString().slice(-2)}${new Date().getMonth() + 1}${new Date().getDate()}`
 
 export default function Editor({ docId }: { docId: string }) {
   const dispatch = useAppDispatch();
-  const user = useAppSelector(state => state.user);
+  const extensions = useEditorExtension({ docId });
 
-  const editorExtension = useEditorExtension({ docId });
-
-  const { uploadContent } = useUploadContent();
+  const uploadContent = useUploadContent();
 
   const editor = useEditor({
-    extensions: editorExtension,
+    extensions: extensions,
     editorProps: {
       attributes: {
         class: 'prose prose-sm sm:prose lg:prose-lg xl:prose-xl m-4 focus:outline-none',
@@ -45,9 +33,9 @@ export default function Editor({ docId }: { docId: string }) {
   const documents = useAppSelector(state => state.documents);
   // 문서들 중에 현재 편집 중인 문서를 선택
   const selectedDocument = useAppSelector(state => state.selectedDocument);
+
   const [docTitle, setDocTitle] = useState<string>(selectedDocument.title); // 문서 제목
-  // 문서의 마지막 편집 시간에 따른 출력값
-  const [lastUpdatedTime, setLastUpdatedTime] = useState<string>('현재 편집 중');
+  const [lastUpdatedTime, setLastUpdatedTime] = useState<string>('현재 편집 중'); // 문서의 마지막 편집 시간에 따른 출력값
 
   const latestDocRef = useRef(selectedDocument);
 
@@ -55,15 +43,6 @@ export default function Editor({ docId }: { docId: string }) {
   useEffect(() => {
     latestDocRef.current = selectedDocument;
   }, [selectedDocument]);
-
-
-  // editor의 값을 state의 값과 동기화
-  useEffect(() => {
-    // selectedDocument.id를 의존성 배열에 넣음으로써 초기화 시에만 실행 되도록 함
-    if (editor && selectedDocument && selectedDocument.docContent) {
-      editor.commands.setContent(selectedDocument.docContent);
-    }
-  }, [editor, selectedDocument.id]);
 
   // 선택된 문서를 지정
   useEffect(() => {
@@ -77,31 +56,31 @@ export default function Editor({ docId }: { docId: string }) {
   }, [documents, docId]);
 
   // 에디터의 내용이 변경될 때마다 적용
-  useEffect(() => {
-    const updateDocument = async () => {
-      if (editor && latestDocRef.current) {
-        const content = editor.getJSON();
+  const updateDocument = useCallback(async () => {
+    if (editor && latestDocRef.current) {
+      const content = editor.getJSON();
 
-        const updatedDoc: DocumentProps = {
-          ...latestDocRef.current,
-          title: docTitle,
-          docContent: content,
-          updatedAt: {
-            seconds: Math.floor(Date.now() / 1000),
-            nanoseconds: (Date.now() % 1000) * 1000000,
-          },
-        };
+      const updatedDoc: DocumentProps = {
+        ...latestDocRef.current,
+        title: docTitle,
+        docContent: content,
+        updatedAt: {
+          seconds: Math.floor(Date.now() / 1000),
+          nanoseconds: Math.floor((Date.now() % 1000) * 1000000),
+        },
+      };
 
-        dispatch(updateDocuments({ docId: updatedDoc.id, updatedData: updatedDoc }));
-        dispatch(setSelectedDocument(updatedDoc));
-        setLastUpdatedTime(formatTimeDiff(updatedDoc.updatedAt));
+      dispatch(updateDocuments({ docId: updatedDoc.id, updatedData: updatedDoc }));
+      dispatch(setSelectedDocument(updatedDoc));
+      setLastUpdatedTime(formatTimeDiff(updatedDoc.updatedAt));
 
-        if (updatedDoc && user.email) {
-          uploadContent(user.email, updatedDoc);
-        }
+      if (updatedDoc.id && updatedDoc.title && updatedDoc.docContent) {
+        uploadContent(updatedDoc);
       }
-    };
+    }
+  }, [dispatch, editor, latestDocRef.current]);
 
+  useEffect(() => {
     if (editor) {
       editor.on('update', updateDocument);
     }
@@ -109,14 +88,18 @@ export default function Editor({ docId }: { docId: string }) {
     return () => {
       editor?.off('update', updateDocument);
     };
-  }, [editor, dispatch, docTitle, user.email]);
+  }, [dispatch, editor, latestDocRef.current]);
 
   // 문서명이 변경되었을 때
   const docTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (selectedDocument) {
+    if (latestDocRef.current) {
       const updatedDoc = {
-        ...selectedDocument,
+        ...latestDocRef.current,
         title: e.target.value,
+        updatedAt: {
+          seconds: Math.floor(Date.now() / 1000),
+          nanoseconds: Math.floor((Date.now() % 1000) * 1000000),
+        },
       };
 
       setDocTitle(e.target.value);
@@ -124,8 +107,8 @@ export default function Editor({ docId }: { docId: string }) {
       dispatch(renameDocuments({ docId: updatedDoc.id, newTitle: updatedDoc.title }));
       setLastUpdatedTime(formatTimeDiff(updatedDoc.updatedAt));
 
-      if (updatedDoc && user.email) {
-        uploadContent(user.email, updatedDoc);
+      if (updatedDoc.id && updatedDoc.title && updatedDoc.docContent) {
+        uploadContent(updatedDoc);
       }
     }
   }

@@ -89,7 +89,7 @@ export async function PUT(req: NextRequest) {
         const docData = docSnap.data();
 
         // 문서의 관리자만 권한을 변경할 수 있도록
-        if (docData.author !== authorEmail) {
+        if (docData.author.email !== authorEmail) {
             return NextResponse.json({ error: "권한 변경 권한이 없습니다" }, { status: 403 });
         }
 
