@@ -19,10 +19,12 @@ import UserSection from "./child/user/UserSection";
 import { addDocumentToFolder, Folder } from "@/redux/features/folderSlice";
 import axios from 'axios';
 import GroupIcon from '../../../public/svgs/group.svg';
+import useAddDocument from "../hooks/useAddDocument";
 
 export default function Aside() {
     const dispatch = useAppDispatch();
     const router = useRouter();
+    const addDocToFolder = useAddDocument();
 
     const user = useAppSelector(state => state.user);
     const folders = useAppSelector(state => state.folders);
@@ -81,38 +83,38 @@ export default function Aside() {
     };
 
     // 문서를 생성하고 작성할 수 있도록 Editor 페이지로 이동
-    const writeDocument = async () => {
-        const defaultFolder: Folder = folders[0];
+    // const writeDocument = async () => {
+    //     const defaultFolder: Folder = folders[0];
 
-        const newDocument: DocumentProps = {
-            id: uuidv4(),
-            title: '',
-            docContent: null,
-            createdAt: { seconds: 0, nanoseconds: 0 },
-            updatedAt: { seconds: 0, nanoseconds: 0 },
-            author: user,
-            folderId: defaultFolder.id,
-            folderName: defaultFolder.name,
-            collaborators: [],
-        };
+    //     const newDocument: DocumentProps = {
+    //         id: uuidv4(),
+    //         title: '',
+    //         docContent: null,
+    //         createdAt: { seconds: 0, nanoseconds: 0 },
+    //         updatedAt: { seconds: 0, nanoseconds: 0 },
+    //         author: user,
+    //         folderId: defaultFolder.id,
+    //         folderName: defaultFolder.name,
+    //         collaborators: [],
+    //     };
 
-        try {
-            await axios.post('/api/document',
-                {
-                    folderId: defaultFolder.id,
-                    document: newDocument
-                });
+    //     try {
+    //         await axios.post('/api/document',
+    //             {
+    //                 folderId: defaultFolder.id,
+    //                 document: newDocument
+    //             });
 
-            // 전체 문서 배열에 추가
-            dispatch(addDocuments(newDocument));
-            // 문서 ID를 기본 폴더에 추가
-            dispatch(addDocumentToFolder({ folderId: defaultFolder.id, docId: newDocument.id }));
+    //         // 전체 문서 배열에 추가
+    //         dispatch(addDocuments(newDocument));
+    //         // 문서 ID를 기본 폴더에 추가
+    //         dispatch(addDocumentToFolder({ folderId: defaultFolder.id, docId: newDocument.id }));
 
-            router.push(`/editor/${defaultFolder.id}/${newDocument.id}`);
-        } catch (error) {
-            console.error(error);
-        }
-    }
+    //         router.push(`/editor/${defaultFolder.id}/${newDocument.id}`);
+    //     } catch (error) {
+    //         console.error(error);
+    //     }
+    // }
 
     return (
         <aside
@@ -156,14 +158,14 @@ export default function Aside() {
                     label="문서"
                     isCollapsed={isCollapsed}
                     onClick={() => router.push('/editor/document')}
-                    addClick={writeDocument} />
+                    addClick={() => addDocToFolder('', folders[0])} />
                 <SidebarItem
                     Icon={GroupIcon}
                     IconWidth="18"
                     label="공유중인 문서"
                     isCollapsed={isCollapsed}
                     onClick={() => router.push('/editor/shared')}
-                    addClick={writeDocument} />
+                    addClick={() => addDocToFolder('', folders[0])} />
                 {/* <SidebarItem
                     Icon={TaskIcon}
                     IconWidth="17"

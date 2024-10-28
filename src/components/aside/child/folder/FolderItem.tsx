@@ -25,6 +25,7 @@ type FolderItemProps = {
 
 export default function FolderItem({ folder }: FolderItemProps) {
     const dispatch = useAppDispatch();
+    const addDocToFolder = useAddDocument();
 
     const user = useAppSelector(state => state.user);
     const folders = useAppSelector(state => state.folders);
@@ -41,8 +42,6 @@ export default function FolderItem({ folder }: FolderItemProps) {
         isInvalid: false,
         msg: '문서 추가에 실패했습니다. 잠시 후 다시 시도해주세요.',
     });
-
-    const addDocToFolder = useAddDocument();
 
     // 폴더명 수정 요청
     const completeEdit = async (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -146,7 +145,7 @@ export default function FolderItem({ folder }: FolderItemProps) {
                                 <GroupHoverItem
                                     Icon={PlusIcon}
                                     IconWidth={15}
-                                    onClick={() => setIsAdding(true)} />
+                                    onClick={() => addDocToFolder('', folder)} />
                             </HoverTooltip> :
                             <>
                                 <HoverTooltip label='폴더명 수정'>
@@ -165,7 +164,7 @@ export default function FolderItem({ folder }: FolderItemProps) {
                                     <GroupHoverItem
                                         Icon={PlusIcon}
                                         IconWidth={15}
-                                        onClick={() => setIsAdding(true)} />
+                                        onClick={() => addDocToFolder('', folder)} />
                                 </HoverTooltip>
                             </>
                     }

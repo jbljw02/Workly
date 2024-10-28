@@ -2,8 +2,6 @@
 
 import '@/styles/editor.css';
 import DocumentPreviewList from "./child/DocumentPreviewList";
-import EditorHomeHeader from "./child/EditorHomeHeader";
-import DocumentListHeader from '../document/DocumentListHeader';
 import DocumentHeader from '../document/DocumentHeader';
 import { useAppSelector } from '@/redux/hooks';
 
