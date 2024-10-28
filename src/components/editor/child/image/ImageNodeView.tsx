@@ -92,7 +92,7 @@ const NodeView = (resizableImgProps: ResizableImageNodeViewRendererProps) => {
               textAlign: resizableImgProps.node.attrs.textAlign,
             });
           } catch (error) {
-            dispatch(showWarningAlert('이미지를 자르지 못했습니다.'));
+            dispatch(showWarningAlert('이미지를 자르지 못했습니다. 잠시 후 다시 시도해주세요.'));
           }
 
           setCropMode(false);
@@ -228,9 +228,17 @@ const ImageNodeView = ResizableImage.extend({
       },
     };
   },
+  group: 'block',
+  inline: false,
+
+  renderHTML({ HTMLAttributes }) {
+    return ['figure', { class: 'image-component' }, ['img', HTMLAttributes]];
+  },
+
   addNodeView() {
     return ReactNodeViewRenderer(NodeView as React.ComponentType<any>);
   },
+  
 });
 
 export default ImageNodeView;

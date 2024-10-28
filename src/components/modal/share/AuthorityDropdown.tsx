@@ -78,7 +78,7 @@ export default function AuthorityDropdown({
                     dispatch(setCoworkerList(prevCoworkerList));
                     dispatch(addCollaborator({ docId: selectedDoc.id, collaborators: [prevCoworkerList] }));
                     setIsOpen(false);
-                    dispatch(showWarningAlert('멤버 제거에 실패했습니다.'));
+                    dispatch(showWarningAlert('멤버 제거에 실패했습니다. 잠시 후 다시 시도해주세요.'));
                 }
             }
             // 권한 변경 요청
@@ -106,7 +106,7 @@ export default function AuthorityDropdown({
                     setCurrentAuthority(prevAuthority);
 
                     setIsOpen(false);
-                    dispatch(showWarningAlert('권한 변경에 실패했습니다.'));
+                    dispatch(showWarningAlert('권한 변경에 실패했습니다. 잠시 후 다시 시도해주세요.'));
                 }
             }
         }

@@ -46,7 +46,7 @@ export default function ShareForm({ selectedDoc }: ShareFormProps) {
             }
 
             if (alreadyExistCoworkers.length > 0) {
-                dispatch(showWarningAlert('이미 멤버로 추가된 사용자가 있습니다'));
+                dispatch(showWarningAlert('이미 멤버로 추가된 사용자가 있습니다.'));
                 return;
             }
 
@@ -66,7 +66,7 @@ export default function ShareForm({ selectedDoc }: ShareFormProps) {
 
             dispatch(setSelectedCoworkers([])); // 작업을 마쳤으니 선택된 협업자들을 초기화
         } catch (error) {
-            dispatch(showWarningAlert('선택된 사용자들을 멤버로 초대하는 데 실패했습니다.'));
+            dispatch(showWarningAlert('선택된 사용자들을 멤버로 초대하는 데 실패했습니다. 잠시 후 다시 시도해주세요.'));
         } finally {
             setIsSubmitting(false); // 제출 종료
         }

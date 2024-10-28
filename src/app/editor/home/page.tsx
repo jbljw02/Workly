@@ -1,7 +1,7 @@
+import EditorHome from "@/components/editor-home/EditorHome";
+
 export default function Page() {
     return (
-        <div>
-            에디터 홈
-        </div>
+        <EditorHome />
     )
 }

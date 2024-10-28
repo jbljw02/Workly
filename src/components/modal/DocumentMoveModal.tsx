@@ -78,7 +78,7 @@ export default function DocumentMoveModal({ isModalOpen, setIsModalOpen, selecte
                     setIsModalOpen(false);
                 } catch (error) {
                     console.error(error);
-                    dispatch(showWarningAlert(`${selectedDoc.title}를 이동하는 데에 실패했습니다.`))
+                    dispatch(showWarningAlert(`${selectedDoc.title}를 이동하는 데에 실패했습니다. 잠시 후 다시 시도해주세요.`))
                 }
             }
         }

@@ -75,7 +75,7 @@ export default function Editor({ docId }: { docId: string }) {
         },
       };
 
-      dispatch(updateDocuments({ docId: updatedDoc.id, updatedData: updatedDoc }));
+      dispatch(updateDocuments({ docId: updatedDoc.id, ...updatedDoc }));
       dispatch(setSelectedDocument(updatedDoc));
       setLastUpdatedTime(formatTimeDiff(updatedDoc.updatedAt));
 
@@ -124,12 +124,15 @@ export default function Editor({ docId }: { docId: string }) {
 
   return (
     <div className="flex-grow h-full">
-      <EditorHeader
-        editor={editor}
-        docTitle={docTitle}
-        lastUpdatedTime={lastUpdatedTime}
-        setLastUpdatedTime={setLastUpdatedTime} />
-      <MenuBar editor={editor} />
+      {/* 에디터의 헤더 */}
+      <div className="sticky top-0 bg-white z-10">
+        <EditorHeader
+          editor={editor}
+          docTitle={docTitle}
+          lastUpdatedTime={lastUpdatedTime}
+          setLastUpdatedTime={setLastUpdatedTime} />
+        <MenuBar editor={editor} />
+      </div>
       <div
         id="editor-content"
         className='p-4 h-full'>

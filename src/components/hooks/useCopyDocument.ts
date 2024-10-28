@@ -39,7 +39,7 @@ export default function useCopyDocument() {
 
             // 문서 복사 실패 시 롤백
             dispatch(deleteDocuments(copiedDocument.id));
-            dispatch(showWarningAlert(`${selectedDocument.title || '제목 없는 문서'}의 사본 생성에 실패했습니다.`));
+            dispatch(showWarningAlert(`${selectedDocument.title || '제목 없는 문서'}의 사본 생성에 실패했습니다. 잠시 후 다시 시도해주세요.`));
         }
     }
 

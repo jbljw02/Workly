@@ -162,35 +162,19 @@ export default function Aside() {
                     IconWidth="18"
                     label="공유중인 문서"
                     isCollapsed={isCollapsed}
-                    onClick={() => router.push('/editor/shared')} />
-                <SidebarItem
+                    onClick={() => router.push('/editor/shared')}
+                    addClick={writeDocument} />
+                {/* <SidebarItem
                     Icon={TaskIcon}
                     IconWidth="17"
                     label="작업"
-                    isCollapsed={isCollapsed} />
-                {/* <SidebarItem
-                    Icon={ScheduleIcon}
-                    IconWidth="17"
-                    label="일정"
                     isCollapsed={isCollapsed} /> */}
             </div>
             {/* 폴더를 추가하고 보여주는 영역 */}
             <FolderSection isCollapsed={isCollapsed} />
-            {/* 휴지통 */}
-            {/* <SidebarItem
-                Icon={TrashIcon}
-                IconWidth="19"
-                label="휴지통"
-                isCollapsed={isCollapsed} /> */}
             {/* 멤버 추가 div를 최하단에 위치하도록 여백 공간을 모두 차지 */}
             <div className="flex-grow" />
-            {/* 최하단 멤버 추가 메뉴 */}
-            {/* <SidebarItem
-                Icon={InviteIcon}
-                IconWidth="19"
-                label="멤버 추가"
-                onClick={() => logout(router)}
-                isCollapsed={isCollapsed} /> */}
+            {/* 휴지통 */}
             <SidebarItem
                 Icon={TrashIcon}
                 IconWidth="19"

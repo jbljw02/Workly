@@ -54,7 +54,7 @@ export default function useDeleteDocument() {
 
             // 삭제에 실패하면 롤백
             dispatch(setDocuments(prevDocs));
-            dispatch(showWarningAlert(`${document.title || '제목 없는 문서'}의 삭제에 실패했습니다.`))
+            dispatch(showWarningAlert(`${document.title || '제목 없는 문서'}의 삭제에 실패했습니다. 잠시 후 다시 시도해주세요.`))
         }
     }
 

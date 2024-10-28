@@ -93,7 +93,7 @@ export default function FolderItem({ folder }: FolderItemProps) {
             console.error(error);
             // 삭제에 실패하면 롤백
             dispatch(setFolders(prevFolders));
-            dispatch(showWarningAlert(`${folder.name}의 삭제에 실패했습니다.`));
+            dispatch(showWarningAlert(`${folder.name}의 삭제에 실패했습니다. 잠시 후 다시 시도해주세요.`));
         }
     }
 
