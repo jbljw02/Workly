@@ -56,7 +56,6 @@ export default function EditorHeader({
     // 문서가 공유됐는지
     const isShared = useMemo(() => selectedDocument.collaborators.length > 0,
         [selectedDocument.collaborators]);
-    console.log('isShared: ', isShared);
 
     const pathname = usePathname();
     const pathParts = pathname.split('/');

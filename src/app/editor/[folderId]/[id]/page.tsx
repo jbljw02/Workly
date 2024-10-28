@@ -16,6 +16,8 @@ export default async function Page({ params }: { params: { id: string } }) {
     const cookieStore = cookies();
     const firebaseToken = cookieStore.get('authToken');
 
+    console.log('firebaseToken: ', firebaseToken);
+
     if (!firebaseToken) {
         return redirect('/access-denied');
     }
@@ -33,6 +35,7 @@ export default async function Page({ params }: { params: { id: string } }) {
 
         return <Editor docId={id} />
     } catch (error) {
+        console.error('페이지 접근 권한 오류: ', error);
         return redirect('/access-denied');
     }
 }
