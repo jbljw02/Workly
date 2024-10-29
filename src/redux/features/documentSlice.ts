@@ -39,7 +39,7 @@ export const documentSlice = createSlice({
     name: 'documents',
     initialState: DocumentsState,
     reducers: {
-        addDocuments: (state, action: PayloadAction<DocumentProps>) => {
+        addDocuments: (state, action) => {
             state.push(action.payload);
         },
         updateDocuments: (state, action) => {

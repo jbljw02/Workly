@@ -13,8 +13,6 @@ import formatTimeDiff from '@/utils/formatTimeDiff'
 import MenuBar from './child/menu-bar/MenuBar'
 import useUploadContent from '../hooks/useUploadContent';
 import useEditorExtension from '../hooks/useEditorExtension';
-import { GetServerSideProps, GetServerSidePropsContext } from 'next';
-import { useRouter } from 'next/navigation';
 
 export default function Editor({ docId }: { docId: string }) {
   const dispatch = useAppDispatch();

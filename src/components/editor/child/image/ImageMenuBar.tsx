@@ -52,7 +52,7 @@ export default function ImageMenuBar({ nodeViewRef, cropStart, resizableImgProps
             editor.chain().focus().deleteSelection().run();
         } catch (error) {
             console.error(error);
-            dispatch(showWarningAlert('이미지 삭제에 실패했습니다. 잠시 후 다시 시도해주세요.'));
+            dispatch(showWarningAlert('이미지 삭제에 실패했습니다.'));
         }
     }
 

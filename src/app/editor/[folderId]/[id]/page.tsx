@@ -1,8 +1,6 @@
 import Editor from "@/components/editor/Editor";
-import { getAuth } from "firebase/auth";
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { auth, firebasedb } from "@/firebase/firebasedb";
 import admin from "@/firebase/firebaseAdmin";
 import axios from 'axios';
 
@@ -15,8 +13,6 @@ export default async function Page({ params }: { params: { id: string } }) {
     // 파이어베이스 인증 토큰 가져오기
     const cookieStore = cookies();
     const firebaseToken = cookieStore.get('authToken');
-
-    console.log('firebaseToken: ', firebaseToken);
 
     if (!firebaseToken) {
         return redirect('/access-denied');

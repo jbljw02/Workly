@@ -92,7 +92,7 @@ const NodeView = (resizableImgProps: ResizableImageNodeViewRendererProps) => {
               textAlign: resizableImgProps.node.attrs.textAlign,
             });
           } catch (error) {
-            dispatch(showWarningAlert('이미지를 자르지 못했습니다. 잠시 후 다시 시도해주세요.'));
+            dispatch(showWarningAlert('이미지를 자르지 못했습니다.'));
           }
 
           setCropMode(false);

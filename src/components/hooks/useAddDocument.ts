@@ -70,10 +70,10 @@ export default function useAddDocument() {
 
             setInvalidInfo ?
                 setInvalidInfo(({
-                    msg: '문서 추가에 실패했습니다. 잠시 후 다시 시도해주세요.',
+                    msg: '문서 추가에 실패했습니다.',
                     isInvalid: true,
                 })) :
-                dispatch(showWarningAlert('문서 추가에 실패했습니다. 잠시 후 다시 시도해주세요.'));
+                dispatch(showWarningAlert('문서 추가에 실패했습니다.'));
 
             return true;
         }

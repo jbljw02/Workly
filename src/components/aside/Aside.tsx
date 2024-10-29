@@ -6,27 +6,20 @@ import SearchInput from "./child/SearchInput";
 import TrashIcon from '../../../public/svgs/trash.svg';
 import HomeIcon from '../../../public/svgs/home.svg';
 import DocumentIcon from '../../../public/svgs/document.svg';
-import TaskIcon from '../../../public/svgs/task.svg';
-import ScheduleIcon from '../../../public/svgs/schedule.svg';
-import InviteIcon from '../../../public/svgs/add-person.svg';
-import { v4 as uuidv4 } from 'uuid';
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { addDocuments, DocumentProps } from "@/redux/features/documentSlice";
 import { useRouter } from "next/navigation";
 import FolderSection from "./child/folder/FolderSection";
 import logout from "@/utils/logout";
 import UserSection from "./child/user/UserSection";
-import { addDocumentToFolder, Folder } from "@/redux/features/folderSlice";
-import axios from 'axios';
 import GroupIcon from '../../../public/svgs/group.svg';
 import useAddDocument from "../hooks/useAddDocument";
+import Trash from "../trash/Trash";
+import { useClickOutside } from "../hooks/useClickOutside";
 
 export default function Aside() {
-    const dispatch = useAppDispatch();
     const router = useRouter();
     const addDocToFolder = useAddDocument();
 
-    const user = useAppSelector(state => state.user);
     const folders = useAppSelector(state => state.folders);
 
     const expandedWidth = 240; // 넓은 상태의 너비
@@ -82,40 +75,6 @@ export default function Aside() {
         }
     };
 
-    // 문서를 생성하고 작성할 수 있도록 Editor 페이지로 이동
-    // const writeDocument = async () => {
-    //     const defaultFolder: Folder = folders[0];
-
-    //     const newDocument: DocumentProps = {
-    //         id: uuidv4(),
-    //         title: '',
-    //         docContent: null,
-    //         createdAt: { seconds: 0, nanoseconds: 0 },
-    //         updatedAt: { seconds: 0, nanoseconds: 0 },
-    //         author: user,
-    //         folderId: defaultFolder.id,
-    //         folderName: defaultFolder.name,
-    //         collaborators: [],
-    //     };
-
-    //     try {
-    //         await axios.post('/api/document',
-    //             {
-    //                 folderId: defaultFolder.id,
-    //                 document: newDocument
-    //             });
-
-    //         // 전체 문서 배열에 추가
-    //         dispatch(addDocuments(newDocument));
-    //         // 문서 ID를 기본 폴더에 추가
-    //         dispatch(addDocumentToFolder({ folderId: defaultFolder.id, docId: newDocument.id }));
-
-    //         router.push(`/editor/${defaultFolder.id}/${newDocument.id}`);
-    //     } catch (error) {
-    //         console.error(error);
-    //     }
-    // }
-
     return (
         <aside
             ref={sidebarRef}
@@ -128,7 +87,7 @@ export default function Aside() {
             }}>
             {/* aside의 너비를 변경시키는 리사이저 */}
             <div
-                className="resizer absolute top-0 right-[-5px] bottom-0 w-2 cursor-col-resize z-50"
+                className="resizer absolute top-0 right-[-5px] bottom-0 w-2 cursor-col-resize z-10"
                 onMouseDown={clickResizer}
                 onMouseEnter={mouserEnterToResizer}
                 onMouseLeave={mouseLeaveFromResizer} />
@@ -176,12 +135,8 @@ export default function Aside() {
             <FolderSection isCollapsed={isCollapsed} />
             {/* 멤버 추가 div를 최하단에 위치하도록 여백 공간을 모두 차지 */}
             <div className="flex-grow" />
-            {/* 휴지통 */}
-            <SidebarItem
-                Icon={TrashIcon}
-                IconWidth="19"
-                label="휴지통"
-                isCollapsed={isCollapsed} />
+            {/* 휴지통 아이콘과 휴지통 내용 영역 */}
+            <Trash isCollapsed={isCollapsed} />
         </aside>
     );
 }

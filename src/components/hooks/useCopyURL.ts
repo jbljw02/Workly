@@ -12,7 +12,7 @@ export const useCopyURL = () => {
         dispatch(showCompleteAlert('링크가 복사되었습니다.'));
       })
       .catch(() => {
-        dispatch(showWarningAlert('링크 복사에 실패했습니다. 잠시 후 다시 시도해주세요.'));
+        dispatch(showWarningAlert('링크 복사에 실패했습니다.'));
       });
   };
 

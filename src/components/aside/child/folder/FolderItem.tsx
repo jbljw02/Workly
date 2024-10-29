@@ -18,6 +18,7 @@ import { v4 as uuidv4 } from 'uuid';
 import HoverTooltip from '@/components/editor/child/menu-bar/HoverTooltip';
 import { showCompleteAlert, showWarningAlert } from '@/redux/features/alertSlice';
 import useAddDocument from '@/components/hooks/useAddDocument';
+import { addFoldersToTrash } from '@/redux/features/trashSlice';
 
 type FolderItemProps = {
     folder: Folder;
@@ -40,7 +41,7 @@ export default function FolderItem({ folder }: FolderItemProps) {
 
     const [isDocInvalidInfo, setIsDocInvalidInfo] = useState({
         isInvalid: false,
-        msg: '문서 추가에 실패했습니다. 잠시 후 다시 시도해주세요.',
+        msg: '문서 추가에 실패했습니다.',
     });
 
     // 폴더명 수정 요청
@@ -79,7 +80,8 @@ export default function FolderItem({ folder }: FolderItemProps) {
 
         try {
             dispatch(deleteFolders(folder.id))
-
+            dispatch(addFoldersToTrash(folder));
+            
             await axios.delete('/api/folder', {
                 params: {
                     email: user.email,
@@ -92,7 +94,9 @@ export default function FolderItem({ folder }: FolderItemProps) {
             console.error(error);
             // 삭제에 실패하면 롤백
             dispatch(setFolders(prevFolders));
-            dispatch(showWarningAlert(`${folder.name}의 삭제에 실패했습니다. 잠시 후 다시 시도해주세요.`));
+            dispatch(addFoldersToTrash(prevFolders));
+            
+            dispatch(showWarningAlert(`${folder.name}의 삭제에 실패했습니다.`));
         }
     }
 
