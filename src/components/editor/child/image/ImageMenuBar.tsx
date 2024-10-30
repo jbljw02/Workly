@@ -1,7 +1,7 @@
 import { RefObject, useRef, useState } from "react";
 import BarDivider from "../divider/VerticalDivider";
-import HoverTooltip from "../menuBar/HoverTooltip";
-import ToolbarButton from "../menuBar/ToolbarButton";
+import HoverTooltip from "../menu-bar/HoverTooltip";
+import ToolbarButton from "../menu-bar/ToolbarButton";
 import AlignLeftIcon from '../../../../../public/svgs/editor/align-left.svg';
 import AlignCenterIcon from '../../../../../public/svgs/editor/align-center.svg';
 import AlignRightIcon from '../../../../../public/svgs/editor/align-right.svg';

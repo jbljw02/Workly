@@ -5,8 +5,8 @@ import { useEffect, useRef } from 'react';
 import WorldIcon from '../../../../../public/svgs/editor/world.svg';
 import EditIcon from '../../../../../public/svgs/editor/pencil-edit.svg';
 import DeleteIcon from '../../../../../public/svgs/trash.svg';
-import HoverTooltip from '../menuBar/HoverTooltip';
-import ToolbarButton from '../menuBar/ToolbarButton';
+import HoverTooltip from '../menu-bar/HoverTooltip';
+import ToolbarButton from '../menu-bar/ToolbarButton';
 import LabelButton from '@/components/button/LabelButton';
 import { LinkSectionProps } from '@/types/linkSectionProps';
 

@@ -9,7 +9,7 @@ import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import axios from 'axios';
 import getUserFolder from "@/components/hooks/getUserFolder";
 import { usePathname, useRouter } from "next/navigation";
-import HoverTooltip from '@/components/editor/child/menuBar/HoverTooltip';
+import HoverTooltip from '@/components/editor/child/menu-bar/HoverTooltip';
 import useDeleteDocument from '@/components/hooks/useDeleteDocument';
 
 type DocumentItemProps = {
@@ -88,7 +88,7 @@ export default function DocumentItem({ document, onClick }: DocumentItemProps) {
                         Icon={EditIcon}
                         IconWidth={15}
                         onClick={(e) => {
-                            e.stopPropagation(); 
+                            e.stopPropagation();
                             setIsEditing(true);
                         }} />
                 </HoverTooltip>

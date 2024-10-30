@@ -8,7 +8,6 @@ import HighlightIcon from '../../../../../public/svgs/editor/highlight.svg'
 import UlIcon from '../../../../../public/svgs/editor/ul.svg'
 import OlIcon from '../../../../../public/svgs/editor/ol.svg'
 import AlignLeftIcon from '../../../../../public/svgs/editor/align-left.svg'
-import FontColorIcon from '../../../../../public/svgs/editor/font-color.svg'
 import ImageIcon from '../../../../../public/svgs/editor/image.svg'
 import LinkIcon from '../../../../../public/svgs/editor/link.svg'
 import CodeIcon from '../../../../../public/svgs/editor/code.svg'
@@ -25,17 +24,18 @@ import { v4 as uuidv4 } from 'uuid';
 import AddLinkSection, { SelectionPosition } from '../link/AddLinkSection'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import LinkTooltip from '../link/LinkTooltip'
-import { setTextSelection } from '@/redux/features/selectionSlice'
 import ColorPicker from './ColorPicker'
 import { setTextColor } from '@/redux/features/textColorSlice'
 import VerticalDivider from '../divider/VerticalDivider'
 import WarningAlert from '@/components/alert/WarningAlert'
-import { SetResizableImageProps } from '../../../../../lib/ImageNode'
 import uploadImage from '@/utils/uploadImage'
 import uploadFile from '@/utils/uploadFile'
 
 export default function MenuBar({ editor }: { editor: Editor }) {
     const dispatch = useAppDispatch();
+
+
+    const editorPermission = useAppSelector(state => state.editorPermission);
 
     const [fontSize, setFontSize] = useState<number>(16);
     const [headingLevel, setHeadingLevel] = useState<string>('16');
@@ -46,7 +46,6 @@ export default function MenuBar({ editor }: { editor: Editor }) {
     const [isHighlight, setIsHighlight] = useState<boolean>(false);
     const [selectedFont, setSelectedFont] = useState<string>('Arial');
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
-
     const [addingLink, setAddingLink] = useState<boolean>(false);
     const [selectionPos, setSelectionPos] = useState<SelectionPosition>({ top: 0, left: 0 });
     const [linkNoticeModal, setLinkNoticeModal] = useState<boolean>(false);
@@ -174,140 +173,140 @@ export default function MenuBar({ editor }: { editor: Editor }) {
     };
 
     return (
-        <div className="flex items-center px-2 py-1 border-b border-t w-full">
-            {/* 화면의 스케일(확대 비율)을 조절하는 드롭다운 */}
-            {/* <RatioDropdown />
-            <VerticalDivider /> */}
-            {/* 헤딩을 조절하는 드롭다운 */}
-            <HeadingDropdown
-                editor={editor && editor}
-                headingLevel={headingLevel} />
-            <VerticalDivider />
-            {/* 폰트를 변경하는 드롭다운 */}
-            <FontDropdwon editor={editor && editor} />
-            <VerticalDivider />
-            {/* 폰트 사이즈를 조절하는 영역 */}
-            <FontSizeCal
-                editor={editor}
-                fontSize={fontSize}
-                setFontSize={setFontSize} />
-            <VerticalDivider />
-            <div className="flex flex-row items-center gap-1">
-                <HoverTooltip label='굵게'>
-                    <ToolbarButton
-                        onClick={() => editor.chain().focus().toggleBold().run()}
-                        isActive={isBold}
-                        Icon={BoldIcon}
-                        iconWidth={16} />
-                </HoverTooltip>
-                <HoverTooltip label='기울임'>
-                    <ToolbarButton
-                        onClick={() => editor.chain().focus().toggleItalic().run()}
-                        isActive={isItalic}
-                        Icon={ItalicIcon}
-                        iconWidth={14} />
-                </HoverTooltip>
-                <HoverTooltip label='밑줄'>
-                    <ToolbarButton
-                        onClick={() => editor.chain().focus().toggleUnderline().run()}
-                        isActive={isUnderline}
-                        Icon={UnderlineIcon}
-                        iconWidth={14} />
-                </HoverTooltip>
-                {/* 글씨의 색상을 변경할 수 있는 버튼과 컬러 선택자 */}
-                <ColorPicker editor={editor} />
-                <HoverTooltip label='강조'>
-                    <ToolbarButton
-                        onClick={() => editor.chain().focus().toggleHighlight().run()}
-                        isActive={isHighlight}
-                        Icon={HighlightIcon}
-                        iconWidth={11} />
-                </HoverTooltip>
-            </div>
-            <VerticalDivider />
-            <div className="flex flex-row items-center gap-1">
-                <HoverTooltip label='순서 없는 리스트'>
-                    <ToolbarButton
-                        onClick={() => editor.chain().focus().toggleBulletList().run()}
-                        isActive={editor && editor.isActive('bulletList')}
-                        Icon={UlIcon}
-                        iconWidth={22} />
-                </HoverTooltip>
-                <HoverTooltip label='순서 있는 리스트'>
-                    <ToolbarButton
-                        onClick={() => editor.chain().focus().toggleOrderedList().run()}
-                        isActive={editor && editor.isActive('orderedList')}
-                        Icon={OlIcon}
-                        iconWidth={22} />
-                </HoverTooltip>
-                {/* 텍스트의 정렬 기준을 정하는 드롭다운 영역 */}
-                <div className="relative">
-                    <HoverTooltip label='정렬'>
+        // 사용자에게 문서 편집 권한이 있을 시에만 메뉴바 표시
+        editorPermission && editorPermission !== '읽기 허용' && (
+            <div className="flex items-center px-2 py-1 border-b w-full">
+                {/* 헤딩을 조절하는 드롭다운 */}
+                <HeadingDropdown
+                    editor={editor && editor}
+                    headingLevel={headingLevel} />
+                <VerticalDivider />
+                {/* 폰트를 변경하는 드롭다운 */}
+                <FontDropdwon editor={editor && editor} />
+                <VerticalDivider />
+                {/* 폰트 사이즈를 조절하는 영역 */}
+                <FontSizeCal
+                    editor={editor}
+                    fontSize={fontSize}
+                    setFontSize={setFontSize} />
+                <VerticalDivider />
+                <div className="flex flex-row items-center gap-1">
+                    <HoverTooltip label='굵게'>
                         <ToolbarButton
-                            onClick={() => setAlignDropdownOpen(!alignDropdownOpen)}
-                            Icon={AlignLeftIcon}
-                            iconWidth={21} />
+                            onClick={() => editor.chain().focus().toggleBold().run()}
+                            isActive={isBold}
+                            Icon={BoldIcon}
+                            iconWidth={16} />
                     </HoverTooltip>
+                    <HoverTooltip label='기울임'>
+                        <ToolbarButton
+                            onClick={() => editor.chain().focus().toggleItalic().run()}
+                            isActive={isItalic}
+                            Icon={ItalicIcon}
+                            iconWidth={14} />
+                    </HoverTooltip>
+                    <HoverTooltip label='밑줄'>
+                        <ToolbarButton
+                            onClick={() => editor.chain().focus().toggleUnderline().run()}
+                            isActive={isUnderline}
+                            Icon={UnderlineIcon}
+                            iconWidth={14} />
+                    </HoverTooltip>
+                    {/* 글씨의 색상을 변경할 수 있는 버튼과 컬러 선택자 */}
+                    <ColorPicker editor={editor} />
+                    <HoverTooltip label='강조'>
+                        <ToolbarButton
+                            onClick={() => editor.chain().focus().toggleHighlight().run()}
+                            isActive={isHighlight}
+                            Icon={HighlightIcon}
+                            iconWidth={11} />
+                    </HoverTooltip>
+                </div>
+                <VerticalDivider />
+                <div className="flex flex-row items-center gap-1">
+                    <HoverTooltip label='순서 없는 리스트'>
+                        <ToolbarButton
+                            onClick={() => editor.chain().focus().toggleBulletList().run()}
+                            isActive={editor && editor.isActive('bulletList')}
+                            Icon={UlIcon}
+                            iconWidth={22} />
+                    </HoverTooltip>
+                    <HoverTooltip label='순서 있는 리스트'>
+                        <ToolbarButton
+                            onClick={() => editor.chain().focus().toggleOrderedList().run()}
+                            isActive={editor && editor.isActive('orderedList')}
+                            Icon={OlIcon}
+                            iconWidth={22} />
+                    </HoverTooltip>
+                    {/* 텍스트의 정렬 기준을 정하는 드롭다운 영역 */}
+                    <div className="relative">
+                        <HoverTooltip label='정렬'>
+                            <ToolbarButton
+                                onClick={() => setAlignDropdownOpen(!alignDropdownOpen)}
+                                Icon={AlignLeftIcon}
+                                iconWidth={21} />
+                        </HoverTooltip>
+                        {
+                            alignDropdownOpen && (
+                                <AlignDropdown
+                                    editor={editor}
+                                    setAlignDropdownOpen={setAlignDropdownOpen} />
+                            )
+                        }
+                    </div>
+                    <HoverTooltip label='구분선'>
+                        <ToolbarButton
+                            onClick={() => editor.chain().focus().setHorizontalRule().run()}
+                            Icon={LineIcon}
+                            iconWidth={18} />
+                    </HoverTooltip>
+                </div>
+                <VerticalDivider />
+                <div className="flex flex-row items-center gap-1">
+                    <HoverTooltip label='이미지 삽입'>
+                        <ToolbarButton
+                            onClick={() => openFileExplorer('image')}
+                            Icon={ImageIcon}
+                            iconWidth={20} />
+                    </HoverTooltip>
+                    <HoverTooltip label='파일 삽입'>
+                        <ToolbarButton
+                            onClick={() => openFileExplorer('file')}
+                            Icon={FileSearchIcon}
+                            iconWidth={20} />
+                    </HoverTooltip>
+                    <HoverTooltip label='링크 삽입'>
+                        <ToolbarButton
+                            onClick={addLink}
+                            Icon={LinkIcon}
+                            iconWidth={20} />
+                    </HoverTooltip>
+                    {/* 링크를 추가하는 영역 */}
                     {
-                        alignDropdownOpen && (
-                            <AlignDropdown
+                        addingLink && (
+                            <AddLinkSection
                                 editor={editor}
-                                setAlignDropdownOpen={setAlignDropdownOpen} />
+                                position={selectionPos}
+                                setAddingLink={setAddingLink}
+                                isOpen={addingLink} />
                         )
                     }
+                    <WarningAlert
+                        isModalOpen={linkNoticeModal}
+                        setIsModalOpen={setLinkNoticeModal}
+                        label="링크를 연결할 영역을 드래그해주세요" />
+                    {/* 링크에 hover를 했을 시 보여지는 툴팁 */}
+                    <LinkTooltip editor={editor} />
+                    <HoverTooltip label='코드 삽입'>
+                        <ToolbarButton
+                            onClick={() => {
+                                editor.chain().focus().insertContent('<pre><code></code></pre>').run();
+                            }}
+                            Icon={CodeIcon}
+                            iconWidth={20} />
+                    </HoverTooltip>
                 </div>
-                <HoverTooltip label='구분선'>
-                    <ToolbarButton
-                        onClick={() => editor.chain().focus().setHorizontalRule().run()}
-                        Icon={LineIcon}
-                        iconWidth={18} />
-                </HoverTooltip>
             </div>
-            <VerticalDivider />
-            <div className="flex flex-row items-center gap-1">
-                <HoverTooltip label='이미지 삽입'>
-                    <ToolbarButton
-                        onClick={() => openFileExplorer('image')}
-                        Icon={ImageIcon}
-                        iconWidth={20} />
-                </HoverTooltip>
-                <HoverTooltip label='파일 삽입'>
-                    <ToolbarButton
-                        onClick={() => openFileExplorer('file')}
-                        Icon={FileSearchIcon}
-                        iconWidth={20} />
-                </HoverTooltip>
-                <HoverTooltip label='링크 삽입'>
-                    <ToolbarButton
-                        onClick={addLink}
-                        Icon={LinkIcon}
-                        iconWidth={20} />
-                </HoverTooltip>
-                {/* 링크를 추가하는 영역 */}
-                {
-                    addingLink && (
-                        <AddLinkSection
-                            editor={editor}
-                            position={selectionPos}
-                            setAddingLink={setAddingLink}
-                            isOpen={addingLink} />
-                    )
-                }
-                <WarningAlert
-                    isModalOpen={linkNoticeModal}
-                    setIsModalOpen={setLinkNoticeModal}
-                    label="링크를 연결할 영역을 드래그해주세요" />
-                {/* 링크에 hover를 했을 시 보여지는 툴팁 */}
-                <LinkTooltip editor={editor} />
-                <HoverTooltip label='코드 삽입'>
-                    <ToolbarButton
-                        onClick={() => {
-                            editor.chain().focus().insertContent('<pre><code></code></pre>').run();
-                        }}
-                        Icon={CodeIcon}
-                        iconWidth={20} />
-                </HoverTooltip>
-            </div>
-        </div>
+        )
     )
 }

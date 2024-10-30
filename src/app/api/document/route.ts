@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import firestore from "../../../../firebase/firestore";
+import firestore from "../../../firebase/firestore";
 import { doc, getDoc, updateDoc, collection, addDoc, writeBatch, query, where, getDocs, orderBy, serverTimestamp } from "firebase/firestore";
 import { Folder } from "@/redux/features/folderSlice";
 import { Collaborator, DocumentProps } from "@/redux/features/documentSlice";
@@ -12,13 +12,11 @@ export async function POST(req: NextRequest) {
         if (!folderId) return NextResponse.json({ error: "폴더 ID가 제공되지 않음" }, { status: 400 });
         if (!document) return NextResponse.json({ error: "문서 정보가 제공되지 않음" }, { status: 400 });
 
-        // 폴더 문서 참조 가져오기
+        // 폴더 참조 가져오기
         const folderDocRef = doc(firestore, 'folders', folderId);
         const folderDocSnap = await getDoc(folderDocRef);
 
-        if (!folderDocSnap.exists()) {
-            return NextResponse.json({ error: "폴더를 찾을 수 없음" }, { status: 404 });
-        }
+        if (!folderDocSnap.exists()) return NextResponse.json({ error: "폴더를 찾을 수 없음" }, { status: 404 });
 
         const folderData = folderDocSnap.data();
 
@@ -139,11 +137,6 @@ export async function DELETE(req: NextRequest) {
         }
 
         const docData = docSnap.data();
-
-        // 문서 소유자 확인
-        if (docData.author.email !== email) {
-            return NextResponse.json({ error: "문서 삭제 권한이 없습니다" }, { status: 403 });
-        }
 
         // 폴더 참조 가져오기
         const folderRef = doc(firestore, 'folders', folderId);

@@ -39,7 +39,7 @@ export const foldersSlice = createSlice({
             const { folderId, docId } = action.payload;
             const folder = state.find(folder => folder.id === folderId);
             if (folder) {
-                folder.documentIds.push(docId); // 폴더에 문서 ID를 추가
+                folder.documentIds.push(docId);
             }
         },
         removeDocumentFromFolder: (state, action) => {

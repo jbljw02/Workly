@@ -93,12 +93,21 @@ export default function AddInputModal({
                     <ModalHeader
                         label={<div className='font-semibold'>{title}</div>}
                         closeModal={closeModal} />
-                    <InputLabelContainer
-                        label="폴더"
-                        value={value}
-                        setValue={setValue}
-                        isInvalidInfo={isInvalidInfo}
-                        placeholder={placeholder} />
+                    <div className="flex flex-col px-6">
+                        <div className='text-sm mt-2 mb-2 pl-0.5'>폴더</div>
+                        <CommonInput
+                            style={{
+                                px: 'px-3',
+                                py: 'py-2',
+                                textSize: 'text-[15px]',
+                            }}
+                            type="text"
+                            value={value}
+                            setValue={setValue}
+                            placeholder={placeholder}
+                            isInvalidInfo={isInvalidInfo}
+                            autoFocus={true} />
+                    </div>
                 </div>
                 {/* 하단 버튼 영역 */}
                 <div className='flex justify-end text-sm gap-3.5 px-6 pb-6'>

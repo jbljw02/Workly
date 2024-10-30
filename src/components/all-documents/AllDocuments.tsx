@@ -10,6 +10,7 @@ export default function AllDocuments() {
     const documents = useAppSelector(state => state.documents);
     const user = useAppSelector(state => state.user);
 
+    // 사용자의 문서들을 필터링
     const usersDocuments = useMemo(() => {
         return documents.filter(doc => doc.author.email === user.email);
     }, [documents]);

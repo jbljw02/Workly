@@ -1,8 +1,37 @@
 import Editor from "@/components/editor/Editor";
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
+import admin from "@/firebase/firebaseAdmin";
+import axios from 'axios';
 
-export default function Page({ params }: { params: { id: string } }) {
+const baseUrl = process.env.NEXT_PUBLIC_API_URL;
+
+export default async function Page({ params }: { params: { id: string } }) {
     const { id } = params;
-    return (
-        <Editor docId={id} />
-    )
+    const docId = params.id; // 문서 ID
+
+    // 파이어베이스 인증 토큰 가져오기
+    const cookieStore = cookies();
+    const firebaseToken = cookieStore.get('authToken');
+
+    if (!firebaseToken) {
+        return redirect('/access-denied');
+    }
+
+    try {
+        const decodedToken = await admin.auth().verifyIdToken(firebaseToken.value);
+        const userEmail = decodedToken.email;
+
+        await axios.get(`${baseUrl}/api/auth/verify-permission`, {
+            params: {
+                email: userEmail,
+                docId: docId,
+            },
+        });
+
+        return <Editor docId={id} />
+    } catch (error) {
+        console.error('페이지 접근 권한 오류: ', error);
+        return redirect('/access-denied');
+    }
 }

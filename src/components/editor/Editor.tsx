@@ -10,15 +10,26 @@ import DragHandle from '@tiptap-pro/extension-drag-handle-react'
 import MenuIcon from '../../../public/svgs/editor/menu-vertical.svg'
 import { DocumentProps, renameDocuments, setSelectedDocument, updateDocuments } from '@/redux/features/documentSlice'
 import formatTimeDiff from '@/utils/formatTimeDiff'
-import MenuBar from './child/menuBar/MenuBar'
+import MenuBar from './child/menu-bar/MenuBar'
 import useUploadContent from '../hooks/useUploadContent';
 import useEditorExtension from '../hooks/useEditorExtension';
 
 export default function Editor({ docId }: { docId: string }) {
   const dispatch = useAppDispatch();
-  const extensions = useEditorExtension({ docId });
 
+  const extensions = useEditorExtension({ docId });
   const uploadContent = useUploadContent();
+
+  const openColorPicker = useAppSelector(state => state.openColorPicker);
+  const documents = useAppSelector(state => state.documents);
+  // 문서들 중에 현재 편집 중인 문서를 선택
+  const selectedDocument = useAppSelector(state => state.selectedDocument);
+  const editorPermission = useAppSelector(state => state.editorPermission);
+
+  const [docTitle, setDocTitle] = useState<string>(selectedDocument.title); // 문서 제목
+  const [lastUpdatedTime, setLastUpdatedTime] = useState<string>('현재 편집 중'); // 문서의 마지막 편집 시간에 따른 출력값
+
+  const latestDocRef = useRef(selectedDocument);
 
   const editor = useEditor({
     extensions: extensions,
@@ -27,17 +38,9 @@ export default function Editor({ docId }: { docId: string }) {
         class: 'prose prose-sm sm:prose lg:prose-lg xl:prose-xl m-4 focus:outline-none',
       },
     },
+    editable: editorPermission !== '읽기 허용',
   });
 
-  const openColorPicker = useAppSelector(state => state.openColorPicker);
-  const documents = useAppSelector(state => state.documents);
-  // 문서들 중에 현재 편집 중인 문서를 선택
-  const selectedDocument = useAppSelector(state => state.selectedDocument);
-
-  const [docTitle, setDocTitle] = useState<string>(selectedDocument.title); // 문서 제목
-  const [lastUpdatedTime, setLastUpdatedTime] = useState<string>('현재 편집 중'); // 문서의 마지막 편집 시간에 따른 출력값
-
-  const latestDocRef = useRef(selectedDocument);
 
   // ref를 사용하여 최신 값을 참조해서 담음
   useEffect(() => {
@@ -70,7 +73,7 @@ export default function Editor({ docId }: { docId: string }) {
         },
       };
 
-      dispatch(updateDocuments({ docId: updatedDoc.id, updatedData: updatedDoc }));
+      dispatch(updateDocuments({ docId: updatedDoc.id, ...updatedDoc }));
       dispatch(setSelectedDocument(updatedDoc));
       setLastUpdatedTime(formatTimeDiff(updatedDoc.updatedAt));
 
@@ -92,7 +95,7 @@ export default function Editor({ docId }: { docId: string }) {
 
   // 문서명이 변경되었을 때
   const docTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (latestDocRef.current) {
+    if (latestDocRef.current && editorPermission && editorPermission !== '읽기 허용') {
       const updatedDoc = {
         ...latestDocRef.current,
         title: e.target.value,
@@ -119,12 +122,15 @@ export default function Editor({ docId }: { docId: string }) {
 
   return (
     <div className="flex-grow h-full">
-      <EditorHeader
-        editor={editor}
-        docTitle={docTitle}
-        lastUpdatedTime={lastUpdatedTime}
-        setLastUpdatedTime={setLastUpdatedTime} />
-      <MenuBar editor={editor} />
+      {/* 에디터의 헤더 */}
+      <div className="sticky top-0 bg-white z-10">
+        <EditorHeader
+          editor={editor}
+          docTitle={docTitle}
+          lastUpdatedTime={lastUpdatedTime}
+          setLastUpdatedTime={setLastUpdatedTime} />
+        <MenuBar editor={editor} />
+      </div>
       <div
         id="editor-content"
         className='p-4 h-full'>
@@ -158,3 +164,4 @@ export default function Editor({ docId }: { docId: string }) {
     </div>
   )
 }
+

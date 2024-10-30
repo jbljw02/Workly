@@ -11,7 +11,7 @@ import AuthTop from './AuthTop';
 import { useRouter } from 'next/navigation';
 import FormInput from '../input/FormInput';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../../../firebase/firebasedb';
+import { auth } from '../../firebase/firebasedb';
 import getEmailToken from '@/utils/getEmailToken';
 import { FirebaseError } from 'firebase/app';
 import EmailVerifyModal from '../modal/EmailVerifyModal';
@@ -75,7 +75,7 @@ export default function Login() {
 
                 if (user && user.emailVerified) {
                     setEmailVerifiedFail(false);
-                    getEmailToken();
+                    await getEmailToken();
 
                     router.push('/editor/home');
                 }

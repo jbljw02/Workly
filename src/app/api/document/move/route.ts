@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import firestore from "../../../../../firebase/firestore";
+import firestore from "../../../../firebase/firestore";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { Folder } from "@/redux/features/folderSlice";
 import { DocumentProps } from "@/redux/features/documentSlice";

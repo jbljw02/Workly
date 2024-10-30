@@ -4,7 +4,7 @@ pre {
     border-radius: 8px;
     color: #ffffff;
     font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
-    margin: 16px 0;
+    margin: 16px 0px;
     padding: 12px 16px;
     width: 600px;
 
@@ -77,7 +77,7 @@ hr {
 }
 
 .node-imageComponent {
-    display: flex;
+    display: block;
     width: 100%;
 }
 

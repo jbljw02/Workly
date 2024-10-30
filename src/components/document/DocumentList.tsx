@@ -1,26 +1,22 @@
 'use client';
 
 import formatTimeDiff from "@/utils/formatTimeDiff";
-import IconButton from "../button/LabelButton";
 import MenuIcon from '../../../public/svgs/editor/menu-vertical.svg'
 import ShareDocumentIcon from '../../../public/svgs/shared-document.svg'
 import { useRouter } from "next/navigation";
 import { DocumentProps, selectedDocument } from "@/redux/features/documentSlice";
 import EmptyFolderIcon from '../../../public/svgs/empty-folder.svg';
-import { deleteDoc, documentId } from "firebase/firestore";
 import { MenuItemProps } from "../editor/child/MenuItem";
 import useCopyDocument from "../hooks/useCopyDocument";
 import { useCopyURL } from "../hooks/useCopyURL";
-import useDownloadPDF from "../hooks/useDownloadPDF";
 import { useRef, useState } from "react";
 import MoveIcon from '../../../public/svgs/editor/move-folder.svg'
-import DownloadIcon from '../../../public/svgs/editor/download.svg'
 import CopyIcon from '../../../public/svgs/editor/copy.svg'
 import DeleteIcon from '../../../public/svgs/trash.svg'
 import LinkCopyIcon from '../../../public/svgs/editor/link.svg'
 import useDeleteDocument from "../hooks/useDeleteDocument";
 import MenuList from "../editor/child/MenuList";
-import HoverTooltip from "../editor/child/menuBar/HoverTooltip";
+import HoverTooltip from "../editor/child/menu-bar/HoverTooltip";
 import { useClickOutside } from "../hooks/useClickOutside";
 import LabelButton from "../button/LabelButton";
 import ShareIcon from '../../../public/svgs/group.svg';

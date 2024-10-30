@@ -40,9 +40,13 @@ export const coworkerList = createSlice({
         },
         updateCoworkerAuthority: (state, action) => {
             const { email, newAuthority } = action.payload;
-            const coworker = state.find(coworker => coworker.email === email);
-            if (coworker) {
-                coworker.authority = newAuthority;
+            const coworkerIndex = state.findIndex(coworker => coworker.email === email);
+
+            if (coworkerIndex !== -1) {
+                state[coworkerIndex] = {
+                    ...state[coworkerIndex],
+                    authority: newAuthority,
+                };
             }
         },
         deleteCoworker: (state, action) => {
@@ -68,16 +72,28 @@ export const selectedCoworkers = createSlice({
     },
 })
 
+export const editorPermission = createSlice({
+    name: 'editorPermission',
+    initialState: null,
+    reducers: {
+        setEditorPermission: (state, action) => {
+            return action.payload;
+        },
+    },
+})
+
 export const { setTargetSharingEmail } = targetSharingEmail.actions;
 export const { setSearchedCoworkers, updateSearchedCoworkerAuthority } = searchedCoworkers.actions;
 export const { setCoworkerList, addCoworker, updateCoworkerAuthority, deleteCoworker } = coworkerList.actions;
 export const { setSelectedCoworkers, updateAuthority } = selectedCoworkers.actions;
+export const { setEditorPermission } = editorPermission.actions;
 
 const reducers = {
     targetSharingEmail: targetSharingEmail.reducer,
     searchedCoworkers: searchedCoworkers.reducer,
     coworkerList: coworkerList.reducer,
     selectedCoworkers: selectedCoworkers.reducer,
+    editorPermission: editorPermission.reducer,
 }
 
 export default reducers;

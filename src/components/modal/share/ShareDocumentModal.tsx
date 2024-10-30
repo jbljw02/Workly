@@ -17,6 +17,8 @@ export default function ShareDocumentModal({ isModalOpen, setIsModalOpen, select
     const dispatch = useAppDispatch();
     const copyURL = useCopyURL();
 
+    const editorPermission = useAppSelector(state => state.editorPermission);
+    
     const [workCategory, setWorkCategory] = useState<'공유' | '게시'>('공유');
 
     const closeModal = () => {
@@ -101,7 +103,8 @@ export default function ShareDocumentModal({ isModalOpen, setIsModalOpen, select
                                     hover: 'hover:bg-blue-700',
                                 }}
                                 label="게시"
-                                onClick={closeModal} />
+                                onClick={closeModal}
+                                disabled={editorPermission !== '전체 허용'} />
                         </div>
                 }
             </div>

@@ -228,9 +228,17 @@ const ImageNodeView = ResizableImage.extend({
       },
     };
   },
+  group: 'block',
+  inline: false,
+
+  renderHTML({ HTMLAttributes }) {
+    return ['figure', { class: 'image-component' }, ['img', HTMLAttributes]];
+  },
+
   addNodeView() {
     return ReactNodeViewRenderer(NodeView as React.ComponentType<any>);
   },
+  
 });
 
 export default ImageNodeView;

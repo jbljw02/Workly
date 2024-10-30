@@ -3,16 +3,23 @@ import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { v4 as uuidv4 } from 'uuid';
 import axios from "axios";
 import { addDocumentToFolder, Folder } from "@/redux/features/folderSlice";
-import { showCompleteAlert } from "@/redux/features/alertSlice";
+import { showCompleteAlert, showWarningAlert } from "@/redux/features/alertSlice";
 import { SetInvalidInfo } from "@/types/invalidInfoProps";
+import { useRouter } from "next/navigation";
 
 export default function useAddDocument() {
     const dispatch = useAppDispatch();
+    const router = useRouter();
 
     const user = useAppSelector(state => state.user);
+    const folders = useAppSelector(state => state.folders);
 
     // 선택된 폴더에 문서 추가
-    const addDocToFolder = async (docTitle: string, folder: Folder, setInvalidInfo: SetInvalidInfo) => {
+    // setInvalidInfo가 있다면, 즉 모달을 통해 추가했다면 라우팅 없이 추가만 진행
+    const addDocToFolder = async (docTitle: string, folder: Folder, setInvalidInfo?: SetInvalidInfo) => {
+        const defaultFolder: Folder = folders[0];
+        console.log(defaultFolder);
+
         const newDocument: DocumentProps = {
             id: uuidv4(),
             title: docTitle,
@@ -50,19 +57,23 @@ export default function useAddDocument() {
             // 문서 ID를 기본 폴더에 추가
             dispatch(addDocumentToFolder({ folderId: folder.id, docId: newDocument.id }));
 
-            setInvalidInfo(({
+            !setInvalidInfo && router.push(`/editor/${folder.id}/${newDocument.id}`);
+
+            setInvalidInfo && setInvalidInfo(({
                 msg: '',
                 isInvalid: false,
-            }));
+            }))
 
-            dispatch(showCompleteAlert(`${folder.name}에 문서가 추가되었습니다.`));
             return false;
         } catch (error) {
             console.error(error);
-            setInvalidInfo(({
-                msg: '문서 추가에 실패했습니다. 잠시 후 다시 시도해주세요.',
-                isInvalid: true,
-            }));
+
+            setInvalidInfo ?
+                setInvalidInfo(({
+                    msg: '문서 추가에 실패했습니다.',
+                    isInvalid: true,
+                })) :
+                dispatch(showWarningAlert('문서 추가에 실패했습니다.'));
 
             return true;
         }

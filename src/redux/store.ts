@@ -11,7 +11,7 @@ import documentReducers, { selectedDocument } from './features/documentSlice';
 import folderReducers from './features/folderSlice';
 import alertReducers from './features/alertSlice';
 import shareDocumentReducers from './features/shareDocumentSlice';
-
+import trashReducers from './features/trashSlice';
 const combinedReducer = combineReducers({
     user: userReducers.user,
     allUsers: userReducers.allUsers,
@@ -32,6 +32,9 @@ const combinedReducer = combineReducers({
     searchedCoworkers: shareDocumentReducers.searchedCoworkers,
     selectedCoworkers: shareDocumentReducers.selectedCoworkers,
     targetSharingEmail: shareDocumentReducers.targetSharingEmail,
+    editorPermission: shareDocumentReducers.editorPermission,
+    documentsTrash: trashReducers.documentsTrash,
+    foldersTrash: trashReducers.foldersTrash,
 })
 
 // RootState가 Redux 스토어의 상태 타입임을 나타냄

@@ -10,7 +10,7 @@ import DivideBar from "./DivideBar";
 import { useRouter } from "next/navigation";
 import PINoticeModal from "../button/PINoticeModal";
 import { createUserWithEmailAndPassword, sendEmailVerification, updateProfile } from "firebase/auth";
-import { auth } from "../../../firebase/firebasedb";
+import { auth } from "../../firebase/firebasedb";
 import EmailVerifyModal from "../modal/EmailVerifyModal";
 import { FirebaseError } from "firebase-admin";
 

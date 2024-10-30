@@ -1,6 +1,6 @@
 import CommonInput from "@/components/input/CommonInput";
 import SubmitButton from "@/components/button/SubmitButton";
-import { updateDocuments, setSelectedDocument, Collaborator, DocumentProps } from "@/redux/features/documentSlice";
+import { updateDocuments, setSelectedDocument, Collaborator, DocumentProps, addCollaborator } from "@/redux/features/documentSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { useRef, useEffect, useMemo, useState } from "react";
 import CloseIcon from '../../../../public/svgs/close.svg';
@@ -21,6 +21,7 @@ export default function ShareForm({ selectedDoc }: ShareFormProps) {
     const selectedCoworkers = useAppSelector(state => state.selectedCoworkers);
     const targetSharingEmail = useAppSelector(state => state.targetSharingEmail);
     const coworkerList = useAppSelector(state => state.coworkerList);
+    const editorPermission = useAppSelector(state => state.editorPermission);
 
     const [isSubmitting, setIsSubmitting] = useState(false); // 현재 폼을 제출중인지
 
@@ -45,7 +46,7 @@ export default function ShareForm({ selectedDoc }: ShareFormProps) {
             }
 
             if (alreadyExistCoworkers.length > 0) {
-                dispatch(showWarningAlert('이미 멤버로 추가된 사용자가 있습니다'));
+                dispatch(showWarningAlert('이미 멤버로 추가된 사용자가 있습니다.'));
                 return;
             }
 
@@ -59,7 +60,7 @@ export default function ShareForm({ selectedDoc }: ShareFormProps) {
             // 추가중인 협업자들을 순회하면서 한 명씩 state에 push
             selectedCoworkers.forEach(coworker => dispatch(addCoworker(coworker)));
 
-            dispatch(updateDocuments({ docId: newDoc.id, ...newDoc }));
+            dispatch(addCollaborator({ docId: newDoc.id, collaborators: selectedCoworkers }));
             dispatch(setSelectedDocument(newDoc));
             dispatch(showCompleteAlert('선택된 사용자들을 멤버로 초대했습니다.'));
 
@@ -82,7 +83,6 @@ export default function ShareForm({ selectedDoc }: ShareFormProps) {
             inputRef.current.focus();
         }
     }, [inputRef]);
-
 
     return (
         <form
@@ -125,7 +125,8 @@ export default function ShareForm({ selectedDoc }: ShareFormProps) {
                         value={targetSharingEmail}
                         onChange={(e) => dispatch(setTargetSharingEmail(e.target.value))}
                         placeholder={selectedCoworkers.length > 0 ? "" : "초대할 사용자의 이메일"}
-                        autoFocus />
+                        autoFocus
+                        disabled={editorPermission !== '전체 허용'} />
                 </div>
                 <SubmitButton
                     style={{
@@ -137,7 +138,7 @@ export default function ShareForm({ selectedDoc }: ShareFormProps) {
                         hover: 'hover:bg-blue-700',
                     }}
                     label='초대'
-                    value={selectedCoworkers.length > 0} />
+                    value={selectedCoworkers.length > 0 && editorPermission === '전체 허용'} />
             </div>
             {
                 alreadyExistCoworkers.length > 0 && (

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import ArrowIcon from '../../../../public/svgs/down-arrow.svg';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
@@ -25,6 +25,13 @@ export default function AuthorityButton({
 }: AuthorityButtonProps) {
     const buttonRef = useRef<HTMLDivElement>(null);
     const coworkerList = useAppSelector(state => state.coworkerList);
+
+    const user = useAppSelector(state => state.user);
+    const selectedDocument = useAppSelector(state => state.selectedDocument);
+    
+     // 현재 문서의 관리자인지 확인
+    const isAuthor = useMemo(() => selectedDocument.author.email === user.email,
+    [selectedDocument.author.email, user.email]);
 
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [currentAuthority, setCurrentAuthority] = useState<AuthorityCategory>(initialAuthority);
@@ -76,7 +83,7 @@ export default function AuthorityButton({
     // 드롭다운을 토글
     const toggleDropdown = (e: React.MouseEvent) => {
         e.stopPropagation();
-        if (currentAuthority !== '관리자' && isClickEnabled) {
+        if (currentAuthority !== '관리자' && isClickEnabled && selectedDocument.author.email === user.email) {
             setIsOpen(prev => !prev);
         }
     };
@@ -86,10 +93,10 @@ export default function AuthorityButton({
             <div
                 ref={buttonRef}
                 onClick={toggleDropdown}
-                // 현재 권한이 관리자인지, 이메일이 정규식을 충족해 클릭이 가능한 상태인지에 따라 분기
+                // 
                 className={`flex items-center gap-1 px-2 py-1 text-neutral-400 rounded select-none 
                     ${currentAuthority === '관리자' ? '' :
-                        (isClickEnabled ? 'hover:bg-gray-200 cursor-pointer' : '')}`}>
+                        (isClickEnabled && isAuthor ? 'hover:bg-gray-200 cursor-pointer' : '')}`}>
                 <div className={`whitespace-nowrap text-sm
                     ${currentAuthority === '관리자' ? 'mr-9' : ''}`}>
                     {initialAuthority}

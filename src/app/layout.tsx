@@ -7,7 +7,7 @@ import { Provider } from "react-redux";
 import Aside from '@/components/aside/Aside';
 import EmailVerifyCheck from '@/components/global/EmailVerifyCheck';
 import { usePathname } from 'next/navigation';
-import { auth } from '../../firebase/firebasedb';
+import { auth } from '../firebase/firebasedb';
 import GlobalAlert from '@/components/global/GlobalAlert';
 import NextNProgress from 'nextjs-progressbar';
 

@@ -12,12 +12,13 @@ import { deleteFolders } from '@/redux/features/folderSlice';
 import PlusIcon from '../../../../../public/svgs/plus.svg';
 import DocumentSection from './DocumentSection';
 import EditInput from './EditInput';
-import { addDocuments, deleteDocuments, DocumentProps } from '@/redux/features/documentSlice';
+import { addDocuments, DocumentProps } from '@/redux/features/documentSlice';
 import AddInputModal from '@/components/modal/AddInputModal';
 import { v4 as uuidv4 } from 'uuid';
-import HoverTooltip from '@/components/editor/child/menuBar/HoverTooltip';
+import HoverTooltip from '@/components/editor/child/menu-bar/HoverTooltip';
 import { showCompleteAlert, showWarningAlert } from '@/redux/features/alertSlice';
 import useAddDocument from '@/components/hooks/useAddDocument';
+import { addDocumentsToTrash, addFoldersToTrash, setDocumentsTrash } from '@/redux/features/trashSlice';
 
 type FolderItemProps = {
     folder: Folder;
@@ -25,9 +26,13 @@ type FolderItemProps = {
 
 export default function FolderItem({ folder }: FolderItemProps) {
     const dispatch = useAppDispatch();
+    const addDocToFolder = useAddDocument();
 
     const user = useAppSelector(state => state.user);
     const folders = useAppSelector(state => state.folders);
+    const documents = useAppSelector(state => state.documents);
+    const foldersTrash = useAppSelector(state => state.foldersTrash);
+    const documentsTrash = useAppSelector(state => state.documentsTrash);
 
     const [isHovered, setIsHovered] = useState(false);
     const [isEditing, setIsEditing] = useState(false); // 폴더명 수정중
@@ -39,10 +44,8 @@ export default function FolderItem({ folder }: FolderItemProps) {
 
     const [isDocInvalidInfo, setIsDocInvalidInfo] = useState({
         isInvalid: false,
-        msg: '문서 추가에 실패했습니다. 잠시 후 다시 시도해주세요.',
+        msg: '문서 추가에 실패했습니다.',
     });
-
-    const addDocToFolder = useAddDocument();
 
     // 폴더명 수정 요청
     const completeEdit = async (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -77,10 +80,18 @@ export default function FolderItem({ folder }: FolderItemProps) {
     // 폴더 삭제 요청
     const deleteFolder = async () => {
         const prevFolders = [...folders];
+        const prevFoldersTrash = [...foldersTrash];
+        const prevDocumentsTrash = [...documentsTrash];
+
+        // 폴더 내의 문서들
+        const documentsOfFolder = documents.filter(doc => folder.documentIds.includes(doc.id));
 
         try {
+            // 폴더와 폴더 내의 문서들을 휴지통에 추가
             dispatch(deleteFolders(folder.id))
-
+            dispatch(addFoldersToTrash(folder));
+            dispatch(addDocumentsToTrash(documentsOfFolder));
+            
             await axios.delete('/api/folder', {
                 params: {
                     email: user.email,
@@ -88,11 +99,14 @@ export default function FolderItem({ folder }: FolderItemProps) {
                 }
             });
 
-            dispatch(showCompleteAlert(`${folder.name}를 성공적으로 삭제했습니다.`));
+            dispatch(showCompleteAlert(`${folder.name}의 삭제를 완료했습니다.`));
         } catch (error) {
             console.error(error);
             // 삭제에 실패하면 롤백
             dispatch(setFolders(prevFolders));
+            dispatch(addFoldersToTrash(prevFoldersTrash));
+            dispatch(setDocumentsTrash(prevDocumentsTrash));
+            
             dispatch(showWarningAlert(`${folder.name}의 삭제에 실패했습니다.`));
         }
     }
@@ -146,7 +160,7 @@ export default function FolderItem({ folder }: FolderItemProps) {
                                 <GroupHoverItem
                                     Icon={PlusIcon}
                                     IconWidth={15}
-                                    onClick={() => setIsAdding(true)} />
+                                    onClick={() => addDocToFolder('', folder)} />
                             </HoverTooltip> :
                             <>
                                 <HoverTooltip label='폴더명 수정'>
@@ -165,7 +179,7 @@ export default function FolderItem({ folder }: FolderItemProps) {
                                     <GroupHoverItem
                                         Icon={PlusIcon}
                                         IconWidth={15}
-                                        onClick={() => setIsAdding(true)} />
+                                        onClick={() => addDocToFolder('', folder)} />
                                 </HoverTooltip>
                             </>
                     }

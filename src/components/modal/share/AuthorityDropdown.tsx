@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from "react";
 import { useClickOutside } from "@/components/hooks/useClickOutside";
-import { Collaborator, DocumentProps } from "@/redux/features/documentSlice";
+import { addCollaborator, Collaborator, deleteCollaborator, DocumentProps, updateCollaboratorAuthority, updateDocuments } from "@/redux/features/documentSlice";
 import { deleteCoworker, setCoworkerList, updateCoworkerAuthority, updateSearchedCoworkerAuthority } from "@/redux/features/shareDocumentSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import axios from "axios";
@@ -59,7 +59,9 @@ export default function AuthorityDropdown({
             if (authority === '멤버 제거') {
                 const prevCoworkerList = [...coworkerList];
                 try {
+                    // coworkerList와 documents에서 모두 협업자를 삭제
                     dispatch(deleteCoworker(targetUser.email));
+                    dispatch(deleteCollaborator({ docId: selectedDoc.id, email: targetUser.email }));
                     setIsOpen(false);
 
                     await axios.delete('/api/document/coworker', {
@@ -74,7 +76,7 @@ export default function AuthorityDropdown({
 
                     // 요청에 실패할 경우 기존 상태로 롤백
                     dispatch(setCoworkerList(prevCoworkerList));
-
+                    dispatch(addCollaborator({ docId: selectedDoc.id, collaborators: [prevCoworkerList] }));
                     setIsOpen(false);
                     dispatch(showWarningAlert('멤버 제거에 실패했습니다.'));
                 }
@@ -83,8 +85,9 @@ export default function AuthorityDropdown({
             else {
                 const prevAuthority = targetUser.authority;
                 try {
-                    // 전역 상태를 업데이트 하고, 화면에 보여질 로컬 state의 상태도 변경
+                    // coworkerList와 documents 모두 권한을 변경
                     dispatch(updateCoworkerAuthority({ email: targetUser.email, newAuthority: authority }));
+                    dispatch(updateCollaboratorAuthority({ docId: selectedDoc.id, email: targetUser.email, newAuthority: authority }));
                     setCurrentAuthority(authority);
 
                     setIsOpen(false);
@@ -99,6 +102,7 @@ export default function AuthorityDropdown({
                     console.error(error);
                     // 요청에 실패할 경우 기존 상태로 롤백
                     dispatch(updateCoworkerAuthority({ email: targetUser.email, newAuthority: prevAuthority }));
+                    dispatch(updateCollaboratorAuthority({ docId: selectedDoc.id, email: targetUser.email, newAuthority: prevAuthority }));
                     setCurrentAuthority(prevAuthority);
 
                     setIsOpen(false);
