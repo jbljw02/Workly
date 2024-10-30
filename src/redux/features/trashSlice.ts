@@ -10,7 +10,14 @@ export const documentsTrashSlice = createSlice({
     initialState: DocumentsState,
     reducers: {
         addDocumentsToTrash: (state, action) => {
-            state.push(action.payload);
+            // 단일 문서일 경우
+            if (!Array.isArray(action.payload)) {
+                state.push(action.payload);
+            }
+            // 배열일 경우
+            else {
+                state.push(...action.payload);
+            }
         },
         deleteDocumentsFromTrash: (state, action) => {
             return state.filter(doc => doc.id !== action.payload);
@@ -18,6 +25,10 @@ export const documentsTrashSlice = createSlice({
         setDocumentsTrash: (state, action) => {
             return action.payload;
         },
+        // 해당 폴더의 모든 문서를 삭제/복원
+        deleteAllDocumentsTrashOfFolder: (state, action) => {
+            return state.filter(doc => doc.folderId !== action.payload);
+        }
     }
 })
 
@@ -34,6 +45,13 @@ export const foldersTrashSlice = createSlice({
         setFoldersTrash: (state, action) => {
             return action.payload;
         },
+        addDocumentToFolderTrash: (state, action) => {
+            const { folderId, docId } = action.payload;
+            const folder = state.find(folder => folder.id === folderId);
+            if (folder) {
+                folder.documentIds.push(docId);
+            }
+        },
         removeDocumentFromFolderTrash: (state, action) => {
             const { folderId, docId } = action.payload;
             const folder = state.find(folder => folder.id === folderId);
@@ -44,8 +62,8 @@ export const foldersTrashSlice = createSlice({
     }
 })
 
-export const { addDocumentsToTrash, deleteDocumentsFromTrash, setDocumentsTrash } = documentsTrashSlice.actions;
-export const { addFoldersToTrash, deleteFoldersFromTrash, setFoldersTrash } = foldersTrashSlice.actions;
+export const { addDocumentsToTrash, deleteDocumentsFromTrash, setDocumentsTrash, deleteAllDocumentsTrashOfFolder } = documentsTrashSlice.actions;
+export const { addFoldersToTrash, deleteFoldersFromTrash, setFoldersTrash, addDocumentToFolderTrash, removeDocumentFromFolderTrash } = foldersTrashSlice.actions;
 
 const reducers = {
     documentsTrash: documentsTrashSlice.reducer,

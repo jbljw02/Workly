@@ -9,71 +9,105 @@ import { Folder } from "@/redux/features/folderSlice";
 import axios from "axios";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { showCompleteAlert, showWarningAlert } from "@/redux/features/alertSlice";
-import { deleteDocumentsFromTrash, deleteFoldersFromTrash, setDocumentsTrash, setFoldersTrash } from "@/redux/features/trashSlice";
+import { deleteAllDocumentsTrashOfFolder, deleteDocumentsFromTrash, deleteFoldersFromTrash, removeDocumentFromFolderTrash, setDocumentsTrash, setFoldersTrash } from "@/redux/features/trashSlice";
 
 type DeleteCheckModalProps = ModalProps & {
     searchCategory: SearchCategory;
     item: DocumentProps | Folder;
-    trashList: DocumentProps[] | Folder[];
 }
 
-export default function DeleteCheckModal({
-    isModalOpen,
-    setIsModalOpen,
-    searchCategory,
-    item,
-    trashList }: DeleteCheckModalProps) {
+export default function DeleteCheckModal({ isModalOpen, setIsModalOpen, searchCategory, item }: DeleteCheckModalProps) {
     const dispatch = useAppDispatch();
 
     const user = useAppSelector(state => state.user);
+    const documentsTrash = useAppSelector(state => state.documentsTrash);
+    const foldersTrash = useAppSelector(state => state.foldersTrash);
 
-    // 휴지통에 있는 아이템 영구 삭제
-    // 삭제할 아이템이 문서인지 폴더인지에 따라서 작업 분기
-    const deleteItemPermanently = async (item: DocumentProps | Folder) => {
-        const prevTrashList = [...trashList];
+    // 문서를 영구 삭제
+    const deleteDocumentPermanently = async (document: DocumentProps) => {
+        const prevDocumentsTrash = [...documentsTrash];
+        const prevFoldersTrash = [...foldersTrash];
+
         try {
-            // 휴지통에서 문서, 폴더 삭제
-            if (searchCategory === '문서') {
-                dispatch(deleteDocumentsFromTrash(item.id));
-            }
-            else {
-                dispatch(deleteFoldersFromTrash(item.id));
-            }
+            // 휴지통에서 문서 삭제
+            dispatch(deleteDocumentsFromTrash(document.id));
+            dispatch(removeDocumentFromFolderTrash({
+                folderId: document.folderId,
+                docId: document.id,
+            }));
 
             setIsModalOpen(false);
 
-            await axios.delete(`/api/trash/${searchCategory === '문서' ? 'document' : 'folder'}`, {
-                params: (
-                    searchCategory === '문서' ?
-                        {
-                            email: user.email,
-                            docId: item.id,
-                            folderId: (item as DocumentProps).folderId,
-                        } :
-                        {
-                            email: user.email,
-                            folderId: item.id,
-                        }
-                )
-            })
+            // tiptap cloud 서버에서 문서 삭제
+            await axios.delete('/api/tiptap-document', {
+                params: { docName: document.id }
+            });
 
-            if (searchCategory === '문서') {
-                dispatch(showCompleteAlert('해당 문서는 영구적으로 삭제되었습니다.'));
-            }
-            else {
-                dispatch(showCompleteAlert('해당 폴더는 영구적으로 삭제되었습니다.'));
-            }
+            // 파이어베이스에서 문서 삭제
+            await axios.delete('/api/trash/document', {
+                params: {
+                    docId: document.id,
+                    folderId: document.folderId,
+                }
+            });
+
+            dispatch(showCompleteAlert('해당 문서는 영구적으로 삭제되었습니다.'));
         } catch (error) {
             console.log(error);
             dispatch(showWarningAlert('삭제에 실패했습니다.'));
 
             // 삭제 실패 시 롤백
-            if (searchCategory === '문서') {
-                dispatch(setDocumentsTrash(prevTrashList));
-            }
-            else {
-                dispatch(setFoldersTrash(prevTrashList));
-            }
+            dispatch(setDocumentsTrash(prevDocumentsTrash));
+            dispatch(setFoldersTrash(prevFoldersTrash));
+        }
+    }
+
+    // 폴더를 영구 삭제
+    const deleteFolderPermanently = async (folder: Folder) => {
+        const prevDocumentsTrash = [...documentsTrash];
+        const prevFoldersTrash = [...foldersTrash];
+
+        try {
+            dispatch(deleteFoldersFromTrash(folder.id));
+            dispatch(deleteAllDocumentsTrashOfFolder(folder.id));
+
+            setIsModalOpen(false);
+
+            // 폴더 내 모든 문서를 클라우드에서 삭제(병렬 처리)
+            await Promise.all(
+                folder.documentIds.map(id =>
+                    axios.delete('/api/tiptap-document', {
+                        params: { docName: id }
+                    })
+                )
+            );
+
+            // 파이어베이스에서 폴더 삭제
+            await axios.delete('/api/trash/folder', {
+                params: {
+                    email: user.email,
+                    folderId: folder.id,
+                }
+            });
+
+            dispatch(showCompleteAlert('해당 폴더는 영구적으로 삭제되었습니다.'));
+        } catch (error) {
+            console.log(error);
+            dispatch(showWarningAlert('삭제에 실패했습니다.'));
+
+            // 삭제 실패 시 롤백
+            dispatch(setDocumentsTrash(prevDocumentsTrash));
+            dispatch(setFoldersTrash(prevFoldersTrash));
+        }
+    }
+
+    // 삭제할 아이템이 문서인지 폴더인지 확인하고 작업을 분기
+    const deleteItemPermanently = (item: DocumentProps | Folder) => {
+        if (searchCategory === '문서') {
+            deleteDocumentPermanently(item as DocumentProps);
+        }
+        else {
+            deleteFolderPermanently(item as Folder);
         }
     }
 
@@ -141,8 +175,4 @@ export default function DeleteCheckModal({
             </div>
         </Modal>
     )
-}
-
-function removeDocumentFromFolderTrash(arg0: { folderId: string; docId: string; }): any {
-    throw new Error("Function not implemented.");
 }

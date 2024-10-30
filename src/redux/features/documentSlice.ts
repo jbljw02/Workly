@@ -57,9 +57,6 @@ export const documentSlice = createSlice({
                 state[index].title = newTitle;
             }
         },
-        deleteDocuments: (state, action) => {
-            return state.filter(doc => doc.id !== action.payload);
-        },
         setDocuments: (state, action) => {
             return action.payload;
         },
@@ -103,7 +100,7 @@ export const selectedDocument = createSlice({
     }
 })
 
-export const { addDocuments, updateDocuments, renameDocuments, deleteDocuments, updateCollaboratorAuthority, addCollaborator,deleteCollaborator, setDocuments } = documentSlice.actions;
+export const { addDocuments, updateDocuments, renameDocuments, updateCollaboratorAuthority, addCollaborator, deleteCollaborator, setDocuments } = documentSlice.actions;
 export const { setSelectedDocument } = selectedDocument.actions;
 
 const reducers = {

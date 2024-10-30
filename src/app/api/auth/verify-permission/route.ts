@@ -30,11 +30,9 @@ export async function GET(req: NextRequest) {
             collaborator.email === email) || targetDoc?.author.email === email;
 
         if (isValidAccess) {
-            console.log("있음")
             return NextResponse.json({ isValidAccess }, { status: 200 });
         }
         else {
-            console.log("없음")
             return NextResponse.json({ isValidAccess }, { status: 403 });
         }
 

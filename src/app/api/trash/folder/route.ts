@@ -2,6 +2,60 @@ import { collection, getDocs, query, where, orderBy, getDoc, doc, writeBatch } f
 import { NextRequest, NextResponse } from "next/server";
 import firestore from "../../../../firebase/firestore";
 
+// 휴지통에 있는 폴더 복원 - POST
+export async function POST(req: NextRequest) {
+    try {
+        const { folderId } = await req.json();
+
+        if (!folderId) return NextResponse.json({ error: "폴더 ID가 제공되지 않음" }, { status: 400 });
+
+        // 휴지통의 폴더 참조 가져오기
+        const trashFolderRef = doc(firestore, 'trash-folders', folderId);
+        const trashFolderSnap = await getDoc(trashFolderRef);
+
+        if (!trashFolderSnap.exists()) {
+            return NextResponse.json({ error: "휴지통에서 폴더를 찾을 수 없음" }, { status: 404 });
+        }
+
+        const trashFolderData = trashFolderSnap.data();
+        
+        // 배치 작업 시작
+        const batch = writeBatch(firestore);
+
+        // folders 컬렉션에 폴더를 복원 시킴
+        const newFolderRef = doc(firestore, 'folders', folderId);
+        batch.set(newFolderRef, {
+            ...trashFolderData,
+        });
+
+        // 폴더 내의 모든 문서도 복원
+        const documentIds = trashFolderData.documentIds || [];
+        for (const docId of documentIds) {
+            const trashDocRef = doc(firestore, 'trash-documents', docId);
+            const trashDocSnap = await getDoc(trashDocRef);
+
+            if (trashDocSnap.exists()) {
+                const docData = trashDocSnap.data();
+                // documents 컬렉션에 문서 복원
+                const newDocRef = doc(firestore, 'documents', docId);
+                batch.set(newDocRef, docData);
+                // 휴지통에서 문서 삭제
+                batch.delete(trashDocRef);
+            }
+        }
+
+        // 휴지통에서 폴더 삭제
+        batch.delete(trashFolderRef);
+
+        // 배치 작업 실행
+        await batch.commit();
+
+        return NextResponse.json({ success: "폴더 및 관련 문서 복원 성공" }, { status: 200 });
+    } catch (error) {
+        return NextResponse.json({ error: "폴더 복원 실패" }, { status: 500 });
+    }
+}
+
 // 휴지통에 있는 사용자의 폴더 요청 - READ
 export async function GET(req: NextRequest) {
     try {

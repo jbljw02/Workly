@@ -8,6 +8,7 @@ export default function TrashList({ searchCategory }: { searchCategory: SearchCa
     const documentsTrash = useAppSelector(state => state.documentsTrash);
     const foldersTrash = useAppSelector(state => state.foldersTrash);
 
+    // 문서와 폴더 중 출력하는 항목에 따라 다른 값 반환
     const trashList = useMemo(() => searchCategory === '문서' ?
         documentsTrash :
         foldersTrash,
@@ -20,8 +21,7 @@ export default function TrashList({ searchCategory }: { searchCategory: SearchCa
                     trashList.map(document => (
                         <TrashItem
                             item={document}
-                            searchCategory={searchCategory}
-                            trashList={trashList} />
+                            searchCategory={searchCategory} />
                     )) :
                     <div className="flex flex-col items-center justify-center text-neutral-500 h-full gap-3 pb-6">
                         <EmptyTrashIcon width="33" />

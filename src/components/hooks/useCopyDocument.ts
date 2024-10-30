@@ -1,6 +1,6 @@
 import { showCompleteAlert, showWarningAlert } from "@/redux/features/alertSlice";
-import { addDocuments, deleteDocuments, DocumentProps } from "@/redux/features/documentSlice";
-import { addDocumentToFolder } from "@/redux/features/folderSlice";
+import { addDocuments, DocumentProps } from "@/redux/features/documentSlice";
+import { addDocumentToFolder, removeDocumentFromFolder } from "@/redux/features/folderSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import axios from "axios";
 import { v4 as uuidv4 } from 'uuid';
@@ -38,7 +38,10 @@ export default function useCopyDocument() {
             console.error(error);
 
             // 문서 복사 실패 시 롤백
-            dispatch(deleteDocuments(copiedDocument.id));
+            dispatch(removeDocumentFromFolder({
+                folderId: copiedDocument.folderId,
+                docId: copiedDocument.id,
+            }));
             dispatch(showWarningAlert(`${selectedDocument.title || '제목 없는 문서'}의 사본 생성에 실패했습니다.`));
         }
     }

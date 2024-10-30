@@ -12,13 +12,11 @@ export async function POST(req: NextRequest) {
         if (!folderId) return NextResponse.json({ error: "폴더 ID가 제공되지 않음" }, { status: 400 });
         if (!document) return NextResponse.json({ error: "문서 정보가 제공되지 않음" }, { status: 400 });
 
-        // 폴더 문서 참조 가져오기
+        // 폴더 참조 가져오기
         const folderDocRef = doc(firestore, 'folders', folderId);
         const folderDocSnap = await getDoc(folderDocRef);
 
-        if (!folderDocSnap.exists()) {
-            return NextResponse.json({ error: "폴더를 찾을 수 없음" }, { status: 404 });
-        }
+        if (!folderDocSnap.exists()) return NextResponse.json({ error: "폴더를 찾을 수 없음" }, { status: 404 });
 
         const folderData = folderDocSnap.data();
 

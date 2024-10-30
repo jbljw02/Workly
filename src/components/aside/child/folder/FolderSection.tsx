@@ -34,11 +34,11 @@ export default function FolderSection({ isCollapsed }: FolderSectionProps) {
             await getUserFolder(email, dispatch);
             await getUserDocument(email, dispatch);
         }
-    }, []);
+    }, [user.email, dispatch]);
 
     useEffect(() => {
         getUserData(user.email, dispatch);
-    }, [user.email, dispatch, getUserData]);
+    }, [getUserData]);
 
     return (
         // Aside의 width에 따라 각각 다른 레이아웃 출력
