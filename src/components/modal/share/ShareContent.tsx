@@ -40,21 +40,6 @@ export default function ShareContent({ selectedDoc }: ShareContentProps) {
         authority: '전체 허용',
     }), [targetSharingEmail]);
 
-    // 해당 문서의 협업자들을 가져와 coworkerList에 담음
-    const getCoworkers = useCallback(async (email: string, docId: string) => {
-        try {
-            const response = await axios.get('/api/document/coworker', {
-                params: {
-                    email: email,
-                    docId: docId
-                },
-            });
-            dispatch(setCoworkerList(response.data as Collaborator[]));
-        } catch (error) {
-            console.error('협업자 가져오기 오류: ', error);
-        }
-    }, []);
-
     // 전체 사용자 가져오기
     const getAllUsers = useCallback(async () => {
         try {
@@ -64,10 +49,6 @@ export default function ShareContent({ selectedDoc }: ShareContentProps) {
             console.error('전체 사용자 가져오기 오류: ', error);
         }
     }, []);
-
-    useEffect(() => {
-        getCoworkers(selectedDoc.author.email, selectedDoc.id);
-    }, [user.email, selectedDoc.id, getCoworkers]);
 
     useEffect(() => {
         getAllUsers();

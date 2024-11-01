@@ -23,7 +23,6 @@ export default function Editor({ docId }: { docId: string }) {
   const uploadContent = useUploadContent();
 
   const openColorPicker = useAppSelector(state => state.openColorPicker);
-  const documents = useAppSelector(state => state.documents);
   // 문서들 중에 현재 편집 중인 문서를 선택
   const selectedDocument = useAppSelector(state => state.selectedDocument);
   const editorPermission = useAppSelector(state => state.editorPermission);

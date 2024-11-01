@@ -12,13 +12,14 @@ import { deleteFolders } from '@/redux/features/folderSlice';
 import PlusIcon from '../../../../../public/svgs/plus.svg';
 import DocumentSection from './DocumentSection';
 import EditInput from './EditInput';
-import { addDocuments, DocumentProps } from '@/redux/features/documentSlice';
+import { addDocuments, deleteAllDocumentsOfFolder, DocumentProps } from '@/redux/features/documentSlice';
 import AddInputModal from '@/components/modal/AddInputModal';
 import { v4 as uuidv4 } from 'uuid';
 import HoverTooltip from '@/components/editor/child/menu-bar/HoverTooltip';
 import { showCompleteAlert, showWarningAlert } from '@/redux/features/alertSlice';
 import useAddDocument from '@/components/hooks/useAddDocument';
 import { addDocumentsToTrash, addFoldersToTrash, setDocumentsTrash } from '@/redux/features/trashSlice';
+import useUndoState from '@/components/hooks/useUndoState';
 
 type FolderItemProps = {
     folder: Folder;
@@ -26,6 +27,8 @@ type FolderItemProps = {
 
 export default function FolderItem({ folder }: FolderItemProps) {
     const dispatch = useAppDispatch();
+    
+    const undoState = useUndoState();
     const addDocToFolder = useAddDocument();
 
     const user = useAppSelector(state => state.user);
@@ -79,16 +82,15 @@ export default function FolderItem({ folder }: FolderItemProps) {
 
     // 폴더 삭제 요청
     const deleteFolder = async () => {
-        const prevFolders = [...folders];
-        const prevFoldersTrash = [...foldersTrash];
-        const prevDocumentsTrash = [...documentsTrash];
-
         // 폴더 내의 문서들
         const documentsOfFolder = documents.filter(doc => folder.documentIds.includes(doc.id));
 
         try {
-            // 폴더와 폴더 내의 문서들을 휴지통에 추가
-            dispatch(deleteFolders(folder.id))
+            // 폴더와 폴더 내의 모든 문서를 삭제
+            dispatch(deleteFolders(folder.id));
+            dispatch(deleteAllDocumentsOfFolder(folder.id));
+
+            // 삭제된 폴더와 문서들을 휴지통에 추가
             dispatch(addFoldersToTrash(folder));
             dispatch(addDocumentsToTrash(documentsOfFolder));
             
@@ -103,9 +105,7 @@ export default function FolderItem({ folder }: FolderItemProps) {
         } catch (error) {
             console.error(error);
             // 삭제에 실패하면 롤백
-            dispatch(setFolders(prevFolders));
-            dispatch(addFoldersToTrash(prevFoldersTrash));
-            dispatch(setDocumentsTrash(prevDocumentsTrash));
+            undoState();
             
             dispatch(showWarningAlert(`${folder.name}의 삭제에 실패했습니다.`));
         }
