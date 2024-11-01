@@ -13,6 +13,8 @@ import formatTimeDiff from '@/utils/formatTimeDiff'
 import MenuBar from './child/menu-bar/MenuBar'
 import useUploadContent from '../hooks/useUploadContent';
 import useEditorExtension from '../hooks/useEditorExtension';
+import fireStore from "@/firebase/firestore";
+import { doc, onSnapshot } from "firebase/firestore";
 
 export default function Editor({ docId }: { docId: string }) {
   const dispatch = useAppDispatch();
@@ -41,7 +43,6 @@ export default function Editor({ docId }: { docId: string }) {
     editable: editorPermission !== '읽기 허용',
   });
 
-
   // ref를 사용하여 최신 값을 참조해서 담음
   useEffect(() => {
     latestDocRef.current = selectedDocument;
@@ -49,14 +50,10 @@ export default function Editor({ docId }: { docId: string }) {
 
   // 선택된 문서를 지정
   useEffect(() => {
-    if (documents.length && docId) {
-      const selectedDoc = documents.find((doc: DocumentProps) => doc.id === docId);
-      if (selectedDoc) {
-        setDocTitle(selectedDoc?.title);
-        dispatch(setSelectedDocument(selectedDoc));
-      }
+    if (selectedDocument) {
+      setDocTitle(selectedDocument.title);
     }
-  }, [documents, docId]);
+  }, [selectedDocument.title]);
 
   // 에디터의 내용이 변경될 때마다 적용
   const updateDocument = useCallback(async () => {
@@ -74,10 +71,9 @@ export default function Editor({ docId }: { docId: string }) {
       };
 
       dispatch(updateDocuments({ docId: updatedDoc.id, ...updatedDoc }));
-      dispatch(setSelectedDocument(updatedDoc));
       setLastUpdatedTime(formatTimeDiff(updatedDoc.updatedAt));
 
-      if (updatedDoc.id && updatedDoc.title && updatedDoc.docContent) {
+      if (updatedDoc.id) {
         uploadContent(updatedDoc);
       }
     }
@@ -106,11 +102,10 @@ export default function Editor({ docId }: { docId: string }) {
       };
 
       setDocTitle(e.target.value);
-      dispatch(setSelectedDocument(updatedDoc));
       dispatch(renameDocuments({ docId: updatedDoc.id, newTitle: updatedDoc.title }));
       setLastUpdatedTime(formatTimeDiff(updatedDoc.updatedAt));
 
-      if (updatedDoc.id && updatedDoc.title && updatedDoc.docContent) {
+      if (updatedDoc.id) {
         uploadContent(updatedDoc);
       }
     }

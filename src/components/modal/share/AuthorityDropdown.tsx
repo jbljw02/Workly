@@ -30,6 +30,7 @@ export default function AuthorityDropdown({
     const dropdownRef = useRef<HTMLDivElement>(null);
 
     const coworkerList = useAppSelector(state => state.coworkerList);
+    console.log('selectedDoc', selectedDoc);
 
     const authorityList = [
         {
