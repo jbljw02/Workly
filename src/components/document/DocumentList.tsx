@@ -117,7 +117,7 @@ export default function DocumentList({ documents, isShared }: DocumentListProps)
                                                     document.folderName
                                             }
                                         </span>
-                                        <span>{formatTimeDiff(document.updatedAt)}</span>
+                                        <span>{formatTimeDiff(document.readedAt)}</span>
                                     </div>
                                 </div>
                                 {/* 메뉴의 옵션 */}

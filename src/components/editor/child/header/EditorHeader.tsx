@@ -84,23 +84,24 @@ export default function EditorHeader({
     }, [selectedDocument.author.email, selectedDocument.id]);
 
     useEffect(() => {
-        getCoworkers(selectedDocument.author.email, selectedDocument.id);
+        if (selectedDocument.id && selectedDocument.author.email) {
+            getCoworkers(selectedDocument.author.email, selectedDocument.id);
+        }
     }, [getCoworkers]);
 
     // 현재 편집 중인 문서에 대한 권한을 확인
     const checkPermission = useCallback(() => {
         const collaborator = selectedDocument.collaborators.find(collaborator => collaborator.email === user.email);
 
-        // 협업자의 권한 반환
-        if (collaborator) {
-            return collaborator.authority;
-        }
-
         // 관리자라면 전체 허용으로 반환
         if (selectedDocument.author.email === user.email) {
+            console.log("2")
             return '전체 허용';
         }
-
+        // 협업자의 권한 반환
+        else if (collaborator) {
+            return collaborator.authority;
+        }
         return null; // 권한이 없는 경우
     }, [selectedDocument.collaborators, selectedDocument.author.email, user.email]);
 
@@ -185,16 +186,6 @@ export default function EditorHeader({
         return [];
     }, [editorPermission]);
 
-    useEffect(() => {
-        // 1분마다 문서의 마지막 편집 시간이 언제인지 확인
-        const updatedTimeInterval = setInterval(() => {
-            const updatedTime = formatTimeDiff(selectedDocument.updatedAt);
-            setLastUpdatedTime(updatedTime);
-        }, 60000);
-
-        return () => clearInterval(updatedTimeInterval);
-    }, [selectedDocument.updatedAt]);
-
     useClickOutside(optionRef, () => setMenuListOpen(false), optionRef);
 
     return (
@@ -203,7 +194,6 @@ export default function EditorHeader({
             <HeaderTitle />
             {/* 헤더 우측 영역 */}
             <div className='flex flex-row items-center gap-1'>
-                <div className='text-sm text-neutral-400 mr-1'>{lastUpdatedTime}</div>
                 <HoverTooltip label='문서를 공유하거나 게시'>
                     <button
                         onClick={() => setIsShareModal(true)}

@@ -12,8 +12,8 @@ export default function DocumentPreviewList() {
     const filteredDocuments = useMemo(() => {
         // 문서를 최신순으로 정렬
         const sorted = [...documents].sort((a, b) => {
-            const aTime = a.updatedAt.seconds * 1000 + a.updatedAt.nanoseconds / 1000000;
-            const bTime = b.updatedAt.seconds * 1000 + b.updatedAt.nanoseconds / 1000000;
+            const aTime = a.readedAt.seconds * 1000 + a.readedAt.nanoseconds / 1000000;
+            const bTime = b.readedAt.seconds * 1000 + b.readedAt.nanoseconds / 1000000;
             return bTime - aTime;
         });
 
@@ -44,9 +44,10 @@ export default function DocumentPreviewList() {
                         <DocumentPreviewItem key={doc.id} document={doc} />
                     ))
                 }
-                <div className="flex flex-col justify-center items-center border p-4 rounded shadow-sm w-64 h-96 overflow-hidden
+                <div 
+                className="flex flex-col justify-center items-center border p-4 rounded shadow-sm w-64 h-96 overflow-hidden
                     cursor-pointer hover:bg-gray-100 transition-all duration-150">
-                    <div className="flex flex-col items-center  text-neutral-600 gap-3">
+                    <div className="flex flex-col items-center  text-neutral-500 gap-3">
                         <AddNoteIcon width="40" />
                         <div className="text-sm font-semibold">새 문서 작성</div>
                     </div>

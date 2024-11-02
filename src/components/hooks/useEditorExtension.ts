@@ -76,9 +76,6 @@ export default function useEditorExtension({ docId }: { docId: string }) {
         name: docId,
         appId: appId!,
         document: doc,
-        onConnect: () => {
-            console.log('connected')
-        },
     }), [docId, doc]);
 
     useEffect(() => {

@@ -22,16 +22,6 @@ export default function Aside() {
 
     const folders = useAppSelector(state => state.folders);
 
-    const coworkerList = useAppSelector(state => state.coworkerList); // 현재 문서의 협업자들
-    const selectedCoworkers = useAppSelector(state => state.selectedCoworkers); // 선택된 협업자들
-    const targetSharingEmail = useAppSelector(state => state.targetSharingEmail); // 공유할 사용자의 이메일
-    const searchedCoworkers = useAppSelector(state => state.searchedCoworkers); // 검색된 협업자들
-  
-    useEffect(() => {
-      console.log('coworkerList', coworkerList);
-    }, [coworkerList]);
-  
-
     const expandedWidth = 240; // 넓은 상태의 너비
     const collapsedWidth = 70; // 좁은 상태의 너비
     const toggleWidthThreshold = 150; // 너비 변경을 위한 임계값

@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
             },
             collaborators: [],
             createdAt: serverTimestamp(),
-            updatedAt: serverTimestamp(),
+            readedAt: serverTimestamp(),
         });
 
         // 배치 작업 실행

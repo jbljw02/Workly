@@ -17,9 +17,6 @@ export default function useAddDocument() {
     // 선택된 폴더에 문서 추가
     // setInvalidInfo가 있다면, 즉 모달을 통해 추가했다면 라우팅 없이 추가만 진행
     const addDocToFolder = async (docTitle: string, folder: Folder, setInvalidInfo?: SetInvalidInfo) => {
-        const defaultFolder: Folder = folders[0];
-        console.log(defaultFolder);
-
         const newDocument: DocumentProps = {
             id: uuidv4(),
             title: docTitle,
@@ -28,7 +25,7 @@ export default function useAddDocument() {
                 seconds: Math.floor(Date.now() / 1000),
                 nanoseconds: Math.floor((Date.now() % 1000) * 1000000),
             },
-            updatedAt: {
+            readedAt: {
                 seconds: Math.floor(Date.now() / 1000),
                 nanoseconds: Math.floor((Date.now() % 1000) * 1000000),
             },

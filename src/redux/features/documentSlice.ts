@@ -11,7 +11,7 @@ export type DocumentProps = {
     title: string;
     docContent: JSONContent | null;
     createdAt: { seconds: number, nanoseconds: number };
-    updatedAt: { seconds: number, nanoseconds: number };
+    readedAt: { seconds: number, nanoseconds: number };
     author: UserProps;
     folderId: string;
     folderName: string;
@@ -24,7 +24,7 @@ const selectedDocumentState: DocumentProps = {
     title: '',
     docContent: null,
     createdAt: { seconds: 0, nanoseconds: 0 },
-    updatedAt: { seconds: 0, nanoseconds: 0 },
+    readedAt: { seconds: 0, nanoseconds: 0 },
     author: {
         email: '',
         displayName: '',

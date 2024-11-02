@@ -31,7 +31,7 @@ export default function useAddFolder() {
             author: user,
             collaborators: [],
             createdAt: '',
-            updatedAt: '',
+            readedAt: '',
         }
 
         try {
