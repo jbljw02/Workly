@@ -9,7 +9,7 @@ export type Folder = {
     author: UserProps;
     collaborators?: Collaborator[];
     createdAt: string;
-    updatedAt: string;
+    readedAt: string;
 }
 
 const foldersState: Folder[] = [];

@@ -26,7 +26,6 @@ import LinkNode from "../../../lib/linkNode";
 import FileNode from "../../../lib/fileNode";
 import { Editor } from "@tiptap/react";
 import '@/styles/editor.css'
-import axios from "axios";
 
 const appId = process.env.NEXT_PUBLIC_TIPTAP_APP_ID;
 const wsUrl = process.env.NEXT_PUBLIC_WEBSOCKET_URL;
@@ -77,10 +76,7 @@ export default function useEditorExtension({ docId }: { docId: string }) {
         name: docId,
         appId: appId!,
         document: doc,
-        onConnect: () => {
-            console.log('connected')
-        },
-    }), [docId, doc])
+    }), [docId, doc]);
 
     useEffect(() => {
         return () => {
@@ -95,6 +91,7 @@ export default function useEditorExtension({ docId }: { docId: string }) {
     useEffect(() => {
         provider.setAwarenessField('user', {
             name: user.displayName,
+            id: user.email,
             color: userColor,
         });
     }, [user.displayName, userColor, provider]);

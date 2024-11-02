@@ -11,26 +11,16 @@ import MenuIcon from '../../../public/svgs/editor/menu-vertical.svg'
 import { DocumentProps, renameDocuments, setSelectedDocument, updateDocuments } from '@/redux/features/documentSlice'
 import formatTimeDiff from '@/utils/formatTimeDiff'
 import MenuBar from './child/menu-bar/MenuBar'
-import useUploadContent from '../hooks/useUploadContent';
 import useEditorExtension from '../hooks/useEditorExtension';
+import useUploadTitle from '../hooks/useUploadTitle';
+import useVisitDocument from '../hooks/useVisitDocument';
+import useDocumentRealTime from '../hooks/useDocumentRealTime';
 
 export default function Editor({ docId }: { docId: string }) {
   const dispatch = useAppDispatch();
 
   const extensions = useEditorExtension({ docId });
-  const uploadContent = useUploadContent();
-
-  const openColorPicker = useAppSelector(state => state.openColorPicker);
-  const documents = useAppSelector(state => state.documents);
-  // 문서들 중에 현재 편집 중인 문서를 선택
-  const selectedDocument = useAppSelector(state => state.selectedDocument);
   const editorPermission = useAppSelector(state => state.editorPermission);
-
-  const [docTitle, setDocTitle] = useState<string>(selectedDocument.title); // 문서 제목
-  const [lastUpdatedTime, setLastUpdatedTime] = useState<string>('현재 편집 중'); // 문서의 마지막 편집 시간에 따른 출력값
-
-  const latestDocRef = useRef(selectedDocument);
-
   const editor = useEditor({
     extensions: extensions,
     editorProps: {
@@ -41,80 +31,57 @@ export default function Editor({ docId }: { docId: string }) {
     editable: editorPermission !== '읽기 허용',
   });
 
+  const uploadTitle = useUploadTitle();
 
-  // ref를 사용하여 최신 값을 참조해서 담음
-  useEffect(() => {
-    latestDocRef.current = selectedDocument;
-  }, [selectedDocument]);
+  const openColorPicker = useAppSelector(state => state.openColorPicker);
+  const selectedDocument = useAppSelector(state => state.selectedDocument);
 
-  // 선택된 문서를 지정
-  useEffect(() => {
-    if (documents.length && docId) {
-      const selectedDoc = documents.find((doc: DocumentProps) => doc.id === docId);
-      if (selectedDoc) {
-        setDocTitle(selectedDoc?.title);
-        dispatch(setSelectedDocument(selectedDoc));
-      }
-    }
-  }, [documents, docId]);
+  const docTitle = useMemo(() => selectedDocument.title, [selectedDocument.title]); // 문서 제목
+  const [lastUpdatedTime, setLastUpdatedTime] = useState<string>('현재 편집 중'); // 문서의 마지막 편집 시간에 따른 출력값
 
-  // 에디터의 내용이 변경될 때마다 적용
+  // 에디터의 내용이 변경될 때마다 state와의 일관성을 유지
   const updateDocument = useCallback(async () => {
-    if (editor && latestDocRef.current) {
+    if (editor && selectedDocument) {
       const content = editor.getJSON();
 
       const updatedDoc: DocumentProps = {
-        ...latestDocRef.current,
-        title: docTitle,
+        ...selectedDocument,
         docContent: content,
-        updatedAt: {
-          seconds: Math.floor(Date.now() / 1000),
-          nanoseconds: Math.floor((Date.now() % 1000) * 1000000),
-        },
       };
 
       dispatch(updateDocuments({ docId: updatedDoc.id, ...updatedDoc }));
-      dispatch(setSelectedDocument(updatedDoc));
-      setLastUpdatedTime(formatTimeDiff(updatedDoc.updatedAt));
-
-      if (updatedDoc.id && updatedDoc.title && updatedDoc.docContent) {
-        uploadContent(updatedDoc);
-      }
+      setLastUpdatedTime(formatTimeDiff(updatedDoc.readedAt));
     }
-  }, [dispatch, editor, latestDocRef.current]);
+  }, [dispatch, editor, selectedDocument]);
 
   useEffect(() => {
-    if (editor) {
-      editor.on('update', updateDocument);
-    }
+    editor?.on('update', updateDocument);
 
     return () => {
       editor?.off('update', updateDocument);
     };
-  }, [dispatch, editor, latestDocRef.current]);
+  }, [updateDocument]);
 
   // 문서명이 변경되었을 때
   const docTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (latestDocRef.current && editorPermission && editorPermission !== '읽기 허용') {
-      const updatedDoc = {
-        ...latestDocRef.current,
+    if (selectedDocument && editorPermission && editorPermission !== '읽기 허용') {
+      const updatedDoc: DocumentProps = {
+        ...selectedDocument,
         title: e.target.value,
-        updatedAt: {
-          seconds: Math.floor(Date.now() / 1000),
-          nanoseconds: Math.floor((Date.now() % 1000) * 1000000),
-        },
       };
 
-      setDocTitle(e.target.value);
-      dispatch(setSelectedDocument(updatedDoc));
-      dispatch(renameDocuments({ docId: updatedDoc.id, newTitle: updatedDoc.title }));
-      setLastUpdatedTime(formatTimeDiff(updatedDoc.updatedAt));
+      // setDocTitle(e.target.value);
+      dispatch(renameDocuments({ docId: updatedDoc.id, newTitle: e.target.value }));
+      setLastUpdatedTime(formatTimeDiff(updatedDoc.readedAt));
 
-      if (updatedDoc.id && updatedDoc.title && updatedDoc.docContent) {
-        uploadContent(updatedDoc);
+      if (updatedDoc.id) {
+        uploadTitle(updatedDoc);
       }
     }
   }
+
+  useDocumentRealTime({ docId }); // 문서의 실시간 변경을 감지
+  useVisitDocument({ docId }); // 페이지에 초기 방문 시에 열람일 업데이트
 
   if (!editor) {
     return null;

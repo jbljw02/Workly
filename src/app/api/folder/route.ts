@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
         const newFolder = {
             ...folder,
             createdAt: serverTimestamp(),
-            updatedAt: serverTimestamp()
+            readedAt: serverTimestamp()
         };
 
         // 문서 저장

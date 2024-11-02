@@ -11,7 +11,7 @@ export type DocumentProps = {
     title: string;
     docContent: JSONContent | null;
     createdAt: { seconds: number, nanoseconds: number };
-    updatedAt: { seconds: number, nanoseconds: number };
+    readedAt: { seconds: number, nanoseconds: number };
     author: UserProps;
     folderId: string;
     folderName: string;
@@ -24,7 +24,7 @@ const selectedDocumentState: DocumentProps = {
     title: '',
     docContent: null,
     createdAt: { seconds: 0, nanoseconds: 0 },
-    updatedAt: { seconds: 0, nanoseconds: 0 },
+    readedAt: { seconds: 0, nanoseconds: 0 },
     author: {
         email: '',
         displayName: '',
@@ -40,7 +40,14 @@ export const documentSlice = createSlice({
     initialState: DocumentsState,
     reducers: {
         addDocuments: (state, action) => {
-            state.push(action.payload);
+            // 단일 문서일 경우
+            if (!Array.isArray(action.payload)) {
+                state.push(action.payload);
+            }
+            // 배열일 경우
+            else {
+                state.push(...action.payload);
+            }
         },
         updateDocuments: (state, action) => {
             // 변경할 문서의 ID를 찾고, 값을 업데이트
@@ -49,6 +56,13 @@ export const documentSlice = createSlice({
             if (index !== -1) {
                 state[index] = { ...state[index], ...updatedData };
             }
+        },
+        deleteDocuments: (state, action) => {
+            return state.filter(doc => doc.id !== action.payload);
+        },
+        // 해당 폴더의 모든 문서를 삭제/복원
+        deleteAllDocumentsOfFolder: (state, action) => {
+            return state.filter(doc => doc.folderId !== action.payload);
         },
         renameDocuments: (state, action) => {
             const { docId, newTitle } = action.payload;
@@ -100,7 +114,7 @@ export const selectedDocument = createSlice({
     }
 })
 
-export const { addDocuments, updateDocuments, renameDocuments, updateCollaboratorAuthority, addCollaborator, deleteCollaborator, setDocuments } = documentSlice.actions;
+export const { addDocuments, updateDocuments, renameDocuments, deleteAllDocumentsOfFolder, updateCollaboratorAuthority, addCollaborator, deleteCollaborator, setDocuments, deleteDocuments } = documentSlice.actions;
 export const { setSelectedDocument } = selectedDocument.actions;
 
 const reducers = {

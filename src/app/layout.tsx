@@ -10,6 +10,7 @@ import { usePathname } from 'next/navigation';
 import { auth } from '../firebase/firebasedb';
 import GlobalAlert from '@/components/global/GlobalAlert';
 import NextNProgress from 'nextjs-progressbar';
+import GetRealTimeDocuments from '@/components/global/GetRealTimeDocument';
 
 export default function RootLayout({
   children,

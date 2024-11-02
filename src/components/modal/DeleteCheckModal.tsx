@@ -10,6 +10,7 @@ import axios from "axios";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { showCompleteAlert, showWarningAlert } from "@/redux/features/alertSlice";
 import { deleteAllDocumentsTrashOfFolder, deleteDocumentsFromTrash, deleteFoldersFromTrash, removeDocumentFromFolderTrash, setDocumentsTrash, setFoldersTrash } from "@/redux/features/trashSlice";
+import useDeleteTrash from "../hooks/useDeleteTrash";
 
 type DeleteCheckModalProps = ModalProps & {
     searchCategory: SearchCategory;
@@ -18,6 +19,8 @@ type DeleteCheckModalProps = ModalProps & {
 
 export default function DeleteCheckModal({ isModalOpen, setIsModalOpen, searchCategory, item }: DeleteCheckModalProps) {
     const dispatch = useAppDispatch();
+
+    const { deleteTrashDocument, deleteTrashFolder } = useDeleteTrash();
 
     const user = useAppSelector(state => state.user);
     const documentsTrash = useAppSelector(state => state.documentsTrash);
@@ -29,12 +32,8 @@ export default function DeleteCheckModal({ isModalOpen, setIsModalOpen, searchCa
         const prevFoldersTrash = [...foldersTrash];
 
         try {
-            // 휴지통에서 문서 삭제
-            dispatch(deleteDocumentsFromTrash(document.id));
-            dispatch(removeDocumentFromFolderTrash({
-                folderId: document.folderId,
-                docId: document.id,
-            }));
+            // 휴지통에서 문서를 삭제하고 폴더에서 참조 제거
+            deleteTrashDocument(document);
 
             setIsModalOpen(false);
 
@@ -68,8 +67,8 @@ export default function DeleteCheckModal({ isModalOpen, setIsModalOpen, searchCa
         const prevFoldersTrash = [...foldersTrash];
 
         try {
-            dispatch(deleteFoldersFromTrash(folder.id));
-            dispatch(deleteAllDocumentsTrashOfFolder(folder.id));
+            // 휴지통에서 폴더를 삭제하고 참조 중인 모든 문서 제거
+            deleteTrashFolder(folder);
 
             setIsModalOpen(false);
 

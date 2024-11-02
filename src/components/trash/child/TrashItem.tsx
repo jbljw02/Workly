@@ -13,6 +13,8 @@ import { showCompleteAlert, showWarningAlert } from "@/redux/features/alertSlice
 import { useRef, useState } from "react";
 import DeleteCheckModal from "@/components/modal/DeleteCheckModal";
 import { deleteAllDocumentsTrashOfFolder, deleteDocumentsFromTrash, deleteFoldersFromTrash, removeDocumentFromFolderTrash, setDocumentsTrash, setFoldersTrash } from "@/redux/features/trashSlice";
+import useUndoState from "@/components/hooks/useUndoState";
+import useDeleteTrash from "@/components/hooks/useDeleteTrash";
 
 type TrashItemProps = {
     searchCategory: SearchCategory;
@@ -22,71 +24,60 @@ type TrashItemProps = {
 export default function TrashItem({ searchCategory, item }: TrashItemProps) {
     const dispatch = useAppDispatch();
 
-    const folders = useAppSelector(state => state.folders);
+    const undoState = useUndoState();
+    const { deleteTrashDocument, deleteTrashFolder } = useDeleteTrash();
+
     const documentsTrash = useAppSelector(state => state.documentsTrash);
     const foldersTrash = useAppSelector(state => state.foldersTrash);
-
-    const documents = useAppSelector(state => state.documents);
 
     const [isDeleting, setIsDeleting] = useState(false);
 
     // 문서를 복원
     const restoreDocument = async () => {
-        const prevDocumentsTrash = [...documentsTrash];
-        const prevFoldersTrash = [...foldersTrash];
-        const prevFolders = [...folders];
-
         try {
             // 부모 폴더가 삭제된 경우 복원 불가
-            if (!foldersTrash.some(folder => folder.id !== (item as DocumentProps).folderId)) {
-                dispatch(showWarningAlert('해당 문서가 속한 폴더가 삭제되었습니다.'));
+            if (foldersTrash.some(folder => folder.id === (item as DocumentProps).folderId)) {
+                dispatch(showWarningAlert('해당 문서가 속한 폴더가 휴지통에 있습니다.'));
                 return;
             }
 
-            // 휴지통에서 문서 삭제
-            dispatch(deleteDocumentsFromTrash(item.id));
-            dispatch(removeDocumentFromFolderTrash({
-                folderId: (item as DocumentProps).folderId,
-                docId: item.id,
-            }));
+            // 휴지통에서 문서를 삭제하고 폴더에서 참조 제거
+            deleteTrashDocument(item as DocumentProps);
 
-            // 문서 복원
+            // 복원할 문서를 폴더와 전체 문서 목록에 추가
             dispatch(addDocumentToFolder({
                 folderId: (item as DocumentProps).folderId,
                 docId: item.id,
             }));
+            dispatch(addDocuments(item));
 
             await axios.post('/api/trash/document', {
                 document: item,
                 folderId: (item as DocumentProps).folderId,
             });
 
-
             dispatch(showCompleteAlert('해당 문서는 복원되었습니다.'));
         } catch (error) {
             console.log(error);
-            dispatch(showWarningAlert('복원에 실패했습니다.'));
 
             // 요청 실패 시 롤백
-            dispatch(setDocumentsTrash(prevDocumentsTrash));
-            dispatch(setFoldersTrash(prevFoldersTrash));
-            dispatch(setFolders(prevFolders));
+            undoState();
+            dispatch(showWarningAlert('복원에 실패했습니다.'));
         }
     }
 
     // 폴더를 복원
     const restoreFolder = async () => {
-        const prevDocumentsTrash = [...documentsTrash];
-        const prevFoldersTrash = [...foldersTrash];
-        const prevFolders = [...folders];
+        // 복원할 폴더 내의 모든 문서
+        const documentsOfFolder = documentsTrash.filter(doc => (item as Folder).documentIds.includes(doc.id));
 
         try {
-            // 휴지통에서 폴더를 삭제하고, 폴더 내의 모든 문서를 삭제
-            dispatch(deleteFoldersFromTrash(item.id));
-            dispatch(deleteAllDocumentsTrashOfFolder(item.id));
+            // 휴지통에서 폴더를 삭제하고 참조 중인 모든 문서 제거
+            deleteTrashFolder(item as Folder);
 
             // 문서 복원
             dispatch(addFolders(item));
+            dispatch(addDocuments(documentsOfFolder));
 
             await axios.post('/api/trash/folder', {
                 folderId: (item as Folder).id,
@@ -95,12 +86,10 @@ export default function TrashItem({ searchCategory, item }: TrashItemProps) {
             dispatch(showCompleteAlert('해당 폴더는 복원되었습니다.'));
         } catch (error) {
             console.log(error);
-            dispatch(showWarningAlert('복원에 실패했습니다.'));
-
             // 요청 실패 시 롤백
-            dispatch(setDocumentsTrash(prevDocumentsTrash));
-            dispatch(setFoldersTrash(prevFoldersTrash));
-            dispatch(setFolders(prevFolders));
+            undoState();
+
+            dispatch(showWarningAlert('복원에 실패했습니다.'));
         }
     }
 

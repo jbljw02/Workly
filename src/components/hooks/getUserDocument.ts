@@ -1,5 +1,4 @@
 import { setDocuments } from "@/redux/features/documentSlice";
-import { setFolders } from "@/redux/features/folderSlice";
 import { AppDispatch } from "@/redux/store";
 import axios from 'axios';
 

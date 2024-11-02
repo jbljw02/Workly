@@ -34,7 +34,6 @@ import uploadFile from '@/utils/uploadFile'
 export default function MenuBar({ editor }: { editor: Editor }) {
     const dispatch = useAppDispatch();
 
-
     const editorPermission = useAppSelector(state => state.editorPermission);
 
     const [fontSize, setFontSize] = useState<number>(16);

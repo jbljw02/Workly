@@ -21,13 +21,6 @@ export default function DocumentItem({ document, onClick }: DocumentItemProps) {
     const dispatch = useAppDispatch();
     const deleteDoc = useDeleteDocument();
 
-    const pathname = usePathname();
-    const pathParts = pathname.split('/');
-    const folderId = pathParts[2]; // '/editor/[folderId]/[documentId]'일 때 folderId는 2번째 인덱스
-    const documentId = pathParts[3]; // documentId는 3번째 인덱스
-
-    const user = useAppSelector(state => state.user);
-
     const [isEditing, setIsEditing] = useState(false);
     const [docTitle, setDocTitle] = useState(document.title);
 
@@ -42,7 +35,6 @@ export default function DocumentItem({ document, onClick }: DocumentItemProps) {
 
                 await axios.put('/api/document',
                     {
-                        email: user.email,
                         docId: document.id,
                         newDocName: docTitle,
                     });

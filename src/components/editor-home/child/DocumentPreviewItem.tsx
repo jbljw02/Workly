@@ -60,7 +60,7 @@ export default function DocumentPreviewItem({ key, document }: DocumentPreviewIt
             </div>
             {/* 마지막 편집 시간 */}
             <div className="text-xs text-neutral-600 mt-auto">
-                {formatTimeDiff(document.updatedAt)}
+                {formatTimeDiff(document.readedAt)}
             </div>
         </div>
     )

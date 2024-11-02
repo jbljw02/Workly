@@ -28,7 +28,6 @@ export default function AuthorityDropdown({
 }: AuthorityDropdownProps) {
     const dispatch = useAppDispatch();
     const dropdownRef = useRef<HTMLDivElement>(null);
-
     const coworkerList = useAppSelector(state => state.coworkerList);
 
     const authorityList = [

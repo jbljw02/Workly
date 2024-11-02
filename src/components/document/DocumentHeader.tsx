@@ -6,9 +6,6 @@ import AddInputModal from "../modal/AddInputModal";
 import useAddDocument from "../hooks/useAddDocument";
 import useAddFolder from "../hooks/useAddFolder";
 import { useAppSelector } from "@/redux/hooks";
-import useCopyDocument from "../hooks/useCopyDocument";
-import { useCopyURL } from "../hooks/useCopyURL";
-import useDownloadPDF from "../hooks/useDownloadPDF";
 
 type DocumentHeaderProps = {
     title: string;

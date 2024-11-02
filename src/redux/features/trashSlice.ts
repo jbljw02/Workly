@@ -25,7 +25,7 @@ export const documentsTrashSlice = createSlice({
         setDocumentsTrash: (state, action) => {
             return action.payload;
         },
-        // 해당 폴더의 모든 문서를 삭제/복원
+        // 해당 폴더의 모든 문서를 삭제
         deleteAllDocumentsTrashOfFolder: (state, action) => {
             return state.filter(doc => doc.folderId !== action.payload);
         }

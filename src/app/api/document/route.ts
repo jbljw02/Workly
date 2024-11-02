@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import firestore from "../../../firebase/firestore";
-import { doc, getDoc, updateDoc, collection, addDoc, writeBatch, query, where, getDocs, orderBy, serverTimestamp } from "firebase/firestore";
+import { doc, getDoc, updateDoc, collection, addDoc, writeBatch, query, where, getDocs, orderBy, serverTimestamp, setDoc } from "firebase/firestore";
 import { Folder } from "@/redux/features/folderSlice";
 import { Collaborator, DocumentProps } from "@/redux/features/documentSlice";
 
@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
         const newDocument = {
             ...document,
             createdAt: serverTimestamp(),
-            updatedAt: serverTimestamp(),
+            readedAt: serverTimestamp(),
         };
         batch.set(newDocRef, newDocument);
 
@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
         const updatedDocumentIds = [...(folderData.documentIds || []), document.id];
         batch.update(folderDocRef, {
             documentIds: updatedDocumentIds,
-            updatedAt: serverTimestamp() // 폴더의 updatedAt도 업데이트
+            readedAt: serverTimestamp() // 폴더의 readedAt도 업데이트
         });
 
         // 배치 작업 실행
@@ -83,14 +83,12 @@ export async function GET(req: NextRequest) {
     }
 }
 
-// 문서 수정 - UPDATE
+// 문서명 수정 - UPDATE
 export async function PUT(req: NextRequest) {
     try {
-        const { docId, newDocName, newDocContent } = await req.json();
+        const { docId, newDocName } = await req.json();
 
         if (!docId) return NextResponse.json({ error: "문서 아이디가 제공되지 않음" }, { status: 400 });
-        if (!newDocName) return NextResponse.json({ error: "문서명이 제공되지 않음" }, { status: 400 });
-        if (!newDocContent) return NextResponse.json({ error: "문서 내용이 제공되지 않음" }, { status: 400 });
 
         // 문서 참조 가져오기
         const docRef = doc(firestore, 'documents', docId);
@@ -102,9 +100,7 @@ export async function PUT(req: NextRequest) {
 
         // 문서명, 문서 내용, 수정 시간 업데이트
         const updateData = {
-            updatedAt: serverTimestamp(),
             ...(newDocName !== undefined && { title: newDocName }),
-            ...(newDocContent !== undefined && { docContent: newDocContent }),
         };
 
         await updateDoc(docRef, updateData);
@@ -113,6 +109,31 @@ export async function PUT(req: NextRequest) {
     } catch (error) {
         console.error(error);
         return NextResponse.json({ error: "문서 수정 실패" }, { status: 500 });
+    }
+}
+
+// 문서 초기 접속 시 열람일 업데이트 - UPDATE
+export async function PATCH(req: NextRequest) {
+    try {
+        const { docId } = await req.json();
+
+        if (!docId) return NextResponse.json({ error: "문서 아이디가 제공되지 않음" }, { status: 400 });
+
+        const docRef = doc(firestore, 'documents', docId);
+        const docSnap = await getDoc(docRef);
+
+        if (!docSnap.exists()) {
+            return NextResponse.json({ error: "문서를 찾을 수 없음" }, { status: 404 });
+        }
+
+        await updateDoc(docRef, {
+            readedAt: serverTimestamp(),
+        });
+
+        return NextResponse.json({ success: "열람 시간 업데이트 성공" }, { status: 200 });
+    } catch (error) {
+        console.error(error);
+        return NextResponse.json({ error: "열람 시간 업데이트 실패" }, { status: 500 });
     }
 }
 
