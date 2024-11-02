@@ -4,9 +4,11 @@ import '@/styles/editor.css';
 import DocumentPreviewList from "./child/DocumentPreviewList";
 import DocumentHeader from '../document/DocumentHeader';
 import { useAppSelector } from '@/redux/hooks';
+import useGetUserData from '../hooks/useGetUserData';
 
 export default function EditorHome() {
     const user = useAppSelector(state => state.user);
+    useGetUserData();
     return (
         <div className="flex flex-col w-full">
             {/* 홈의 헤더 */}

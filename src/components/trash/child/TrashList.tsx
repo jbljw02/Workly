@@ -20,7 +20,7 @@ export default function TrashList({ searchedInput, searchCategory }: TrashListPr
         [searchCategory, documentsTrash, foldersTrash, searchedInput]);
 
     return (
-        <div className="flex flex-col mt-1 flex-grow">
+        <div className="flex flex-col mt-1 flex-grow overflow-y-auto">
             {
                 trashList.length ?
                     trashList.map(document => (
