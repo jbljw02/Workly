@@ -26,19 +26,14 @@ import useCopyDocument from '@/components/hooks/useCopyDocument'
 import { setCoworkerList, setEditorPermission } from '@/redux/features/shareDocumentSlice'
 import axios from 'axios'
 import { Collaborator } from '@/redux/features/documentSlice'
+import ConnectedUsers from './ConnectedUserList'
 
 type EditorHeaderProps = {
     editor: Editor,
     docTitle: string,
-    lastUpdatedTime: string;
-    setLastUpdatedTime: React.Dispatch<React.SetStateAction<string>>;
 }
 
-export default function EditorHeader({
-    editor,
-    docTitle,
-    lastUpdatedTime,
-    setLastUpdatedTime }: EditorHeaderProps) {
+export default function EditorHeader({ editor, docTitle }: EditorHeaderProps) {
     const dispatch = useAppDispatch();
 
     const deleteDoc = useDeleteDocument();
@@ -83,6 +78,7 @@ export default function EditorHeader({
         }
     }, [selectedDocument.author.email, selectedDocument.id]);
 
+
     useEffect(() => {
         if (selectedDocument.id && selectedDocument.author.email) {
             getCoworkers(selectedDocument.author.email, selectedDocument.id);
@@ -95,7 +91,6 @@ export default function EditorHeader({
 
         // 관리자라면 전체 허용으로 반환
         if (selectedDocument.author.email === user.email) {
-            console.log("2")
             return '전체 허용';
         }
         // 협업자의 권한 반환
@@ -194,6 +189,8 @@ export default function EditorHeader({
             <HeaderTitle />
             {/* 헤더 우측 영역 */}
             <div className='flex flex-row items-center gap-1'>
+                {/* 현재 문서에 연결중인 사용자를 나열 */}
+                <ConnectedUsers />
                 <HoverTooltip label='문서를 공유하거나 게시'>
                     <button
                         onClick={() => setIsShareModal(true)}

@@ -1,13 +1,14 @@
 import { setDocuments } from "@/redux/features/documentSlice";
 import { setFolders } from "@/redux/features/folderSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { AppDispatch } from "@/redux/store";
 import axios from "axios";
+import { usePathname } from "next/navigation";
 import { useEffect } from "react";
-
 
 export default function useGetUserData() {
     const dispatch = useAppDispatch();
+    const pathname = usePathname();
+    
     const user = useAppSelector(state => state.user);
 
     // 사용자의 전체 문서 요청
@@ -34,7 +35,7 @@ export default function useGetUserData() {
             }
         }
         getUserData();
-    }, [user.email]);
+    }, [user.email, pathname]);
 
     return null;
 }

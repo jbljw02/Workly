@@ -40,20 +40,6 @@ export default function ShareContent({ selectedDoc }: ShareContentProps) {
         authority: '전체 허용',
     }), [targetSharingEmail]);
 
-    // 전체 사용자 가져오기
-    const getAllUsers = useCallback(async () => {
-        try {
-            const response = await axios.get('/api/users');
-            dispatch(setAllUsers(response.data as UserProps[]));
-        } catch (error) {
-            console.error('전체 사용자 가져오기 오류: ', error);
-        }
-    }, []);
-
-    useEffect(() => {
-        getAllUsers();
-    }, [getAllUsers]);
-
     // 협업자를 선택하는 함수
     const coworkerSelect = (coworker: Collaborator) => {
         if (isDropdownEnabled) {

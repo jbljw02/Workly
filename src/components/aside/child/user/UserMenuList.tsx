@@ -9,13 +9,14 @@ import ContactIcon from '../../../../../public/svgs/contact.svg';
 import { useAppSelector } from "@/redux/hooks";
 
 type UserMenuList = {
+    menuListOpen: boolean;
     setListOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function UserMenuList({ setListOpen }: UserMenuList) {
+export default function UserMenuList({ menuListOpen, setListOpen }: UserMenuList) {
     const router = useRouter();
     const user = useAppSelector(state => state.user);
-    
+
     const menuItems: MenuItemProps[] = [
         {
             Icon: UserIcon,
@@ -39,7 +40,9 @@ export default function UserMenuList({ setListOpen }: UserMenuList) {
     ];
 
     return (
-        <div className="flex flex-col w-full overflow-hidden absolute bg-white border rounded border-neutral-300 pt-3.5 pb-1.5 z-10 top-[72px] left-4 shadow-[0px_4px_10px_rgba(0,0,0,0.25)]">
+        <div className={`flex flex-col w-full overflow-hidden absolute bg-white border rounded border-neutral-300 pt-3.5 pb-1.5 z-10 top-[72px] left-4 shadow-[0px_4px_10px_rgba(0,0,0,0.25)]
+            transition-opacity duration-200 ease-in-out
+            ${menuListOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
             <div className="pb-2 pr-3 pl-3">
                 <UserProfile user={user} />
             </div>

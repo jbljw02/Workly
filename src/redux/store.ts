@@ -12,6 +12,7 @@ import folderReducers from './features/folderSlice';
 import alertReducers from './features/alertSlice';
 import shareDocumentReducers from './features/shareDocumentSlice';
 import trashReducers from './features/trashSlice';
+
 const combinedReducer = combineReducers({
     user: userReducers.user,
     allUsers: userReducers.allUsers,
@@ -33,6 +34,7 @@ const combinedReducer = combineReducers({
     selectedCoworkers: shareDocumentReducers.selectedCoworkers,
     targetSharingEmail: shareDocumentReducers.targetSharingEmail,
     editorPermission: shareDocumentReducers.editorPermission,
+    connectedUsers: shareDocumentReducers.connectedUsers,
     documentsTrash: trashReducers.documentsTrash,
     foldersTrash: trashReducers.foldersTrash,
 })

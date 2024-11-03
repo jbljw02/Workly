@@ -3,6 +3,7 @@ import { SearchCategory } from "../Trash";
 import TrashItem from "./TrashItem";
 import { useMemo } from "react";
 import EmptyTrashIcon from '../../../../public/svgs/empty-trash.svg';
+import React from "react";
 
 type TrashListProps = {
     searchedInput: string;
@@ -24,9 +25,11 @@ export default function TrashList({ searchedInput, searchCategory }: TrashListPr
             {
                 trashList.length ?
                     trashList.map(document => (
-                        <TrashItem
-                            item={document}
-                            searchCategory={searchCategory} />
+                        <React.Fragment key={document.id}>
+                            <TrashItem
+                                item={document}
+                                searchCategory={searchCategory} />
+                        </React.Fragment>
                     )) :
                     <div className="flex flex-col items-center justify-center text-neutral-500 h-full gap-3 pb-6">
                         <EmptyTrashIcon width="33" />

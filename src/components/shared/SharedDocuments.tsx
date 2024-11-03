@@ -6,7 +6,6 @@ import { useMemo } from 'react';
 import DocumentListHeader from '../document/DocumentListHeader';
 import DocumentList from '../document/DocumentList';
 import DocumentHeader from '../document/DocumentHeader';
-import useGetUserData from '../hooks/useGetUserData';
 
 export default function SharedDocuments() {
     const documents = useAppSelector((state: RootState) => state.documents);
@@ -16,8 +15,6 @@ export default function SharedDocuments() {
         return documents.filter(document => document.collaborators.length > 0);
     }, [documents]);
 
-    useGetUserData();
-    
     return (
         <div className="flex flex-col w-full">
             <DocumentHeader

@@ -1,3 +1,4 @@
+import React from "react";
 import MenuItem from "./MenuItem";
 import { MenuItemProps } from "./MenuItem";
 import HorizontalDivider from "./divider/HorizontalDivider";
@@ -24,18 +25,16 @@ export default function MenuList({ isOpen, menuList, setListOpen, listPositon }:
                 transition-opacity duration-200 ease-in-out
                 ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
             style={{ top: listPositon.top, right: listPositon.right }}>
-            <li
-                key={menuList.length}
+            <ul
                 className="list-none text-sm m-0 p-0">
                 {
                     menuList.map((item, index) => (
-                        <>
+                        <React.Fragment key={index}>
                             {
                                 item.horizonLine &&
                                 <HorizontalDivider borderColor="border-gray-200" />
                             }
                             <MenuItem
-                                key={index}
                                 Icon={item.Icon}
                                 IconWidth={item.IconWidth}
                                 label={item.label}
@@ -43,10 +42,10 @@ export default function MenuList({ isOpen, menuList, setListOpen, listPositon }:
                                     item.onClick(e);
                                     setListOpen(false);
                                 }} />
-                        </>
+                        </React.Fragment>
                     ))
                 }
-            </li>
+            </ul>
         </div>
     )
 }

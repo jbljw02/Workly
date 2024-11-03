@@ -44,6 +44,7 @@ export default function Editor({ docId }: { docId: string }) {
     if (editor && selectedDocument) {
       const content = editor.getJSON();
 
+      // 문서의 내용을 업데이트
       const updatedDoc: DocumentProps = {
         ...selectedDocument,
         docContent: content,
@@ -70,7 +71,6 @@ export default function Editor({ docId }: { docId: string }) {
         title: e.target.value,
       };
 
-      // setDocTitle(e.target.value);
       dispatch(renameDocuments({ docId: updatedDoc.id, newTitle: e.target.value }));
       setLastUpdatedTime(formatTimeDiff(updatedDoc.readedAt));
 
@@ -93,9 +93,7 @@ export default function Editor({ docId }: { docId: string }) {
       <div className="sticky top-0 bg-white z-10">
         <EditorHeader
           editor={editor}
-          docTitle={docTitle}
-          lastUpdatedTime={lastUpdatedTime}
-          setLastUpdatedTime={setLastUpdatedTime} />
+          docTitle={docTitle} />
         <MenuBar editor={editor} />
       </div>
       <div

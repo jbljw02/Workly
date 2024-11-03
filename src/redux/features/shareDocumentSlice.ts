@@ -1,7 +1,17 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { Collaborator } from "./documentSlice";
 
-export const targetSharingEmail = createSlice({
+export type ConnectedUser = {
+    name: string;
+    id: string;
+    color: string;
+    photoURL: string;
+    connectedAt: number;
+}
+
+const initialConnectedUsers: ConnectedUser[] = [];
+
+export const targetSharingEmailSlice = createSlice({
     name: 'targetSharingEmail',
     initialState: '',
     reducers: {
@@ -11,7 +21,7 @@ export const targetSharingEmail = createSlice({
     },
 })
 
-export const searchedCoworkers = createSlice({
+export const searchedCoworkersSlice = createSlice({
     name: 'searchedCoworkers',
     initialState: [] as Collaborator[],
     reducers: {
@@ -28,7 +38,7 @@ export const searchedCoworkers = createSlice({
     },
 })
 
-export const coworkerList = createSlice({
+export const coworkerListSlice = createSlice({
     name: 'coworkerList',
     initialState: [] as Collaborator[],
     reducers: {
@@ -55,7 +65,7 @@ export const coworkerList = createSlice({
     },
 })
 
-export const selectedCoworkers = createSlice({
+export const selectedCoworkersSlice = createSlice({
     name: 'selectedCoworkers',
     initialState: [] as Collaborator[],
     reducers: {
@@ -72,7 +82,7 @@ export const selectedCoworkers = createSlice({
     },
 })
 
-export const editorPermission = createSlice({
+export const editorPermissionSlice = createSlice({
     name: 'editorPermission',
     initialState: null,
     reducers: {
@@ -82,18 +92,30 @@ export const editorPermission = createSlice({
     },
 })
 
-export const { setTargetSharingEmail } = targetSharingEmail.actions;
-export const { setSearchedCoworkers, updateSearchedCoworkerAuthority } = searchedCoworkers.actions;
-export const { setCoworkerList, addCoworker, updateCoworkerAuthority, deleteCoworker } = coworkerList.actions;
-export const { setSelectedCoworkers, updateAuthority } = selectedCoworkers.actions;
-export const { setEditorPermission } = editorPermission.actions;
+export const connectedUsersSlice = createSlice({
+    name: 'connectedUsers',
+    initialState: initialConnectedUsers,
+    reducers: {
+        setConnectedUsers: (state, action) => {
+            return action.payload;
+        },
+    },
+})
+
+export const { setTargetSharingEmail } = targetSharingEmailSlice.actions;
+export const { setSearchedCoworkers, updateSearchedCoworkerAuthority } = searchedCoworkersSlice.actions;
+export const { setCoworkerList, addCoworker, updateCoworkerAuthority, deleteCoworker } = coworkerListSlice.actions;
+export const { setSelectedCoworkers, updateAuthority } = selectedCoworkersSlice.actions;
+export const { setEditorPermission } = editorPermissionSlice.actions;
+export const { setConnectedUsers } = connectedUsersSlice.actions;
 
 const reducers = {
-    targetSharingEmail: targetSharingEmail.reducer,
-    searchedCoworkers: searchedCoworkers.reducer,
-    coworkerList: coworkerList.reducer,
-    selectedCoworkers: selectedCoworkers.reducer,
-    editorPermission: editorPermission.reducer,
+    targetSharingEmail: targetSharingEmailSlice.reducer,
+    searchedCoworkers: searchedCoworkersSlice.reducer,
+    coworkerList: coworkerListSlice.reducer,
+    selectedCoworkers: selectedCoworkersSlice.reducer,
+    editorPermission: editorPermissionSlice.reducer,
+    connectedUsers: connectedUsersSlice.reducer,
 }
 
 export default reducers;

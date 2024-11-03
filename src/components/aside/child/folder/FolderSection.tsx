@@ -1,7 +1,7 @@
 import SidebarItem from "../SidebarItem";
 import FolderIcon from '../../../../../public/svgs/folder.svg';
 import PlusIcon from '../../../../../public/svgs/add-folder.svg';
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 import AddInputModal from "@/components/modal/AddInputModal";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import FolderItem from "./FolderItem";
