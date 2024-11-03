@@ -9,7 +9,6 @@ import { addDocumentToFolder, Folder, removeDocumentFromFolder } from "@/redux/f
 import axios from 'axios';
 import { DocumentProps, updateDocuments } from "@/redux/features/documentSlice";
 import ModalHeader from "./ModalHeader";
-import InputLabelContainer from "./InputLabelContainer";
 import { showCompleteAlert, showWarningAlert } from "@/redux/features/alertSlice";
 import { WorkingDocModalProps } from "@/types/workingDocModalProps";
 

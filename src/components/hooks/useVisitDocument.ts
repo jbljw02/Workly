@@ -20,6 +20,4 @@ export default function useVisitDocument({ docId }: { docId: string }) {
 
         visitDocument();
     }, [docId]);
-
-    return null;
 }

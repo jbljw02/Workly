@@ -21,7 +21,9 @@ export default function HeaderTitle() {
     // documents의 값이 변경될 때마다 현재 선택된 문서의 값도 업데이트
     useEffect(() => {
         const currentDocument = documents.find(doc => doc.id === documentId);
-        dispatch(setSelectedDocument(currentDocument));
+        if (currentDocument) {
+            dispatch(setSelectedDocument(currentDocument));
+        }
     }, [folders, documents]);
 
     return (

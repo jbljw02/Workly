@@ -86,7 +86,7 @@ export async function GET(req: NextRequest) {
 // 문서명 수정 - UPDATE
 export async function PUT(req: NextRequest) {
     try {
-        const { docId, newDocName } = await req.json();
+        const { docId, newDocName, newDocContent } = await req.json();
 
         if (!docId) return NextResponse.json({ error: "문서 아이디가 제공되지 않음" }, { status: 400 });
 
@@ -100,7 +100,9 @@ export async function PUT(req: NextRequest) {
 
         // 문서명, 문서 내용, 수정 시간 업데이트
         const updateData = {
+            readedAt: serverTimestamp(),
             ...(newDocName !== undefined && { title: newDocName }),
+            ...(newDocContent !== undefined && { docContent: newDocContent }),
         };
 
         await updateDoc(docRef, updateData);

@@ -40,6 +40,4 @@ export default function useDocumentRealTime({ docId }: { docId: string }) {
 
         return () => unsubscribe();
     }, [docId, dispatch]);
-
-    return null;
 }

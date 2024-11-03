@@ -24,7 +24,7 @@ export default function DocumentPreviewList() {
 
         return sorted;
     }, [documents, sortCategory]);
-
+  
     return (
         <div className="flex flex-col gap-3 px-12">
             <div className="text-xl font-semibold pl-0.5">문서</div>
