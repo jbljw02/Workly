@@ -8,7 +8,7 @@ import firestore from '@/firebase/firestore';
 
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
-export default async function Page({ params }: { params: { id: string } }) {
+export default async function EditorPage({ params }: { params: { id: string } }) {
     const { id } = params;
     const docId = params.id;
 

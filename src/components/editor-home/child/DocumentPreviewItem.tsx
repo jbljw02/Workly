@@ -6,6 +6,8 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import GroupIcon from '../../../../public/svgs/group.svg';
 import HoverTooltip from "@/components/editor/child/menu-bar/HoverTooltip";
+import { useAppSelector } from "@/redux/hooks";
+import ShortcutsOnIcon from '../../../../public/svgs/shortcuts-on.svg';
 
 type DocumentPreviewItemProps = {
     document: DocumentProps;
@@ -13,7 +15,7 @@ type DocumentPreviewItemProps = {
 
 export default function DocumentPreviewItem({ document }: DocumentPreviewItemProps) {
     const router = useRouter();
-    console.log(document);
+    const user = useAppSelector(state => state.user);
 
     // 문서 미리보기 렌더링
     const renderDocumentPreview = (docContent: JSONContent | null) => {
@@ -65,12 +67,18 @@ export default function DocumentPreviewItem({ document }: DocumentPreviewItemPro
                 <div className="text-xs mt-auto">
                     {formatTimeDiff(document.readedAt)}
                 </div>
-                {/* 문서에 협업자가 있을 경우 */}
-                {
-                    document.collaborators.length > 0 &&
-                    <GroupIcon
-                        width={16} height={16} />
-                }
+                <div className="flex flex-row items-center gap-1.5">
+                    {/* 문서에 협업자가 있을 경우 */}
+                    {
+                        document.collaborators.length > 0 &&
+                        <GroupIcon width={13} />
+                    }
+                    {/* 즐겨찾기로 추가한 문서일 경우 */}
+                    {
+                        document.shortcutsUsers.includes(user.email) &&
+                        <ShortcutsOnIcon width={16} />
+                    }
+                </div>
             </div>
         </div>
     )

@@ -32,6 +32,7 @@ export default function useAddDocument() {
             folderId: folder.id,
             folderName: folder.name,
             collaborators: [],
+            shortcutsUsers: [],
         }
 
         try {

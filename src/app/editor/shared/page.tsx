@@ -1,6 +1,6 @@
 import ShareDocument from "@/components/shared/SharedDocuments";
 
-export default function Page() {
+export default function EditorSharedPage() {
     return (
         <ShareDocument />
     )

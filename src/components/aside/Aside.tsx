@@ -13,7 +13,7 @@ import UserSection from "./child/user/UserSection";
 import GroupIcon from '../../../public/svgs/group.svg';
 import useAddDocument from "../hooks/useAddDocument";
 import Trash from "../trash/Trash";
-import ShortcutIcon from '../../../public/svgs/shortcut.svg';
+import ShortcutIcon from '../../../public/svgs/shortcuts-off.svg';
 
 export default function Aside() {
     const router = useRouter();
@@ -126,7 +126,7 @@ export default function Aside() {
                     addClick={() => addDocToFolder('', folders[0])} />
                 <SidebarItem
                     Icon={ShortcutIcon}
-                    IconWidth="18"
+                    IconWidth="22"
                     label="즐겨찾기"
                     isCollapsed={isCollapsed}
                     onClick={() => router.push('/editor/shortcuts')} />
