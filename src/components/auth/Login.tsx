@@ -100,9 +100,9 @@ export default function Login() {
     }
 
     return (
-        <div className="flex w-full h-auto items-center justify-center">
+        <div className="flex w-full min-h-screen items-center justify-center">
             <HeaderButton />
-            <div className='flex flex-col w-[450px] h-auto items-center justify-center mb-7 gap-8'>
+            <div className='flex flex-col w-[450px] h-full items-center justify-center mb-7 gap-8'>
                 <AuthTop
                     title='로그인'
                     subtitle='Workly에서 계속해서 작업하세요.' />

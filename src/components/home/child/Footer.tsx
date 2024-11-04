@@ -20,7 +20,7 @@ export default function Footer() {
                 </div>
             </div>
             {/* Footer 우측 */}
-            <div className='flex flex-col h-full'>
+            <div className='flex flex-col h-full gap-2.5'>
                 <button className='flex justify-start mt-2 items-center gap-2 group cursor-pointer'>
                     <GithubIcon
                         className='text-black group-hover:text-gray-600'

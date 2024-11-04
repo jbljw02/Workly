@@ -3,15 +3,16 @@
 import GlobalAlert from "@/components/global/GlobalAlert";
 import useGetUserData from "@/components/hooks/useGetUserData";
 import useGetAllUsers from "@/components/hooks/useGetAllUsers";
-import { useAppSelector } from "@/redux/hooks";
+import Aside from "@/components/aside/Aside";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
     useGetUserData();
     useGetAllUsers();
     return (
-        <body>
+        <div className="flex flex-row w-full min-h-screen">
             <GlobalAlert />
+            <Aside />
             {children}
-        </body>
+        </div>
     )
 }

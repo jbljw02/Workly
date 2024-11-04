@@ -103,6 +103,7 @@ export default function DocumentMoveModal({ isModalOpen, setIsModalOpen, selecte
                     top: '45%',
                     width: 510,
                     maxHeight: '80vh',
+                    minHeight: 330,
                     height: 'fit-content',
                     transform: 'translate(-50%, -50%)',
                     zIndex: 49,

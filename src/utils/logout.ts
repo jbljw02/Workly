@@ -6,12 +6,7 @@ import { useRouter } from "next/navigation";
 const logout = async (router: ReturnType<typeof useRouter>) => {
     try {
         await signOut(auth);
-        await axios.post('/api/auth/logout', null, {
-            headers: {
-                "Content-Type": "application/json",
-                "Accept": "application/json"
-            },
-        });
+        await axios.post('/api/auth/logout', null);
         router.push('/');
     } catch (error) {
         throw error;

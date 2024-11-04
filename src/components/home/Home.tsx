@@ -1,20 +1,17 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import LogoIcon from '../../../public/svgs/logo.svg';
 import CommonButton from '../button/CommonButton';
 import Header from './child/Header';
 import Footer from './child/Footer';
 import logout from '@/utils/logout';
-import { useAppDispatch, useAppSelector } from '@/redux/hooks';
-import { useEffect } from 'react';
 
 export default function Home() {
     const router = useRouter();
 
     return (
-        <div className="flex flex-col justify-between w-full">
-            <div className='mx-64'>
+        <div className="flex flex-col flex-grow justify-between w-full min-h-screen">
+            <div className='mx-64 flex-grow h-full'>
                 <Header />
                 <div className='py-28'>
                     <div className='font-extrabold text-6xl mb-4 text-black'>

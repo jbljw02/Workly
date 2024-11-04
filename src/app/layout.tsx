@@ -19,18 +19,13 @@ export default function RootLayout({
     // 첫 렌더링 시에 스토어를 생성
     storeRef.current = makeStore();
   }
-  const pathname = usePathname();
   return (
     <html lang="en" className="w-full h-full text-[#212121]">
       <head>
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet" />
       </head>
-      <body className="flex min-h-screen">
+      <body className="min-w-full min-h-screen">
         <Provider store={storeRef.current}>
-          {
-            pathname.startsWith('/editor') &&
-            <Aside />
-          }
           <EmailVerifyCheck />
           <NextNProgress
             color="#29D"

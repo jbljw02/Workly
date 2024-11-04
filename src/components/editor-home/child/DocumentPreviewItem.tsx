@@ -4,15 +4,17 @@ import formatTimeDiff from "@/utils/formatTimeDiff";
 import { JSONContent } from "@tiptap/react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import GroupIcon from '../../../../public/svgs/group.svg';
+import HoverTooltip from "@/components/editor/child/menu-bar/HoverTooltip";
 
 type DocumentPreviewItemProps = {
-    key: string;
     document: DocumentProps;
 }
 
-export default function DocumentPreviewItem({ key, document }: DocumentPreviewItemProps) {
+export default function DocumentPreviewItem({ document }: DocumentPreviewItemProps) {
     const router = useRouter();
-    
+    console.log(document);
+
     // 문서 미리보기 렌더링
     const renderDocumentPreview = (docContent: JSONContent | null) => {
         return docContent?.content?.map((block, index) => {
@@ -58,9 +60,17 @@ export default function DocumentPreviewItem({ key, document }: DocumentPreviewIt
                     {renderDocumentPreview(document.docContent)}
                 </div>
             </div>
-            {/* 마지막 편집 시간 */}
-            <div className="text-xs text-neutral-600 mt-auto">
-                {formatTimeDiff(document.readedAt)}
+            <div className="flex flex-row justify-between text-neutral-600">
+                {/* 마지막 편집 시간 */}
+                <div className="text-xs mt-auto">
+                    {formatTimeDiff(document.readedAt)}
+                </div>
+                {/* 문서에 협업자가 있을 경우 */}
+                {
+                    document.collaborators.length > 0 &&
+                    <GroupIcon
+                        width={16} height={16} />
+                }
             </div>
         </div>
     )
