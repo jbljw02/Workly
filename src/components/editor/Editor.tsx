@@ -34,6 +34,8 @@ export default function Editor({ docId }: { docId: string }) {
 
   const { updateContent, debouncedUpdateRequest } = useUpdateContent();
 
+  console.log(editor?.getJSON());
+
   const openColorPicker = useAppSelector(state => state.openColorPicker);
   const selectedDocument = useAppSelector(state => state.selectedDocument);
 

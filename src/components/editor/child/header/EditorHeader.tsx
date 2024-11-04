@@ -63,28 +63,6 @@ export default function EditorHeader({ editor, docTitle }: EditorHeaderProps) {
     const [isMoving, setIsMoving] = useState(false); // 문서가 이동중인지
     const [isShareModal, setIsShareModal] = useState(false); // 문서가 공유됐는지
 
-    // 해당 문서의 협업자들을 가져와 coworkerList에 담음
-    const getCoworkers = useCallback(async (email: string, docId: string) => {
-        try {
-            const response = await axios.get('/api/document/coworker', {
-                params: {
-                    email: email,
-                    docId: docId
-                },
-            });
-            dispatch(setCoworkerList(response.data as Collaborator[]));
-        } catch (error) {
-            console.error('협업자 가져오기 오류: ', error);
-        }
-    }, [selectedDocument.author.email, selectedDocument.id]);
-
-
-    useEffect(() => {
-        if (selectedDocument.id && selectedDocument.author.email) {
-            getCoworkers(selectedDocument.author.email, selectedDocument.id);
-        }
-    }, [getCoworkers]);
-
     // 현재 편집 중인 문서에 대한 권한을 확인
     const checkPermission = useCallback(() => {
         const collaborator = selectedDocument.collaborators.find(collaborator => collaborator.email === user.email);

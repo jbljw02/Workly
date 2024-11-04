@@ -18,7 +18,7 @@ export default function ShareDocumentModal({ isModalOpen, setIsModalOpen, select
     const copyURL = useCopyURL();
 
     const editorPermission = useAppSelector(state => state.editorPermission);
-    
+
     const [workCategory, setWorkCategory] = useState<'공유' | '게시'>('공유');
 
     const closeModal = () => {
@@ -39,7 +39,7 @@ export default function ShareDocumentModal({ isModalOpen, setIsModalOpen, select
                     left: '50%',
                     top: '48%',
                     width: 600,
-                    height: 'fit-content', // h-auto와 같이 크기에 맞춰서 height 조절
+                    height: 429, // h-auto와 같이 크기에 맞춰서 height 조절
                     transform: 'translate(-50%, -50%)',
                     zIndex: 49,
                     padding: 0,
@@ -79,7 +79,7 @@ export default function ShareDocumentModal({ isModalOpen, setIsModalOpen, select
                 {/* 하단 버튼 영역 */}
                 {
                     workCategory === '공유' ?
-                        <div className='flex justify-end px- text-sm p-5 border-t'>
+                        <div className='flex items-center justify-end w-full text-sm p-5 border-t'>
                             <CommonButton
                                 style={{
                                     px: 'px-3.5',
@@ -92,7 +92,7 @@ export default function ShareDocumentModal({ isModalOpen, setIsModalOpen, select
                                 label="링크 복사"
                                 onClick={() => copyURL(selectedDoc.folderId, selectedDoc.id)} />
                         </div> :
-                        <div className='flex justify-center w-full text-sm p-5 border-t'>
+                        <div className='flex items-center justify-center w-full text-sm p-5 border-t'>
                             <CommonButton
                                 style={{
                                     px: 'px-[270px]',

@@ -22,28 +22,94 @@ export default function DocumentPreviewItem({ document }: DocumentPreviewItemPro
         return docContent?.content?.map((block, index) => {
             // 텍스트 블록
             if (block.type === 'paragraph') {
-                return <p key={index}>{block.content?.map(item => item.text)}</p>;
+                return <p key={index}>
+                    {block.content?.map(item => item.text)}
+                </p>;
+            }
+            // 순서 있는 목록 블록
+            else if (block.type === 'orderedList') {
+                return <p key={index}>
+                    <ol className="-ml-1">
+                        {
+                            block.content?.map((item, i) => (
+                                <li className="py-0.5" key={i}>
+                                    {item.content?.[0]?.content?.[0]?.text || ''}
+                                </li>
+                            ))
+                        }
+                    </ol>
+                </p>;
+            }
+            // 순서 없는 목록 블록
+            else if (block.type === 'bulletList') {
+                return <p key={index}>
+                    <ul className="-ml-1">
+                        {
+                            block.content?.map((item, i) => (
+                                <li className="py-0.5" key={i}>
+                                    {item.content?.[0]?.content?.[0]?.text || ''}
+                                </li>
+                            ))
+                        }
+                    </ul>
+                </p>;
+            }
+            // 헤딩 블록
+            else if (block.type === 'heading') {
+                if (block.attrs?.level === 1) {
+                    return <p
+                        key={index}
+                        className="text-[19px] font-semibold my-1">
+                        {block.content?.map(item => item.text)}
+                    </p>
+                }
+                else if (block.attrs?.level === 2) {
+                    return <p
+                        key={index}
+                        className="text-[18px] font-semibold my-1">
+                        {block.content?.map(item => item.text)}
+                    </p>
+                }
+                else if (block.attrs?.level === 3) {
+                    return <p
+                        key={index}
+                        className="text-[17px] font-semibold my-1">
+                        {block.content?.map(item => item.text)}
+                    </p>
+                }
             }
             // 파일 블록
             else if (block.type === 'file') {
-                return <p key={index}><PdfFileNode fileTitle={block.attrs?.title} fileUrl={block.attrs?.src} /></p>;
+                return <p key={index}>
+                    <PdfFileNode fileTitle={block.attrs?.title} fileUrl={block.attrs?.src} />
+                </p>;
             }
             // 코드 블록
             else if (block.type === 'codeBlock') {
-                return <pre
-                    className="w-full text-xs px-3 py-2 truncate my-3"
-                    key={index}>{block.content?.map(item => item.text).join(' ')}</pre>;
+                return <p key={index}>
+                    <pre
+                        className="w-full text-xs px-3 py-2 truncate my-0">
+                        {block.content?.map(item => item.text).join(' ')}
+                    </pre>
+                </p>
             }
             // 이미지 블록
             else if (block.type === 'imageComponent') {
-                return <Image
-                    key={index}
-                    src={block.attrs?.src}
-                    alt={block.attrs?.alt}
-                    width={block.attrs?.width}
-                    height={block.attrs?.height}
-                    className="max-w-full h-auto"
-                    style={{ objectFit: "contain" }} />;
+                return <p className="my-1" key={index}>
+                    <Image
+                        src={block.attrs?.src}
+                        alt={block.attrs?.alt}
+                        width={block.attrs?.width}
+                        height={block.attrs?.height}
+                        className="max-w-full h-auto"
+                        style={{ objectFit: "contain" }} />
+                </p>;
+            }
+            // 수평선 블록
+            else if (block.type === 'horizontalRule') {
+                return <p key={index}>
+                    <hr className="my-1.5" />
+                </p>;
             }
             return null;
         });
@@ -58,7 +124,7 @@ export default function DocumentPreviewItem({ document }: DocumentPreviewItemPro
                 {/* 문서 제목 */}
                 <div className="text-xl font-semibold py-0 pb-2">{document.title || "제목 없는 노트"}</div>
                 {/* 문서 미리보기 */}
-                <div className="text-sm text-neutral-500 overflow-hidden mb-3">
+                <div className="text-sm text-neutral-500 overflow-hidden mb-3 [&>p]:py-[3px]">
                     {renderDocumentPreview(document.docContent)}
                 </div>
             </div>

@@ -26,7 +26,7 @@ import LinkNode from "../../../lib/linkNode";
 import FileNode from "../../../lib/fileNode";
 import { Editor } from "@tiptap/react";
 import '@/styles/editor.css'
-import { ConnectedUser,  setConnectedUsers } from "@/redux/features/shareDocumentSlice";
+import { ConnectedUser, setConnectedUsers } from "@/redux/features/shareDocumentSlice";
 
 const appId = process.env.NEXT_PUBLIC_TIPTAP_APP_ID;
 

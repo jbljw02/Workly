@@ -77,8 +77,7 @@ hr {
 }
 
 .node-imageComponent {
-    display: block;
-    width: 100%;
+    display: inline-flex;
 }
 
 /* 링크를 걸어놓은 텍스트 */

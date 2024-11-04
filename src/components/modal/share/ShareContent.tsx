@@ -199,7 +199,7 @@ export default function ShareContent({ selectedDoc }: ShareContentProps) {
                             selectedDoc={selectedDoc} />
                     </div>
                     {
-                        coworkerList.map(coworker => (
+                        selectedDoc.collaborators.map(coworker => (
                             <div
                                 key={coworker.email}
                                 className='flex flex-row items-center justify-between'>

@@ -180,8 +180,9 @@ const NodeView = (resizableImgProps: ResizableImageNodeViewRendererProps) => {
       className="relative image-component"
       data-drag-handle
       style={{ justifyContent: alignment }}
+      contentEditable={false}
       draggable={true}>
-      <div className="inline-flex flex-col items-center relative node-imageComponent">
+      <div className="inline-flex flex-col items-center relative h-auto">
         {
           cropMode ? (
             <ImageCropper
@@ -238,7 +239,7 @@ const ImageNodeView = ResizableImage.extend({
   addNodeView() {
     return ReactNodeViewRenderer(NodeView as React.ComponentType<any>);
   },
-  
+
 });
 
 export default ImageNodeView;
