@@ -27,6 +27,8 @@ import FileNode from "../../../lib/fileNode";
 import { Editor } from "@tiptap/react";
 import '@/styles/editor.css'
 import { ConnectedUser, setConnectedUsers } from "@/redux/features/shareDocumentSlice";
+import Blockquote from "@tiptap/extension-blockquote";
+import Strike from "@tiptap/extension-strike";
 
 const appId = process.env.NEXT_PUBLIC_TIPTAP_APP_ID;
 
@@ -160,6 +162,7 @@ export default function useEditorExtension({ docId }: { docId: string }) {
             },
             history: false,
         }),
+        Strike,
         Document,
         Underline,
         Highlight.configure({
@@ -177,6 +180,7 @@ export default function useEditorExtension({ docId }: { docId: string }) {
         Heading.configure({
             levels: [1, 2, 3],
         }),
+        Blockquote,
         FontSize,
         FontFamily,
         LinkNode.configure({

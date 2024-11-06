@@ -17,7 +17,7 @@ export default function Header() {
             <div className="flex flex-row items-center gap-3">
                 <button
                     onClick={() => router.push('/login')}
-                    className='rounded px-3 py-1.5 hover:bg-gray-100'>
+                    className='flex-shrink-0 rounded px-3 py-1.5 hover:bg-gray-100'>
                     로그인
                 </button>
                 <CommonButton

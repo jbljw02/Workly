@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useMemo } from "react";
 import PaperIcon from '../../../../../public/svgs/editor/paper.svg'
 
-export default function HeaderTitle() {
+export default function HeaderTitle({ isPublished }: { isPublished: boolean }) {
     const dispatch = useAppDispatch();
 
     const pathname = usePathname();
@@ -32,8 +32,14 @@ export default function HeaderTitle() {
                 <PaperIcon width="20" />
             </div>
             <div className='flex flex-row items-center gap-1'>
-                <div className='text-sm rounded-sm hover:underline cursor-pointer'>{selectedDocument.folderName}</div>
-                <div className='text-sm font-light mx-1'>{'/'}</div>
+                {
+                    !isPublished && (
+                        <>
+                            <div className='text-sm rounded-sm hover:underline cursor-pointer'>{selectedDocument.folderName}</div>
+                            <div className='text-sm font-light mx-1'>{'/'}</div>
+                        </>
+                    )
+                }
                 <div className='text-sm font-bold'>{selectedDocument.title || '제목 없는 문서'}</div>
             </div>
         </div>

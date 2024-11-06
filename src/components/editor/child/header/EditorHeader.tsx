@@ -24,16 +24,16 @@ import { useCopyURL } from '@/components/hooks/useCopyURL'
 import useDownloadPDF from '@/components/hooks/useDownloadPDF'
 import useCopyDocument from '@/components/hooks/useCopyDocument'
 import { setCoworkerList, setEditorPermission } from '@/redux/features/shareDocumentSlice'
-import axios from 'axios'
-import { Collaborator } from '@/redux/features/documentSlice'
 import ConnectedUsers from './ConnectedUserList'
+import WebIcon from '../../../../../public/svgs/web.svg'
 
 type EditorHeaderProps = {
     editor: Editor,
     docTitle: string,
+    isPublished?: boolean,
 }
 
-export default function EditorHeader({ editor, docTitle }: EditorHeaderProps) {
+export default function EditorHeader({ editor, docTitle, isPublished }: EditorHeaderProps) {
     const dispatch = useAppDispatch();
 
     const deleteDoc = useDeleteDocument();
@@ -83,7 +83,45 @@ export default function EditorHeader({ editor, docTitle }: EditorHeaderProps) {
     }, [checkPermission]);
 
     const menuItems: MenuItemProps[] = useMemo(() => {
-        if (editorPermission === '전체 허용') {
+        if (editorPermission === '읽기 허용' || !editorPermission || isPublished) {
+            return [
+                {
+                    Icon: LinkCopyIcon,
+                    IconWidth: "16",
+                    label: "링크 복사",
+                    onClick: () => copyURL(folderId, documentId),
+                },
+                {
+                    Icon: DownloadIcon,
+                    IconWidth: "14",
+                    label: "다운로드",
+                    onClick: () => downloadPDF(editor, docTitle),
+                }
+            ];
+        }
+        else if (editorPermission === '쓰기 허용') {
+            return [
+                {
+                    Icon: CopyIcon,
+                    IconWidth: "16",
+                    label: "사본 만들기",
+                    onClick: () => copyDoc(selectedDocument),
+                },
+                {
+                    Icon: LinkCopyIcon,
+                    IconWidth: "16",
+                    label: "링크 복사",
+                    onClick: () => copyURL(folderId, documentId),
+                },
+                {
+                    Icon: DownloadIcon,
+                    IconWidth: "14",
+                    label: "다운로드",
+                    onClick: () => downloadPDF(editor, docTitle),
+                }
+            ];
+        }
+        else if (editorPermission === '전체 허용') {
             return [
                 {
                     Icon: MoveIcon,
@@ -118,67 +156,35 @@ export default function EditorHeader({ editor, docTitle }: EditorHeaderProps) {
                 }
             ];
         }
-        else if (editorPermission === '쓰기 허용') {
-            return [
-                {
-                    Icon: CopyIcon,
-                    IconWidth: "16",
-                    label: "사본 만들기",
-                    onClick: () => copyDoc(selectedDocument),
-                },
-                {
-                    Icon: LinkCopyIcon,
-                    IconWidth: "16",
-                    label: "링크 복사",
-                    onClick: () => copyURL(folderId, documentId),
-                },
-                {
-                    Icon: DownloadIcon,
-                    IconWidth: "14",
-                    label: "다운로드",
-                    onClick: () => downloadPDF(editor, docTitle),
-                }
-            ];
-        }
-        else if (editorPermission === '읽기 허용' || !editorPermission) {
-            return [
-                {
-                    Icon: LinkCopyIcon,
-                    IconWidth: "16",
-                    label: "링크 복사",
-                    onClick: () => copyURL(folderId, documentId),
-                },
-                {
-                    Icon: DownloadIcon,
-                    IconWidth: "14",
-                    label: "다운로드",
-                    onClick: () => downloadPDF(editor, docTitle),
-                }
-            ];
-        }
         return [];
-    }, [editorPermission]);
+    }, [editorPermission, isPublished]);
 
     useClickOutside(optionRef, () => setMenuListOpen(false), optionRef);
 
     return (
         <div className='flex flex-row justify-between border-b pl-3 pr-5 py-3'>
             {/* 헤더 좌측 영역 */}
-            <HeaderTitle />
+            <HeaderTitle isPublished={isPublished || false} />
             {/* 헤더 우측 영역 */}
             <div className='flex flex-row items-center gap-1'>
                 {/* 현재 문서에 연결중인 사용자를 나열 */}
-                <ConnectedUsers />
-                <HoverTooltip label='문서를 공유하거나 게시'>
-                    <button
-                        onClick={() => setIsShareModal(true)}
-                        className='text-sm px-1.5 py-1 rounded-sm hover:bg-gray-100 cursor-pointer'>공유</button>
-                </HoverTooltip>
-                <HoverTooltip label={isShared ? '공유중인 문서' : '나에게만 공개'}>
+                {
+                    !isPublished && (
+                        <>
+                            <ConnectedUsers />
+                            <HoverTooltip label='문서를 공유하거나 게시'>
+                                <button
+                                    onClick={() => setIsShareModal(true)}
+                                    className='text-sm px-1.5 py-1 rounded-sm hover:bg-gray-100 cursor-pointer'>공유</button>
+                            </HoverTooltip>
+                        </>
+                    )
+                }
+                <HoverTooltip label={isPublished ? '공개된 문서' : (isShared ? '공유중인 문서' : '나에게만 공개')}>
                     {
                         isAuthor && (
                             <ToolbarButton
-                                Icon={isShared ? UnLockIcon : LockIcon}
+                                Icon={isPublished ? WebIcon : (isShared ? UnLockIcon : LockIcon)}
                                 iconWidth={20} />
                         )
                     }

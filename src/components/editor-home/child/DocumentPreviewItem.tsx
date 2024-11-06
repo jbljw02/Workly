@@ -111,6 +111,20 @@ export default function DocumentPreviewItem({ document }: DocumentPreviewItemPro
                     <hr className="my-1.5" />
                 </p>;
             }
+            // 인용굽 ㅡㄹ록
+            else if (block.type === 'blockquote') {
+                return (
+                    <blockquote key={index} className="pl-3 border-l-3 border-gray-300 my-2">
+                        {
+                            block.content?.map((paragraph, i) => (
+                                <p className="py-0.5" key={i}>
+                                    {paragraph.content?.map(item => item.text).join(' ')}
+                                </p>
+                            ))
+                        }
+                    </blockquote>
+                );
+            }
             return null;
         });
     };

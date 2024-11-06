@@ -16,6 +16,7 @@ import useVisitDocument from '../hooks/useVisitDocument';
 import useDocumentRealTime from '../hooks/useDocumentRealTime';
 import useUpdateContent from '../hooks/useUpdateContent';
 import useLeavePage from '../hooks/useLeavePage';
+import EditorTitleInput from './child/EditorTitleInput';
 
 export default function Editor({ docId }: { docId: string }) {
   const dispatch = useAppDispatch();
@@ -33,8 +34,6 @@ export default function Editor({ docId }: { docId: string }) {
   });
 
   const { updateContent, debouncedUpdateRequest } = useUpdateContent();
-
-  console.log(editor?.getJSON());
 
   const openColorPicker = useAppSelector(state => state.openColorPicker);
   const selectedDocument = useAppSelector(state => state.selectedDocument);
@@ -112,20 +111,11 @@ export default function Editor({ docId }: { docId: string }) {
         <MenuBar editor={editor} />
       </div>
       <div
-        id="editor-content"
         className='p-4 h-full'>
-        <input
-          type="text"
-          value={docTitle}
-          onChange={(e) => docTitleChange(e)}
-          placeholder="제목을 입력해주세요"
-          className="editor-title text-[40px] pl-5 pb-4 font-bold outline-none w-full"
-          onKeyDown={(e) => {
-            // Enter 키를 누르거나 방향키 아래를 눌렀을 때 editor로 포커스를 이동
-            if (e.key === 'Enter' || e.key === 'ArrowDown') {
-              editor.commands.focus();
-            }
-          }} />
+        <EditorTitleInput
+          docTitle={docTitle}
+          docTitleChange={docTitleChange}
+          readonly={editorPermission === '읽기 허용'} />
         <DragHandle
           tippyOptions={{
             placement: 'left',
@@ -144,4 +134,3 @@ export default function Editor({ docId }: { docId: string }) {
     </div>
   )
 }
-

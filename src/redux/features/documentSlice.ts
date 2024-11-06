@@ -17,6 +17,7 @@ export type DocumentProps = {
     folderName: string;
     collaborators: Collaborator[];
     shortcutsUsers: string[];
+    isPublished?: boolean;
 }
 
 const DocumentsState: DocumentProps[] = [];
@@ -113,6 +114,14 @@ export const documentSlice = createSlice({
                     document.shortcutsUsers.filter(user => user !== email) :
                     [...document.shortcutsUsers, email];
             }
+        },
+        // 문서를 게시
+        publishContent: (state, action) => {
+            const { docId } = action.payload;
+            const document = state.find(doc => doc.id === docId);
+            if (document) {
+                document.isPublished = true;
+            }
         }
     },
 })
@@ -127,7 +136,7 @@ export const selectedDocument = createSlice({
     }
 })
 
-export const { addDocuments, updateDocuments, renameDocuments, deleteAllDocumentsOfFolder, updateCollaboratorAuthority, addCollaborator, deleteCollaborator, setDocuments, deleteDocuments, toggleShortcut } = documentSlice.actions;
+export const { addDocuments, updateDocuments, renameDocuments, deleteAllDocumentsOfFolder, updateCollaboratorAuthority, addCollaborator, deleteCollaborator, setDocuments, deleteDocuments, toggleShortcut, publishContent } = documentSlice.actions;
 export const { setSelectedDocument } = selectedDocument.actions;
 
 const reducers = {

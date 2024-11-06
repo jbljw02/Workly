@@ -30,6 +30,8 @@ import VerticalDivider from '../divider/VerticalDivider'
 import WarningAlert from '@/components/alert/WarningAlert'
 import uploadImage from '@/utils/uploadImage'
 import uploadFile from '@/utils/uploadFile'
+import StrikeIcon from '../../../../../public/svgs/editor/strike.svg'
+import BlockquoteIcon from '../../../../../public/svgs/editor/blockquote.svg'
 
 export default function MenuBar({ editor }: { editor: Editor }) {
     const dispatch = useAppDispatch();
@@ -42,6 +44,7 @@ export default function MenuBar({ editor }: { editor: Editor }) {
     const [isBold, setIsBold] = useState<boolean>(false);
     const [isItalic, setIsItalic] = useState<boolean>(false);
     const [isUnderline, setIsUnderline] = useState<boolean>(false);
+    const [isStrike, setIsStrike] = useState<boolean>(false);
     const [isHighlight, setIsHighlight] = useState<boolean>(false);
     const [selectedFont, setSelectedFont] = useState<string>('Arial');
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -101,6 +104,7 @@ export default function MenuBar({ editor }: { editor: Editor }) {
             setIsItalic(editor.isActive('italic'));
             setIsUnderline(editor.isActive('underline'));
             setIsHighlight(editor.isActive('highlight'));
+            setIsStrike(editor.isActive('strike'));
         };
 
         // selectionUpdate: 에디터 내에서 '텍스트 선택'이 변경될 때마다 트리거
@@ -211,6 +215,13 @@ export default function MenuBar({ editor }: { editor: Editor }) {
                             Icon={UnderlineIcon}
                             iconWidth={14} />
                     </HoverTooltip>
+                    <HoverTooltip label='취소선'>
+                        <ToolbarButton
+                            onClick={() => editor.chain().focus().toggleStrike().run()}
+                            isActive={isStrike}
+                            Icon={StrikeIcon}
+                            iconWidth={16} />
+                    </HoverTooltip>
                     {/* 글씨의 색상을 변경할 수 있는 버튼과 컬러 선택자 */}
                     <ColorPicker editor={editor} />
                     <HoverTooltip label='강조'>
@@ -218,7 +229,7 @@ export default function MenuBar({ editor }: { editor: Editor }) {
                             onClick={() => editor.chain().focus().toggleHighlight().run()}
                             isActive={isHighlight}
                             Icon={HighlightIcon}
-                            iconWidth={11} />
+                            iconWidth={15} />
                     </HoverTooltip>
                 </div>
                 <VerticalDivider />
@@ -298,10 +309,14 @@ export default function MenuBar({ editor }: { editor: Editor }) {
                     <LinkTooltip editor={editor} />
                     <HoverTooltip label='코드 삽입'>
                         <ToolbarButton
-                            onClick={() => {
-                                editor.chain().focus().insertContent('<pre><code></code></pre>').run();
-                            }}
+                            onClick={() => editor.chain().focus().insertContent('<pre><code></code></pre>').run()}
                             Icon={CodeIcon}
+                            iconWidth={20} />
+                    </HoverTooltip>
+                    <HoverTooltip label='인용구 추가'>
+                        <ToolbarButton
+                            onClick={() => editor.chain().focus().toggleBlockquote().run()}
+                            Icon={BlockquoteIcon}
                             iconWidth={20} />
                     </HoverTooltip>
                 </div>
