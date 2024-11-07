@@ -34,8 +34,6 @@ export default function SignUp() {
         msg: '',
     });
 
-    console.log("이메일: ", emailInvalid)
-
     const [passwordInvalid, setPasswordInvalid] = useState({
         isInvalid: false,
         msg: '비밀번호는 6자 이상, 최소 한 개의 특수문자를 포함해야 합니다',
@@ -202,9 +200,9 @@ export default function SignUp() {
 
 
     return (
-        <div className="flex w-full h-auto items-center justify-center">
+        <div className="flex w-full min-h-screen items-center justify-center">
             <HeaderButton />
-            <div className='flex flex-col w-[450px] h-auto items-center justify-center mb-7 gap-8'>
+            <div className='flex flex-col w-[450px] h-full items-center justify-center mb-7 gap-8'>
                 <AuthTop
                     title='회원가입'
                     subtitle='Workly에 오신 것을 환영합니다!' />

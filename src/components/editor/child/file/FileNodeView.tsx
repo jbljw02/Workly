@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Editor, NodeViewWrapper, NodeViewProps } from '@tiptap/react';
 import FileInfoIcon from '../../../../../public/svgs/editor/file-info.svg';
 import FileFullModal from '@/components/modal/FileFullModal';
@@ -23,14 +23,17 @@ export interface FileNodeViewProps {
     node: Node & {
         attrs: FileNodeAttrs;
     };
+    isPublished?: boolean;
 }
 
-export default function FileNodeView({ editor, node }: FileNodeViewProps) {
+export default function FileNodeView({ editor, node, }: FileNodeViewProps) {
     const dispatch = useAppDispatch();
 
     const { id, href, title, mimeType, size } = node.attrs;
 
     const fileNode = useAppSelector(state => state.fileNode);
+    const webPublished = useAppSelector(state => state.webPublished);
+    const editorPermission = useAppSelector(state => state.editorPermission);
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [menuListOpen, setMenuListOpen] = useState(false);
@@ -60,15 +63,17 @@ export default function FileNodeView({ editor, node }: FileNodeViewProps) {
     const fileMenuClick = (e: React.MouseEvent) => {
         e.stopPropagation();
 
-        dispatch(setFileNode({
-            id: id,
-            href: href,
-            title: title,
-            mimeType: mimeType,
-            size: size,
-        }));
+        if (!webPublished) {
+            dispatch(setFileNode({
+                id: id,
+                href: href,
+                title: title,
+                mimeType: mimeType,
+                size: size,
+            }));
 
-        setMenuListOpen(!menuListOpen);
+            setMenuListOpen(!menuListOpen);
+        }
     }
 
     // 파일 드래그 종료
@@ -151,39 +156,58 @@ export default function FileNodeView({ editor, node }: FileNodeViewProps) {
         }
     };
 
-    const menuItems: MenuItemProps[] = [
-        {
-            Icon: EditIcon,
-            IconWidth: "16",
-            label: "파일명 변경",
-            onClick: () => editFileName(),
-        },
-        {
-            Icon: LinkCopyIcon,
-            IconWidth: "16",
-            label: "링크 복사",
-            onClick: () => copyLink(fileNode.href),
-        },
-        {
-            Icon: DownloadIcon,
-            IconWidth: "16",
-            label: "다운로드",
-            onClick: () => downloadFile(fileNode.href, fileNode.title),
-        },
-        {
-            Icon: CopyIcon,
-            IconWidth: "14",
-            label: "복제",
-            onClick: () => duplicateFile(editor, fileNode),
-            horizonLine: true,
-        },
-        {
-            Icon: DeleteIcon,
-            IconWidth: "17",
-            label: "삭제",
-            onClick: () => deleteFile(editor, fileNode.id),
+    const menuItems: MenuItemProps[] = useMemo(() => {
+        // 모든 권한에 공통적으로 들어가는 아이템
+        const commonMenuItems = [
+            {
+                Icon: LinkCopyIcon,
+                IconWidth: "16",
+                label: "링크 복사",
+                onClick: () => copyLink(fileNode.href),
+            },
+            {
+                Icon: DownloadIcon,
+                IconWidth: "14",
+                label: "다운로드",
+                onClick: () => downloadFile(fileNode.href, fileNode.title),
+            }
+        ];
+
+        // 모든 권한을 가지고 있을 때의 아이템
+        const fullPermissionItems = [
+            {
+                Icon: EditIcon,
+                IconWidth: "16",
+                label: "파일명 변경",
+                onClick: () => editFileName(),
+            },
+            ...commonMenuItems,
+            {
+                Icon: CopyIcon,
+                IconWidth: "14",
+                label: "복제",
+                onClick: () => duplicateFile(editor, fileNode),
+                horizonLine: true,
+            },
+            {
+                Icon: DeleteIcon,
+                IconWidth: "17",
+                label: "삭제",
+                onClick: () => deleteFile(editor, fileNode.id),
+            },
+        ]
+
+        if (editorPermission === '읽기 허용') {
+            return [
+                ...commonMenuItems,
+            ]
         }
-    ];
+        else {
+            return [
+                ...fullPermissionItems,
+            ]
+        }
+    }, [fileNode, editorPermission]);
 
     useClickOutside(fileRef, () => setMenuListOpen(false), fileRef);
 
@@ -198,8 +222,8 @@ export default function FileNodeView({ editor, node }: FileNodeViewProps) {
                     data-file={title}
                     onClick={fileClick}
                     ref={fileRef}
-                    className={`data-file relative inline-flex flex-row items-center justify-center w-auto rounded-md p-2 mt-2 mb-2 hover:bg-gray-100 cursor-pointer duration-100 
-                    ${menuListOpen ? 'bg-gray-100' : 'bg-gray-50'}`}>
+                    className={`data-file relative inline-flex flex-row items-center justify-center w-auto rounded-md p-2 mt-2 mb-2 hover:bg-gray-200 cursor-pointer duration-200 
+                    ${menuListOpen ? 'bg-gray-200' : 'bg-gray-100'}`}>
                     <FileInfoIcon width="26" />
                     <div className='flex justify-between items-center mt-0.5'>
                         {
@@ -215,15 +239,26 @@ export default function FileNodeView({ editor, node }: FileNodeViewProps) {
                         <div className='ml-3 text-sm text-neutral-500'>{formatSize(size)}</div>
                         <div
                             onClick={fileMenuClick}
-                            className={`ml-4 -mr-0.5 hover:bg-gray-200 p-1 rounded-sm ${menuListOpen ? 'bg-gray-200' : ''}`}>
-                            <MenuIcon width="18" />
+                            className={`ml-4 -mr-0.5 hover:bg-gray-300 p-1 rounded-sm 
+                            ${menuListOpen ? 'bg-gray-200' : ''}`}>
+                            {
+                                // 문서가 게시중이 아닐 때 리스트 확인 불가
+                                !webPublished && (
+                                    <MenuIcon width="18" />
+                                )
+                            }
                         </div>
                     </div>
-                    <MenuList
-                        isOpen={menuListOpen}
-                        menuList={menuItems}
-                        setListOpen={setMenuListOpen}
-                        listPositon={{ top: '50px', right: '0px' }} />
+                    {
+                        // 문서가 게시중이 아닐 때 리스트 확인 불가
+                        !webPublished && (
+                            <MenuList
+                                isOpen={menuListOpen}
+                                menuList={menuItems}
+                                setListOpen={setMenuListOpen}
+                                listPositon={{ top: '50px', right: '0px' }} />
+                        )
+                    }
                 </div>
             </NodeViewWrapper>
             <FileFullModal
@@ -232,7 +267,7 @@ export default function FileNodeView({ editor, node }: FileNodeViewProps) {
                 href={fileNode.href}
                 download={fileNode.title}>
                 {
-                    // 파일 형식이 PDF일 경우 PDF 뷰어��� 통해 보여주고, 다른 형식일 경우 대체 화면 출력
+                    // 파일 형식이 PDF일 경우 PDF 뷰어를 통해 보여주고, 다른 형식일 경우 대체 화면 출력
                     mimeType === 'application/pdf' ? (
                         <iframe
                             className='absolute w-full h-full max-w-[90vw] max-h-[90vh] rounded-md'

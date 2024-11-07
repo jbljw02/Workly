@@ -12,7 +12,6 @@ export default function useAddDocument() {
     const router = useRouter();
 
     const user = useAppSelector(state => state.user);
-    const folders = useAppSelector(state => state.folders);
 
     // 선택된 폴더에 문서 추가
     // setInvalidInfo가 있다면, 즉 모달을 통해 추가했다면 라우팅 없이 추가만 진행
@@ -33,6 +32,7 @@ export default function useAddDocument() {
             folderId: folder.id,
             folderName: folder.name,
             collaborators: [],
+            shortcutsUsers: [],
         }
 
         try {
@@ -54,12 +54,13 @@ export default function useAddDocument() {
             // 문서 ID를 기본 폴더에 추가
             dispatch(addDocumentToFolder({ folderId: folder.id, docId: newDocument.id }));
 
-            !setInvalidInfo && router.push(`/editor/${folder.id}/${newDocument.id}`);
-
-            setInvalidInfo && setInvalidInfo(({
-                msg: '',
-                isInvalid: false,
-            }))
+            // 모달을 통해 추가했다면 라우팅 없이 추가만 진행
+            setInvalidInfo ?
+                setInvalidInfo(({
+                    msg: '',
+                    isInvalid: false,
+                })) :
+                router.push(`/editor/${folder.id}/${newDocument.id}`);
 
             return false;
         } catch (error) {

@@ -77,8 +77,11 @@ hr {
 }
 
 .node-imageComponent {
-    display: block;
-    width: 100%;
+    display: inline-flex;
+}
+
+.node-file {
+    display: inline-flex;
 }
 
 /* 링크를 걸어놓은 텍스트 */
@@ -110,10 +113,6 @@ hr {
 
 .drag-handle:hover {
     background-color: #f0f0f0;
-}
-
-.editor-title::placeholder {
-    color: #dcdcdc;
 }
 
 .ProseMirror {
@@ -153,4 +152,10 @@ hr {
     top: -1.4em;
     user-select: none;
     white-space: nowrap;
+}
+
+blockquote {
+    border-left: 3px solid #e1e1e0;
+    margin: 1rem 0;
+    padding-left: 0.7rem;
 }

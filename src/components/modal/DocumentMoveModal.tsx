@@ -9,7 +9,6 @@ import { addDocumentToFolder, Folder, removeDocumentFromFolder } from "@/redux/f
 import axios from 'axios';
 import { DocumentProps, updateDocuments } from "@/redux/features/documentSlice";
 import ModalHeader from "./ModalHeader";
-import InputLabelContainer from "./InputLabelContainer";
 import { showCompleteAlert, showWarningAlert } from "@/redux/features/alertSlice";
 import { WorkingDocModalProps } from "@/types/workingDocModalProps";
 
@@ -104,6 +103,7 @@ export default function DocumentMoveModal({ isModalOpen, setIsModalOpen, selecte
                     top: '45%',
                     width: 510,
                     maxHeight: '80vh',
+                    minHeight: 330,
                     height: 'fit-content',
                     transform: 'translate(-50%, -50%)',
                     zIndex: 49,

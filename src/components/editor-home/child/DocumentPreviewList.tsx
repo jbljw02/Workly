@@ -3,6 +3,7 @@ import DocumentPreviewItem from "./DocumentPreviewItem";
 import AddNoteIcon from '../../../../public/svgs/add-note.svg';
 import { useMemo, useState } from "react";
 import CategoryButton from "@/components/button/CategoryButton";
+import React from "react";
 
 export default function DocumentPreviewList() {
     const documents = useAppSelector(state => state.documents);
@@ -41,11 +42,13 @@ export default function DocumentPreviewList() {
             <div className="flex flex-wrap gap-5 overflow-hidden">
                 {
                     filteredDocuments.map(doc => (
-                        <DocumentPreviewItem key={doc.id} document={doc} />
+                        <React.Fragment key={doc.id}>
+                            <DocumentPreviewItem document={doc} />
+                        </React.Fragment>
                     ))
                 }
-                <div 
-                className="flex flex-col justify-center items-center border p-4 rounded shadow-sm w-64 h-96 overflow-hidden
+                <div
+                    className="flex flex-col justify-center items-center border p-4 rounded shadow-sm w-64 h-96 overflow-hidden
                     cursor-pointer hover:bg-gray-100 transition-all duration-150">
                     <div className="flex flex-col items-center  text-neutral-500 gap-3">
                         <AddNoteIcon width="40" />

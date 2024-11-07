@@ -15,6 +15,7 @@ import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { setOpenFullModal } from "@/redux/features/editorImageSlice";
 import { showWarningAlert } from "@/redux/features/alertSlice";
 import { deleteObject, getStorage, ref } from "firebase/storage";
+import ImageFullModal from "./ImageFullModal";
 
 type ImageMenuBarProps = {
     nodeViewRef: RefObject<HTMLDivElement>;
@@ -101,25 +102,7 @@ export default function ImageMenuBar({ nodeViewRef, cropStart, resizableImgProps
                         iconWidth={21}
                         onClick={() => dispatch(setOpenFullModal(true))} />
                 </HoverTooltip>
-                {
-                    openFullModal &&
-                    <FileFullModal
-                        isModalOpen={openFullModal}
-                        setIsModalOpen={() => dispatch(setOpenFullModal(false))}
-                        href={resizableImgProps.node.attrs.src}
-                        download={resizableImgProps.node.attrs.title || ''}>
-                        <img
-                            className='border-none rounded-sm'
-                            src={resizableImgProps.node.attrs.src}
-                            style={{
-                                maxWidth: '100%',
-                                maxHeight: '100%',
-                                width: 'auto',
-                                height: 'auto',
-                                objectFit: 'contain',
-                            }} />
-                    </FileFullModal>
-                }
+                <ImageFullModal resizableImgProps={resizableImgProps} />
             </div>
         </div>
     )

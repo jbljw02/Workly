@@ -5,7 +5,6 @@ import CommonInput from '../input/CommonInput';
 import SubmitButton from '../button/SubmitButton';
 import CommonButton from '../button/CommonButton';
 import ModalHeader from './ModalHeader';
-import InputLabelContainer from './InputLabelContainer';
 
 export interface AddInputModal extends ModalProps {
     title: string;

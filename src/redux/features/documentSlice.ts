@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 import { JSONContent } from "@tiptap/react";
 import { UserProps } from "./userSlice";
 
@@ -16,6 +16,10 @@ export type DocumentProps = {
     folderId: string;
     folderName: string;
     collaborators: Collaborator[];
+    shortcutsUsers: string[];
+    isPublished?: boolean;
+    publishedUser?: UserProps;
+    publishedDate?: { seconds: number, nanoseconds: number };
 }
 
 const DocumentsState: DocumentProps[] = [];
@@ -33,6 +37,7 @@ const selectedDocumentState: DocumentProps = {
     folderId: '',
     folderName: '',
     collaborators: [],
+    shortcutsUsers: [],
 }
 
 export const documentSlice = createSlice({
@@ -101,6 +106,26 @@ export const documentSlice = createSlice({
                 document.collaborators = document.collaborators.filter(collab => collab.email !== email);
             }
         },
+        // 즐겨찾기 여부 토글
+        toggleShortcut: (state, action) => {
+            const { docId, email } = action.payload;
+            const document = state.find(doc => doc.id === docId);
+            if (document) {
+                // 이미 즐겨찾기에 존재하면 제거, 없으면 추가
+                document.shortcutsUsers = document.shortcutsUsers.includes(email) ?
+                    document.shortcutsUsers.filter(user => user !== email) :
+                    [...document.shortcutsUsers, email];
+            }
+        },
+        // 문서를 게시
+        publishContent: (state, action) => {
+            const { docId, user } = action.payload;
+            const document = state.find(doc => doc.id === docId);
+            if (document) {
+                document.isPublished = true;
+                document.publishedUser = user;
+            }
+        }
     },
 })
 
@@ -114,7 +139,7 @@ export const selectedDocument = createSlice({
     }
 })
 
-export const { addDocuments, updateDocuments, renameDocuments, deleteAllDocumentsOfFolder, updateCollaboratorAuthority, addCollaborator, deleteCollaborator, setDocuments, deleteDocuments } = documentSlice.actions;
+export const { addDocuments, updateDocuments, renameDocuments, deleteAllDocumentsOfFolder, updateCollaboratorAuthority, addCollaborator, deleteCollaborator, setDocuments, deleteDocuments, toggleShortcut, publishContent } = documentSlice.actions;
 export const { setSelectedDocument } = selectedDocument.actions;
 
 const reducers = {

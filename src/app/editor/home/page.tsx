@@ -1,6 +1,6 @@
 import EditorHome from "@/components/editor-home/EditorHome";
 
-export default function Page() {
+export default function EditorHomePage() {
     return (
         <EditorHome />
     )

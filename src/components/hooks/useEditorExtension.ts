@@ -26,9 +26,11 @@ import LinkNode from "../../../lib/linkNode";
 import FileNode from "../../../lib/fileNode";
 import { Editor } from "@tiptap/react";
 import '@/styles/editor.css'
+import { ConnectedUser, setConnectedUsers } from "@/redux/features/shareDocumentSlice";
+import Blockquote from "@tiptap/extension-blockquote";
+import Strike from "@tiptap/extension-strike";
 
 const appId = process.env.NEXT_PUBLIC_TIPTAP_APP_ID;
-const wsUrl = process.env.NEXT_PUBLIC_WEBSOCKET_URL;
 
 const colors = [
     '#958DF1', // 보라색
@@ -56,12 +58,23 @@ const colors = [
     '#E3F4F4', // 연한 청록색
 ]
 
-// docId를 키로 가지는 Y.Doc 인스턴스를 저장하는 맵
+// docId를 키로 가지는 Y.Doc 인스턴스를 는 맵
 const docMap = new Map<string, Y.Doc>();
 
-export default function useEditorExtension({ docId }: { docId: string }) {
+type useEditorExtensionProps = {
+    docId: string,
+}
+
+export default function useEditorExtension({ docId }: useEditorExtensionProps) {
     const dispatch = useAppDispatch();
+
     const user = useAppSelector(state => state.user);
+    const connectedUser = useAppSelector(state => state.connectedUsers);
+    const webPublished = useAppSelector(state => state.webPublished);
+    const selectedDocument = useAppSelector(state => state.selectedDocument);
+
+    // 사용자의 커서 색상을 지정
+    const userColor = useMemo(() => colors[Math.floor(Math.random() * colors.length)], []);
 
     // docId에 해당하는 Y.Doc 인스턴스를 가져오거나 새로 생성
     const doc = useMemo(() => {
@@ -76,25 +89,75 @@ export default function useEditorExtension({ docId }: { docId: string }) {
         name: docId,
         appId: appId!,
         document: doc,
+        onConnect: () => {
+            console.log('connected');
+        },
     }), [docId, doc]);
 
-    useEffect(() => {
-        return () => {
-            provider.destroy();
-        };
-    }, [docId, doc]);
 
-    // 사용자의 커서 색상을 지정
-    const userColor = useMemo(() => colors[Math.floor(Math.random() * colors.length)], []);
+    // 접속자 목록 업데이트
+    useEffect(() => {
+        const updateActiveUsers = () => {
+            const users: ConnectedUser[] = [];
+            provider.awareness?.getStates().forEach((state: any) => {
+                const user = state.user;
+                if (user) {
+                    users.push({
+                        name: user.name,
+                        id: user.id,
+                        color: user.color,
+                        photoURL: user.photoURL,
+                        connectedAt: user.connectedAt,
+                    });
+                }
+            });
+
+            // 작성자를 제외한 사용자들을 접속 시간순으로 정렬
+            const sortedUsers = users.sort((a, b) => {
+                if (a.id === selectedDocument.author.email) return -1; // a가 작성자인 경우 제일 앞에 위치(a를 b보다 앞에 배치)
+                if (b.id === selectedDocument.author.email) return 1; // b가 작성자인 경우 제일 뒤에 위치(b를 a보다 앞에 배치)
+                return a.connectedAt - b.connectedAt; // 접속 시간순으로 정렬
+            });
+
+            dispatch(setConnectedUsers(sortedUsers));
+        };
+
+        // awareness 상태가 변경될 때마다 접속자 목록 업데이트
+        provider.awareness?.on('change', updateActiveUsers);
+
+        // 초기 상태 설정
+        updateActiveUsers();
+
+        return () => {
+            provider.awareness?.off('change', updateActiveUsers);
+        };
+    }, [provider, dispatch, user, userColor, selectedDocument.author.email]);
 
     // 현재 사용자의 정보를 필드에 할당
     useEffect(() => {
-        provider.setAwarenessField('user', {
-            name: user.displayName,
-            id: user.email,
-            color: userColor,
-        });
-    }, [user.displayName, userColor, provider]);
+        const setUserAwareness = () => {
+            if (user.displayName && user.email && user.photoURL) {
+                provider.setAwarenessField('user', {
+                    name: user.displayName,
+                    id: user.email,
+                    color: userColor,
+                    photoURL: user.photoURL,
+                    connectedAt: Date.now(),
+                });
+            }
+        };
+
+        setUserAwareness();
+    }, [user.displayName, user.email, user.photoURL, userColor, provider]);
+
+    // 소켓 연결 해제
+    useEffect(() => {
+        return () => {
+            if (provider) {
+                provider.destroy();
+            }
+        };
+    }, [provider]);
 
     const extensions = [
         StarterKit.configure({
@@ -108,6 +171,7 @@ export default function useEditorExtension({ docId }: { docId: string }) {
             },
             history: false,
         }),
+        Strike,
         Document,
         Underline,
         Highlight.configure({
@@ -125,13 +189,14 @@ export default function useEditorExtension({ docId }: { docId: string }) {
         Heading.configure({
             levels: [1, 2, 3],
         }),
+        Blockquote,
         FontSize,
         FontFamily,
         LinkNode.configure({
             openOnClick: true,
             autolink: true,
             defaultProtocol: 'https',
-            setLinkTooltip: (payload: any) => dispatch(setLinkTooltip(payload))
+            setLinkTooltip: (payload: any) => dispatch(setLinkTooltip(payload)),
         }),
         Dropcursor,
         ImageNodeView.configure({
@@ -139,7 +204,7 @@ export default function useEditorExtension({ docId }: { docId: string }) {
             defaultHeight: 600,
         }),
         FileNode,
-        FileHandler.configure({
+        !webPublished && FileHandler.configure({
             onDrop: (currentEditor: Editor, files: File[], pos: number) => {
                 files.forEach(file => {
                     const fileReader = new FileReader()
@@ -165,13 +230,17 @@ export default function useEditorExtension({ docId }: { docId: string }) {
             },
             showOnlyCurrent: false,
         }),
-        Collaboration.configure({
+        !webPublished && Collaboration.configure({
             document: doc,
         }),
-        CollaborationCursor.configure({
-            provider,
+        !webPublished && CollaborationCursor.configure({
+            provider: provider,
             user: {
+                id: user.email,
                 name: user.displayName,
+                color: userColor,
+                photoURL: user.photoURL,
+                connectedAt: Date.now(),
             },
         }),
     ];

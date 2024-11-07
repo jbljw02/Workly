@@ -12,9 +12,12 @@ import { DocumentProps, renameDocuments, setSelectedDocument, updateDocuments } 
 import formatTimeDiff from '@/utils/formatTimeDiff'
 import MenuBar from './child/menu-bar/MenuBar'
 import useEditorExtension from '../hooks/useEditorExtension';
-import useUploadTitle from '../hooks/useUploadTitle';
 import useVisitDocument from '../hooks/useVisitDocument';
 import useDocumentRealTime from '../hooks/useDocumentRealTime';
+import useUpdateContent from '../hooks/useUpdateContent';
+import useLeavePage from '../hooks/useLeavePage';
+import EditorTitleInput from './child/EditorTitleInput';
+import { useRouter } from 'next/navigation';
 
 export default function Editor({ docId }: { docId: string }) {
   const dispatch = useAppDispatch();
@@ -22,7 +25,7 @@ export default function Editor({ docId }: { docId: string }) {
   const extensions = useEditorExtension({ docId });
   const editorPermission = useAppSelector(state => state.editorPermission);
   const editor = useEditor({
-    extensions: extensions,
+    extensions: extensions.filter(ext => ext !== false),
     editorProps: {
       attributes: {
         class: 'prose prose-sm sm:prose lg:prose-lg xl:prose-xl m-4 focus:outline-none',
@@ -31,26 +34,31 @@ export default function Editor({ docId }: { docId: string }) {
     editable: editorPermission !== '읽기 허용',
   });
 
-  const uploadTitle = useUploadTitle();
+  const { updateContent, debouncedUpdateRequest } = useUpdateContent();
 
   const openColorPicker = useAppSelector(state => state.openColorPicker);
   const selectedDocument = useAppSelector(state => state.selectedDocument);
 
   const docTitle = useMemo(() => selectedDocument.title, [selectedDocument.title]); // 문서 제목
-  const [lastUpdatedTime, setLastUpdatedTime] = useState<string>('현재 편집 중'); // 문서의 마지막 편집 시간에 따른 출력값
+  const [lastReadedTime, setLastReadedTime] = useState<string>('현재 편집 중'); // 문서의 마지막 편집 시간에 따른 출력값
 
   // 에디터의 내용이 변경될 때마다 state와의 일관성을 유지
   const updateDocument = useCallback(async () => {
     if (editor && selectedDocument) {
       const content = editor.getJSON();
 
+      // 문서의 내용을 업데이트
       const updatedDoc: DocumentProps = {
         ...selectedDocument,
         docContent: content,
+        readedAt: {
+          seconds: Math.floor(Date.now() / 1000),
+          nanoseconds: Math.floor((Date.now() % 1000) * 1000000),
+        }
       };
 
       dispatch(updateDocuments({ docId: updatedDoc.id, ...updatedDoc }));
-      setLastUpdatedTime(formatTimeDiff(updatedDoc.readedAt));
+      setLastReadedTime(formatTimeDiff(updatedDoc.readedAt));
     }
   }, [dispatch, editor, selectedDocument]);
 
@@ -70,18 +78,25 @@ export default function Editor({ docId }: { docId: string }) {
         title: e.target.value,
       };
 
-      // setDocTitle(e.target.value);
       dispatch(renameDocuments({ docId: updatedDoc.id, newTitle: e.target.value }));
-      setLastUpdatedTime(formatTimeDiff(updatedDoc.readedAt));
+      setLastReadedTime(formatTimeDiff(updatedDoc.readedAt));
 
       if (updatedDoc.id) {
-        uploadTitle(updatedDoc);
+        debouncedUpdateRequest(updatedDoc);
       }
     }
   }
 
+  // 페이지를 떠나기 이전 변경사항 저장
+  const updateContentBeforeLeave = async () => {
+    if (selectedDocument.id && selectedDocument.docContent) {
+      await updateContent(selectedDocument);
+    }
+  };
+
   useDocumentRealTime({ docId }); // 문서의 실시간 변경을 감지
   useVisitDocument({ docId }); // 페이지에 초기 방문 시에 열람일 업데이트
+  useLeavePage(updateContentBeforeLeave); // 페이지를 떠날 때 업데이트
 
   if (!editor) {
     return null;
@@ -93,26 +108,14 @@ export default function Editor({ docId }: { docId: string }) {
       <div className="sticky top-0 bg-white z-10">
         <EditorHeader
           editor={editor}
-          docTitle={docTitle}
-          lastUpdatedTime={lastUpdatedTime}
-          setLastUpdatedTime={setLastUpdatedTime} />
+          docTitle={docTitle} />
         <MenuBar editor={editor} />
       </div>
       <div
-        id="editor-content"
         className='p-4 h-full'>
-        <input
-          type="text"
-          value={docTitle}
-          onChange={(e) => docTitleChange(e)}
-          placeholder="제목을 입력해주세요"
-          className="editor-title text-[40px] pl-5 pb-4 font-bold outline-none w-full"
-          onKeyDown={(e) => {
-            // Enter 키를 누르거나 방향키 아래를 눌렀을 때 editor로 포커스를 이동
-            if (e.key === 'Enter' || e.key === 'ArrowDown') {
-              editor.commands.focus();
-            }
-          }} />
+        <EditorTitleInput
+          docTitle={docTitle}
+          docTitleChange={docTitleChange} />
         <DragHandle
           tippyOptions={{
             placement: 'left',
@@ -131,4 +134,3 @@ export default function Editor({ docId }: { docId: string }) {
     </div>
   )
 }
-

@@ -7,8 +7,6 @@ import { DocumentProps, renameDocuments, setDocuments } from "@/redux/features/d
 import EditInput from "./EditInput";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import axios from 'axios';
-import getUserFolder from "@/components/hooks/getUserFolder";
-import { usePathname, useRouter } from "next/navigation";
 import HoverTooltip from '@/components/editor/child/menu-bar/HoverTooltip';
 import useDeleteDocument from '@/components/hooks/useDeleteDocument';
 

@@ -1,7 +1,7 @@
 import SidebarItem from "../SidebarItem";
 import FolderIcon from '../../../../../public/svgs/folder.svg';
 import PlusIcon from '../../../../../public/svgs/add-folder.svg';
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 import AddInputModal from "@/components/modal/AddInputModal";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import FolderItem from "./FolderItem";
@@ -15,7 +15,9 @@ type FolderSectionProps = {
 }
 
 export default function FolderSection({ isCollapsed }: FolderSectionProps) {
-    const dispatch = useAppDispatch();
+    const addNewFolder = useAddFolder();
+
+    const folders = useAppSelector(state => state.folders);
 
     const [addingFolder, setAddingFolder] = useState<boolean>(false);
     const [newFolderTitle, setNewFolderTitle] = useState<string>('');
@@ -23,22 +25,6 @@ export default function FolderSection({ isCollapsed }: FolderSectionProps) {
         isInvalid: false,
         msg: '',
     });
-
-    const addNewFolder = useAddFolder();
-
-    const user = useAppSelector(state => state.user);
-    const folders = useAppSelector(state => state.folders);
-
-    const getUserData = useCallback(async (email: string, dispatch: AppDispatch) => {
-        if (email) {
-            await getUserFolder(email, dispatch);
-            await getUserDocument(email, dispatch);
-        }
-    }, [user.email, dispatch]);
-
-    useEffect(() => {
-        getUserData(user.email, dispatch);
-    }, [getUserData]);
 
     return (
         // Aside의 width에 따라 각각 다른 레이아웃 출력

@@ -1,20 +1,20 @@
 'use client';
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import SidebarItem from "./child/SidebarItem";
 import SearchInput from "./child/SearchInput";
 import TrashIcon from '../../../public/svgs/trash.svg';
 import HomeIcon from '../../../public/svgs/home.svg';
 import DocumentIcon from '../../../public/svgs/document.svg';
-import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { useAppSelector } from "@/redux/hooks";
 import { useRouter } from "next/navigation";
 import FolderSection from "./child/folder/FolderSection";
-import logout from "@/utils/logout";
 import UserSection from "./child/user/UserSection";
 import GroupIcon from '../../../public/svgs/group.svg';
 import useAddDocument from "../hooks/useAddDocument";
 import Trash from "../trash/Trash";
-import { useClickOutside } from "../hooks/useClickOutside";
+import ShortcutIcon from '../../../public/svgs/shortcuts-off.svg';
+import WebIcon from '../../../public/svgs/web.svg';
 
 export default function Aside() {
     const router = useRouter();
@@ -125,6 +125,18 @@ export default function Aside() {
                     isCollapsed={isCollapsed}
                     onClick={() => router.push('/editor/shared')}
                     addClick={() => addDocToFolder('', folders[0])} />
+                <SidebarItem
+                    Icon={WebIcon}
+                    IconWidth="17"
+                    label="게시된 문서"
+                    isCollapsed={isCollapsed}
+                    onClick={() => router.push('/editor/published')} />
+                <SidebarItem
+                    Icon={ShortcutIcon}
+                    IconWidth="22"
+                    label="즐겨찾기"
+                    isCollapsed={isCollapsed}
+                    onClick={() => router.push('/editor/shortcuts')} />
                 {/* <SidebarItem
                     Icon={TaskIcon}
                     IconWidth="17"

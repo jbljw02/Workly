@@ -4,10 +4,14 @@ import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import firestore from '@/firebase/firestore';
 import { updateDocuments } from '@/redux/features/documentSlice';
 import { redirect, useRouter } from 'next/navigation';
+import convertTimestamp from '@/utils/convertTimestamp';
+import { UserProps } from '@/redux/features/userSlice';
 
 export default function useDocumentRealTime({ docId }: { docId: string }) {
     const dispatch = useAppDispatch();
     const router = useRouter();
+
+    const user = useAppSelector(state => state.user);
 
     // onSnapshot을 이용해 문서의 실시간 변경을 감지
     useEffect(() => {
@@ -18,17 +22,22 @@ export default function useDocumentRealTime({ docId }: { docId: string }) {
             if (docSnap.exists()) {
                 const documentData = docSnap.data();
 
-                // Timestamp를 순수 객체로 변환
-                const convertTimestamp = (timestamp: Timestamp) => ({
-                    seconds: timestamp.seconds,
-                    nanoseconds: timestamp.nanoseconds,
-                });
+                // 사용자가 협업자 목록에 있는지 확인
+                const isCollaborator = documentData.collaborators.some((collaborator: UserProps) => collaborator.email === user.email);
+                // 사용자가 관리자인지 확인
+                const isAuthor = documentData.author.email === user.email;
+
+                // 협업자도 아니며 관리자도 아니라면 404 페이지로 리다이렉트
+                if (!isCollaborator && !isAuthor) {
+                    router.push('/access-denied');
+                    return;
+                }
 
                 const convertedData = {
                     ...documentData,
                     createdAt: convertTimestamp(documentData.createdAt),
                     readedAt: convertTimestamp(documentData.readedAt),
-                };
+                }
 
                 dispatch(updateDocuments({ docId: docId, ...convertedData }));
             }
@@ -39,7 +48,5 @@ export default function useDocumentRealTime({ docId }: { docId: string }) {
         });
 
         return () => unsubscribe();
-    }, [docId, dispatch]);
-
-    return null;
+    }, [docId, dispatch, user]);
 }

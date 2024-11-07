@@ -16,12 +16,15 @@ export default function HeaderTitle() {
     const folders = useAppSelector(state => state.folders);
     const documents = useAppSelector(state => state.documents);
     const selectedDocument = useAppSelector(state => state.selectedDocument);
+    const webPublished = useAppSelector(state => state.webPublished);
 
     // 현재 선택된 문서를 지정
     // documents의 값이 변경될 때마다 현재 선택된 문서의 값도 업데이트
     useEffect(() => {
         const currentDocument = documents.find(doc => doc.id === documentId);
-        dispatch(setSelectedDocument(currentDocument));
+        if (currentDocument) {
+            dispatch(setSelectedDocument(currentDocument));
+        }
     }, [folders, documents]);
 
     return (
@@ -30,8 +33,14 @@ export default function HeaderTitle() {
                 <PaperIcon width="20" />
             </div>
             <div className='flex flex-row items-center gap-1'>
-                <div className='text-sm rounded-sm hover:underline cursor-pointer'>{selectedDocument.folderName}</div>
-                <div className='text-sm font-light mx-1'>{'/'}</div>
+                {
+                    !webPublished && (
+                        <>
+                            <div className='text-sm rounded-sm hover:underline cursor-pointer'>{selectedDocument.folderName}</div>
+                            <div className='text-sm font-light mx-1'>{'/'}</div>
+                        </>
+                    )
+                }
                 <div className='text-sm font-bold'>{selectedDocument.title || '제목 없는 문서'}</div>
             </div>
         </div>

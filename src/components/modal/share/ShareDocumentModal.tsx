@@ -1,24 +1,29 @@
-import { ModalProps } from '@/types/modalProps';
-import { useEffect, useMemo, useRef, useState, useCallback } from 'react';
+import { useState } from 'react';
 import Modal from 'react-modal';
 import CommonInput from '../../input/CommonInput';
 import CommonButton from '../../button/CommonButton';
 import ModalHeader from '../ModalHeader';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
-import { showCompleteAlert } from '@/redux/features/alertSlice';
+import { showCompleteAlert, showWarningAlert } from '@/redux/features/alertSlice';
 import { useCopyURL } from '../../hooks/useCopyURL';
-import { UserProps } from '@/redux/features/userSlice';
 import PublishContent from './PublishContent';
 import ShareContent from './ShareContent';
 import { setTargetSharingEmail } from '@/redux/features/shareDocumentSlice';
 import { WorkingDocModalProps } from '@/types/workingDocModalProps';
+import axios from 'axios';
+import { publishContent } from '@/redux/features/documentSlice';
+import useCancelPublish from '@/components/hooks/useCancelPublish';
+import usePublishDocument from '@/components/hooks/usePublishDocument';
 
 export default function ShareDocumentModal({ isModalOpen, setIsModalOpen, selectedDoc }: WorkingDocModalProps) {
     const dispatch = useAppDispatch();
-    const copyURL = useCopyURL();
 
-    const editorPermission = useAppSelector(state => state.editorPermission);
+    const copyURL = useCopyURL();
+    const cancelPublish = useCancelPublish();
+    const publishDocument = usePublishDocument();
     
+    const editorPermission = useAppSelector(state => state.editorPermission);
+
     const [workCategory, setWorkCategory] = useState<'공유' | '게시'>('공유');
 
     const closeModal = () => {
@@ -79,7 +84,7 @@ export default function ShareDocumentModal({ isModalOpen, setIsModalOpen, select
                 {/* 하단 버튼 영역 */}
                 {
                     workCategory === '공유' ?
-                        <div className='flex justify-end px- text-sm p-5 border-t'>
+                        <div className='flex items-center justify-end w-full text-sm p-5 border-t'>
                             <CommonButton
                                 style={{
                                     px: 'px-3.5',
@@ -92,18 +97,18 @@ export default function ShareDocumentModal({ isModalOpen, setIsModalOpen, select
                                 label="링크 복사"
                                 onClick={() => copyURL(selectedDoc.folderId, selectedDoc.id)} />
                         </div> :
-                        <div className='flex justify-center w-full text-sm p-5 border-t'>
+                        <div className='flex items-center justify-center w-full text-sm p-5 border-t'>
                             <CommonButton
                                 style={{
-                                    px: 'px-[270px]',
+                                    px: `${selectedDoc.isPublished ? 'px-[255px]' : 'px-[270px]'}`,
                                     py: 'py-2',
                                     textSize: 'text-sm',
                                     textColor: 'text-white',
                                     bgColor: 'bg-blue-500',
                                     hover: 'hover:bg-blue-700',
                                 }}
-                                label="게시"
-                                onClick={closeModal}
+                                label={`${selectedDoc.isPublished ? '게시 취소' : '게시'}`}
+                                onClick={() => selectedDoc.isPublished ? cancelPublish(selectedDoc.id) : publishDocument(selectedDoc)}
                                 disabled={editorPermission !== '전체 허용'} />
                         </div>
                 }
