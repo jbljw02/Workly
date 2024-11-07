@@ -8,9 +8,10 @@ import React from "react";
 type DocumentListProps = {
     documents: DocumentProps[];
     isShared?: boolean;
+    isPublished?: boolean;
 }
 
-export default function DocumentList({ documents, isShared }: DocumentListProps) {
+export default function DocumentList({ documents, isShared, isPublished }: DocumentListProps) {
     return (
         <div className='flex flex-col w-full h-full'>
             {
@@ -20,7 +21,8 @@ export default function DocumentList({ documents, isShared }: DocumentListProps)
                             <React.Fragment key={document.id}>
                                 <DocumentListItem
                                     document={document}
-                                    isShared={isShared} />
+                                    isShared={isShared}
+                                    isPublished={isPublished} />
                             </React.Fragment>
                         ))
                     ) :

@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useMemo } from "react";
 import PaperIcon from '../../../../../public/svgs/editor/paper.svg'
 
-export default function HeaderTitle({ isPublished }: { isPublished: boolean }) {
+export default function HeaderTitle() {
     const dispatch = useAppDispatch();
 
     const pathname = usePathname();
@@ -16,6 +16,7 @@ export default function HeaderTitle({ isPublished }: { isPublished: boolean }) {
     const folders = useAppSelector(state => state.folders);
     const documents = useAppSelector(state => state.documents);
     const selectedDocument = useAppSelector(state => state.selectedDocument);
+    const webPublished = useAppSelector(state => state.webPublished);
 
     // 현재 선택된 문서를 지정
     // documents의 값이 변경될 때마다 현재 선택된 문서의 값도 업데이트
@@ -33,7 +34,7 @@ export default function HeaderTitle({ isPublished }: { isPublished: boolean }) {
             </div>
             <div className='flex flex-row items-center gap-1'>
                 {
-                    !isPublished && (
+                    !webPublished && (
                         <>
                             <div className='text-sm rounded-sm hover:underline cursor-pointer'>{selectedDocument.folderName}</div>
                             <div className='text-sm font-light mx-1'>{'/'}</div>

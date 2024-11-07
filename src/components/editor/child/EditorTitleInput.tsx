@@ -3,11 +3,11 @@ import { useAppSelector } from "@/redux/hooks";
 type EditorTitleInputProps = {
     docTitle: string;
     docTitleChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    isPublished?: boolean;
 }
 
-export default function EditorTitleInput({ docTitle, docTitleChange, isPublished }: EditorTitleInputProps) {
+export default function EditorTitleInput({ docTitle, docTitleChange }: EditorTitleInputProps) {
     const editorPermission = useAppSelector(state => state.editorPermission);
+    const webPublished = useAppSelector(state => state.webPublished);
     return (
         <input
             type="text"
@@ -15,6 +15,6 @@ export default function EditorTitleInput({ docTitle, docTitleChange, isPublished
             onChange={docTitleChange}
             placeholder="제목을 입력해주세요"
             className="placeholder:text-[#dcdcdc] text-[40px] pl-5 pb-4 font-bold outline-none w-full"
-            readOnly={isPublished || editorPermission === '읽기 허용'} />
+            readOnly={webPublished || editorPermission === '읽기 허용'} />
     )
 }

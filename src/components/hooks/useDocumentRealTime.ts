@@ -4,6 +4,7 @@ import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import firestore from '@/firebase/firestore';
 import { updateDocuments } from '@/redux/features/documentSlice';
 import { redirect, useRouter } from 'next/navigation';
+import convertTimestamp from '@/utils/convertTimestamp';
 
 export default function useDocumentRealTime({ docId }: { docId: string }) {
     const dispatch = useAppDispatch();
@@ -18,17 +19,11 @@ export default function useDocumentRealTime({ docId }: { docId: string }) {
             if (docSnap.exists()) {
                 const documentData = docSnap.data();
 
-                // Timestamp를 순수 객체로 변환
-                const convertTimestamp = (timestamp: Timestamp) => ({
-                    seconds: timestamp.seconds,
-                    nanoseconds: timestamp.nanoseconds,
-                });
-
                 const convertedData = {
                     ...documentData,
                     createdAt: convertTimestamp(documentData.createdAt),
                     readedAt: convertTimestamp(documentData.readedAt),
-                };
+                }
 
                 dispatch(updateDocuments({ docId: docId, ...convertedData }));
             }

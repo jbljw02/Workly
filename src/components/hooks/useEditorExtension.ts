@@ -61,10 +61,17 @@ const colors = [
 // docId를 키로 가지는 Y.Doc 인스턴스를 는 맵
 const docMap = new Map<string, Y.Doc>();
 
-export default function useEditorExtension({ docId }: { docId: string }) {
+type useEditorExtensionProps = {
+    docId: string,
+}
+
+export default function useEditorExtension({ docId }: useEditorExtensionProps) {
     const dispatch = useAppDispatch();
+
     const user = useAppSelector(state => state.user);
     const connectedUser = useAppSelector(state => state.connectedUsers);
+    const webPublished = useAppSelector(state => state.webPublished);
+    const selectedDocument = useAppSelector(state => state.selectedDocument);
 
     // 사용자의 커서 색상을 지정
     const userColor = useMemo(() => colors[Math.floor(Math.random() * colors.length)], []);
@@ -82,9 +89,11 @@ export default function useEditorExtension({ docId }: { docId: string }) {
         name: docId,
         appId: appId!,
         document: doc,
+        onConnect: () => {
+            console.log('connected');
+        },
     }), [docId, doc]);
 
-    const selectedDocument = useAppSelector(state => state.selectedDocument);
 
     // 접속자 목록 업데이트
     useEffect(() => {
@@ -122,7 +131,7 @@ export default function useEditorExtension({ docId }: { docId: string }) {
         return () => {
             provider.awareness?.off('change', updateActiveUsers);
         };
-    }, [provider, dispatch, user.displayName, user.email, user.photoURL, userColor, selectedDocument.author.email]);
+    }, [provider, dispatch, user, userColor, selectedDocument.author.email]);
 
     // 현재 사용자의 정보를 필드에 할당
     useEffect(() => {
@@ -195,7 +204,7 @@ export default function useEditorExtension({ docId }: { docId: string }) {
             defaultHeight: 600,
         }),
         FileNode,
-        FileHandler.configure({
+        !webPublished && FileHandler.configure({
             onDrop: (currentEditor: Editor, files: File[], pos: number) => {
                 files.forEach(file => {
                     const fileReader = new FileReader()
@@ -221,11 +230,11 @@ export default function useEditorExtension({ docId }: { docId: string }) {
             },
             showOnlyCurrent: false,
         }),
-        Collaboration.configure({
+        !webPublished && Collaboration.configure({
             document: doc,
         }),
-        CollaborationCursor.configure({
-            provider,
+        !webPublished && CollaborationCursor.configure({
+            provider: provider,
             user: {
                 id: user.email,
                 name: user.displayName,

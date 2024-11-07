@@ -29,9 +29,10 @@ import { useClickOutside } from "../hooks/useClickOutside";
 type DocumentListItemProps = {
     document: DocumentProps;
     isShared?: boolean;
+    isPublished?: boolean;
 }
 
-export default function DocumentListItem({ document, isShared }: DocumentListItemProps) {
+export default function DocumentListItem({ document, isShared, isPublished }: DocumentListItemProps) {
     const dispatch = useAppDispatch();
     const router = useRouter();
 
@@ -96,7 +97,6 @@ export default function DocumentListItem({ document, isShared }: DocumentListIte
             <div
                 className='flex items-center w-full hover:bg-gray-100 cursor-pointer transition-all duration-150 group'
                 onClick={() => {
-                    console.log("이동");
                     router.push(`/editor/${document.folderId}/${document.id}`)
                 }}>
                 <div
@@ -116,13 +116,25 @@ export default function DocumentListItem({ document, isShared }: DocumentListIte
                         </div>
                         <div className='flex flex-row items-center gap-2 text-xs mt-1 text-neutral-500'>
                             <span className='bg-gray-100 group-hover:bg-gray-200 rounded px-1.5 py-0.5 truncate transition-colors duration-150'>
+                                {/* 게시된 문서인지, 공유된 문서인지에 따라 분기 */}
                                 {
-                                    isShared ?
-                                        `${document.author.displayName}에 의해 공유됨` :
-                                        document.folderName
+                                    isPublished ?
+                                        `${document.publishedUser?.displayName}에 의해 게시됨` :
+                                        (
+                                            isShared ?
+                                                `${document.author.displayName}에 의해 공유됨` :
+                                                document.folderName
+                                        )
                                 }
                             </span>
-                            <span>{formatTimeDiff(document.readedAt)}</span>
+                            <span>
+                                {/* 게시된 문서라면 게시 날짜, 그 외엔 열람일 출력 */}
+                                {
+                                    isPublished ?
+                                        formatTimeDiff(document.publishedDate!, true) :
+                                        formatTimeDiff(document.readedAt)
+                                }
+                            </span>
                         </div>
                     </div>
                     <div className="flex flex-row items-center justify-end">

@@ -14,6 +14,7 @@ import GroupIcon from '../../../public/svgs/group.svg';
 import useAddDocument from "../hooks/useAddDocument";
 import Trash from "../trash/Trash";
 import ShortcutIcon from '../../../public/svgs/shortcuts-off.svg';
+import WebIcon from '../../../public/svgs/web.svg';
 
 export default function Aside() {
     const router = useRouter();
@@ -124,6 +125,12 @@ export default function Aside() {
                     isCollapsed={isCollapsed}
                     onClick={() => router.push('/editor/shared')}
                     addClick={() => addDocToFolder('', folders[0])} />
+                <SidebarItem
+                    Icon={WebIcon}
+                    IconWidth="17"
+                    label="게시된 문서"
+                    isCollapsed={isCollapsed}
+                    onClick={() => router.push('/editor/published')} />
                 <SidebarItem
                     Icon={ShortcutIcon}
                     IconWidth="22"

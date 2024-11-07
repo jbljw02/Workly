@@ -113,7 +113,7 @@ export default function ShareForm({ selectedDoc }: ShareFormProps) {
                                     <CloseIcon
                                         width="21"
                                         height="21" />
-                                </button>노
+                                </button>
                             </div>
                         ))
                     }

@@ -7,9 +7,6 @@ import { addDocumentsToTrash, addDocumentToFolderTrash, setDocumentsTrash, setFo
 import { removeDocumentFromFolder, setFolders } from '@/redux/features/folderSlice';
 import useUndoState from './useUndoState';
 
-const wsUrl = process.env.NEXT_PUBLIC_WEBSOCKET_URL;
-const tiptapCloudSecret = process.env.NEXT_PUBLIC_TIPTAP_CLOUD_SECRET;
-
 export default function useDeleteDocument() {
     const dispatch = useAppDispatch();
     const router = useRouter();

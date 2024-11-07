@@ -80,6 +80,10 @@ hr {
     display: inline-flex;
 }
 
+.node-file {
+    display: inline-flex;
+}
+
 /* 링크를 걸어놓은 텍스트 */
 .ProseMirror a {
     text-decoration: underline;

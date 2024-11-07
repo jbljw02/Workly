@@ -28,6 +28,7 @@ export const userSlice = createSlice({
         }
     },
 })
+
 export const allUsers = createSlice({
     name: 'allUsers',
     initialState: [] as UserProps[],

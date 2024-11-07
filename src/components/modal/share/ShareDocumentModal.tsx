@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, useCallback } from 'react';
+import { useState } from 'react';
 import Modal from 'react-modal';
 import CommonInput from '../../input/CommonInput';
 import CommonButton from '../../button/CommonButton';
@@ -12,11 +12,16 @@ import { setTargetSharingEmail } from '@/redux/features/shareDocumentSlice';
 import { WorkingDocModalProps } from '@/types/workingDocModalProps';
 import axios from 'axios';
 import { publishContent } from '@/redux/features/documentSlice';
+import useCancelPublish from '@/components/hooks/useCancelPublish';
+import usePublishDocument from '@/components/hooks/usePublishDocument';
 
 export default function ShareDocumentModal({ isModalOpen, setIsModalOpen, selectedDoc }: WorkingDocModalProps) {
     const dispatch = useAppDispatch();
-    const copyURL = useCopyURL();
 
+    const copyURL = useCopyURL();
+    const cancelPublish = useCancelPublish();
+    const publishDocument = usePublishDocument();
+    
     const editorPermission = useAppSelector(state => state.editorPermission);
 
     const [workCategory, setWorkCategory] = useState<'공유' | '게시'>('공유');
@@ -24,25 +29,6 @@ export default function ShareDocumentModal({ isModalOpen, setIsModalOpen, select
     const closeModal = () => {
         dispatch(setTargetSharingEmail(''));
         setIsModalOpen(false);
-    }
-
-    // 문서를 웹 페이지로 게시
-    const publishDocument = async () => {
-        try {
-            if (selectedDoc.isPublished) {
-                dispatch(showWarningAlert('이미 게시된 문서입니다.'));
-                return;
-            }
-            
-            await axios.post(`/api/publish/${selectedDoc.id}`,
-                { docId: selectedDoc.id });
-
-            dispatch(publishContent(selectedDoc.id));
-            dispatch(showCompleteAlert('문서 게시에 성공했습니다.'));
-        } catch (error) {
-            console.log(error);
-            dispatch(showWarningAlert('문서 게시에 실패했습니다.'));
-        }
     }
 
     return (
@@ -58,7 +44,7 @@ export default function ShareDocumentModal({ isModalOpen, setIsModalOpen, select
                     left: '50%',
                     top: '48%',
                     width: 600,
-                    height: 429, // h-auto와 같이 크기에 맞춰서 height 조절
+                    height: 'fit-content', // h-auto와 같이 크기에 맞춰서 height 조절
                     transform: 'translate(-50%, -50%)',
                     zIndex: 49,
                     padding: 0,
@@ -114,15 +100,15 @@ export default function ShareDocumentModal({ isModalOpen, setIsModalOpen, select
                         <div className='flex items-center justify-center w-full text-sm p-5 border-t'>
                             <CommonButton
                                 style={{
-                                    px: `${selectedDoc.isPublished ? 'px-[260px]' : 'px-[240px]'}`,
+                                    px: `${selectedDoc.isPublished ? 'px-[255px]' : 'px-[270px]'}`,
                                     py: 'py-2',
                                     textSize: 'text-sm',
                                     textColor: 'text-white',
                                     bgColor: 'bg-blue-500',
                                     hover: 'hover:bg-blue-700',
                                 }}
-                                label={`${selectedDoc.isPublished ? '게시됨' : '게시'}`}
-                                onClick={publishDocument}
+                                label={`${selectedDoc.isPublished ? '게시 취소' : '게시'}`}
+                                onClick={() => selectedDoc.isPublished ? cancelPublish(selectedDoc.id) : publishDocument(selectedDoc)}
                                 disabled={editorPermission !== '전체 허용'} />
                         </div>
                 }

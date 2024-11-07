@@ -1,4 +1,4 @@
-import PublishedDocument from "@/components/publish/PublishedDocument";
+import PublishedDocument from "@/components/web-published/WebPublishedDocument";
 import firestore from "@/firebase/firestore";
 import { DocumentProps } from "@/redux/features/documentSlice";
 import { doc, getDoc } from "firebase/firestore";
@@ -19,7 +19,7 @@ export default async function PublishedPage({ params }: {
         redirect('/document/not-found');
     }
 
-    const document = docSnap.data() as DocumentProps;
+    const document = docSnap.data();
     return (
         <PublishedDocument document={document} />
     );

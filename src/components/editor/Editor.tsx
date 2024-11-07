@@ -24,7 +24,7 @@ export default function Editor({ docId }: { docId: string }) {
   const extensions = useEditorExtension({ docId });
   const editorPermission = useAppSelector(state => state.editorPermission);
   const editor = useEditor({
-    extensions: extensions,
+    extensions: extensions.filter(ext => ext !== false),
     editorProps: {
       attributes: {
         class: 'prose prose-sm sm:prose lg:prose-lg xl:prose-xl m-4 focus:outline-none',
@@ -114,8 +114,7 @@ export default function Editor({ docId }: { docId: string }) {
         className='p-4 h-full'>
         <EditorTitleInput
           docTitle={docTitle}
-          docTitleChange={docTitleChange}
-          readonly={editorPermission === '읽기 허용'} />
+          docTitleChange={docTitleChange} />
         <DragHandle
           tippyOptions={{
             placement: 'left',

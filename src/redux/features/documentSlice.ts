@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 import { JSONContent } from "@tiptap/react";
 import { UserProps } from "./userSlice";
 
@@ -18,6 +18,8 @@ export type DocumentProps = {
     collaborators: Collaborator[];
     shortcutsUsers: string[];
     isPublished?: boolean;
+    publishedUser?: UserProps;
+    publishedDate?: { seconds: number, nanoseconds: number };
 }
 
 const DocumentsState: DocumentProps[] = [];
@@ -117,10 +119,11 @@ export const documentSlice = createSlice({
         },
         // 문서를 게시
         publishContent: (state, action) => {
-            const { docId } = action.payload;
+            const { docId, user } = action.payload;
             const document = state.find(doc => doc.id === docId);
             if (document) {
                 document.isPublished = true;
+                document.publishedUser = user;
             }
         }
     },
