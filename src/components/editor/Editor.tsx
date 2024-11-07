@@ -17,6 +17,7 @@ import useDocumentRealTime from '../hooks/useDocumentRealTime';
 import useUpdateContent from '../hooks/useUpdateContent';
 import useLeavePage from '../hooks/useLeavePage';
 import EditorTitleInput from './child/EditorTitleInput';
+import { useRouter } from 'next/navigation';
 
 export default function Editor({ docId }: { docId: string }) {
   const dispatch = useAppDispatch();
