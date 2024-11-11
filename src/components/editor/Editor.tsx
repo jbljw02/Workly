@@ -123,6 +123,9 @@ export default function Editor({ docId }: { docId: string }) {
             pointerEvents: openColorPicker ? 'none' : undefined,
           }}>
           <DragHandle
+            tippyOptions={{
+              placement: 'left',
+            }}
             editor={editor}>
             <MenuIcon width="17" />
           </DragHandle>

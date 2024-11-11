@@ -29,7 +29,6 @@ import '@/styles/editor.css'
 import { ConnectedUser, setConnectedUsers } from "@/redux/features/shareDocumentSlice";
 import Blockquote from "@tiptap/extension-blockquote";
 import Strike from "@tiptap/extension-strike";
-import CustomCollaborationCursor from "../../../lib/collabCursorNode";
 import { setSelectedNode } from "@/redux/features/selectedNodeSlice";
 
 const appId = process.env.NEXT_PUBLIC_TIPTAP_APP_ID;
@@ -71,7 +70,6 @@ export default function useEditorExtension({ docId }: useEditorExtensionProps) {
     const dispatch = useAppDispatch();
 
     const user = useAppSelector(state => state.user);
-    const webPublished = useAppSelector(state => state.webPublished);
     const selectedDocument = useAppSelector(state => state.selectedDocument);
 
     // 에디터의 선택 영역이 변경될 때마다 선택된 노드 정보를 업데이트
@@ -83,7 +81,7 @@ export default function useEditorExtension({ docId }: useEditorExtensionProps) {
     //         const node = editor.state.doc.nodeAt(selection.from);
 
     //         console.log(node);
-            
+
     //         if (node) {
     //             dispatch(setSelectedNode({
     //                 type: node.type.name,
@@ -230,7 +228,7 @@ export default function useEditorExtension({ docId }: useEditorExtensionProps) {
             defaultHeight: 600,
         }),
         FileNode,
-        !webPublished && FileHandler.configure({
+        FileHandler.configure({
             onDrop: (currentEditor: Editor, files: File[], pos: number) => {
                 files.forEach(file => {
                     const fileReader = new FileReader()
@@ -256,10 +254,10 @@ export default function useEditorExtension({ docId }: useEditorExtensionProps) {
             },
             showOnlyCurrent: false,
         }),
-        !webPublished && Collaboration.configure({
+        Collaboration.configure({
             document: doc,
         }),
-        !webPublished && CollaborationCursor.configure({
+        CollaborationCursor.configure({
             provider: provider,
             user: {
                 id: user.email,

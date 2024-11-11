@@ -10,13 +10,14 @@ import { useEffect } from "react";
 import { setWebPublished } from "@/redux/features/webPublishedSlice";
 import convertTimestamp from "@/utils/convertTimestamp";
 import { Timestamp } from "firebase/firestore";
+import usePublishedExtension from "../hooks/usePublishedExtension";
 
 export default function PublishedDocument({ document }: { document: any }) {
     const dispatch = useAppDispatch();
 
-    const extension = useEditorExtension({ docId: document.id });
+    const extension = usePublishedExtension();
     const editor = useEditor({
-        extensions: extension.filter(ext => ext !== false),
+        extensions: extension,
         content: document.docContent,
         editable: false,
         editorProps: {
