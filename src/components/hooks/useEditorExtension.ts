@@ -29,6 +29,8 @@ import '@/styles/editor.css'
 import { ConnectedUser, setConnectedUsers } from "@/redux/features/shareDocumentSlice";
 import Blockquote from "@tiptap/extension-blockquote";
 import Strike from "@tiptap/extension-strike";
+import CustomCollaborationCursor from "../../../lib/collabCursorNode";
+import { setSelectedNode } from "@/redux/features/selectedNodeSlice";
 
 const appId = process.env.NEXT_PUBLIC_TIPTAP_APP_ID;
 
@@ -58,7 +60,7 @@ const colors = [
     '#E3F4F4', // 연한 청록색
 ]
 
-// docId를 키로 가지는 Y.Doc 인스턴스를 는 맵
+// docId를 키로 가지는 Y.Doc 인스턴스를 저장하는 맵
 const docMap = new Map<string, Y.Doc>();
 
 type useEditorExtensionProps = {
@@ -69,9 +71,34 @@ export default function useEditorExtension({ docId }: useEditorExtensionProps) {
     const dispatch = useAppDispatch();
 
     const user = useAppSelector(state => state.user);
-    const connectedUser = useAppSelector(state => state.connectedUsers);
     const webPublished = useAppSelector(state => state.webPublished);
     const selectedDocument = useAppSelector(state => state.selectedDocument);
+
+    // 에디터의 선택 영역이 변경될 때마다 선택된 노드 정보를 업데이트
+    // useEffect(() => {
+    //     if (!editor) return;
+
+    //     const updateSelectedNode = () => {
+    //         const { selection } = editor.state;
+    //         const node = editor.state.doc.nodeAt(selection.from);
+
+    //         console.log(node);
+            
+    //         if (node) {
+    //             dispatch(setSelectedNode({
+    //                 type: node.type.name,
+    //                 attrs: node.attrs,
+    //                 position: selection.from
+    //             }));
+    //         }
+    //     };
+
+    //     editor.on('selectionUpdate', updateSelectedNode);
+
+    //     return () => {
+    //         editor.off('selectionUpdate', updateSelectedNode);
+    //     };
+    // }, [editor]);
 
     // 사용자의 커서 색상을 지정
     const userColor = useMemo(() => colors[Math.floor(Math.random() * colors.length)], []);
@@ -93,7 +120,6 @@ export default function useEditorExtension({ docId }: useEditorExtensionProps) {
             console.log('connected');
         },
     }), [docId, doc]);
-
 
     // 접속자 목록 업데이트
     useEffect(() => {

@@ -73,15 +73,17 @@ hr {
 }
 
 .image-component {
-    margin: 16px 0;
+    margin: 0;
+}
+
+/* 이미지 컴포넌트의 부모 요소 */
+.ProseMirror p:has(.node-imageComponent) {
+    display: block;
+    width: 100%;
 }
 
 .node-imageComponent {
-    display: inline-flex;
-}
-
-.node-file {
-    display: inline-flex;
+    margin: 8px 0;
 }
 
 /* 링크를 걸어놓은 텍스트 */

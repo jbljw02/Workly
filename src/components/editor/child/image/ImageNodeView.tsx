@@ -203,7 +203,7 @@ const NodeView = (resizableImgProps: ResizableImageNodeViewRendererProps) => {
               (
                 <div
                   onClick={() => setShowMenu(true)}
-                  className="flex cursor-pointer">
+                  className="inline-flex cursor-pointer">
                   <ResizableImageComponent {...resizableImgProps} />
                 </div>
               )
@@ -247,12 +247,6 @@ const ImageNodeView = ResizableImage.extend({
         default: 'left',
       },
     };
-  },
-  group: 'block',
-  inline: false,
-
-  renderHTML({ HTMLAttributes }) {
-    return ['figure', { class: 'image-component' }, ['img', HTMLAttributes]];
   },
 
   addNodeView() {

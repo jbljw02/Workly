@@ -3,6 +3,7 @@ import firestore from "../../../firebase/firestore";
 import { doc, getDoc, updateDoc, collection, addDoc, writeBatch, query, where, getDocs, orderBy, serverTimestamp, setDoc } from "firebase/firestore";
 import { Folder } from "@/redux/features/folderSlice";
 import { Collaborator, DocumentProps } from "@/redux/features/documentSlice";
+import { Timestamp } from 'firebase/firestore';
 
 // 사용자의 문서를 추가 - CREATE
 export async function POST(req: NextRequest) {
@@ -62,7 +63,34 @@ export async function GET(req: NextRequest) {
         const documentsSnapshot = await getDocs(documentsCollection);
 
         // 모든 문서를 추출
-        const documents = documentsSnapshot.docs.map(doc => doc.data());
+        const documents = documentsSnapshot.docs.map(doc => {
+            const data = doc.data();
+
+            // 타임스탬프 변환
+            const convertTimestamp = (timestamp: Timestamp) => ({
+                seconds: timestamp.seconds,
+                nanoseconds: timestamp.nanoseconds,
+            });
+
+            // 타입 변환
+            const document: DocumentProps = {
+                id: doc.id,
+                title: data.title,
+                docContent: data.docContent || null,
+                createdAt: convertTimestamp(data.createdAt),
+                readedAt: convertTimestamp(data.readedAt),
+                author: data.author,
+                folderId: data.folderId,
+                folderName: data.folderName,
+                collaborators: data.collaborators || [],
+                shortcutsUsers: data.shortcutsUsers || [],
+                isPublished: data.isPublished,
+                publishedUser: data.publishedUser,
+                publishedDate: data.publishedDate ? convertTimestamp(data.publishedDate) : undefined,
+            };
+
+            return document;
+        });
 
         // 변환된 문서 데이터를 필터링
         const filteredDocuments = documents.filter(doc => {

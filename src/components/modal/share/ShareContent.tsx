@@ -1,12 +1,9 @@
 import UserProfile from '@/components/aside/child/user/UserProfile';
 import SubmitButton from '@/components/button/SubmitButton';
 import CommonInput from '@/components/input/CommonInput';
-import { updateDocuments, Collaborator } from '@/redux/features/documentSlice';
-import { setAllUsers, UserProps } from '@/redux/features/userSlice';
+import { Collaborator } from '@/redux/features/documentSlice';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { useState, useCallback, useEffect, useMemo } from 'react';
-import ArrowIcon from '../../../../public/svgs/down-arrow.svg';
-import axios from 'axios';
 import AuthorityButton, { AuthorityCategory } from './AuthorityButton';
 import ShareForm from './ShareForm';
 import { setCoworkerList, setSearchedCoworkers, setSelectedCoworkers, setTargetSharingEmail } from '@/redux/features/shareDocumentSlice';

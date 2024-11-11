@@ -17,7 +17,7 @@ import useDocumentRealTime from '../hooks/useDocumentRealTime';
 import useUpdateContent from '../hooks/useUpdateContent';
 import useLeavePage from '../hooks/useLeavePage';
 import EditorTitleInput from './child/EditorTitleInput';
-import { useRouter } from 'next/navigation';
+import { setSelectedNode } from '@/redux/features/selectedNodeSlice';
 
 export default function Editor({ docId }: { docId: string }) {
   const dispatch = useAppDispatch();
@@ -28,7 +28,7 @@ export default function Editor({ docId }: { docId: string }) {
     extensions: extensions.filter(ext => ext !== false),
     editorProps: {
       attributes: {
-        class: 'prose prose-sm sm:prose lg:prose-lg xl:prose-xl m-4 focus:outline-none',
+        class: 'prose prose-sm sm:prose lg:prose-lg xl:prose-xl m-4 focus:outline-none w-full h-full',
       },
     },
     editable: editorPermission !== '읽기 허용',
@@ -116,19 +116,16 @@ export default function Editor({ docId }: { docId: string }) {
         <EditorTitleInput
           docTitle={docTitle}
           docTitleChange={docTitleChange} />
-        <DragHandle
-          tippyOptions={{
-            placement: 'left',
-          }}
-          editor={editor}>
-          <MenuIcon width="17" />
-        </DragHandle>
         <EditorContent
           editor={editor}
-          className="origin-top-left h-full"
+          className="origin-top-left h-full w-full"
           style={{
             pointerEvents: openColorPicker ? 'none' : undefined,
           }}>
+          <DragHandle
+            editor={editor}>
+            <MenuIcon width="17" />
+          </DragHandle>
         </EditorContent>
       </div>
     </div>

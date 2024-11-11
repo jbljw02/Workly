@@ -6,7 +6,6 @@ import { EditorContent, useEditor } from "@tiptap/react";
 import EditorHeader from "../editor/child/header/EditorHeader";
 import EditorTitleInput from "../editor/child/EditorTitleInput";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-
 import { useEffect } from "react";
 import { setWebPublished } from "@/redux/features/webPublishedSlice";
 import convertTimestamp from "@/utils/convertTimestamp";
@@ -32,6 +31,7 @@ export default function PublishedDocument({ document }: { document: any }) {
             ...document,
             createdAt: convertTimestamp(document.createdAt),
             readedAt: convertTimestamp(document.readedAt),
+            publishedDate: document.publishedDate ? convertTimestamp(document.publishedDate) : undefined,
         }
         dispatch(setSelectedDocument(convertedData));
         dispatch(setWebPublished(true));
@@ -48,8 +48,7 @@ export default function PublishedDocument({ document }: { document: any }) {
                     editor={editor}
                     docTitle={document.title} />
             </div>
-            <div
-                className='p-4 h-full'>
+            <div className='p-4 h-full'>
                 <EditorTitleInput
                     docTitle={document.title} />
                 <EditorContent

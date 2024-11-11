@@ -33,7 +33,6 @@ type DocumentListItemProps = {
 }
 
 export default function DocumentListItem({ document, isShared, isPublished }: DocumentListItemProps) {
-    const dispatch = useAppDispatch();
     const router = useRouter();
 
     const user = useAppSelector(state => state.user);
@@ -97,7 +96,9 @@ export default function DocumentListItem({ document, isShared, isPublished }: Do
             <div
                 className='flex items-center w-full hover:bg-gray-100 cursor-pointer transition-all duration-150 group'
                 onClick={() => {
-                    router.push(`/editor/${document.folderId}/${document.id}`)
+                    isPublished ?
+                        window.open(`/web-published/${document.folderId}/${document.id}`, '_blank') :
+                        router.push(`/editor/${document.folderId}/${document.id}`)
                 }}>
                 <div
                     className='relative flex flex-1 items-center py-5 mx-12 border-b'>

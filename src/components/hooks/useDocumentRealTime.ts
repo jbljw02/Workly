@@ -37,6 +37,7 @@ export default function useDocumentRealTime({ docId }: { docId: string }) {
                     ...documentData,
                     createdAt: convertTimestamp(documentData.createdAt),
                     readedAt: convertTimestamp(documentData.readedAt),
+                    publishedDate: documentData.publishedDate ? convertTimestamp(documentData.publishedDate) : undefined,
                 }
 
                 dispatch(updateDocuments({ docId: docId, ...convertedData }));
