@@ -6,7 +6,7 @@ import { EditorContent, useEditor } from "@tiptap/react";
 import EditorHeader from "../editor/child/header/EditorHeader";
 import EditorTitleInput from "../editor/child/EditorTitleInput";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { useEffect } from "react";
+import { use, useEffect } from "react";
 import { setWebPublished } from "@/redux/features/webPublishedSlice";
 import convertTimestamp from "@/utils/convertTimestamp";
 import { Timestamp } from "firebase/firestore";
@@ -28,6 +28,8 @@ export default function PublishedDocument({ document }: { document: any }) {
     });
 
     useEffect(() => {
+
+        console.log('document', document);
         const convertedData = {
             ...document,
             createdAt: convertTimestamp(document.createdAt),

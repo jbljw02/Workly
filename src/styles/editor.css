@@ -72,18 +72,13 @@ hr {
     visibility: hidden;
 }
 
-.image-component {
-    margin: 0;
-}
-
-/* 이미지 컴포넌트의 부모 요소 */
-.ProseMirror p:has(.node-imageComponent) {
-    display: block;
-    width: 100%;
-}
-
 .node-imageComponent {
-    margin: 8px 0;
+    margin-right: 6px;
+    display: inline-block;
+}
+
+.node-file {
+    display: block;
 }
 
 /* 링크를 걸어놓은 텍스트 */
@@ -120,6 +115,7 @@ hr {
 .ProseMirror {
     margin: 0px;
     padding-left: 20px;
+    padding-right: 20px;
     height: 100%;
 }
 

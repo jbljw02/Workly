@@ -216,13 +216,14 @@ export default function FileNodeView({ editor, node, }: FileNodeViewProps) {
             <NodeViewWrapper
                 onDragEnd={dropFile}
                 data-drag-handle
+                className="inline-block"
                 contentEditable={false}
                 draggable="true">
                 <div
                     data-file={title}
                     onClick={fileClick}
                     ref={fileRef}
-                    className={`data-file relative inline-flex flex-row items-center justify-center w-auto rounded-md p-2 mt-2 mb-2 hover:bg-gray-200 cursor-pointer duration-200 
+                    className={`data-file relative inline-flex flex-row items-center justify-center w-auto rounded-md p-2 my-2 hover:bg-gray-200 cursor-pointer duration-200 
                     ${menuListOpen ? 'bg-gray-200' : 'bg-gray-100'}`}>
                     <FileInfoIcon width="26" />
                     <div className='flex justify-between items-center mt-0.5'>

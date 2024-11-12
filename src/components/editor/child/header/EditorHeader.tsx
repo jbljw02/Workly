@@ -50,6 +50,8 @@ export default function EditorHeader({ editor, docTitle }: EditorHeaderProps) {
     const editorPermission = useAppSelector(state => state.editorPermission);
     const webPublished = useAppSelector(state => state.webPublished);
 
+    console.log('webPublished', webPublished);
+
     // 문서의 관리자인지
     const isAuthor = useMemo(() => selectedDocument.author.email === user.email,
         [selectedDocument.author.email, user.email]);
@@ -196,13 +198,12 @@ export default function EditorHeader({ editor, docTitle }: EditorHeaderProps) {
                         </>
                     )
                 }
+                {/* 게시된 문서인지 먼저 확인한 뒤, 아니라면 공유중인 문서인지 확인 */}
                 <HoverTooltip label={webPublished ? '공개된 문서' : (isShared ? '공유중인 문서' : '나에게만 공개')}>
                     {
-                        isAuthor && (
-                            <ToolbarButton
-                                Icon={webPublished ? WebIcon : (isShared ? UnLockIcon : LockIcon)}
-                                iconWidth={webPublished ? 17 : 20} />
-                        )
+                        <ToolbarButton
+                            Icon={webPublished ? WebIcon : (isShared ? UnLockIcon : LockIcon)}
+                            iconWidth={webPublished ? 17 : 20} />
                     }
                 </HoverTooltip>
                 <div

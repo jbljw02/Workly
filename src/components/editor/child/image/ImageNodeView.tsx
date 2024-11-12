@@ -1,4 +1,4 @@
-import { NodeViewWrapper, ReactNodeViewRenderer } from '@tiptap/react';
+import { mergeAttributes, NodeViewWrapper, ReactNodeViewRenderer } from '@tiptap/react';
 import { ResizableImage, ResizableImageComponent, ResizableImageNodeViewRendererProps } from 'tiptap-extension-resizable-image';
 import { useEffect, useRef, useState } from 'react';
 import 'react-image-crop/dist/ReactCrop.css';
@@ -12,6 +12,7 @@ import uploadImage from '@/utils/image/uploadImageToStorage';
 import cropImage from '@/utils/image/cropImage';
 import { showWarningAlert } from '@/redux/features/alertSlice';
 import ImageFullModal from './ImageFullModal';
+import { Plugin, TextSelection } from 'prosemirror-state';
 
 const NodeView = (resizableImgProps: ResizableImageNodeViewRendererProps) => {
   const dispatch = useAppDispatch();
@@ -181,7 +182,7 @@ const NodeView = (resizableImgProps: ResizableImageNodeViewRendererProps) => {
       <NodeViewWrapper
         ref={nodeViewRef}
         as="figure"
-        className="relative image-component"
+        className="image-component"
         data-drag-handle
         style={{ justifyContent: alignment }}
         contentEditable={false}
@@ -191,8 +192,7 @@ const NodeView = (resizableImgProps: ResizableImageNodeViewRendererProps) => {
           onClick={
             () => (webPublished || editorPermission === '읽기 허용') &&
               dispatch(setOpenFullModal(true))
-          }
-          className="inline-flex flex-col items-center relative h-auto">
+          }>
           {
             // 이미지 자르기 모드
             cropMode ? (
@@ -203,7 +203,7 @@ const NodeView = (resizableImgProps: ResizableImageNodeViewRendererProps) => {
               (
                 <div
                   onClick={() => setShowMenu(true)}
-                  className="inline-flex cursor-pointer">
+                  className="cursor-pointer">
                   <ResizableImageComponent {...resizableImgProps} />
                 </div>
               )
@@ -249,10 +249,13 @@ const ImageNodeView = ResizableImage.extend({
     };
   },
 
+  group: 'block',
+  inline: false,
+  draggable: true,
+
   addNodeView() {
     return ReactNodeViewRenderer(NodeView as React.ComponentType<any>);
   },
-
 });
 
 export default ImageNodeView;

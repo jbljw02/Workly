@@ -30,6 +30,9 @@ import { ConnectedUser, setConnectedUsers } from "@/redux/features/shareDocument
 import Blockquote from "@tiptap/extension-blockquote";
 import Strike from "@tiptap/extension-strike";
 import { setSelectedNode } from "@/redux/features/selectedNodeSlice";
+import DragHandle from "@tiptap-pro/extension-drag-handle";
+import GlobalDragHandle from 'tiptap-extension-global-drag-handle'
+import CustomTextMark from "../../../lib/textMark";
 
 const appId = process.env.NEXT_PUBLIC_TIPTAP_APP_ID;
 
@@ -223,6 +226,7 @@ export default function useEditorExtension({ docId }: useEditorExtensionProps) {
             setLinkTooltip: (payload: any) => dispatch(setLinkTooltip(payload)),
         }),
         Dropcursor,
+        CustomTextMark,
         ImageNodeView.configure({
             defaultWidth: 600,
             defaultHeight: 600,
@@ -248,12 +252,12 @@ export default function useEditorExtension({ docId }: useEditorExtensionProps) {
         }),
         Placeholder.configure({
             placeholder: ({ node, editor }) => {
-                const { from, to } = editor.state.selection
-                const isSelected = from === to && editor.state.selection.$from.parent === node
-                return node.type.name === 'paragraph' && isSelected ? "명령어를 사용하려면 '/' 키를 누르세요." : ''
-            },
-            showOnlyCurrent: false,
-        }),
+            const { from, to } = editor.state.selection
+            const isSelected = from === to && editor.state.selection.$from.parent === node
+            return node.type.name === 'paragraph' && isSelected ? "명령어를 사용하려면 '/' 키를 누르세요." : ''
+        },
+        showOnlyCurrent: false,
+    }),
         Collaboration.configure({
             document: doc,
         }),

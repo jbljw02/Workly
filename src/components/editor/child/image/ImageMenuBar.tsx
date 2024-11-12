@@ -28,16 +28,15 @@ export default function ImageMenuBar({ nodeViewRef, cropStart, resizableImgProps
     const editor = resizableImgProps.editor;
 
     const openFullModal = useAppSelector(state => state.openFullModal);
-    const [alignment, setAlignment] = useState<'left' | 'center' | 'right'>('left');
+    const [alignment, setAlignment] = useState<'flex-start' | 'center' | 'flex-end'>('flex-start');
 
-    const alignmentSetUp = (justifyContent: 'left' | 'center' | 'right') => {
-        // const imgContainer = nodeViewRef.current?.closest('.node-imageComponent') as HTMLElement;
-        // if (imgContainer) {
-        //     imgContainer.style.justifyContent = justifyContent;
-        //     setAlignment(justifyContent);
-        // }
-        console.log(justifyContent);
-        editor.chain().focus().setTextAlign(justifyContent).run();
+    const alignmentSetUp = (justifyContent: 'flex-start' | 'center' | 'flex-end') => {
+        const imgContainer = nodeViewRef.current?.closest('.node-imageComponent') as HTMLElement;
+        if (imgContainer) {
+            imgContainer.style.justifyContent = justifyContent;
+            setAlignment(justifyContent);
+        }
+        
     };
 
     const deleteImage = async () => {
@@ -64,8 +63,8 @@ export default function ImageMenuBar({ nodeViewRef, cropStart, resizableImgProps
             <div className="flex flex-row items-center gap-0.5">
                 <HoverTooltip label="좌측 정렬">
                     <ToolbarButton
-                        onClick={() => alignmentSetUp('left')}
-                        isActive={alignment === 'left'}
+                        onClick={() => alignmentSetUp('flex-start')}
+                        isActive={alignment === 'flex-start'}
                         Icon={AlignLeftIcon}
                         iconWidth={19} />
                 </HoverTooltip>
@@ -78,8 +77,8 @@ export default function ImageMenuBar({ nodeViewRef, cropStart, resizableImgProps
                 </HoverTooltip>
                 <HoverTooltip label='우측 정렬'>
                     <ToolbarButton
-                        onClick={() => alignmentSetUp('right')}
-                        isActive={alignment === 'right'}
+                        onClick={() => alignmentSetUp('flex-end')}
+                        isActive={alignment === 'flex-end'}
                         Icon={AlignRightIcon}
                         iconWidth={19} />
                 </HoverTooltip>

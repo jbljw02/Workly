@@ -17,7 +17,6 @@ import useDocumentRealTime from '../hooks/useDocumentRealTime';
 import useUpdateContent from '../hooks/useUpdateContent';
 import useLeavePage from '../hooks/useLeavePage';
 import EditorTitleInput from './child/EditorTitleInput';
-import { setSelectedNode } from '@/redux/features/selectedNodeSlice';
 
 export default function Editor({ docId }: { docId: string }) {
   const dispatch = useAppDispatch();
@@ -25,7 +24,7 @@ export default function Editor({ docId }: { docId: string }) {
   const extensions = useEditorExtension({ docId });
   const editorPermission = useAppSelector(state => state.editorPermission);
   const editor = useEditor({
-    extensions: extensions.filter(ext => ext !== false),
+    extensions: extensions,
     editorProps: {
       attributes: {
         class: 'prose prose-sm sm:prose lg:prose-lg xl:prose-xl m-4 focus:outline-none w-full h-full',
@@ -86,6 +85,7 @@ export default function Editor({ docId }: { docId: string }) {
       }
     }
   }
+
 
   // 페이지를 떠나기 이전 변경사항 저장
   const updateContentBeforeLeave = async () => {
