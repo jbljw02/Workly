@@ -178,7 +178,7 @@ export default function MenuBar({ editor }: { editor: Editor }) {
     return (
         // 사용자에게 문서 편집 권한이 있을 시에만 메뉴바 표시
         editorPermission && editorPermission !== '읽기 허용' && (
-            <div className="flex items-center px-2 py-1 border-b w-full">
+            <div className="flex items-center px-2 py-1 border-b z-30 w-full">
                 {/* 헤딩을 조절하는 드롭다운 */}
                 <HeadingDropdown
                     editor={editor && editor}

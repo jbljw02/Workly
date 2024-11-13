@@ -14,6 +14,9 @@ export default function PublishedDocuments() {
         return documents.filter(doc => doc.isPublished);
     }, [documents]);
 
+    console.log("documents: ", documents);
+    console.log("publishedDocuments: ", publishedDocuments);
+
     return (
         <div className="flex flex-col w-full">
             <DocumentHeader

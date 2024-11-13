@@ -116,19 +116,21 @@ export default function Editor({ docId }: { docId: string }) {
         <EditorTitleInput
           docTitle={docTitle}
           docTitleChange={docTitleChange} />
+        <DragHandle
+          tippyOptions={{
+            placement: 'left',
+          }}
+          className='z-0'
+          editor={editor}>
+          <MenuIcon
+            width="17" />
+        </DragHandle>
         <EditorContent
           editor={editor}
           className="origin-top-left h-full w-full"
           style={{
             pointerEvents: openColorPicker ? 'none' : undefined,
           }}>
-          <DragHandle
-            tippyOptions={{
-              placement: 'left',
-            }}
-            editor={editor}>
-            <MenuIcon width="17" />
-          </DragHandle>
         </EditorContent>
       </div>
     </div>

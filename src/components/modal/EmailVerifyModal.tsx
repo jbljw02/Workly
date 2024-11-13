@@ -8,8 +8,6 @@ import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { setUser } from '@/redux/features/userSlice';
 import { sendEmailVerification, updateProfile } from '@firebase/auth';
-import path from "path";
-import fs from "fs";
 import { getDownloadURL, getStorage, ref } from 'firebase/storage';
 
 export default function EmailVerifyModal({ isModalOpen, setIsModalOpen }: ModalProps) {
@@ -28,12 +26,7 @@ export default function EmailVerifyModal({ isModalOpen, setIsModalOpen }: ModalP
                 // 사용자의 이메일 인증이 완료된 경우
                 if (user.emailVerified) {
                     const token = await user.getIdToken();
-                    await axios.post('/api/auth/email-token', { token }, {
-                        headers: {
-                            "Content-Type": "application/json",
-                            "Accept": "application/json"
-                        },
-                    });
+                    await axios.post('/api/auth/email-token', { token });
 
                     // 스토리지에서 아바타 이미지를 가져옴
                     const storage = getStorage();

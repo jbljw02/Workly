@@ -1,6 +1,4 @@
 import UserProfile from '@/components/aside/child/user/UserProfile';
-import SubmitButton from '@/components/button/SubmitButton';
-import CommonInput from '@/components/input/CommonInput';
 import { Collaborator } from '@/redux/features/documentSlice';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { useState, useCallback, useEffect, useMemo } from 'react';
@@ -8,7 +6,6 @@ import AuthorityButton, { AuthorityCategory } from './AuthorityButton';
 import ShareForm from './ShareForm';
 import { setCoworkerList, setSearchedCoworkers, setSelectedCoworkers, setTargetSharingEmail } from '@/redux/features/shareDocumentSlice';
 import { emailRegex } from '@/components/auth/SignUp';
-import { WorkingDocModalProps } from '@/types/workingDocModalProps';
 import { DocumentProps } from '@/redux/features/documentSlice';
 
 type ShareContentProps = {

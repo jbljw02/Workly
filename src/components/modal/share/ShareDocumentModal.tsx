@@ -10,8 +10,6 @@ import PublishContent from './PublishContent';
 import ShareContent from './ShareContent';
 import { setTargetSharingEmail } from '@/redux/features/shareDocumentSlice';
 import { WorkingDocModalProps } from '@/types/workingDocModalProps';
-import axios from 'axios';
-import { publishContent } from '@/redux/features/documentSlice';
 import useCancelPublish from '@/components/hooks/useCancelPublish';
 import usePublishDocument from '@/components/hooks/usePublishDocument';
 
@@ -21,7 +19,7 @@ export default function ShareDocumentModal({ isModalOpen, setIsModalOpen, select
     const copyURL = useCopyURL();
     const cancelPublish = useCancelPublish();
     const publishDocument = usePublishDocument();
-    
+
     const editorPermission = useAppSelector(state => state.editorPermission);
 
     const [workCategory, setWorkCategory] = useState<'공유' | '게시'>('공유');
@@ -36,8 +34,13 @@ export default function ShareDocumentModal({ isModalOpen, setIsModalOpen, select
             isOpen={isModalOpen}
             style={{
                 overlay: {
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
                     backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                    zIndex: 48,
+                    zIndex: 500,
                 },
                 content: {
                     position: 'absolute',
@@ -46,7 +49,7 @@ export default function ShareDocumentModal({ isModalOpen, setIsModalOpen, select
                     width: 600,
                     height: 'fit-content', // h-auto와 같이 크기에 맞춰서 height 조절
                     transform: 'translate(-50%, -50%)',
-                    zIndex: 49,
+                    zIndex: 501,
                     padding: 0,
                     overflow: 'hidden',
                 }

@@ -1,14 +1,15 @@
 import { Editor } from '@tiptap/react'
 import ReactDOMServer from 'react-dom/server';
 import PdfFileNode from '@/components/editor/child/file/PdfFileNode';
+import { useAppDispatch } from '@/redux/hooks';
+import { showWarningAlert } from '@/redux/features/alertSlice';
 
 export default function useDownloadPDF() {
-    // 에디터 내용을 PDF로 변환하고 다운로드하는 함수
-    const downloadPDF = async (editor: Editor, docTitle: string) => {
-        try {
-            // 에디터의 HTML 콘텐츠 가져오기
-            let content = editor.getHTML();
+    const dispatch = useAppDispatch();
 
+    // 에디터 내용을 PDF로 변환하고 다운로드하는 함수
+    const downloadPDF = async (content: string, docTitle: string) => {
+        try {
             // 에디터에서 가져온 HTML을 임시 div에 파싱
             const container = document.createElement('div');
             container.innerHTML = content;
@@ -49,6 +50,7 @@ export default function useDownloadPDF() {
             });
 
             if (!response.ok) {
+                dispatch(showWarningAlert('파일을 다운로드 하는 데 실패했습니다.'));
                 throw new Error('PDF 생성에 실패했습니다.');
             }
 
@@ -67,6 +69,7 @@ export default function useDownloadPDF() {
             document.body.removeChild(a);
         } catch (error) {
             console.error('PDF 다운로드 중 오류 발생:', error);
+            dispatch(showWarningAlert('파일을 다운로드 하는 데 실패했습니다.'));
         }
     };
 

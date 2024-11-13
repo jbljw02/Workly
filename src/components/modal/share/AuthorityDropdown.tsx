@@ -70,6 +70,8 @@ export default function AuthorityDropdown({
                             docId: docId
                         }
                     });
+
+                    dispatch(showCompleteAlert('멤버를 제거했습니다.'));
                 } catch (error) {
                     console.error(error);
 
@@ -118,6 +120,7 @@ export default function AuthorityDropdown({
     };
 
     useClickOutside(dropdownRef, () => setIsOpen(false), buttonRef);
+
     return (
         <div
             ref={dropdownRef}
@@ -125,7 +128,7 @@ export default function AuthorityDropdown({
                 position: 'absolute',
                 top: `${dropdownPosition.top}px`,
                 left: `${dropdownPosition.left}px`,
-                zIndex: 50,
+                zIndex: 503,
             }}
             className='flex flex-col bg-white border border-gray-200 rounded shadow-xl'
             onClick={(e) => e.stopPropagation()}>

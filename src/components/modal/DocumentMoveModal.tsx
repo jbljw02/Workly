@@ -95,7 +95,7 @@ export default function DocumentMoveModal({ isModalOpen, setIsModalOpen, selecte
                     right: 0,
                     bottom: 0,
                     backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                    zIndex: 48,
+                    zIndex: 500,
                 },
                 content: {
                     position: 'absolute',
@@ -106,7 +106,7 @@ export default function DocumentMoveModal({ isModalOpen, setIsModalOpen, selecte
                     minHeight: 330,
                     height: 'fit-content',
                     transform: 'translate(-50%, -50%)',
-                    zIndex: 49,
+                    zIndex: 501,
                     padding: 0,
                 }
             }}>

@@ -44,7 +44,7 @@ export default function FileFullModal({
                     right: 0,
                     bottom: 0,
                     backgroundColor: 'rgba(0, 0, 0, 0.65)',
-                    zIndex: 1000, 
+                    zIndex: 500, 
                 },
                 content: {
                     display: 'flex',
@@ -56,7 +56,7 @@ export default function FileFullModal({
                     width: '100vw',
                     height: '100vh',
                     padding: 0,
-                    zIndex: 1001,
+                    zIndex: 501,
                     inset: 0, // 모달을 화면 전체에 꽉 채우도록
                 },
             }}>

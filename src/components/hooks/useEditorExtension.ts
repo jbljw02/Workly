@@ -252,12 +252,12 @@ export default function useEditorExtension({ docId }: useEditorExtensionProps) {
         }),
         Placeholder.configure({
             placeholder: ({ node, editor }) => {
-            const { from, to } = editor.state.selection
-            const isSelected = from === to && editor.state.selection.$from.parent === node
-            return node.type.name === 'paragraph' && isSelected ? "명령어를 사용하려면 '/' 키를 누르세요." : ''
-        },
-        showOnlyCurrent: false,
-    }),
+                const { from, to } = editor.state.selection
+                const isSelected = from === to && editor.state.selection.$from.parent === node
+                return node.type.name === 'paragraph' && isSelected ? "명령어를 사용하려면 '/' 키를 누르세요." : ''
+            },
+            showOnlyCurrent: false,
+        }),
         Collaboration.configure({
             document: doc,
         }),

@@ -20,7 +20,7 @@ export default function usePublishDocument() {
                     user: user,
                 });
 
-            dispatch(publishContent(selectedDoc.id));
+            dispatch(publishContent({ docId: selectedDoc.id, user: user }));
             dispatch(showCompleteAlert('문서 게시에 성공했습니다.'));
         } catch (error) {
             console.log(error);

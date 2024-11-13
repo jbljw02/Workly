@@ -1,67 +1,67 @@
 /* 코드 라인 */
 pre {
-    background: #2d2b29;
-    border-radius: 8px;
-    color: #ffffff;
-    font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
-    margin: 16px 0px;
-    padding: 12px 16px;
-    width: 600px;
+  background: #2d2b29;
+  border-radius: 8px;
+  color: #ffffff;
+  font-family: "Menlo", "Monaco", "Courier New", monospace;
+  margin: 16px 0px;
+  padding: 12px 16px;
+  width: 600px;
 
-    code {
-        background: none;
-        font-size: 14px;
-        padding: 0;
-    }
+  code {
+    background: none;
+    font-size: 14px;
+    padding: 0;
+  }
 }
 
 /* 리스트 */
 ul,
 ol {
-    padding: 0px 32px 0px 22.4px;
+  padding: 0px 32px 0px 22.4px;
 }
 
 ul {
-    list-style-type: disc;
+  list-style-type: disc;
 }
 
 ol {
-    list-style-type: decimal;
+  list-style-type: decimal;
 }
 
 ol li::marker {
-    font-size: inherit;
-    font-family: inherit;
-    color: inherit;
+  font-size: inherit;
+  font-family: inherit;
+  color: inherit;
 }
 
 h1,
 h2,
 h4,
 p {
-    padding: 4px 0px;
+  padding: 4px 0px;
 }
 
 h1 {
-    font-size: 30px;
+  font-size: 30px;
 }
 
 h2 {
-    font-size: 24px;
+  font-size: 24px;
 }
 
 h3 {
-    font-size: 20px;
+  font-size: 20px;
 }
 
 h1,
 h2,
 h3 {
-    font-weight: 600;
+  font-weight: 600;
 }
 
 hr {
-    margin: 16px 0;
+  margin: 16px 0;
 }
 
 /* 이미지 리사이저 */
@@ -69,91 +69,97 @@ hr {
 .image-resizer-e,
 .image-resizer-s,
 .image-resizer-w {
-    visibility: hidden;
+  visibility: hidden;
 }
 
 .node-imageComponent {
-    margin-right: 6px;
-    display: inline-block;
+  margin-right: 6px;
+  display: inline-block;
+  position: relative;
+}
+
+.resizable-img {
 }
 
 .node-file {
-    display: block;
+  display: block;
 }
 
 /* 링크를 걸어놓은 텍스트 */
 .ProseMirror a {
-    text-decoration: underline;
-    color: blue;
-    text-decoration-color: blue;
-    cursor: pointer;
+  text-decoration: underline;
+  color: blue;
+  text-decoration-color: blue;
+  cursor: pointer;
 }
 
 .ProseMirror a:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 
 /* 강조 하이라이트 */
 .highlight {
-    padding: 2.5px 0;
+  padding: 2.5px 0;
 }
 
 /* 드래그 핸들 관련 */
 .drag-handle {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 5px;
-    padding: 4px 2px;
-    cursor: grab;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 5px;
+  padding: 4px 2px;
+  cursor: grab;
 }
 
 .drag-handle:hover {
-    background-color: #f0f0f0;
+  background-color: #f0f0f0;
 }
 
 .ProseMirror {
-    margin: 0px;
-    padding-left: 20px;
-    padding-right: 20px;
-    height: 100%;
+  margin: 0px;
+  padding-left: 20px;
+  padding-right: 20px;
+  height: 100%;
 }
 
 .tiptap p.is-empty::before {
-    color: #e1e1e0;
-    content: attr(data-placeholder);
-    float: left;
-    height: 0;
-    pointer-events: none;
+  color: #e1e1e0;
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
 }
 
 .collaboration-cursor__caret {
-    border-left: 1px solid #0d0d0d;
-    border-right: 1px solid #0d0d0d;
-    margin-left: -1px;
-    margin-right: -1px;
-    pointer-events: none;
-    position: relative;
-    word-break: normal;
+  border-left: 1px solid #0d0d0d;
+  border-right: 1px solid #0d0d0d;
+  margin-left: -1px;
+  margin-right: -1px;
+  pointer-events: none;
+  position: relative;
+  word-break: normal;
+  z-index: 10;
 }
 
 .collaboration-cursor__label {
-    border-radius: 3px 3px 3px 0;
-    color: #0d0d0d;
-    font-size: 12px;
-    font-style: normal;
-    font-weight: 600;
-    left: -1px;
-    line-height: normal;
-    padding: 0.1rem 0.3rem;
-    position: absolute;
-    top: -1.4em;
-    user-select: none;
-    white-space: nowrap;
+  border-radius: 3px 3px 3px 0;
+  color: #0d0d0d;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 600;
+  left: -1px;
+  line-height: normal;
+  padding: 0.1rem 0.3rem;
+  position: absolute;
+  top: -1.4em;
+  user-select: none;
+  white-space: nowrap;
+  z-index: 10;
 }
 
 blockquote {
-    border-left: 3px solid #e1e1e0;
-    margin: 1rem 0;
-    padding-left: 0.7rem;
+  border-left: 3px solid #e1e1e0;
+  margin: 1rem 0;
+  padding-left: 0.7rem;
 }

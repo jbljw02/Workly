@@ -29,6 +29,9 @@ import WebIcon from '../../../../../public/svgs/web.svg'
 import PublishIcon from '../../../../../public/svgs/publish.svg'
 import useCancelPublish from '@/components/hooks/useCancelPublish'
 import usePublishDocument from '@/components/hooks/usePublishDocument'
+import { DocumentProps } from '@/redux/features/documentSlice'
+import useCheckPermission from '@/components/hooks/useCheckPermission'
+import useDocumentMenu from '@/components/hooks/useMenuItem'
 
 type EditorHeaderProps = {
     editor: Editor,
@@ -36,21 +39,18 @@ type EditorHeaderProps = {
 }
 
 export default function EditorHeader({ editor, docTitle }: EditorHeaderProps) {
-    const dispatch = useAppDispatch();
-
     const deleteDoc = useDeleteDocument();
     const copyDoc = useCopyDocument();
     const copyURL = useCopyURL();
     const downloadPDF = useDownloadPDF();
     const cancelPublish = useCancelPublish();
     const publishDocument = usePublishDocument();
+    const checkPermission = useCheckPermission();
 
     const user = useAppSelector(state => state.user);
     const selectedDocument = useAppSelector(state => state.selectedDocument);
     const editorPermission = useAppSelector(state => state.editorPermission);
     const webPublished = useAppSelector(state => state.webPublished);
-
-    console.log('webPublished', webPublished);
 
     // 문서의 관리자인지
     const isAuthor = useMemo(() => selectedDocument.author.email === user.email,
@@ -70,112 +70,27 @@ export default function EditorHeader({ editor, docTitle }: EditorHeaderProps) {
     const [isMoving, setIsMoving] = useState(false); // 문서가 이동중인지
     const [isShareModal, setIsShareModal] = useState(false); // 문서가 공유됐는지
 
-    // 현재 편집 중인 문서에 대한 권한을 확인
-    const checkPermission = useCallback(() => {
-        const collaborator = selectedDocument.collaborators.find(collaborator => collaborator.email === user.email);
-
-        // 관리자라면 전체 허용으로 반환
-        if (selectedDocument.author.email === user.email) {
-            return '전체 허용';
-        }
-        // 협업자의 권한 반환
-        else if (collaborator) {
-            return collaborator.authority;
-        }
-        return null; // 권한이 없는 경우
+    useEffect(() => {
+        checkPermission(selectedDocument);
     }, [selectedDocument.collaborators, selectedDocument.author.email, user.email]);
 
-    useEffect(() => {
-        dispatch(setEditorPermission(checkPermission()));
-    }, [checkPermission]);
-
-    const menuItems: MenuItemProps[] = useMemo(() => {
-        // 모든 권한에 공통적으로 들어가는 아이템
-        const commonMenuItems = [
-            {
-                Icon: LinkCopyIcon,
-                IconWidth: "16",
-                label: "링크 복사",
-                onClick: () => copyURL(folderId, documentId),
-            },
-            {
-                Icon: DownloadIcon,
-                IconWidth: "14",
-                label: "다운로드",
-                onClick: () => downloadPDF(editor, docTitle),
+    const menuItems = useDocumentMenu({
+        document: selectedDocument,
+        editorPermission: editorPermission || '',
+        isWebPublished: false,
+        onMove: () => setIsMoving(true),
+        onCopy: copyDoc,
+        onCopyURL: copyURL,
+        onDownload: () => {
+            if (selectedDocument.docContent) {
+                downloadPDF(editor.getHTML(), selectedDocument.title)
             }
-        ];
+        },
+        onDelete: deleteDoc,
+        onPublish: publishDocument,
+        onCancelPublish: cancelPublish
+    });
 
-        // 모든 권한을 가지고 있을 때의 아이템
-        const fullPermissionItems = [
-            {
-                Icon: MoveIcon,
-                IconWidth: "15",
-                label: "옮기기",
-                onClick: () => setIsMoving(true),
-            },
-            {
-                Icon: CopyIcon,
-                IconWidth: "16",
-                label: "사본 만들기",
-                onClick: () => copyDoc(selectedDocument),
-            },
-            ...commonMenuItems
-        ];
-
-        // 웹 페이지로 게시된 문서를 보고 있다면
-        if (webPublished) {
-            return [
-                ...commonMenuItems
-            ];
-        }
-
-        // 모든 권한을 가지고 있지 않다면
-        if (editorPermission !== '전체 허용') {
-            return commonMenuItems;
-        }
-        // 모든 권한을 가지고 있다면
-        else {
-            // 게시가 완료된 문서
-            if (selectedDocument.isPublished) {
-                return [
-                    ...fullPermissionItems,
-                    {
-                        Icon: WebIcon,
-                        IconWidth: "14",
-                        label: "게시 취소",
-                        onClick: () => cancelPublish(selectedDocument.id),
-                        horizonLine: true,
-                    },
-                    {
-                        Icon: DeleteIcon,
-                        IconWidth: "17",
-                        label: "휴지통으로 이동",
-                        onClick: (e: React.MouseEvent) => deleteDoc(e, selectedDocument),
-                    }
-                ];
-            }
-            // 게시가 완료되지 않은 문서
-            else {
-                return [
-                    ...fullPermissionItems,
-                    {
-                        Icon: WebIcon,
-                        IconWidth: "14",
-                        label: "게시",
-                        onClick: () => publishDocument(selectedDocument),
-                        horizonLine: true,
-                    },
-                    {
-                        Icon: DeleteIcon,
-                        IconWidth: "17",
-                        label: "휴지통으로 이동",
-                        onClick: (e: React.MouseEvent) => deleteDoc(e, selectedDocument),
-                    }
-                ];
-            }
-        }
-    }, [selectedDocument, editorPermission, webPublished]);
 
     useClickOutside(optionRef, () => setMenuListOpen(false), optionRef);
 
