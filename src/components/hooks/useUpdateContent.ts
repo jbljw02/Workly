@@ -28,7 +28,7 @@ export default function useUpdateContent() {
         []);
 
     // 즉시 업데이트 요청
-    const updateContent = useCallback(async (latestDoc: DocumentProps) => {
+    const updateContent = async (latestDoc: DocumentProps) => {
         if (!latestDoc) return;
 
         try {
@@ -41,7 +41,7 @@ export default function useUpdateContent() {
             console.error(error);
             dispatch(showWarningAlert('변경사항 저장에 실패하였습니다.'));
         }
-    }, [dispatch]);
+    };
 
 
     return { updateContent, debouncedUpdateRequest };

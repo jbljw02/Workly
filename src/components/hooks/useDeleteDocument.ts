@@ -6,12 +6,14 @@ import { showCompleteAlert, showWarningAlert } from '@/redux/features/alertSlice
 import { addDocumentsToTrash, addDocumentToFolderTrash, setDocumentsTrash, setFoldersTrash } from '@/redux/features/trashSlice';
 import { removeDocumentFromFolder, setFolders } from '@/redux/features/folderSlice';
 import useUndoState from './useUndoState';
+import useUpdateContent from './useUpdateContent';
 
 export default function useDeleteDocument() {
     const dispatch = useAppDispatch();
     const router = useRouter();
 
     const undoState = useUndoState();
+    const { updateContent } = useUpdateContent();
 
     const user = useAppSelector(state => state.user);
 
@@ -38,6 +40,10 @@ export default function useDeleteDocument() {
                 folderId: document.folderId,
                 docId: document.id,
             }));
+
+            // if(!document.docContent) {
+            //     updateContent(document);
+            // }
 
             // 현재 페이지를 삭제했다면 홈으로 라우팅
             if (document.id === documentId) {

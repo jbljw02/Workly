@@ -6,7 +6,6 @@ import { NoticeModalProps } from '@/types/noticeModalProps';
 
 export default function WarningAlert({ isModalOpen, setIsModalOpen, label }: NoticeModalProps) {
     const [animation, setAnimation] = useState<string>('slide-up');
-    const tooltipRef = useRef<HTMLDivElement>(null);
     
     useEffect(() => {
         if (isModalOpen) {
@@ -24,13 +23,10 @@ export default function WarningAlert({ isModalOpen, setIsModalOpen, label }: Not
         setTimeout(() => setIsModalOpen(false), 500);
     };
     
-    useClickOutside(tooltipRef, closeTooltip);
-    
     if (!isModalOpen) return null;
     
     return (
         <div
-            ref={tooltipRef}
             className={`${animation} z-[503] fixed bottom-7 right-7 min-w-80 w-auto flex items-center p-4 rounded-lg text-yellow-900 bg-yellow-100 border border-yellow-200`}>
             <CautionIcon width="20" className="mr-3" />
             <div className="flex-grow text-sm font-medium">{label}</div>

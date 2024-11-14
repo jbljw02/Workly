@@ -6,9 +6,11 @@ import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import axios from "axios";
 import { AuthorityCategory } from "./AuthorityButton";
 import { showCompleteAlert, showWarningAlert } from "@/redux/features/alertSlice";
+import useOverlayLock from "@/components/hooks/useOverlayLock";
 
 type AuthorityDropdownProps = {
     dropdownPosition: { top: number, left: number };
+    isOpen: boolean;
     setIsOpen: (isOpen: boolean) => void;
     selectedDoc: DocumentProps;
     buttonRef: React.RefObject<HTMLDivElement>;
@@ -19,6 +21,7 @@ type AuthorityDropdownProps = {
 
 export default function AuthorityDropdown({
     dropdownPosition,
+    isOpen,
     setIsOpen,
     selectedDoc,
     buttonRef,

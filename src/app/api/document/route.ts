@@ -67,10 +67,15 @@ export async function GET(req: NextRequest) {
             const data = doc.data();
 
             // 타임스탬프 변환
-            const convertTimestamp = (timestamp: Timestamp) => ({
-                seconds: timestamp.seconds,
-                nanoseconds: timestamp.nanoseconds,
-            });
+            const convertTimestamp = (timestamp: Timestamp | null) => {
+                if (!timestamp) {
+                    return { seconds: 0, nanoseconds: 0 }; // 기본값 설정
+                }
+                return {
+                    seconds: timestamp.seconds,
+                    nanoseconds: timestamp.nanoseconds,
+                };
+            };
 
             // 타입 변환
             const document: DocumentProps = {
@@ -107,6 +112,7 @@ export async function GET(req: NextRequest) {
 
         return NextResponse.json(filteredDocuments, { status: 200 });
     } catch (error) {
+        console.error("에러: ", error);
         return NextResponse.json({ error: "문서 정보 요청 실패" }, { status: 500 });
     }
 }
@@ -175,6 +181,10 @@ export async function DELETE(req: NextRequest) {
         const email = searchParams.get('email');
         const folderId = searchParams.get('folderId');
         const docId = searchParams.get('docId');
+
+        console.log('email:', email);
+        console.log('folderId:', folderId);
+        console.log('docId:', docId);
 
         if (!email) return NextResponse.json({ error: "이메일이 제공되지 않음" }, { status: 400 });
         if (!folderId) return NextResponse.json({ error: "폴더 ID가 제공되지 않음" }, { status: 400 });

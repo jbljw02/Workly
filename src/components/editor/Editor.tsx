@@ -18,7 +18,6 @@ import useUpdateContent from '../hooks/useUpdateContent';
 import useLeavePage from '../hooks/useLeavePage';
 import EditorTitleInput from './child/EditorTitleInput';
 import { Attrs, Fragment } from 'prosemirror-model';
-import { Editor as EditorType } from '@tiptap/react';
 
 export type SelectedNode = {
   attrs: Attrs | undefined;
@@ -30,9 +29,7 @@ export type SelectedNode = {
 export default function Editor({ docId }: { docId: string }) {
   const dispatch = useAppDispatch();
 
-  const [selectedNode, setSelectedNode] = useState<SelectedNode | null>(null); // 문서에서 선택된 노드
-
-  const extensions = useEditorExtension({ docId, selectedNode });
+  const extensions = useEditorExtension({ docId });
   const editorPermission = useAppSelector(state => state.editorPermission);
   const editor = useEditor({
     extensions: extensions,
@@ -97,29 +94,9 @@ export default function Editor({ docId }: { docId: string }) {
     }
   }
 
-  // 현재 어떤 노드를 선택했는지 찾고 업데이트
-  const selectionUpdate = (editor: EditorType) => {
-    const { from } = editor.state.selection;
-    const node = editor.state.doc.nodeAt(from);
-    const selectionNode = {
-      attrs: node?.attrs,
-      type: node?.type.name,
-      content: node?.content,
-      text: node?.text!,
-    };
-    setSelectedNode(selectionNode);
-  }
-
-  useEffect(() => {
-    editor?.on('selectionUpdate', ({ editor }) => selectionUpdate(editor));
-    return () => {
-      editor?.off('selectionUpdate');
-    };
-  }, [editor]);
-
   // 페이지를 떠나기 이전 변경사항 저장
   const updateContentBeforeLeave = async () => {
-    if (selectedDocument.id && selectedDocument.docContent) {
+    if (selectedDocument && selectedDocument.id && selectedDocument.docContent) {
       await updateContent(selectedDocument);
     }
   };

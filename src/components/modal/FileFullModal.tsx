@@ -4,6 +4,7 @@ import { useRef, ReactNode } from 'react';
 import { useClickOutside } from '../hooks/useClickOutside';
 import DownloadIcon from '../../../public/svgs/editor/download.svg';
 import CloseIcon from '../../../public/svgs/editor/close.svg';
+import useOverlayLock from '../hooks/useOverlayLock';
 
 interface FileFullModal extends ModalProps {
     children: ReactNode;
@@ -30,6 +31,8 @@ export default function FileFullModal({
         link.click();
         document.body.removeChild(link);
     };
+
+    useOverlayLock(isModalOpen);
 
     return (
         <Modal

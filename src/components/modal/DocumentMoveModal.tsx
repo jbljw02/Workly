@@ -11,6 +11,7 @@ import { DocumentProps, updateDocuments } from "@/redux/features/documentSlice";
 import ModalHeader from "./ModalHeader";
 import { showCompleteAlert, showWarningAlert } from "@/redux/features/alertSlice";
 import { WorkingDocModalProps } from "@/types/workingDocModalProps";
+import useOverlayLock from "../hooks/useOverlayLock";
 
 export default function DocumentMoveModal({ isModalOpen, setIsModalOpen, selectedDoc }: WorkingDocModalProps) {
     const dispatch = useAppDispatch();
@@ -81,12 +82,15 @@ export default function DocumentMoveModal({ isModalOpen, setIsModalOpen, selecte
             }
         }
     }
+    
+    useOverlayLock(isModalOpen);
 
     if (!selectedDoc) return null;
 
     return (
         <Modal
             isOpen={isModalOpen}
+            onRequestClose={() => setIsModalOpen(false)}
             style={{
                 overlay: {
                     position: 'fixed',

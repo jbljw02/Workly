@@ -33,8 +33,6 @@ import { setSelectedNode } from "@/redux/features/selectedNodeSlice";
 import DragHandle from "@tiptap-pro/extension-drag-handle";
 import GlobalDragHandle from 'tiptap-extension-global-drag-handle'
 import CustomTextMark from "../../../lib/textMark";
-import { SelectedNode } from "../editor/Editor";
-import customCollabCursor from "../../../lib/customCollabCursor";
 
 const appId = process.env.NEXT_PUBLIC_TIPTAP_APP_ID;
 
@@ -69,10 +67,9 @@ const docMap = new Map<string, Y.Doc>();
 
 type useEditorExtensionProps = {
     docId: string,
-    selectedNode: SelectedNode | null,
 }
 
-export default function useEditorExtension({ docId, selectedNode }: useEditorExtensionProps) {
+export default function useEditorExtension({ docId }: useEditorExtensionProps) {
     const dispatch = useAppDispatch();
 
     const user = useAppSelector(state => state.user);
@@ -94,18 +91,7 @@ export default function useEditorExtension({ docId, selectedNode }: useEditorExt
         name: docId,
         appId: appId!,
         document: doc,
-        onConnect: () => {
-            console.log('connected');
-        },
     }), [docId, doc]);
-
-    // useRef를 사용하여 최신 selectedNode 값을 추적
-    const selectedNodeRef = useRef(selectedNode);
-
-    // selectedNode가 변경될 때마다 ref 업데이트
-    useEffect(() => {
-        selectedNodeRef.current = selectedNode;
-    }, [selectedNode]);
 
     // 접속자 목록 업데이트
     useEffect(() => {
@@ -145,27 +131,22 @@ export default function useEditorExtension({ docId, selectedNode }: useEditorExt
         };
     }, [provider, dispatch, user, userColor, selectedDocument.author.email]);
 
-    // provider의 awareness 필드 설정을 위한 함수 수정
+    // 현재 사용자의 정보를 필드에 할당
     useEffect(() => {
-        if (!user.displayName || !user.email || !user.photoURL) return;
-
-        // 즉시 실행되는 함수로 변경
-        const updateAwareness = () => {
-            provider.setAwarenessField('user', {
-                name: user.displayName,
-                id: user.email,
-                color: userColor,
-                photoURL: user.photoURL,
-                connectedAt: Date.now(),
-                // selectedNode가 변경될 때마다 즉시 반영
-                selectedNodeType: selectedNode?.type,
-            });
+        const setUserAwareness = () => {
+            if (user.displayName && user.email && user.photoURL) {
+                provider.setAwarenessField('user', {
+                    name: user.displayName,
+                    id: user.email,
+                    color: userColor,
+                    photoURL: user.photoURL,
+                    connectedAt: Date.now(),
+                });
+            }
         };
 
-        // selectedNode가 변경될 때마다 즉시 실행
-        updateAwareness();
-
-    }, [user.displayName, user.email, user.photoURL, userColor, provider, selectedNode]); // selectedNode를 의존성 배열에 추가
+        setUserAwareness();
+    }, [user.displayName, user.email, user.photoURL, userColor, provider]);
 
     // 소켓 연결 해제
     useEffect(() => {
@@ -176,119 +157,92 @@ export default function useEditorExtension({ docId, selectedNode }: useEditorExt
         };
     }, [provider]);
 
-    const extensions = useMemo(() => {
-        // 기본 익스텐션 배열 생성
-        const baseExtensions = [
-            StarterKit.configure({
-                bulletList: {
-                    keepMarks: true,
-                    keepAttributes: true,
-                },
-                orderedList: {
-                    keepMarks: true,
-                    keepAttributes: true,
-                },
-                history: false,
-            }),
-            Strike,
-            Document,
-            Underline,
-            Highlight.configure({
-                multicolor: true,
-                HTMLAttributes: {
-                    class: 'highlight',
-                },
-            }),
-            TextStyle,
-            Color,
-            ListItem,
-            TextAlign.configure({
-                types: ['heading', 'paragraph'],
-            }),
-            Heading.configure({
-                levels: [1, 2, 3],
-            }),
-            Blockquote,
-            FontSize,
-            FontFamily,
-            LinkNode.configure({
-                openOnClick: true,
-                autolink: true,
-                defaultProtocol: 'https',
-                setLinkTooltip: (payload: any) => dispatch(setLinkTooltip(payload)),
-            }),
-            Dropcursor,
-            CustomTextMark,
-            ImageNodeView.configure({
-                defaultWidth: 600,
-                defaultHeight: 600,
-            }),
-            FileNode,
-            FileHandler.configure({
-                onDrop: (currentEditor: Editor, files: File[], pos: number) => {
-                    files.forEach(file => {
-                        const fileReader = new FileReader()
-                        fileReader.onload = async () => {
-                            const src = fileReader.result as string
-                            const blobUrl = URL.createObjectURL(file);
+    const extensions = [
+        StarterKit.configure({
+            bulletList: {
+                keepMarks: true,
+                keepAttributes: true,
+            },
+            orderedList: {
+                keepMarks: true,
+                keepAttributes: true,
+            },
+            history: false,
+        }),
+        Strike,
+        Document,
+        Underline,
+        Highlight.configure({
+            multicolor: true,
+            HTMLAttributes: {
+                class: 'highlight',
+            },
+        }),
+        TextStyle,
+        Color,
+        ListItem,
+        TextAlign.configure({
+            types: ['heading', 'paragraph'],
+        }),
+        Heading.configure({
+            levels: [1, 2, 3],
+        }),
+        Blockquote,
+        FontSize,
+        FontFamily,
+        LinkNode.configure({
+            openOnClick: true,
+            autolink: true,
+            defaultProtocol: 'https',
+            setLinkTooltip: (payload: any) => dispatch(setLinkTooltip(payload)),
+        }),
+        Dropcursor,
+        CustomTextMark,
+        ImageNodeView.configure({
+            defaultWidth: 600,
+            defaultHeight: 600,
+        }),
+        FileNode,
+        FileHandler.configure({
+            onDrop: (currentEditor: Editor, files: File[], pos: number) => {
+                files.forEach(file => {
+                    const fileReader = new FileReader()
+                    fileReader.onload = async () => {
+                        const src = fileReader.result as string
+                        const blobUrl = URL.createObjectURL(file);
 
-                            if (file.type.startsWith('image/')) {
-                                uploadImage(currentEditor, file, src)
-                            } else {
-                                uploadFile(currentEditor, file, blobUrl, pos)
-                            }
+                        if (file.type.startsWith('image/')) {
+                            uploadImage(currentEditor, file, src)
+                        } else {
+                            uploadFile(currentEditor, file, blobUrl, pos)
                         }
-                        fileReader.readAsDataURL(file)
-                    })
-                },
-            }),
-            Placeholder.configure({
-                placeholder: ({ node, editor }) => {
-                    const { from, to } = editor.state.selection
-                    const isSelected = from === to && editor.state.selection.$from.parent === node
-                    return node.type.name === 'paragraph' && isSelected ? "명령어를 사용하려면 '/' 키를 누르세요." : ''
-                },
-                showOnlyCurrent: false,
-            }),
-            Collaboration.configure({
-                document: doc,
-            }),
-        ];
-
-        return [
-            ...baseExtensions,
-            customCollabCursor.configure({
-                provider: provider,
-                user: {
-                    id: user.email,
-                    name: user.displayName,
-                    color: userColor,
-                    photoURL: user.photoURL,
-                },
-                render: (user: any) => {
-                    const cursor = document.createElement('span')
-                    console.log('user:', user)
-
-                    // 현재 사용자의 selectedNodeType이 imageComponent인 경우 즉시 커서를 숨김
-                    if (user.selectedNodeType === 'imageComponent') {
-                        cursor.style.display = 'none';
-                        return cursor;
                     }
-
-                    cursor.classList.add('collaboration-cursor__caret')
-                    cursor.setAttribute('style', `border-color: ${user.color}`)
-
-                    const label = document.createElement('div')
-                    label.classList.add('collaboration-cursor__label')
-                    label.setAttribute('style', `background-color: ${user.color}`)
-                    label.insertBefore(document.createTextNode(user.name), null)
-                    cursor.insertBefore(label, null)
-
-                    return cursor;
-                },
-            }),
-        ];
-    }, [user, userColor, selectedNode]);
+                    fileReader.readAsDataURL(file)
+                })
+            },
+        }),
+        Placeholder.configure({
+            placeholder: ({ node, editor }) => {
+                const { from, to } = editor.state.selection
+                const isSelected = from === to && editor.state.selection.$from.parent === node
+                return node.type.name === 'paragraph' && isSelected ? "명령어를 사용하려면 '/' 키를 누르세요." : ''
+            },
+            showOnlyCurrent: false,
+        }),
+        Collaboration.configure({
+            document: doc,
+        }),
+        CollaborationCursor.configure({
+            provider: provider,
+            user: {
+                id: user.email,
+                name: user.displayName,
+                color: userColor,
+                photoURL: user.photoURL,
+                connectedAt: Date.now(),
+            },
+        }),
+    ];
 
     return extensions;
 }

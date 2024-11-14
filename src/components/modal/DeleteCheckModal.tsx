@@ -11,6 +11,8 @@ import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { showCompleteAlert, showWarningAlert } from "@/redux/features/alertSlice";
 import { deleteAllDocumentsTrashOfFolder, deleteDocumentsFromTrash, deleteFoldersFromTrash, removeDocumentFromFolderTrash, setDocumentsTrash, setFoldersTrash } from "@/redux/features/trashSlice";
 import useDeleteTrash from "../hooks/useDeleteTrash";
+import useOverlayLock from "../hooks/useOverlayLock";
+import { useEffect } from "react";
 
 type DeleteCheckModalProps = ModalProps & {
     searchCategory: SearchCategory;
@@ -110,9 +112,29 @@ export default function DeleteCheckModal({ isModalOpen, setIsModalOpen, searchCa
         }
     }
 
+    // 엔터키를 누를 시 삭제 작업 수행
+    useEffect(() => {
+        const keyPress = (event: KeyboardEvent) => {
+            if (event.key === 'Enter') {
+                deleteItemPermanently(item);
+            }
+        };
+
+        if (isModalOpen) {
+            window.addEventListener('keydown', keyPress);
+        }
+
+        return () => {
+            window.removeEventListener('keydown', keyPress);
+        };
+    }, [isModalOpen, item]);
+
+    useOverlayLock(isModalOpen);
+
     return (
         <Modal
             isOpen={isModalOpen}
+            onRequestClose={() => setIsModalOpen(false)}
             style={{
                 overlay: {
                     position: 'fixed',

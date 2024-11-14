@@ -14,6 +14,7 @@ type AuthorityButtonProps = {
     selectedDoc: DocumentProps;
     isClickEnabled?: boolean;
     isMember?: boolean;
+    scrollbarRef?: React.RefObject<HTMLDivElement>;
 }
 
 export default function AuthorityButton({
@@ -21,32 +22,30 @@ export default function AuthorityButton({
     targetUser,
     selectedDoc,
     isClickEnabled,
-    isMember
+    isMember,
+    scrollbarRef
 }: AuthorityButtonProps) {
     const buttonRef = useRef<HTMLDivElement>(null);
     const coworkerList = useAppSelector(state => state.coworkerList);
 
     const user = useAppSelector(state => state.user);
     const selectedDocument = useAppSelector(state => state.selectedDocument);
-    
-     // 현재 문서의 관리자인지 확인
+
+    // 현재 문서의 관리자인지 확인
     const isAuthor = useMemo(() => selectedDocument.author.email === user.email,
-    [selectedDocument.author.email, user.email]);
+        [selectedDocument.author.email, user.email]);
 
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [currentAuthority, setCurrentAuthority] = useState<AuthorityCategory>(initialAuthority);
     const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 }); // 권한을 선택하는 드롭다운의 포지션
 
-    // 드롭다운의 위치를 업데이트하는 함수를 useCallback으로 선언
     const updatePosition = useCallback(() => {
-        // 버튼의 현재 위치와 크기 정보를 가져옴
+        // 버튼과 스크롤바의 현재 위치와 크기 정보를 가져옴
         const rect = buttonRef.current?.getBoundingClientRect();
         if (rect) {
-            // 드롭다운의 위치: 버튼 바로 아래
-            // window.scrollY와 window.scrollX를 더해 스크롤 위치 고려
             setDropdownPosition({
                 top: rect.bottom + window.scrollY,
-                left: rect.left + window.scrollX,
+                left: rect.left,
             });
         }
     }, [buttonRef]);
@@ -93,7 +92,6 @@ export default function AuthorityButton({
             <div
                 ref={buttonRef}
                 onClick={toggleDropdown}
-                // 
                 className={`flex items-center gap-1 px-2 py-1 text-neutral-400 rounded select-none 
                     ${currentAuthority === '관리자' ? '' :
                         (isClickEnabled && isAuthor ? 'hover:bg-gray-200 cursor-pointer' : '')}`}>
@@ -110,6 +108,7 @@ export default function AuthorityButton({
                 isOpen && createPortal(
                     <AuthorityDropdown
                         dropdownPosition={dropdownPosition}
+                        isOpen={isOpen}
                         setIsOpen={setIsOpen}
                         selectedDoc={selectedDoc}
                         buttonRef={buttonRef}

@@ -1,10 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Modal from 'react-modal';
 import CommonInput from '../../input/CommonInput';
 import CommonButton from '../../button/CommonButton';
 import ModalHeader from '../ModalHeader';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
-import { showCompleteAlert, showWarningAlert } from '@/redux/features/alertSlice';
 import { useCopyURL } from '../../hooks/useCopyURL';
 import PublishContent from './PublishContent';
 import ShareContent from './ShareContent';
@@ -12,6 +11,7 @@ import { setTargetSharingEmail } from '@/redux/features/shareDocumentSlice';
 import { WorkingDocModalProps } from '@/types/workingDocModalProps';
 import useCancelPublish from '@/components/hooks/useCancelPublish';
 import usePublishDocument from '@/components/hooks/usePublishDocument';
+import useOverlayLock from '@/components/hooks/useOverlayLock';
 
 export default function ShareDocumentModal({ isModalOpen, setIsModalOpen, selectedDoc }: WorkingDocModalProps) {
     const dispatch = useAppDispatch();
@@ -19,19 +19,22 @@ export default function ShareDocumentModal({ isModalOpen, setIsModalOpen, select
     const copyURL = useCopyURL();
     const cancelPublish = useCancelPublish();
     const publishDocument = usePublishDocument();
-
+    
     const editorPermission = useAppSelector(state => state.editorPermission);
-
+    
     const [workCategory, setWorkCategory] = useState<'공유' | '게시'>('공유');
-
+    
     const closeModal = () => {
         dispatch(setTargetSharingEmail(''));
         setIsModalOpen(false);
     }
 
+    useOverlayLock(isModalOpen);
+    
     return (
         <Modal
             isOpen={isModalOpen}
+            onRequestClose={closeModal}
             style={{
                 overlay: {
                     position: 'fixed',

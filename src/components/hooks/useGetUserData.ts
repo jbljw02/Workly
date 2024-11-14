@@ -13,18 +13,26 @@ export default function useGetUserData() {
 
     // 사용자의 전체 문서 요청
     const getUserDocument = async () => {
-        const response = await axios.get('/api/document', {
-            params: { email: user.email }
-        });
-        dispatch(setDocuments(response.data));
+        try {
+            const response = await axios.get('/api/document', {
+                params: { email: user.email }
+            });
+            dispatch(setDocuments(response.data));
+        } catch (error) {
+            console.error(error);
+        }
     }
 
     // 사용자의 전체 폴더 요청
     const getUserFolder = async () => {
-        const response = await axios.get('/api/folder', {
-            params: { email: user.email },
-        });
-        dispatch(setFolders(response.data));
+        try {
+            const response = await axios.get('/api/folder', {
+                params: { email: user.email },
+            });
+            dispatch(setFolders(response.data));
+        } catch (error) {
+            console.error(error);
+        }
     }
 
     useEffect(() => {

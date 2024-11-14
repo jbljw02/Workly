@@ -5,6 +5,7 @@ import CommonInput from '../input/CommonInput';
 import SubmitButton from '../button/SubmitButton';
 import CommonButton from '../button/CommonButton';
 import ModalHeader from './ModalHeader';
+import useOverlayLock from '../hooks/useOverlayLock';
 
 export interface AddInputModal extends ModalProps {
     title: string;
@@ -60,9 +61,12 @@ export default function AddInputModal({
         }
     }
 
+    useOverlayLock(isModalOpen);
+
     return (
         <Modal
             isOpen={isModalOpen}
+            onRequestClose={closeModal}
             style={{
                 overlay: {
                     position: 'fixed',

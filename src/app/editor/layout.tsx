@@ -4,6 +4,7 @@ import GlobalAlert from "@/components/global/GlobalAlert";
 import useGetUserData from "@/components/hooks/useGetUserData";
 import useGetAllUsers from "@/components/hooks/useGetAllUsers";
 import Aside from "@/components/aside/Aside";
+import '@/styles/scrollbar.css';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
     useGetUserData();

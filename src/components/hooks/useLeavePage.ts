@@ -2,13 +2,18 @@
 
 import { useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
+import { useAppSelector } from '@/redux/hooks'
 
 export default function useLeavePage(onLeavePage: () => void | Promise<void>) {
     const router = useRouter()
 
+    const selectedDocument = useAppSelector(state => state.selectedDocument);
+
     const leavePage = useCallback(async () => {
         try {
-            await onLeavePage()
+            if (!selectedDocument || !selectedDocument.id) {
+                await onLeavePage()
+            }
         } catch (error) {
             console.error('페이지를 떠나는 도중 에러 발생: ', error)
         }
