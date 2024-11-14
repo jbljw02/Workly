@@ -8,7 +8,7 @@ import { useEffect } from "react";
 export default function useGetUserData() {
     const dispatch = useAppDispatch();
     const pathname = usePathname();
-    
+
     const user = useAppSelector(state => state.user);
 
     // 사용자의 전체 문서 요청
@@ -30,8 +30,12 @@ export default function useGetUserData() {
     useEffect(() => {
         const getUserData = async () => {
             if (user.email) {
-                await getUserDocument();
-                await getUserFolder();
+                try {
+                    await getUserDocument();
+                    await getUserFolder();
+                } catch (error) {
+                    console.error(error);
+                }
             }
         }
         getUserData();

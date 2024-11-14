@@ -1,21 +1,14 @@
 import MenuIcon from '../../../../../public/svgs/editor/menu-horizontal.svg'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import LinkCopyIcon from '../../../../../public/svgs/editor/link.svg'
-import DownloadIcon from '../../../../../public/svgs/editor/download.svg'
-import CopyIcon from '../../../../../public/svgs/editor/copy.svg'
-import DeleteIcon from '../../../../../public/svgs/trash.svg'
-import MoveIcon from '../../../../../public/svgs/editor/move-folder.svg'
 import MenuList from '../MenuList'
 import { MenuItemProps } from '../MenuItem'
 import LockIcon from '../../../../../public/svgs/editor/lock.svg'
 import UnLockIcon from '../../../../../public/svgs/editor/un-lock.svg'
-import formatTimeDiff from '@/utils/formatTimeDiff'
 import { Editor } from '@tiptap/react'
 import { useClickOutside } from '@/components/hooks/useClickOutside'
-import { useAppDispatch, useAppSelector } from '@/redux/hooks'
+import { useAppSelector } from '@/redux/hooks'
 import HeaderTitle from './HeaderTitle'
 import DocumentMoveModal from '@/components/modal/DocumentMoveModal'
-import { usePathname } from 'next/navigation'
 import HoverTooltip from '../menu-bar/HoverTooltip'
 import ToolbarButton from '../menu-bar/ToolbarButton'
 import ShareDocumentModal from '@/components/modal/share/ShareDocumentModal'
@@ -23,22 +16,18 @@ import useDeleteDocument from '@/components/hooks/useDeleteDocument'
 import { useCopyURL } from '@/components/hooks/useCopyURL'
 import useDownloadPDF from '@/components/hooks/useDownloadPDF'
 import useCopyDocument from '@/components/hooks/useCopyDocument'
-import { setCoworkerList, setEditorPermission } from '@/redux/features/shareDocumentSlice'
 import ConnectedUsers from './ConnectedUserList'
 import WebIcon from '../../../../../public/svgs/web.svg'
-import PublishIcon from '../../../../../public/svgs/publish.svg'
 import useCancelPublish from '@/components/hooks/useCancelPublish'
 import usePublishDocument from '@/components/hooks/usePublishDocument'
-import { DocumentProps } from '@/redux/features/documentSlice'
 import useCheckPermission from '@/components/hooks/useCheckPermission'
 import useDocumentMenu from '@/components/hooks/useMenuItem'
 
 type EditorHeaderProps = {
     editor: Editor,
-    docTitle: string,
 }
 
-export default function EditorHeader({ editor, docTitle }: EditorHeaderProps) {
+export default function EditorHeader({ editor }: EditorHeaderProps) {
     const deleteDoc = useDeleteDocument();
     const copyDoc = useCopyDocument();
     const copyURL = useCopyURL();
@@ -58,11 +47,9 @@ export default function EditorHeader({ editor, docTitle }: EditorHeaderProps) {
     // 문서가 공유됐는지
     const isShared = useMemo(() => selectedDocument.collaborators.length > 0,
         [selectedDocument.collaborators]);
-
-    const pathname = usePathname();
-    const pathParts = pathname.split('/');
-    const folderId = pathParts[2]; // '/editor/[folderId]/[documentId]'일 때 folderId는 2번째 인덱스
-    const documentId = pathParts[3]; // documentId는 3번째 인덱스
+    // 문서가 게시됐는지
+    const isPublished = useMemo(() => selectedDocument.isPublished,
+        [selectedDocument.isPublished]);
 
     const optionRef = useRef<HTMLDivElement>(null);
 
@@ -70,10 +57,12 @@ export default function EditorHeader({ editor, docTitle }: EditorHeaderProps) {
     const [isMoving, setIsMoving] = useState(false); // 문서가 이동중인지
     const [isShareModal, setIsShareModal] = useState(false); // 문서가 공유됐는지
 
+    // 현재 접속중인 사용자가 문서에 어떤 권한을 가지고 있는지
     useEffect(() => {
         checkPermission(selectedDocument);
     }, [selectedDocument.collaborators, selectedDocument.author.email, user.email]);
 
+    // 문서에 지정할 수 있는 옵션의 목록
     const menuItems = useDocumentMenu({
         document: selectedDocument,
         editorPermission: editorPermission || '',
@@ -121,6 +110,15 @@ export default function EditorHeader({ editor, docTitle }: EditorHeaderProps) {
                             iconWidth={webPublished ? 17 : 20} />
                     }
                 </HoverTooltip>
+                {/* 게시된 문서라면 아이콘 표시 */}
+                {
+                    isPublished &&
+                    <HoverTooltip label='게시된 문서'>
+                        <ToolbarButton
+                            Icon={WebIcon}
+                            iconWidth={19} />
+                    </HoverTooltip>
+                }
                 <div
                     onClick={() => setMenuListOpen(!menuListOpen)}
                     ref={optionRef}>
