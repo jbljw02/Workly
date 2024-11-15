@@ -8,7 +8,7 @@ import '@/styles/editor.css';
 import EditorHeader from './child/header/EditorHeader'
 import DragHandle from '@tiptap-pro/extension-drag-handle-react'
 import MenuIcon from '../../../public/svgs/editor/menu-vertical.svg'
-import { DocumentProps, renameDocuments, setSelectedDocument, updateDocuments } from '@/redux/features/documentSlice'
+import { DocumentProps, renameDocuments, setSelectedDocument, updateDocuments, updateSelectedDocContent } from '@/redux/features/documentSlice'
 import formatTimeDiff from '@/utils/formatTimeDiff'
 import MenuBar from './child/menu-bar/MenuBar'
 import useEditorExtension from '../hooks/useEditorExtension';
@@ -40,7 +40,7 @@ export default function Editor({ docId }: { docId: string }) {
     },
     editable: editorPermission !== '읽기 허용',
   }, []);
-
+  
   const { updateContent, debouncedUpdateRequest } = useUpdateContent();
 
   const openColorPicker = useAppSelector(state => state.openColorPicker);
@@ -50,11 +50,12 @@ export default function Editor({ docId }: { docId: string }) {
   const [lastReadedTime, setLastReadedTime] = useState<string>('현재 편집 중'); // 문서의 마지막 편집 시간에 따른 출력값
 
   // 에디터의 내용이 변경될 때마다 state와의 일관성을 유지
-  const updateDocument = useCallback(async () => {
-    if (editor && selectedDocument) {
+  useEffect(() => {
+    if (!editor || !selectedDocument) return;
+    
+    const updateDocument = async () => {
       const content = editor.getJSON();
 
-      // 문서의 내용을 업데이트
       const updatedDoc: DocumentProps = {
         ...selectedDocument,
         docContent: content,
@@ -65,17 +66,16 @@ export default function Editor({ docId }: { docId: string }) {
       };
 
       dispatch(updateDocuments({ docId: updatedDoc.id, ...updatedDoc }));
+      // dispatch(updateSelectedDocContent(content));
       setLastReadedTime(formatTimeDiff(updatedDoc.readedAt));
-    }
-  }, [dispatch, editor, selectedDocument]);
+    };
 
-  useEffect(() => {
-    editor?.on('update', updateDocument);
+    editor.on('update', updateDocument);
 
     return () => {
-      editor?.off('update', updateDocument);
+      editor.off('update', updateDocument);
     };
-  }, [updateDocument]);
+  }, [editor, selectedDocument, dispatch]);
 
   // 문서명이 변경되었을 때
   const docTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

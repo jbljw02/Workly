@@ -6,18 +6,17 @@ import { useAppSelector } from '@/redux/hooks'
 
 export default function useLeavePage(onLeavePage: () => void | Promise<void>) {
     const router = useRouter()
-
     const selectedDocument = useAppSelector(state => state.selectedDocument);
 
     const leavePage = useCallback(async () => {
         try {
-            if (!selectedDocument || !selectedDocument.id) {
+            if (selectedDocument && selectedDocument.id) {
                 await onLeavePage()
             }
         } catch (error) {
             console.error('페이지를 떠나는 도중 에러 발생: ', error)
         }
-    }, [onLeavePage])
+    }, [onLeavePage]);
 
     useEffect(() => {
         // 브라우저 탭 닫기, 새로고침 감지

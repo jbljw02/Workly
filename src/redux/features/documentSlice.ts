@@ -143,22 +143,25 @@ export const documentSlice = createSlice({
     },
 })
 
-export const selectedDocument = createSlice({
+export const selectedDocumentSlice = createSlice({
     name: 'selectedDocument',
     initialState: selectedDocumentState,
     reducers: {
         setSelectedDocument: (state, action) => {
             return action.payload;
+        },
+        updateSelectedDocContent: (state, action) => {
+            state.docContent = action.payload;
         }
     }
 })
 
 export const { addDocuments, updateDocuments, renameDocuments, deleteAllDocumentsOfFolder, updateCollaboratorAuthority, addCollaborator, deleteCollaborator, setDocuments, deleteDocuments, toggleShortcut, publishContent, canclePublishContent } = documentSlice.actions;
-export const { setSelectedDocument } = selectedDocument.actions;
+export const { setSelectedDocument, updateSelectedDocContent } = selectedDocumentSlice.actions;
 
 const reducers = {
     documents: documentSlice.reducer,
-    selectedDocument: selectedDocument.reducer,
+    selectedDocument: selectedDocumentSlice.reducer,
 }
 
 export default reducers;

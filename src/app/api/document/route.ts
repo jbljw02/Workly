@@ -176,15 +176,7 @@ export async function PATCH(req: NextRequest) {
 // 문서 삭제 - DELETE
 export async function DELETE(req: NextRequest) {
     try {
-        const { searchParams } = new URL(req.url);
-
-        const email = searchParams.get('email');
-        const folderId = searchParams.get('folderId');
-        const docId = searchParams.get('docId');
-
-        console.log('email:', email);
-        console.log('folderId:', folderId);
-        console.log('docId:', docId);
+        const { email, folderId, docId, docContent } = await req.json();
 
         if (!email) return NextResponse.json({ error: "이메일이 제공되지 않음" }, { status: 400 });
         if (!folderId) return NextResponse.json({ error: "폴더 ID가 제공되지 않음" }, { status: 400 });
@@ -216,6 +208,8 @@ export async function DELETE(req: NextRequest) {
         const trashDocRef = doc(firestore, 'trash-documents', docId);
         batch.set(trashDocRef, {
             ...docData,
+            // 미처 문서의 변경사항이 저장되지 못한 상황이라면 변경사항 체크
+            ...(!docData.docContent && docContent && { docContent: docContent }),
         });
 
         // 원본 문서 삭제

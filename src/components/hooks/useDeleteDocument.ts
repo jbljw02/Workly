@@ -27,6 +27,12 @@ export default function useDeleteDocument() {
         e.stopPropagation();
 
         try {
+            // 현재 페이지를 삭제했다면 홈으로 라우팅
+            if (document.id === documentId) {
+                console.log("이동")
+                router.push('/editor/home');
+            }
+
             // 문서를 폴더에서 삭제하고, 전체 문서 목록에서 삭제
             dispatch(removeDocumentFromFolder({
                 folderId: document.folderId,
@@ -41,21 +47,13 @@ export default function useDeleteDocument() {
                 docId: document.id,
             }));
 
-            // if(!document.docContent) {
-            //     updateContent(document);
-            // }
-
-            // 현재 페이지를 삭제했다면 홈으로 라우팅
-            if (document.id === documentId) {
-                router.push('/editor/home');
-            }
-
             // 파이어베이스의 문서 삭제
             await axios.delete('/api/document', {
-                params: {
+                data: {
                     email: user.email,
                     folderId: document.folderId,
                     docId: document.id,
+                    docContent: document.docContent,
                 }
             });
 
