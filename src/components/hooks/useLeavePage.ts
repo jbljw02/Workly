@@ -3,6 +3,8 @@
 import { useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAppSelector } from '@/redux/hooks'
+import { doc, getDoc } from 'firebase/firestore'
+import firestore from '@/firebase/firestore'
 
 export default function useLeavePage(onLeavePage: () => void | Promise<void>) {
     const router = useRouter()
@@ -11,7 +13,7 @@ export default function useLeavePage(onLeavePage: () => void | Promise<void>) {
     const leavePage = useCallback(async () => {
         try {
             if (selectedDocument && selectedDocument.id) {
-                await onLeavePage()
+                await onLeavePage();
             }
         } catch (error) {
             console.error('페이지를 떠나는 도중 에러 발생: ', error)

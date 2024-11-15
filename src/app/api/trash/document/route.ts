@@ -141,8 +141,6 @@ export async function DELETE(req: NextRequest) {
 
         const documentData = trashDocSnap.data();
 
-        console.log('documentData:', documentData);
-
         // 문서 내용에서 이미지 URL 추출
         const imageUrls: string[] = [];
 

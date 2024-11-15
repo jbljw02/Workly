@@ -4,6 +4,8 @@ import axios from "axios";
 import { DocumentProps } from "@/redux/features/documentSlice";
 import { showWarningAlert } from "@/redux/features/alertSlice";
 import { useAppDispatch } from "@/redux/hooks";
+import firestore from "@/firebase/firestore";
+import { getDoc, doc } from "firebase/firestore";
 
 export default function useUpdateContent() {
     const dispatch = useAppDispatch();

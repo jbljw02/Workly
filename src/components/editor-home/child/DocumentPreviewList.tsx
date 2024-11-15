@@ -9,6 +9,8 @@ export default function DocumentPreviewList() {
     const documents = useAppSelector(state => state.documents);
     const [sortCategory, setSortCategory] = useState<'최근 문서' | '공유중인 문서'>('최근 문서');
 
+    console.log('documents: ', documents);
+
     // 카테고리에 따른 필터링 된 문서 목록
     const filteredDocuments = useMemo(() => {
         // 문서를 최신순으로 정렬

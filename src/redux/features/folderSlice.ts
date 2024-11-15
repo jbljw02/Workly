@@ -44,7 +44,10 @@ export const foldersSlice = createSlice({
         },
         removeDocumentFromFolder: (state, action) => {
             const { folderId, docId } = action.payload;
+            console.log('folderId: ', folderId);
+            console.log('docId: ', docId);
             const folder = state.find(folder => folder.id === folderId);
+            console.log('folder: ', folder);
             if (folder) {
                 folder.documentIds = folder.documentIds.filter(id => id !== docId); // 문서 ID 제거
             }

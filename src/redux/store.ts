@@ -7,13 +7,14 @@ import fileReducers from './features/fileSlice';
 import linkReducers from './features/linkSlice';
 import selectionReducers from './features/selectionSlice';
 import textColorReducers from './features/textColorSlice';
-import documentReducers, { selectedDocument } from './features/documentSlice';
+import documentReducers from './features/documentSlice';
 import folderReducers from './features/folderSlice';
 import alertReducers from './features/alertSlice';
 import shareDocumentReducers from './features/shareDocumentSlice';
 import trashReducers from './features/trashSlice';
 import webPublishedReducers from './features/webPublishedSlice';
 import selectedNodeReducers from './features/selectedNodeSlice';
+import loadingReducers from './features/loadingSlice';
 
 const combinedReducer = combineReducers({
     user: userReducers.user,
@@ -41,6 +42,7 @@ const combinedReducer = combineReducers({
     foldersTrash: trashReducers.foldersTrash,
     webPublished: webPublishedReducers.webPublished,
     selectedNode: selectedNodeReducers.selectedNode,
+    isDeleting: loadingReducers.isDeleting,
 })
 
 // RootState가 Redux 스토어의 상태 타입임을 나타냄

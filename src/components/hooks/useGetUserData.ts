@@ -10,6 +10,7 @@ export default function useGetUserData() {
     const pathname = usePathname();
 
     const user = useAppSelector(state => state.user);
+    const isDeleting = useAppSelector(state => state.isDeleting);
 
     // 사용자의 전체 문서 요청
     const getUserDocument = async () => {
@@ -35,9 +36,10 @@ export default function useGetUserData() {
         }
     }
 
+    
     useEffect(() => {
         const getUserData = async () => {
-            if (user.email) {
+            if (user.email && !isDeleting) {
                 try {
                     await getUserDocument();
                     await getUserFolder();
@@ -46,8 +48,9 @@ export default function useGetUserData() {
                 }
             }
         }
+
         getUserData();
-    }, [user.email, pathname]);
+    }, [user.email, pathname, isDeleting]);
 
     return null;
 }

@@ -12,6 +12,8 @@ export default async function EditorPage({ params }: { params: { id: string } })
     const { id } = params;
     const docId = params.id;
 
+    console.log('params: ', params);
+
     // 현재 경로의 문서가 존재하는지 확인
     const docRef = doc(firestore, 'documents', docId);
     const docSnap = await getDoc(docRef);
