@@ -43,12 +43,15 @@ export default function useDeleteDocument() {
                 folderId: document.folderId,
                 docId: document.id,
             }));
-            
-            // 현재 페이지를 삭제했다면 홈으로 라우팅
-            if ((document.id).trim() === documentId.trim()) {
-                router.push('/editor/home');
+
+            // 문서의 상세 페이지일 경우
+            if (pathParts.length === 4) {
+                // 현재 페이지를 삭제했다면 홈으로 라우팅
+                if ((document.id).trim() === documentId.trim()) {
+                    router.push('/editor/home');
+                }
             }
-            
+
             // 파이어베이스의 문서 삭제
             await axios.delete('/api/document', {
                 data: {
@@ -58,9 +61,10 @@ export default function useDeleteDocument() {
                     docContent: document.docContent,
                 }
             });
-            
+
             dispatch(showCompleteAlert(`${document.title || '제목 없는 문서'}의 삭제를 완료했습니다.`));
         } catch (error) {
+            console.log('error: ', error);
             // 삭제에 실패하면 롤백
             undoState();
             dispatch(showWarningAlert(`${document.title || '제목 없는 문서'}의 삭제에 실패했습니다.`))

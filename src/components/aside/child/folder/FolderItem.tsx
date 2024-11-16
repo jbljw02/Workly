@@ -193,7 +193,7 @@ export default function FolderItem({ folder }: FolderItemProps) {
             <AddInputModal
                 isModalOpen={isAdding}
                 setIsModalOpen={setIsAdding}
-                title='폴더에 문서 추가하기'
+                title='내 폴더에 문서 추가하기'
                 value={docTitle}
                 setValue={setDocTitle}
                 submitFunction={() => addDocToFolder(docTitle, folder, setIsDocInvalidInfo)}

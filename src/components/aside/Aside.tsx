@@ -124,8 +124,7 @@ export default function Aside() {
                         Icon={GroupIcon}
                         IconWidth="18"
                         label="공유중인 문서"
-                        isCollapsed={isCollapsed}
-                        addClick={() => addDocToFolder('', folders[0])} />
+                        isCollapsed={isCollapsed} />
                 </Link>
                 <Link href="/editor/published">
                     <SidebarItem
