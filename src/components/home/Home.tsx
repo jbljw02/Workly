@@ -3,7 +3,6 @@
 import CommonButton from '../button/CommonButton';
 import Header from './child/Header';
 import Footer from './child/Footer';
-import logout from '@/utils/logout';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -24,8 +23,8 @@ export default function Home() {
                         <Link href="/signup">
                             <CommonButton
                                 style={{
-                                    px: 'px-8',
-                                    py: 'py-4',
+                                    width: 'w-52',
+                                    height: 'h-[62px]',
                                     textSize: 'text-xl',
                                     textColor: 'text-white',
                                     bgColor: 'bg-black',
@@ -36,8 +35,8 @@ export default function Home() {
                         <Link href="/contact">
                             <CommonButton
                                 style={{
-                                    px: 'px-8',
-                                    py: 'py-4',
+                                    width: 'w-40',
+                                    height: 'h-[62px]',
                                     textSize: 'text-xl',
                                     textColor: 'text-black',
                                     bgColor: 'bg-white',

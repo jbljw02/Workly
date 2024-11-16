@@ -13,11 +13,15 @@ import { auth } from "../../firebase/firebasedb";
 import EmailVerifyModal from "../modal/EmailVerifyModal";
 import { FirebaseError } from "firebase-admin";
 import Link from "next/link";
+import { useAppDispatch } from "@/redux/hooks";
+import { setWorkingSpinner } from "@/redux/features/placeholderSlice";
 
 export const emailRegex = /^[A-Za-z0-9_\.\-]+@[A-Za-z0-9\-]+\.[A-Za-z]{2,}$/;
 export const pwdRegex = /^(?=.*[!@#$%^&*(),.?":{}|<>]).{6,}$/;
 
 export default function SignUp() {
+    const dispatch = useAppDispatch();
+
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -169,6 +173,8 @@ export default function SignUp() {
 
     const signUp = async () => {
         try {
+            dispatch(setWorkingSpinner(true));
+            
             const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password)
             const user = userCredential.user;
 
@@ -193,6 +199,9 @@ export default function SignUp() {
             else {
                 throw error;
             }
+        }
+        finally {
+            dispatch(setWorkingSpinner(false));
         }
     }
 
@@ -238,8 +247,8 @@ export default function SignUp() {
                         isInvalidInfo={confirmPasswordInvalid} />
                     <SubmitButton
                         style={{
-                            px: '',
-                            py: 'py-3.5',
+                            width: 'w-full',
+                            height: 'h-[52px]',
                             textSize: 'text-base',
                             textColor: 'text-white',
                             bgColor: 'bg-blue-500',

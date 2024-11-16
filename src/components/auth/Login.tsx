@@ -14,9 +14,14 @@ import { FirebaseError } from 'firebase/app';
 import EmailVerifyModal from '../modal/EmailVerifyModal';
 import Link from 'next/link';
 import { useRouter } from 'next-nprogress-bar';
+import 'nprogress/nprogress.css';
+import NProgress from 'nprogress';
+import { useAppDispatch, useAppSelector } from '@/redux/hooks';
+import { setWorkingSpinner } from '@/redux/features/placeholderSlice';
 
 export default function Login() {
     const router = useRouter();
+    const dispatch = useAppDispatch();
 
     const [formData, setFormData] = useState({
         email: '',
@@ -62,6 +67,8 @@ export default function Login() {
 
     const login = async () => {
         try {
+            dispatch(setWorkingSpinner(true));
+
             await signInWithEmailAndPassword(auth, formData.email, formData.password);
             const user = auth.currentUser;
 
@@ -96,6 +103,9 @@ export default function Login() {
                 }))
             }
         }
+        finally {
+            dispatch(setWorkingSpinner(false));
+        }
     }
 
     return (
@@ -126,8 +136,8 @@ export default function Login() {
                         isInvalidInfo={isInvalidInfo} />
                     <SubmitButton
                         style={{
-                            px: '',
-                            py: 'py-3.5',
+                            width: 'w-full',
+                            height: 'h-[52px]',
                             textSize: 'text-base',
                             textColor: 'text-white',
                             bgColor: 'bg-blue-500',

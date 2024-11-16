@@ -1,6 +1,9 @@
+import { useAppSelector } from "@/redux/hooks";
+import LoadingSpinner from "../placeholder/LoadingSpinner";
+
 type StyleProps = {
-    px: string;
-    py: string;
+    width: string;
+    height: string;
     textSize: string;
     textColor: string;
     bgColor: string;
@@ -15,18 +18,21 @@ type SubmitButtonProps = {
 };
 
 export default function SubmitButton({ style, label, value, onClick }: SubmitButtonProps) {
-    const { px, py, textSize, textColor, bgColor, hover } = style;
-
+    const { width, height, textSize, textColor, bgColor, hover } = style;
+    const workingSpinner = useAppSelector(state => state.workingSpinner);
     return (
         <button
             type="submit"
             onClick={value ? onClick : undefined}
-            disabled={!value}
+            disabled={!value || workingSpinner}
             // 입력값이 존재할 때만 버튼 활성화
-            className={`${px} ${py} ${textSize} ${textColor} ${bgColor}
+            className={`${width} ${height} ${textSize} ${textColor} ${bgColor}
             ${value ? hover : 'border-gray-300 bg-gray-300 cursor-not-allowed'} 
             rounded-lg border transform transition-all duration-200 whitespace-nowrap`}>
-            {label}
+            {!workingSpinner && label}
+            {
+                workingSpinner && <LoadingSpinner size={20} />
+            }
         </button>
     )
 }

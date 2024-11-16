@@ -172,8 +172,8 @@ export default function DeleteCheckModal({ isModalOpen, setIsModalOpen, searchCa
                 <div className='flex justify-end text-sm gap-3.5 px-6 pb-6'>
                     <CommonButton
                         style={{
-                            px: 'px-3.5',
-                            py: 'py-2',
+                            width: 'w-16',
+                            height: 'h-[38px]',
                             textSize: 'text-white',
                             textColor: 'text-gray-500',
                             bgColor: 'bg-red-500',
@@ -183,8 +183,8 @@ export default function DeleteCheckModal({ isModalOpen, setIsModalOpen, searchCa
                         onClick={() => deleteItemPermanently(item)} />
                     <CommonButton
                         style={{
-                            px: 'px-3.5',
-                            py: 'py-2',
+                            width: 'w-14',
+                            height: 'h-[38px]',
                             textSize: 'text-sm',
                             textColor: 'text-gray-500',
                             bgColor: 'bg-transparent',

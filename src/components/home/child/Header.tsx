@@ -22,8 +22,8 @@ export default function Header() {
                 <Link href="/signup">
                     <CommonButton
                         style={{
-                            px: 'px-4',
-                            py: 'py-2',
+                            width: 'w-[150px]',
+                            height: 'h-11',
                             textSize: 'text-base',
                             textColor: 'text-white',
                             bgColor: 'bg-black',

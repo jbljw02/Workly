@@ -1,4 +1,4 @@
-import { DocumentProps, selectedDocument } from "@/redux/features/documentSlice";
+import { DocumentProps } from "@/redux/features/documentSlice";
 import { setEditorPermission } from "@/redux/features/shareDocumentSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 

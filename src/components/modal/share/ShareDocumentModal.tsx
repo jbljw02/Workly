@@ -12,6 +12,7 @@ import { WorkingDocModalProps } from '@/types/workingDocModalProps';
 import useCancelPublish from '@/components/hooks/useCancelPublish';
 import usePublishDocument from '@/components/hooks/usePublishDocument';
 import useOverlayLock from '@/components/hooks/useOverlayLock';
+import SubmitButton from '@/components/button/SubmitButton';
 
 export default function ShareDocumentModal({ isModalOpen, setIsModalOpen, selectedDoc }: WorkingDocModalProps) {
     const dispatch = useAppDispatch();
@@ -19,18 +20,18 @@ export default function ShareDocumentModal({ isModalOpen, setIsModalOpen, select
     const copyURL = useCopyURL();
     const cancelPublish = useCancelPublish();
     const publishDocument = usePublishDocument();
-    
+
     const editorPermission = useAppSelector(state => state.editorPermission);
-    
+
     const [workCategory, setWorkCategory] = useState<'공유' | '게시'>('공유');
-    
+
     const closeModal = () => {
         dispatch(setTargetSharingEmail(''));
         setIsModalOpen(false);
     }
 
     useOverlayLock(isModalOpen);
-    
+
     return (
         <Modal
             isOpen={isModalOpen}
@@ -93,8 +94,8 @@ export default function ShareDocumentModal({ isModalOpen, setIsModalOpen, select
                         <div className='flex items-center justify-end w-full text-sm p-5 border-t'>
                             <CommonButton
                                 style={{
-                                    px: 'px-3.5',
-                                    py: 'py-2',
+                                    width: 'w-20',
+                                    height: 'h-9',
                                     textSize: 'text-sm',
                                     textColor: 'text-white',
                                     bgColor: 'bg-blue-500',
@@ -104,18 +105,20 @@ export default function ShareDocumentModal({ isModalOpen, setIsModalOpen, select
                                 onClick={() => copyURL(selectedDoc.folderId, selectedDoc.id)} />
                         </div> :
                         <div className='flex items-center justify-center w-full text-sm p-5 border-t'>
-                            <CommonButton
+                            <SubmitButton
                                 style={{
-                                    px: `${selectedDoc.isPublished ? 'px-[255px]' : 'px-[270px]'}`,
-                                    py: 'py-2',
+                                    width: 'w-full',
+                                    height: 'h-9',
                                     textSize: 'text-sm',
                                     textColor: 'text-white',
                                     bgColor: 'bg-blue-500',
                                     hover: 'hover:bg-blue-700',
                                 }}
                                 label={`${selectedDoc.isPublished ? '게시 취소' : '게시'}`}
-                                onClick={() => selectedDoc.isPublished ? cancelPublish(selectedDoc.id) : publishDocument(selectedDoc)}
-                                disabled={editorPermission !== '전체 허용'} />
+                                onClick={() => selectedDoc.isPublished ?
+                                    cancelPublish(selectedDoc.id) :
+                                    publishDocument(selectedDoc)}
+                                value={editorPermission === '전체 허용'} />
                         </div>
                 }
             </div>

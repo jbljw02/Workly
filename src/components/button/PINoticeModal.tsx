@@ -102,8 +102,8 @@ export default function PINoticeModal({ isModalOpen, setIsModalOpen, setIsAgree,
                 <div className='flex flex-row items-center justify-center gap-5 mt-8'>
                     <CommonButton
                         style={{
-                            px: 'px-[105px]',
-                            py: 'py-2.5',
+                            width: 'w-full',
+                            height: 'h-12',
                             textSize: 'text-base',
                             textColor: 'text-white',
                             bgColor: 'bg-black',
@@ -116,8 +116,8 @@ export default function PINoticeModal({ isModalOpen, setIsModalOpen, setIsAgree,
                         }} />
                     <CommonButton
                         style={{
-                            px: 'px-[105px]',
-                            py: 'py-2.5',
+                            width: 'w-full',
+                            height: 'h-12',
                             textSize: 'text-base',
                             textColor: 'text-black',
                             bgColor: 'bg-white',

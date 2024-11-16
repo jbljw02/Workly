@@ -1,3 +1,5 @@
+'use client';
+
 import { ModalProps } from '@/types/modalProps';
 import { useState } from 'react';
 import Modal from 'react-modal';
@@ -9,6 +11,9 @@ import { setUser } from '@/redux/features/userSlice';
 import { sendEmailVerification, updateProfile } from '@firebase/auth';
 import { getDownloadURL, getStorage, ref } from 'firebase/storage';
 import { useRouter } from 'next-nprogress-bar';
+import { showWarningAlert } from '@/redux/features/alertSlice';
+import { setWorkingSpinner } from '@/redux/features/placeholderSlice';
+import NProgress from 'nprogress';
 
 export default function EmailVerifyModal({ isModalOpen, setIsModalOpen }: ModalProps) {
     const dispatch = useAppDispatch();
@@ -20,47 +25,55 @@ export default function EmailVerifyModal({ isModalOpen, setIsModalOpen }: ModalP
 
     // 사용자의 이메일 인증 여부를 확인하고, 그에 따라 계정을 활성화할지 결정
     const accountActivate = async () => {
-        if (user) {
-            // 사용자 상태 갱신
-            user.reload().then(async () => {
-                // 사용자의 이메일 인증이 완료된 경우
-                if (user.emailVerified) {
-                    const token = await user.getIdToken();
-                    await axios.post('/api/auth/email-token', { token });
+        try {
+            if (user) {
+                // 사용자 상태 갱신
+                user.reload().then(async () => {
+                    // 사용자의 이메일 인증이 완료된 경우
+                    if (user.emailVerified) {
+                        NProgress.start();
 
-                    // 스토리지에서 아바타 이미지를 가져옴
-                    const storage = getStorage();
-                    const avatarRef = ref(storage, 'images/avatar.png');
-                    const avatarURL = await getDownloadURL(avatarRef);
-
-                    // 이메일을 통해 인증된 사용자는 아바타 이미지를 사용
-                    await updateProfile(user, {
-                        photoURL: avatarURL,
-                    });
-
-                    // 사용자의 초기 정보를 설정
-                    await axios.post('/api/auth/user-initial-data', { user });
-
-                    if (user.displayName && user.email) {
-                        dispatch(setUser({
-                            displayName: user.displayName,
-                            email: user.email,
-                            photoURL: user.photoURL ? user.photoURL : avatarURL,
-                        }))
+                        const token = await user.getIdToken();
+                        await axios.post('/api/auth/email-token', { token });
+    
+                        // 스토리지에서 아바타 이미지를 가져옴
+                        const storage = getStorage();
+                        const avatarRef = ref(storage, 'images/avatar.png');
+                        const avatarURL = await getDownloadURL(avatarRef);
+    
+                        // 이메일을 통해 인증된 사용자는 아바타 이미지를 사용
+                        await updateProfile(user, {
+                            photoURL: avatarURL,
+                        });
+    
+                        // 사용자의 초기 정보를 설정
+                        await axios.post('/api/auth/user-initial-data', { user });
+    
+                        if (user.displayName && user.email) {
+                            dispatch(setUser({
+                                displayName: user.displayName,
+                                email: user.email,
+                                photoURL: user.photoURL ? user.photoURL : avatarURL,
+                            }))
+                        }
+    
+                        router.push('/editor/home');
                     }
-
-                    router.push('/editor/home');
-                }
-                else {
-                    setIsVerify(false);
-
-                    // 이메일이 인증되지 않은 상태에서 '확인' 버튼을 클릭하면 진동 효과
-                    setIsVibrate(true);
-                    setTimeout(() => {
-                        setIsVibrate(false);
-                    }, 1000)
-                }
-            });
+                    else {
+                        setIsVerify(false);
+    
+                        // 이메일이 인증되지 않은 상태에서 '확인' 버튼을 클릭하면 진동 효과
+                        setIsVibrate(true);
+                        setTimeout(() => {
+                            setIsVibrate(false);
+                        }, 1000)
+                    }
+                });
+            }
+        } catch(error) {
+            dispatch(showWarningAlert('이메일 인증에 실패했습니다.'))
+        } finally {
+            NProgress.done();
         }
     }
 
@@ -126,8 +139,8 @@ export default function EmailVerifyModal({ isModalOpen, setIsModalOpen }: ModalP
                     <div className={`${isVibrate && 'vibrate'}`}>
                         <CommonButton
                             style={{
-                                px: 'px-[91px]',
-                                py: 'py-2.5',
+                                width: 'w-[226px]',
+                                height: 'h-[46px]',
                                 textSize: 'text-base',
                                 textColor: 'text-white',
                                 bgColor: 'bg-black',
@@ -138,8 +151,8 @@ export default function EmailVerifyModal({ isModalOpen, setIsModalOpen }: ModalP
                     </div>
                     <CommonButton
                         style={{
-                            px: 'px-[91px]',
-                            py: 'py-2.5',
+                            width: 'w-[226px]',
+                            height: 'h-[46px]',
                             textSize: 'text-base',
                             textColor: 'text-black',
                             bgColor: 'bg-white',

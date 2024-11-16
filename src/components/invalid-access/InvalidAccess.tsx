@@ -28,8 +28,8 @@ export default function InvalidAccess({ title, description, Icon, iconWidth }: I
                     <Link href="/contact">
                         <CommonButton
                             style={{
-                                px: 'px-4',
-                                py: 'py-2',
+                                width: 'w-[94px]',
+                                height: 'h-[42px]',
                                 textSize: 'text-base',
                                 textColor: 'text-black',
                                 bgColor: 'bg-white',
@@ -40,8 +40,8 @@ export default function InvalidAccess({ title, description, Icon, iconWidth }: I
                     <Link href="/editor/home">
                         <CommonButton
                             style={{
-                                px: 'px-4',
-                                py: 'py-2',
+                                width: 'w-[175px]',
+                                height: 'h-[42px]',
                                 textSize: 'text-base',
                                 textColor: 'text-white',
                                 bgColor: 'bg-black',

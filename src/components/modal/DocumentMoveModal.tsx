@@ -12,11 +12,14 @@ import ModalHeader from "./ModalHeader";
 import { showCompleteAlert, showWarningAlert } from "@/redux/features/alertSlice";
 import { WorkingDocModalProps } from "@/types/workingDocModalProps";
 import useOverlayLock from "../hooks/useOverlayLock";
+import { setWorkingSpinner } from "@/redux/features/placeholderSlice";
+import LoadingSpinner from "../placeholder/LoadingSpinner";
 
 export default function DocumentMoveModal({ isModalOpen, setIsModalOpen, selectedDoc }: WorkingDocModalProps) {
     const dispatch = useAppDispatch();
 
     const folders = useAppSelector(state => state.folders);
+    const workingSpinner = useAppSelector(state => state.workingSpinner);
 
     // 검색을 통해 필터링 된 폴더들
     const [searchedFolders, setSearchedFolders] = useState<Folder[]>(folders);
@@ -60,12 +63,6 @@ export default function DocumentMoveModal({ isModalOpen, setIsModalOpen, selecte
             }
 
             try {
-                await axios.put('/api/document/move',
-                    {
-                        folderId: targetFolder.id,
-                        document: selectedDoc
-                    });
-
                 // 전체 문서중에 변경할 문서의 폴더 이름을 변경
                 dispatch(updateDocuments({ docId: selectedDoc.id, ...newDoc }));
 
@@ -73,16 +70,23 @@ export default function DocumentMoveModal({ isModalOpen, setIsModalOpen, selecte
                 dispatch(removeDocumentFromFolder({ folderId: selectedDoc.folderId, docId: newDoc.id }));
                 dispatch(addDocumentToFolder({ folderId: targetFolder.id, docId: newDoc.id }));
 
+                setIsModalOpen(false);
+                
+                await axios.put('/api/document/move',
+                    {
+                        folderId: targetFolder.id,
+                        document: selectedDoc
+                    });
+
                 // 문서 이동이 성공했다는 Alert를 띄우고 모달 닫기
                 dispatch(showCompleteAlert(`${selectedDoc.title || '제목 없는 문서'}를 ${targetFolder.name}로 옮겼습니다.`))
-                setIsModalOpen(false);
             } catch (error) {
                 console.error(error);
                 dispatch(showWarningAlert(`${selectedDoc.title}를 이동하는 데에 실패했습니다.`))
-            }
+            } 
         }
     }
-    
+
     useOverlayLock(isModalOpen);
 
     if (!selectedDoc) return null;
@@ -150,7 +154,7 @@ export default function DocumentMoveModal({ isModalOpen, setIsModalOpen, selecte
                                                     <div className="text-sm truncate select-none">{folder.name}</div>
                                                 </div>
                                                 <div className={`text-[12px] pr-3 text-neutral-500 select-none
-                                                    ${vibrateFolderId === folder.id ? 'vibrate text-red-500' : ''}`}>
+                                                        ${vibrateFolderId === folder.id ? 'vibrate text-red-500' : ''}`}>
                                                     {
                                                         selectedDoc.folderId === folder.id && '현재 폴더'
                                                     }
