@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import { auth } from "../../firebase/firebasedb";
 import getEmailToken from "@/utils/getEmailToken";
 import logout from "@/utils/logout";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next-nprogress-bar";
 
 export default function EmailVerifyCheck() {
     const dispatch = useAppDispatch();

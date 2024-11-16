@@ -1,7 +1,7 @@
 import axios from "axios";
 import { signOut } from "firebase/auth";
 import { auth } from "../firebase/firebasedb";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next-nprogress-bar";
 
 const logout = async (router: ReturnType<typeof useRouter>) => {
     try {

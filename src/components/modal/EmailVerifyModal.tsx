@@ -4,11 +4,11 @@ import Modal from 'react-modal';
 import CommonButton from '../button/CommonButton';
 import { auth } from '../../firebase/firebasedb';
 import { useAppDispatch } from '@/redux/hooks';
-import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { setUser } from '@/redux/features/userSlice';
 import { sendEmailVerification, updateProfile } from '@firebase/auth';
 import { getDownloadURL, getStorage, ref } from 'firebase/storage';
+import { useRouter } from 'next-nprogress-bar';
 
 export default function EmailVerifyModal({ isModalOpen, setIsModalOpen }: ModalProps) {
     const dispatch = useAppDispatch();
@@ -48,6 +48,7 @@ export default function EmailVerifyModal({ isModalOpen, setIsModalOpen }: ModalP
                             photoURL: user.photoURL ? user.photoURL : avatarURL,
                         }))
                     }
+
                     router.push('/editor/home');
                 }
                 else {

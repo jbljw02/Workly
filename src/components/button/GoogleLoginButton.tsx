@@ -5,7 +5,8 @@ import { auth } from '../../firebase/firebasedb';
 import { useAppDispatch } from '@/redux/hooks';
 import { setUser } from '@/redux/features/userSlice';
 import axios from 'axios';
-import { useRouter } from 'next/navigation';
+import { showWarningAlert } from '@/redux/features/alertSlice';
+import { useRouter } from 'next-nprogress-bar';
 
 export default function GoogleLoginButton() {
     const dispatch = useAppDispatch();
@@ -25,9 +26,18 @@ export default function GoogleLoginButton() {
             const token = await user.getIdToken();
 
             // 사용자 이름, 이메일, 토큰 확인
-            if (!user.displayName) throw new Error("사용자 이름이 존재하지 않습니다.");
-            if (!user.email) throw new Error("사용자 이메일이 존재하지 않습니다.");
-            if (!token) throw new Error("사용자 토큰을 생성하지 못했습니다.");
+            if (!user.displayName) {
+                dispatch(showWarningAlert('사용자 이름이 존재하지 않습니다.'));
+                throw new Error("사용자 이름이 존재하지 않습니다.");
+            }
+            if (!user.email) {
+                dispatch(showWarningAlert('사용자 이메일이 존재하지 않습니다.'));
+                throw new Error("사용자 이메일이 존재하지 않습니다.");
+            }
+            if (!token) {
+                dispatch(showWarningAlert('로그인에 실패했습니다.'));
+                throw new Error("사용자 토큰을 생성하지 못했습니다.");
+            }
 
             // 파이어베이스 토큰 인증
             await axios.post('/api/auth/email-token', { token });
@@ -47,6 +57,7 @@ export default function GoogleLoginButton() {
 
             return { user: { name: user.displayName, email: user.email } };
         } catch (error) {
+            dispatch(showWarningAlert('로그인에 실패했습니다.'));
             throw error;
         }
     };

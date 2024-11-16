@@ -3,7 +3,7 @@ import { DocumentProps } from "@/redux/features/documentSlice"
 import formatTimeDiff from "@/utils/formatTimeDiff";
 import { JSONContent } from "@tiptap/react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import Link from 'next/link';
 import GroupIcon from '../../../../public/svgs/group.svg';
 import HoverTooltip from "@/components/editor/child/menu-bar/HoverTooltip";
 import { useAppSelector } from "@/redux/hooks";
@@ -14,7 +14,6 @@ type DocumentPreviewItemProps = {
 }
 
 export default function DocumentPreviewItem({ document }: DocumentPreviewItemProps) {
-    const router = useRouter();
     const user = useAppSelector(state => state.user);
 
     // 문서 미리보기 렌더링
@@ -130,8 +129,8 @@ export default function DocumentPreviewItem({ document }: DocumentPreviewItemPro
     };
 
     return (
-        <div
-            onClick={() => router.push(`/editor/${document.folderId}/${document.id}`)}
+        <Link
+            href={`/editor/${document.folderId}/${document.id}`}
             className="flex flex-col justify-between border p-4 rounded shadow-sm w-64 h-96 overflow-hidden
                 cursor-pointer hover:bg-gray-100 transition-all duration-150">
             <div className="flex flex-col overflow-hidden">
@@ -160,6 +159,6 @@ export default function DocumentPreviewItem({ document }: DocumentPreviewItemPro
                     }
                 </div>
             </div>
-        </div>
+        </Link>
     )
 }

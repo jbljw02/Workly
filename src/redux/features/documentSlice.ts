@@ -63,7 +63,6 @@ export const documentSlice = createSlice({
             }
         },
         deleteDocuments: (state, action) => {
-            console.log('action.payload: ', action.payload);
             return state.filter(doc => doc.id !== action.payload);
         },
         // 해당 폴더의 모든 문서를 삭제/복원

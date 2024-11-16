@@ -1,10 +1,8 @@
 'use client'
 
 import { useEffect, useCallback } from 'react'
-import { useRouter } from 'next/navigation'
 import { useAppSelector } from '@/redux/hooks'
-import { doc, getDoc } from 'firebase/firestore'
-import firestore from '@/firebase/firestore'
+import { useRouter } from 'next-nprogress-bar';
 
 export default function useLeavePage(onLeavePage: () => void | Promise<void>) {
     const router = useRouter()

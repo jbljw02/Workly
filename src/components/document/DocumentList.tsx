@@ -1,6 +1,6 @@
 'use client';
 
-import { DocumentProps, selectedDocument, toggleShortcut } from "@/redux/features/documentSlice";
+import { DocumentProps, toggleShortcut } from "@/redux/features/documentSlice";
 import EmptyFolderIcon from '../../../public/svgs/empty-folder.svg';
 import DocumentListItem from "./DocumentListItem";
 import React from "react";

@@ -3,8 +3,9 @@ import DocumentIcon from '../../../../../public/svgs/document.svg';
 import DocumentItem from "./DocumentItem";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/dist/client/components/navigation";
-import { DocumentProps } from "@/redux/features/documentSlice";
+import Link from "next/link";
+import { useRouter } from "next-nprogress-bar";
+import React from "react";
 
 type DocumentSectionProps = {
     folder: Folder,
@@ -12,18 +13,12 @@ type DocumentSectionProps = {
 
 export default function DocumentSection({ folder }: DocumentSectionProps) {
     const router = useRouter();
-
     const documents = useAppSelector(state => state.documents);
 
     // 전체 문서에서 폴더가 가지고 있는 docId와 일치하는 것들만 필터링
     const documentsInFolder = useMemo(() =>
         documents.filter(doc => folder.documentIds.includes(doc.id)),
         [documents, folder]);
-
-    // 선택된 문서의 경로로 라우팅
-    const docRouting = (folderId: string, docId: string) => {
-        router.push(`/editor/${folderId}/${docId}`)
-    }
 
     return (
         <div>
@@ -32,11 +27,11 @@ export default function DocumentSection({ folder }: DocumentSectionProps) {
                     documentsInFolder.map(doc => {
                         return (
                             // 각각의 폴더 영역
-                            <div key={doc.id}>
+                            <React.Fragment key={doc.id}>
                                 <DocumentItem
-                                    onClick={() => docRouting(folder.id, doc.id)}
-                                    document={doc} />
-                            </div>
+                                    document={doc}
+                                    onClick={() => router.push(`/editor/${folder.id}/${doc.id}`)} />
+                            </React.Fragment>
 
                         )
                     }) :

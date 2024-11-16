@@ -5,7 +5,7 @@ import axios from "axios";
 import { addDocumentToFolder, Folder } from "@/redux/features/folderSlice";
 import { showCompleteAlert, showWarningAlert } from "@/redux/features/alertSlice";
 import { SetInvalidInfo } from "@/types/invalidInfoProps";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next-nprogress-bar";
 
 export default function useAddDocument() {
     const dispatch = useAppDispatch();

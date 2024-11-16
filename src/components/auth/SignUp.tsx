@@ -7,19 +7,17 @@ import SubmitButton from "../button/SubmitButton";
 import FormInput from "../input/FormInput";
 import AuthTop from "./AuthTop";
 import DivideBar from "./DivideBar";
-import { useRouter } from "next/navigation";
 import PINoticeModal from "../button/PINoticeModal";
 import { createUserWithEmailAndPassword, sendEmailVerification, updateProfile } from "firebase/auth";
 import { auth } from "../../firebase/firebasedb";
 import EmailVerifyModal from "../modal/EmailVerifyModal";
 import { FirebaseError } from "firebase-admin";
+import Link from "next/link";
 
 export const emailRegex = /^[A-Za-z0-9_\.\-]+@[A-Za-z0-9\-]+\.[A-Za-z]{2,}$/;
 export const pwdRegex = /^(?=.*[!@#$%^&*(),.?":{}|<>]).{6,}$/;
 
 export default function SignUp() {
-    const router = useRouter();
-
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -273,9 +271,11 @@ export default function SignUp() {
                     </div>
                     <div className='flex flex-row gap-1.5'>
                         <div>이미 계정이 있으신가요?</div>
-                        <button
-                            onClick={() => router.push('/login')}
-                            className='text-blue-600 underline'>로그인</button>
+                        <Link
+                            href="/login"
+                            className="text-blue-600 underline">
+                                로그인
+                        </Link>
                     </div>
                 </div>
                 <PINoticeModal

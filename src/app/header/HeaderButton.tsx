@@ -1,6 +1,7 @@
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import BackIcon from '../../../public/svgs/back.svg';
 import CloseIcon from '../../../public/svgs/close.svg'
+import { useRouter } from "next-nprogress-bar";
 
 export default function HeaderButton() {
     const router = useRouter();
@@ -11,11 +12,9 @@ export default function HeaderButton() {
                 onClick={() => router.back()}>
                 <BackIcon width="18" />
             </button>
-            <button
-                type="button"
-                onClick={() => router.push('/')}>
+            <Link href="/">
                 <CloseIcon width="25" />
-            </button>
+            </Link>
         </header>
     )
 }

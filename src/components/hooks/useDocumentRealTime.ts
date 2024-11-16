@@ -3,9 +3,9 @@ import { doc, onSnapshot, Timestamp } from 'firebase/firestore';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import firestore from '@/firebase/firestore';
 import { updateDocuments } from '@/redux/features/documentSlice';
-import { redirect, useRouter } from 'next/navigation';
 import convertTimestamp from '@/utils/convertTimestamp';
 import { UserProps } from '@/redux/features/userSlice';
+import { useRouter } from 'next-nprogress-bar';
 
 export default function useDocumentRealTime({ docId }: { docId: string }) {
     const dispatch = useAppDispatch();

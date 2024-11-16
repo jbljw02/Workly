@@ -6,6 +6,10 @@ body {
   font-family: 'Inter', system-ui, sans-serif;
 }
 
+#nprogress .bar {
+  z-index: 99999 !important;
+}
+
 /* Chrome, Safari, Edge.. */
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {

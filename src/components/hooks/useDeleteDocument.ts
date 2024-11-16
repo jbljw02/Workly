@@ -1,4 +1,4 @@
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import axios from 'axios';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { deleteDocuments, DocumentProps, setDocuments } from '@/redux/features/documentSlice';
@@ -8,6 +8,7 @@ import { removeDocumentFromFolder, setFolders } from '@/redux/features/folderSli
 import useUndoState from './useUndoState';
 import useUpdateContent from './useUpdateContent';
 import { setIsDeleting } from '@/redux/features/loadingSlice';
+import { useRouter } from 'next-nprogress-bar';
 
 export default function useDeleteDocument() {
     const dispatch = useAppDispatch();

@@ -3,7 +3,6 @@
 import formatTimeDiff from "@/utils/formatTimeDiff";
 import MenuIcon from '../../../public/svgs/editor/menu-vertical.svg'
 import ShareDocumentIcon from '../../../public/svgs/shared-document.svg'
-import { useRouter } from "next/navigation";
 import { DocumentProps } from "@/redux/features/documentSlice";
 import { MenuItemProps } from "../editor/child/MenuItem";
 import useCopyDocument from "../hooks/useCopyDocument";
@@ -17,8 +16,6 @@ import useDeleteDocument from "../hooks/useDeleteDocument";
 import MenuList from "../editor/child/MenuList";
 import HoverTooltip from "../editor/child/menu-bar/HoverTooltip";
 import LabelButton from "../button/LabelButton";
-import ShareIcon from '../../../public/svgs/group.svg';
-import DownloadIcon from '../../../public/svgs/editor/download.svg';
 import DocumentMoveModal from "../modal/DocumentMoveModal";
 import ShareDocumentModal from "../modal/share/ShareDocumentModal";
 import ShortcutsOffIcon from '../../../public/svgs/shortcuts-off.svg';
@@ -35,6 +32,7 @@ import usePublishDocument from "../hooks/usePublishDocument";
 import WebIcon from '../../../public/svgs/web.svg'
 import useCheckPermission from "../hooks/useCheckPermission";
 import useDocumentMenu from "../hooks/useMenuItem";
+import { useRouter } from "next-nprogress-bar";
 
 type DocumentListItemProps = {
     document: DocumentProps;
