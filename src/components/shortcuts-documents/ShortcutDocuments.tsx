@@ -12,7 +12,7 @@ export default function ShortcutDocuments() {
     // 즐겨찾기 문서 목록
     const shortcutsDocuments = useMemo(() => documents.filter(doc => doc.shortcutsUsers?.includes(user.email)), [documents, user]);
     return (
-        <div className="flex flex-col w-full">
+        <div className="flex flex-col w-full h-full overflow-y-auto">
             <DocumentHeader
                 title="즐겨찾기"
                 description={`${shortcutsDocuments.length}개의 즐겨찾기 문서`} />

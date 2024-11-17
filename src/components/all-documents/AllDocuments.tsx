@@ -5,6 +5,7 @@ import DocumentHeader from "../document/DocumentHeader";
 import DocumentList from "../document/DocumentList";
 import DocumentListHeader from "../document/DocumentListHeader";
 import { useMemo } from "react";
+import DocumentListSkeleton from "../placeholder/skeleton/DocumentListSkeleton";
 
 export default function AllDocuments() {
     const documents = useAppSelector(state => state.documents);
@@ -16,7 +17,7 @@ export default function AllDocuments() {
     }, [documents]);
 
     return (
-        <div className="flex flex-col w-full">
+        <div className="flex flex-col w-full h-full overflow-y-auto">
             <DocumentHeader
                 title="문서"
                 description={`${usersDocuments.length}개의 문서`} />

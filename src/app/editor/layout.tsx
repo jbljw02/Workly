@@ -10,7 +10,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     useGetUserData();
     useGetAllUsers();
     return (
-        <div className="flex flex-row w-full min-h-screen">
+        <div className="flex flex-row w-full h-screen overflow-hidden">
             <GlobalAlert />
             <Aside />
             {children}

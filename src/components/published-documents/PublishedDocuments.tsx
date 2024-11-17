@@ -14,11 +14,8 @@ export default function PublishedDocuments() {
         return documents.filter(doc => doc.isPublished);
     }, [documents]);
 
-    console.log("documents: ", documents);
-    console.log("publishedDocuments: ", publishedDocuments);
-
     return (
-        <div className="flex flex-col w-full">
+        <div className="flex flex-col w-full h-full overflow-y-auto">
             <DocumentHeader
                 title="웹 페이지로 게시된 문서"
                 description={`${publishedDocuments.length}개의 문서`} />

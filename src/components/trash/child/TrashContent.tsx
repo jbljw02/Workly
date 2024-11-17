@@ -7,6 +7,7 @@ import axios from "axios";
 import { useRef, useState, useCallback, useEffect } from "react";
 import { SearchCategory } from "../Trash";
 import TrashList from "./TrashList";
+import { setTrashLoading } from "@/redux/features/placeholderSlice";
 
 export default function TrashContent({ isTrashOpen }: { isTrashOpen: boolean }) {
     const dispatch = useAppDispatch();
@@ -20,12 +21,16 @@ export default function TrashContent({ isTrashOpen }: { isTrashOpen: boolean }) 
     const getTrashDocuments = useCallback(async () => {
         if (user.email) {
             try {
+                dispatch(setTrashLoading(true));
+                
                 const response = await axios.get('/api/trash/document', {
                     params: { email: user.email }
                 })
                 dispatch(setDocumentsTrash(response.data));
             } catch (error) {
                 dispatch(showWarningAlert('휴지통의 정보를 불러오는 데에 실패했습니다.'));
+            } finally {
+                dispatch(setTrashLoading(false));
             }
         }
     }, [user.email]);

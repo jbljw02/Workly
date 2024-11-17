@@ -109,7 +109,7 @@ export default function Editor({ docId }: { docId: string }) {
     return null;
   }
   return (
-    <div className="flex-grow h-full">
+    <div className="flex-grow h-full overflow-y-auto">
       {/* 에디터의 헤더 */}
       <div className="sticky top-0 bg-white z-10">
         <EditorHeader

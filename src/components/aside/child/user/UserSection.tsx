@@ -3,6 +3,7 @@ import { useRef, useState } from "react";
 import { useClickOutside } from "@/components/hooks/useClickOutside";
 import UserMenuList from "./UserMenuList";
 import UserProfile from "./UserProfile";
+import UserProfileSkeleton from "@/components/placeholder/skeleton/UserProfileSkeleton";
 
 export default function UserSection() {
     const user = useAppSelector(state => state.user);
@@ -17,12 +18,18 @@ export default function UserSection() {
             className="mb-6 w-full overflow-hidden z-20"
             ref={containerRef}
             onClick={() => setMenuListOpen(!menuListOpen)}>
-            <div className="cursor-pointer">
-                <UserProfile user={user} />
-            </div>
-            <UserMenuList
-                menuListOpen={menuListOpen}
-                setListOpen={setMenuListOpen} />
+            {
+                !user.displayName || !user.email ?
+                    <UserProfileSkeleton /> :
+                    <>
+                        <div className="cursor-pointer">
+                            <UserProfile user={user} />
+                        </div>
+                        <UserMenuList
+                            menuListOpen={menuListOpen}
+                            setListOpen={setMenuListOpen} />
+                    </>
+            }
         </div>
     );
 }

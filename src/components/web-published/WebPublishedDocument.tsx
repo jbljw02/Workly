@@ -28,8 +28,6 @@ export default function PublishedDocument({ document }: { document: any }) {
     });
 
     useEffect(() => {
-
-        console.log('document', document);
         const convertedData = {
             ...document,
             createdAt: convertTimestamp(document.createdAt),
@@ -48,8 +46,7 @@ export default function PublishedDocument({ document }: { document: any }) {
         <div className="flex-grow h-full">
             <div className="sticky top-0 bg-white z-10">
                 <EditorHeader
-                    editor={editor}
-                    docTitle={document.title} />
+                    editor={editor} />
             </div>
             <div className='p-4 h-full'>
                 <EditorTitleInput

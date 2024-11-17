@@ -9,7 +9,7 @@ export default function EditorHome() {
     const user = useAppSelector(state => state.user);
 
     return (
-        <div className="flex flex-col w-full h-full">
+        <div className="flex flex-col w-full h-full overflow-y-auto">
             {/* 홈의 헤더 */}
             <DocumentHeader
                 title={`${user.displayName}님, 안녕하세요`}

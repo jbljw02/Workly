@@ -77,7 +77,7 @@ export default function Aside() {
     return (
         <aside
             ref={sidebarRef}
-            className={`relative p-4 pt-5 flex flex-col transition-width duration-300 ease-in-out flex-shrink-0`}
+            className={`relative h-full p-4 pt-5 flex flex-col transition-width duration-300 ease-in-out flex-shrink-0`}
             style={{
                 width: `${sidebarWidth}px`,
                 transitionProperty: 'width',

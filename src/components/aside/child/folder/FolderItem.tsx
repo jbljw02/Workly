@@ -7,7 +7,6 @@ import ArrowIcon from '../../../../../public/svgs/right-arrow.svg';
 import EditIcon from '../../../../../public/svgs/editor/pencil-edit.svg';
 import DeleteIcon from '../../../../../public/svgs/trash.svg';
 import GroupHoverItem from '../GroupHoverItem';
-import getUserFolder from '@/components/hooks/getUserFolder';
 import { deleteFolders } from '@/redux/features/folderSlice';
 import PlusIcon from '../../../../../public/svgs/plus.svg';
 import DocumentSection from './DocumentSection';

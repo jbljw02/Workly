@@ -1,5 +1,7 @@
+import { showWarningAlert } from "@/redux/features/alertSlice";
 import { setDocuments } from "@/redux/features/documentSlice";
 import { setFolders } from "@/redux/features/folderSlice";
+import { setDocumentLoading, setFolderLoading } from "@/redux/features/placeholderSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import axios from "axios";
 import { usePathname } from "next/navigation";
@@ -27,6 +29,7 @@ export default function useGetUserData() {
     // 사용자의 전체 폴더 요청
     const getUserFolder = async () => {
         try {
+            dispatch(setFolderLoading(true));
             const response = await axios.get('/api/folder', {
                 params: { email: user.email },
             });
@@ -36,7 +39,6 @@ export default function useGetUserData() {
         }
     }
 
-    
     useEffect(() => {
         const getUserData = async () => {
             if (user.email && !isDeleting) {
@@ -44,7 +46,10 @@ export default function useGetUserData() {
                     await getUserDocument();
                     await getUserFolder();
                 } catch (error) {
-                    console.error(error);
+                    dispatch(showWarningAlert('사용자의 데이터를 불러오는 데 실패했습니다.'))
+                } finally {
+                    dispatch(setDocumentLoading(false));
+                    dispatch(setFolderLoading(false));
                 }
             }
         }

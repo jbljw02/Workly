@@ -45,6 +45,7 @@ const combinedReducer = combineReducers({
     selectedNode: selectedNodeReducers.selectedNode,
     isDeleting: loadingReducers.isDeleting,
     workingSpinner: placeholderReducers.workingSpinner,
+    loading: placeholderReducers.loading
 })
 
 // RootState가 Redux 스토어의 상태 타입임을 나타냄

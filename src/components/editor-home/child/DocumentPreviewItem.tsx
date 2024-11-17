@@ -131,7 +131,7 @@ export default function DocumentPreviewItem({ document }: DocumentPreviewItemPro
     return (
         <Link
             href={`/editor/${document.folderId}/${document.id}`}
-            className="flex flex-col justify-between border p-4 rounded shadow-sm w-64 h-96 overflow-hidden
+            className="flex flex-col justify-between border p-4 rounded shadow-sm w-[254px] h-96 overflow-hidden
                 cursor-pointer hover:bg-gray-100 transition-all duration-150">
             <div className="flex flex-col overflow-hidden">
                 {/* 문서 제목 */}
