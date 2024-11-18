@@ -17,6 +17,9 @@ import useDocumentRealTime from '../hooks/useDocumentRealTime';
 import useUpdateContent from '../hooks/useUpdateContent';
 import useLeavePage from '../hooks/useLeavePage';
 import EditorTitleInput from './child/EditorTitleInput';
+import EditorHeaderSkeleton from '../placeholder/skeleton/editor/EditorHeaderSkeleton';
+import EditorContentSkeleton from '../placeholder/skeleton/editor/EditorContentSkeleton';
+import { usePathname } from 'next/navigation';
 
 export default function Editor({ docId }: { docId: string }) {
   const dispatch = useAppDispatch();
@@ -35,12 +38,27 @@ export default function Editor({ docId }: { docId: string }) {
 
   const { updateContent, debouncedUpdateRequest } = useUpdateContent();
 
+  const pathname = usePathname();
+  const pathParts = pathname.split('/');
+  const folderId = pathParts[2]; // '/editor/[folderId]/[documentId]'일 때 folderId는 2번째 인덱스
+  const documentId = pathParts[3]; // documentId는 3번째 인덱스
+  
+  const documents = useAppSelector(state => state.documents);
+  const folders = useAppSelector(state => state.folders);
   const openColorPicker = useAppSelector(state => state.openColorPicker);
   const selectedDocument = useAppSelector(state => state.selectedDocument);
-  console.log('selectedDocument', selectedDocument);
 
   const docTitle = useMemo(() => selectedDocument.title, [selectedDocument.title]); // 문서 제목
   const [lastReadedTime, setLastReadedTime] = useState<string>('현재 편집 중'); // 문서의 마지막 편집 시간에 따른 출력값
+
+  // 현재 선택된 문서를 지정
+  // documents의 값이 변경될 때마다 현재 선택된 문서의 값도 업데이트
+  useEffect(() => {
+    const currentDocument = documents.find(doc => doc.id === documentId);
+    if (currentDocument) {
+      dispatch(setSelectedDocument(currentDocument));
+    }
+  }, [folders, documents]);
 
   // 에디터의 내용이 변경될 때마다 state와의 일관성을 유지
   useEffect(() => {
@@ -103,34 +121,44 @@ export default function Editor({ docId }: { docId: string }) {
   return (
     <div className="w-full h-full overflow-y-auto">
       {/* 에디터의 헤더 */}
-      <div className="sticky top-0 bg-white z-10">
-        <EditorHeader
-          editor={editor} />
-        <MenuBar editor={editor} />
-      </div>
-      <div
-        className='p-4'>
-        <EditorTitleInput
-          docTitle={docTitle}
-          docTitleChange={docTitleChange}
-          editor={editor} />
-        <DragHandle
-          tippyOptions={{
-            placement: 'left',
-          }}
-          className='z-0'
-          editor={editor}>
-          <MenuIcon
-            width="17" />
-        </DragHandle>
-        <EditorContent
-          editor={editor}
-          className="origin-top-left h-full w-full"
-          style={{
-            pointerEvents: openColorPicker ? 'none' : undefined,
-          }}>
-        </EditorContent>
-      </div>
+      {
+        selectedDocument.title ?
+          <div className="sticky top-0 bg-white z-10">
+            <EditorHeader
+              editor={editor} />
+            <MenuBar editor={editor} />
+          </div> :
+          <EditorHeaderSkeleton />
+      }
+      {
+        selectedDocument.docContent ?
+          <>
+            <div
+              className='p-4'>
+              <EditorTitleInput
+                docTitle={docTitle}
+                docTitleChange={docTitleChange}
+                editor={editor} />
+              <DragHandle
+                tippyOptions={{
+                  placement: 'left',
+                }}
+                className='z-0'
+                editor={editor}>
+                <MenuIcon
+                  width="17" />
+              </DragHandle>
+              <EditorContent
+                editor={editor}
+                className="origin-top-left h-full w-full"
+                style={{
+                  pointerEvents: openColorPicker ? 'none' : undefined,
+                }}>
+              </EditorContent>
+            </div>
+          </> :
+          <EditorContentSkeleton />
+      }
     </div>
   )
 }

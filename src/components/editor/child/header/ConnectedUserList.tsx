@@ -29,25 +29,38 @@ function ConnectedUserItem({ user, index }: ConnectedUserItemProps) {
 
 export default function ConnectedUsers() {
     const connectedUsers = useAppSelector(state => state.connectedUsers);
+    const connection = useAppSelector(state => state.connection);
+
     return (
         <div className="flex flex-row items-center justify-center gap-1.5 mr-1.5">
-            <div className="flex items-center justify-center pt-0.5 gap-1">
-                <GreenCircleIcon
-                    width="10"
-                    className="pt-1" />
-                <div className="text-[11px] text-neutral-500">연결됨</div>
-            </div>
-            <div className="flex flex-row">
-                {
-                    connectedUsers.map((user, index) => (
-                        <React.Fragment key={user.id}>
-                            <ConnectedUserItem
-                                user={user}
-                                index={index} />
-                        </React.Fragment>
-                    ))
-                }
-            </div>
-        </div>
+            {
+                connection ?
+                    <div className="flex items-center justify-center gap-2">
+                        <div className="flex flex-row items-center justify-center gap-1 pt-0.5">
+                            <GreenCircleIcon
+                                width="10"
+                                className="pt-[3px] text-green-500" />
+                            <div className="text-[11px] text-neutral-500">연결됨</div>
+                        </div>
+                        <div className="flex flex-row">
+                            {
+                                connectedUsers.map((user, index) => (
+                                    <React.Fragment key={user.id}>
+                                        <ConnectedUserItem
+                                            user={user}
+                                            index={index} />
+                                    </React.Fragment>
+                                ))
+                            }
+                        </div>
+                    </div> :
+                    <div className="flex flex-row items-center justify-center gap-1 pt-0.5">
+                        <GreenCircleIcon
+                            width="10"
+                            className="pt-[3px] text-red-400" />
+                        <div className="text-[11px] text-red-400 font-semibold">연결 실패</div>
+                    </div>
+            }
+        </div >
     );
 }

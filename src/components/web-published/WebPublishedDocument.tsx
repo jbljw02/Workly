@@ -50,7 +50,8 @@ export default function PublishedDocument({ document }: { document: any }) {
             </div>
             <div className='p-4 h-full'>
                 <EditorTitleInput
-                    docTitle={document.title} />
+                    docTitle={document.title}
+                    editor={editor} />
                 <EditorContent
                     editor={editor}
                     className="origin-top-left h-full" />

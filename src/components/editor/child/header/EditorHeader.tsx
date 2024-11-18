@@ -80,7 +80,6 @@ export default function EditorHeader({ editor }: EditorHeaderProps) {
         onCancelPublish: cancelPublish
     });
 
-
     useClickOutside(optionRef, () => setMenuListOpen(false), optionRef);
 
     return (

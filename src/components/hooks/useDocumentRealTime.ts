@@ -40,8 +40,6 @@ export default function useDocumentRealTime({ docId }: { docId: string }) {
                     publishedDate: documentData.publishedDate ? convertTimestamp(documentData.publishedDate) : undefined,
                 }
 
-                console.log('convertedData', convertedData);
-
                 dispatch(updateDocuments({ docId: docId, ...convertedData }));
             }
             // 문서가 존재하지 않거나 삭제됐다면 404 페이지로 리다이렉트

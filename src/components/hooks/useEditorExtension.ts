@@ -29,10 +29,8 @@ import '@/styles/editor.css'
 import { ConnectedUser, setConnectedUsers } from "@/redux/features/shareDocumentSlice";
 import Blockquote from "@tiptap/extension-blockquote";
 import Strike from "@tiptap/extension-strike";
-import { setSelectedNode } from "@/redux/features/selectedNodeSlice";
-import DragHandle from "@tiptap-pro/extension-drag-handle";
-import GlobalDragHandle from 'tiptap-extension-global-drag-handle'
 import CustomTextMark from "../../../lib/textMark";
+import { setConnection } from "@/redux/features/connectionSlice";
 
 const appId = process.env.NEXT_PUBLIC_TIPTAP_APP_ID;
 
@@ -91,6 +89,8 @@ export default function useEditorExtension({ docId }: useEditorExtensionProps) {
         name: docId,
         appId: appId!,
         document: doc,
+        onConnect: () => dispatch(setConnection(true)),
+        onDisconnect: () => dispatch(setConnection(false)),
     }), [docId, doc]);
 
     // 접속자 목록 업데이트

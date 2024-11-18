@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import BoldIcon from '../../../../../public/svgs/editor/bold.svg'
 import ItalicIcon from '../../../../../public/svgs/editor/italic.svg'
 import UnderlineIcon from '../../../../../public/svgs/editor/underline.svg'

@@ -16,6 +16,7 @@ import webPublishedReducers from './features/webPublishedSlice';
 import selectedNodeReducers from './features/selectedNodeSlice';
 import loadingReducers from './features/loadingSlice';
 import placeholderReducers from './features/placeholderSlice';
+import connectionReducers from './features/connectionSlice';
 
 const combinedReducer = combineReducers({
     user: userReducers.user,
@@ -45,7 +46,8 @@ const combinedReducer = combineReducers({
     selectedNode: selectedNodeReducers.selectedNode,
     isDeleting: loadingReducers.isDeleting,
     workingSpinner: placeholderReducers.workingSpinner,
-    loading: placeholderReducers.loading
+    loading: placeholderReducers.loading,
+    connection: connectionReducers.connection,
 })
 
 // RootState가 Redux 스토어의 상태 타입임을 나타냄
