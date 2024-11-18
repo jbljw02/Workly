@@ -118,7 +118,7 @@ export default function LinkEditSection({ editor, isEditing, setIsEditing }: Lin
                         autoFocus />
                 </div>
             </div>
-            <div className="flex flex-row items-center w-full justify-end text-[13px] mt-4">
+            <div className="flex flex-row items-center w-full justify-end mt-4">
                 <LabelButton
                     onClick={() => editLink(editor, linkTooltip)}
                     Icon={SaveIcon}

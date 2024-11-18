@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import BoldIcon from '../../../../../public/svgs/editor/bold.svg'
 import ItalicIcon from '../../../../../public/svgs/editor/italic.svg'
 import UnderlineIcon from '../../../../../public/svgs/editor/underline.svg'
@@ -32,6 +32,7 @@ import uploadImage from '@/utils/uploadImage'
 import uploadFile from '@/utils/uploadFile'
 import StrikeIcon from '../../../../../public/svgs/editor/strike.svg'
 import BlockquoteIcon from '../../../../../public/svgs/editor/blockquote.svg'
+import ManagementLink from '../link/ManagementLink'
 
 export default function MenuBar({ editor }: { editor: Editor }) {
     const dispatch = useAppDispatch();
@@ -51,6 +52,8 @@ export default function MenuBar({ editor }: { editor: Editor }) {
     const [addingLink, setAddingLink] = useState<boolean>(false);
     const [selectionPos, setSelectionPos] = useState<SelectionPosition>({ top: 0, left: 0 });
     const [linkNoticeModal, setLinkNoticeModal] = useState<boolean>(false);
+
+    const linkRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         // 에디터가 초기화 되지 않았을 시
@@ -161,16 +164,25 @@ export default function MenuBar({ editor }: { editor: Editor }) {
     // 선택된 텍스트의 위치를 찾고 링크를 추가하는 컴포넌트를 열기
     const addLink = () => {
         const selection = window.getSelection();
-        if (selection &&
-            selection.rangeCount > 0
-            && selection.toString().trim() !== "") {
+        console.log('selection: ', selection?.toString().trim());
+
+        if (addingLink) {
+            setAddingLink(false);
+        }
+
+        if (selection && selection.rangeCount > 0 && selection.toString().trim() !== "") {
             const range = selection.getRangeAt(0);
             const rect = range.getBoundingClientRect();
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
 
-            setSelectionPos({ top: rect.bottom, left: rect.left });
-            setAddingLink(true);
+            setSelectionPos({
+                top: rect.bottom + scrollTop, // 선택 영역 하단
+                left: rect.left, // 선택 영역 왼쪽 시작점
+            });
+            setAddingLink(!addingLink);
         }
-        else {
+        else if (selection && !selection.toString().trim() && !addingLink) {
+            setAddingLink(false);
             setLinkNoticeModal(true);
         }
     };
@@ -285,26 +297,8 @@ export default function MenuBar({ editor }: { editor: Editor }) {
                             Icon={FileSearchIcon}
                             iconWidth={20} />
                     </HoverTooltip>
-                    <HoverTooltip label='링크 삽입'>
-                        <ToolbarButton
-                            onClick={addLink}
-                            Icon={LinkIcon}
-                            iconWidth={20} />
-                    </HoverTooltip>
                     {/* 링크를 추가하는 영역 */}
-                    {
-                        addingLink && (
-                            <AddLinkSection
-                                editor={editor}
-                                position={selectionPos}
-                                setAddingLink={setAddingLink}
-                                isOpen={addingLink} />
-                        )
-                    }
-                    <WarningAlert
-                        isModalOpen={linkNoticeModal}
-                        setIsModalOpen={setLinkNoticeModal}
-                        label="링크를 연결할 영역을 드래그해주세요" />
+                    <ManagementLink editor={editor} />
                     {/* 링크에 hover를 했을 시 보여지는 툴팁 */}
                     <LinkTooltip editor={editor} />
                     <HoverTooltip label='코드 삽입'>

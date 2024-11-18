@@ -34,6 +34,7 @@ export default function ConnectedUsers() {
     return (
         <div className="flex flex-row items-center justify-center gap-1.5 mr-1.5">
             {
+                // 소켓 연결 성공 여부에 따라 분기
                 connection ?
                     <div className="flex items-center justify-center gap-2">
                         <div className="flex flex-row items-center justify-center gap-1 pt-0.5">

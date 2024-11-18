@@ -99,7 +99,8 @@ export default function useEditorExtension({ docId }: useEditorExtensionProps) {
             const users: ConnectedUser[] = [];
             provider.awareness?.getStates().forEach((state: any) => {
                 const user = state.user;
-                if (user) {
+                // 이미 연결된 사용자가 아니라면 접속자 목록에 추가
+                if (user && !users.some(u => u.id === user.id)) {
                     users.push({
                         name: user.name,
                         id: user.id,
