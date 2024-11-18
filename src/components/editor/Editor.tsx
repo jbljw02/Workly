@@ -17,14 +17,6 @@ import useDocumentRealTime from '../hooks/useDocumentRealTime';
 import useUpdateContent from '../hooks/useUpdateContent';
 import useLeavePage from '../hooks/useLeavePage';
 import EditorTitleInput from './child/EditorTitleInput';
-import { Attrs, Fragment } from 'prosemirror-model';
-
-export type SelectedNode = {
-  attrs: Attrs | undefined;
-  type: string | undefined;
-  content: Fragment | undefined;
-  text: string;
-}
 
 export default function Editor({ docId }: { docId: string }) {
   const dispatch = useAppDispatch();
@@ -40,11 +32,12 @@ export default function Editor({ docId }: { docId: string }) {
     },
     editable: editorPermission !== '읽기 허용',
   }, []);
-  
+
   const { updateContent, debouncedUpdateRequest } = useUpdateContent();
 
   const openColorPicker = useAppSelector(state => state.openColorPicker);
   const selectedDocument = useAppSelector(state => state.selectedDocument);
+  console.log('selectedDocument', selectedDocument);
 
   const docTitle = useMemo(() => selectedDocument.title, [selectedDocument.title]); // 문서 제목
   const [lastReadedTime, setLastReadedTime] = useState<string>('현재 편집 중'); // 문서의 마지막 편집 시간에 따른 출력값
@@ -52,7 +45,7 @@ export default function Editor({ docId }: { docId: string }) {
   // 에디터의 내용이 변경될 때마다 state와의 일관성을 유지
   useEffect(() => {
     if (!editor || !selectedDocument) return;
-    
+
     const updateDocument = async () => {
       const content = editor.getJSON();
 
@@ -96,9 +89,7 @@ export default function Editor({ docId }: { docId: string }) {
 
   // 페이지를 떠나기 이전 변경사항 저장
   const updateContentBeforeLeave = async () => {
-    if (selectedDocument && selectedDocument.id && selectedDocument.docContent) {
-      await updateContent(selectedDocument);
-    }
+    await updateContent(selectedDocument);
   };
 
   useDocumentRealTime({ docId }); // 문서의 실시간 변경을 감지
@@ -108,8 +99,9 @@ export default function Editor({ docId }: { docId: string }) {
   if (!editor) {
     return null;
   }
+
   return (
-    <div className="flex-grow h-full overflow-y-auto">
+    <div className="w-full h-full overflow-y-auto">
       {/* 에디터의 헤더 */}
       <div className="sticky top-0 bg-white z-10">
         <EditorHeader
@@ -117,10 +109,11 @@ export default function Editor({ docId }: { docId: string }) {
         <MenuBar editor={editor} />
       </div>
       <div
-        className='p-4 h-full'>
+        className='p-4'>
         <EditorTitleInput
           docTitle={docTitle}
-          docTitleChange={docTitleChange} />
+          docTitleChange={docTitleChange}
+          editor={editor} />
         <DragHandle
           tippyOptions={{
             placement: 'left',

@@ -2,7 +2,7 @@
 
 import { useEffect, useCallback } from 'react'
 import { useAppSelector } from '@/redux/hooks'
-import { useRouter } from 'next-nprogress-bar';
+import { useRouter } from 'next/navigation';
 
 export default function useLeavePage(onLeavePage: () => void | Promise<void>) {
     const router = useRouter()
@@ -10,7 +10,7 @@ export default function useLeavePage(onLeavePage: () => void | Promise<void>) {
 
     const leavePage = useCallback(async () => {
         try {
-            if (selectedDocument && selectedDocument.id) {
+            if (selectedDocument && selectedDocument.id && selectedDocument.docContent) {
                 await onLeavePage();
             }
         } catch (error) {

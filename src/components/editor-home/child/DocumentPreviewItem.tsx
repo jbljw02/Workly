@@ -15,11 +15,12 @@ type DocumentPreviewItemProps = {
 
 export default function DocumentPreviewItem({ document }: DocumentPreviewItemProps) {
     const user = useAppSelector(state => state.user);
+    const documents = useAppSelector(state => state.documents);
+    console.log('documents22', documents);
 
     // 문서 미리보기 렌더링
     const renderDocumentPreview = (docContent: JSONContent | null) => {
         return docContent?.content?.map((block, index) => {
-            // 텍스트 블록
             if (block.type === 'paragraph') {
                 return <p key={index}>
                     {block.content?.map(item => item.text)}

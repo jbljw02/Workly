@@ -14,7 +14,7 @@ function ConnectedUserItem({ user, index }: ConnectedUserItemProps) {
     return (
         <div
             key={user.id}
-            className={`relative ${index !== 0 ? '-ml-1' : ''}`}>
+            className={`flex items-center justify-center relative ${index !== 0 ? '-ml-1' : ''}`}>
             <HoverTooltip label={user.name}>
                 <Image
                     src={user.photoURL}
@@ -34,7 +34,7 @@ export default function ConnectedUsers() {
             <div className="flex items-center justify-center pt-0.5 gap-1">
                 <GreenCircleIcon
                     width="10"
-                    className="pt-0.5" />
+                    className="pt-1" />
                 <div className="text-[11px] text-neutral-500">연결됨</div>
             </div>
             <div className="flex flex-row">
