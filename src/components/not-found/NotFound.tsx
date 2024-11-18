@@ -11,7 +11,7 @@ export default function NotFound() {
                 <>
                     페이지를 찾을 수 없습니다.
                     <br />
-                    삭제됐거나 존재하지 않는 문서입니다.
+                    존재하지 않는 경로입니다.
                 </>
             }
             Icon={NotFoundIcon}

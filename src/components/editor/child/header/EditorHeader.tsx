@@ -1,21 +1,14 @@
 import MenuIcon from '../../../../../public/svgs/editor/menu-horizontal.svg'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import LinkCopyIcon from '../../../../../public/svgs/editor/link.svg'
-import DownloadIcon from '../../../../../public/svgs/editor/download.svg'
-import CopyIcon from '../../../../../public/svgs/editor/copy.svg'
-import DeleteIcon from '../../../../../public/svgs/trash.svg'
-import MoveIcon from '../../../../../public/svgs/editor/move-folder.svg'
 import MenuList from '../MenuList'
 import { MenuItemProps } from '../MenuItem'
 import LockIcon from '../../../../../public/svgs/editor/lock.svg'
 import UnLockIcon from '../../../../../public/svgs/editor/un-lock.svg'
-import formatTimeDiff from '@/utils/formatTimeDiff'
 import { Editor } from '@tiptap/react'
 import { useClickOutside } from '@/components/hooks/useClickOutside'
-import { useAppDispatch, useAppSelector } from '@/redux/hooks'
+import { useAppSelector } from '@/redux/hooks'
 import HeaderTitle from './HeaderTitle'
 import DocumentMoveModal from '@/components/modal/DocumentMoveModal'
-import { usePathname } from 'next/navigation'
 import HoverTooltip from '../menu-bar/HoverTooltip'
 import ToolbarButton from '../menu-bar/ToolbarButton'
 import ShareDocumentModal from '@/components/modal/share/ShareDocumentModal'
@@ -23,27 +16,25 @@ import useDeleteDocument from '@/components/hooks/useDeleteDocument'
 import { useCopyURL } from '@/components/hooks/useCopyURL'
 import useDownloadPDF from '@/components/hooks/useDownloadPDF'
 import useCopyDocument from '@/components/hooks/useCopyDocument'
-import { setCoworkerList, setEditorPermission } from '@/redux/features/shareDocumentSlice'
 import ConnectedUsers from './ConnectedUserList'
 import WebIcon from '../../../../../public/svgs/web.svg'
-import PublishIcon from '../../../../../public/svgs/publish.svg'
 import useCancelPublish from '@/components/hooks/useCancelPublish'
 import usePublishDocument from '@/components/hooks/usePublishDocument'
+import useCheckPermission from '@/components/hooks/useCheckPermission'
+import useDocumentMenu from '@/components/hooks/useMenuItem'
 
 type EditorHeaderProps = {
     editor: Editor,
-    docTitle: string,
 }
 
-export default function EditorHeader({ editor, docTitle }: EditorHeaderProps) {
-    const dispatch = useAppDispatch();
-
+export default function EditorHeader({ editor }: EditorHeaderProps) {
     const deleteDoc = useDeleteDocument();
     const copyDoc = useCopyDocument();
     const copyURL = useCopyURL();
     const downloadPDF = useDownloadPDF();
     const cancelPublish = useCancelPublish();
     const publishDocument = usePublishDocument();
+    const checkPermission = useCheckPermission();
 
     const user = useAppSelector(state => state.user);
     const selectedDocument = useAppSelector(state => state.selectedDocument);
@@ -56,11 +47,9 @@ export default function EditorHeader({ editor, docTitle }: EditorHeaderProps) {
     // 문서가 공유됐는지
     const isShared = useMemo(() => selectedDocument.collaborators.length > 0,
         [selectedDocument.collaborators]);
-
-    const pathname = usePathname();
-    const pathParts = pathname.split('/');
-    const folderId = pathParts[2]; // '/editor/[folderId]/[documentId]'일 때 folderId는 2번째 인덱스
-    const documentId = pathParts[3]; // documentId는 3번째 인덱스
+    // 문서가 게시됐는지
+    const isPublished = useMemo(() => selectedDocument.isPublished,
+        [selectedDocument.isPublished]);
 
     const optionRef = useRef<HTMLDivElement>(null);
 
@@ -68,112 +57,28 @@ export default function EditorHeader({ editor, docTitle }: EditorHeaderProps) {
     const [isMoving, setIsMoving] = useState(false); // 문서가 이동중인지
     const [isShareModal, setIsShareModal] = useState(false); // 문서가 공유됐는지
 
-    // 현재 편집 중인 문서에 대한 권한을 확인
-    const checkPermission = useCallback(() => {
-        const collaborator = selectedDocument.collaborators.find(collaborator => collaborator.email === user.email);
-
-        // 관리자라면 전체 허용으로 반환
-        if (selectedDocument.author.email === user.email) {
-            return '전체 허용';
-        }
-        // 협업자의 권한 반환
-        else if (collaborator) {
-            return collaborator.authority;
-        }
-        return null; // 권한이 없는 경우
+    // 현재 접속중인 사용자가 문서에 어떤 권한을 가지고 있는지
+    useEffect(() => {
+        checkPermission(selectedDocument);
     }, [selectedDocument.collaborators, selectedDocument.author.email, user.email]);
 
-    useEffect(() => {
-        dispatch(setEditorPermission(checkPermission()));
-    }, [checkPermission]);
-
-    const menuItems: MenuItemProps[] = useMemo(() => {
-        // 모든 권한에 공통적으로 들어가는 아이템
-        const commonMenuItems = [
-            {
-                Icon: LinkCopyIcon,
-                IconWidth: "16",
-                label: "링크 복사",
-                onClick: () => copyURL(folderId, documentId),
-            },
-            {
-                Icon: DownloadIcon,
-                IconWidth: "14",
-                label: "다운로드",
-                onClick: () => downloadPDF(editor, docTitle),
+    // 문서에 지정할 수 있는 옵션의 목록
+    const menuItems = useDocumentMenu({
+        document: selectedDocument,
+        editorPermission: editorPermission || '',
+        isWebPublished: false,
+        onMove: () => setIsMoving(true),
+        onCopy: copyDoc,
+        onCopyURL: copyURL,
+        onDownload: () => {
+            if (selectedDocument.docContent) {
+                downloadPDF(editor.getHTML(), selectedDocument.title)
             }
-        ];
-
-        // 모든 권한을 가지고 있을 때의 아이템
-        const fullPermissionItems = [
-            {
-                Icon: MoveIcon,
-                IconWidth: "15",
-                label: "옮기기",
-                onClick: () => setIsMoving(true),
-            },
-            {
-                Icon: CopyIcon,
-                IconWidth: "16",
-                label: "사본 만들기",
-                onClick: () => copyDoc(selectedDocument),
-            },
-            ...commonMenuItems
-        ];
-
-        // 웹 페이지로 게시된 문서를 보고 있다면
-        if (webPublished) {
-            return [
-                ...commonMenuItems
-            ];
-        }
-
-        // 모든 권한을 가지고 있지 않다면
-        if (editorPermission !== '전체 허용') {
-            return commonMenuItems;
-        }
-        // 모든 권한을 가지고 있다면
-        else {
-            // 게시가 완료된 문서
-            if (selectedDocument.isPublished) {
-                return [
-                    ...fullPermissionItems,
-                    {
-                        Icon: WebIcon,
-                        IconWidth: "14",
-                        label: "게시 취소",
-                        onClick: () => cancelPublish(selectedDocument.id),
-                        horizonLine: true,
-                    },
-                    {
-                        Icon: DeleteIcon,
-                        IconWidth: "17",
-                        label: "휴지통으로 이동",
-                        onClick: (e: React.MouseEvent) => deleteDoc(e, selectedDocument),
-                    }
-                ];
-            }
-            // 게시가 완료되지 않은 문서
-            else {
-                return [
-                    ...fullPermissionItems,
-                    {
-                        Icon: WebIcon,
-                        IconWidth: "14",
-                        label: "게시",
-                        onClick: () => publishDocument(selectedDocument),
-                        horizonLine: true,
-                    },
-                    {
-                        Icon: DeleteIcon,
-                        IconWidth: "17",
-                        label: "휴지통으로 이동",
-                        onClick: (e: React.MouseEvent) => deleteDoc(e, selectedDocument),
-                    }
-                ];
-            }
-        }
-    }, [selectedDocument, editorPermission, webPublished]);
+        },
+        onDelete: deleteDoc,
+        onPublish: publishDocument,
+        onCancelPublish: cancelPublish
+    });
 
     useClickOutside(optionRef, () => setMenuListOpen(false), optionRef);
 
@@ -196,15 +101,23 @@ export default function EditorHeader({ editor, docTitle }: EditorHeaderProps) {
                         </>
                     )
                 }
+                {/* 게시된 문서인지 먼저 확인한 뒤, 아니라면 공유중인 문서인지 확인 */}
                 <HoverTooltip label={webPublished ? '공개된 문서' : (isShared ? '공유중인 문서' : '나에게만 공개')}>
                     {
-                        isAuthor && (
-                            <ToolbarButton
-                                Icon={webPublished ? WebIcon : (isShared ? UnLockIcon : LockIcon)}
-                                iconWidth={webPublished ? 17 : 20} />
-                        )
+                        <ToolbarButton
+                            Icon={webPublished ? WebIcon : (isShared ? UnLockIcon : LockIcon)}
+                            iconWidth={webPublished ? 17 : 20} />
                     }
                 </HoverTooltip>
+                {/* 게시된 문서라면 아이콘 표시 */}
+                {
+                    isPublished &&
+                    <HoverTooltip label='게시된 문서'>
+                        <ToolbarButton
+                            Icon={WebIcon}
+                            iconWidth={19} />
+                    </HoverTooltip>
+                }
                 <div
                     onClick={() => setMenuListOpen(!menuListOpen)}
                     ref={optionRef}>

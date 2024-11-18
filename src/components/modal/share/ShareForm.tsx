@@ -1,6 +1,6 @@
 import CommonInput from "@/components/input/CommonInput";
 import SubmitButton from "@/components/button/SubmitButton";
-import { updateDocuments, setSelectedDocument, Collaborator, DocumentProps, addCollaborator } from "@/redux/features/documentSlice";
+import { DocumentProps, addCollaborator } from "@/redux/features/documentSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { useRef, useEffect, useMemo, useState } from "react";
 import CloseIcon from '../../../../public/svgs/close.svg';
@@ -9,6 +9,7 @@ import Image from "next/image";
 import { addCoworker, setSelectedCoworkers, setTargetSharingEmail } from "@/redux/features/shareDocumentSlice";
 import axios from "axios";
 import { showCompleteAlert, showWarningAlert } from "@/redux/features/alertSlice";
+import { setWorkingSpinner } from "@/redux/features/placeholderSlice";
 
 type ShareFormProps = {
     selectedDoc: DocumentProps;
@@ -38,6 +39,7 @@ export default function ShareForm({ selectedDoc }: ShareFormProps) {
 
         try {
             setIsSubmitting(true); // 제출 시작
+            dispatch(setWorkingSpinner(true));
 
             // 추가중인 협업자를 문서에 추가
             const newDoc = {
@@ -68,6 +70,7 @@ export default function ShareForm({ selectedDoc }: ShareFormProps) {
             dispatch(showWarningAlert('선택된 사용자들을 멤버로 초대하는 데 실패했습니다.'));
         } finally {
             setIsSubmitting(false); // 제출 종료
+            dispatch(setWorkingSpinner(false));
         }
     }
 
@@ -129,15 +132,16 @@ export default function ShareForm({ selectedDoc }: ShareFormProps) {
                 </div>
                 <SubmitButton
                     style={{
-                        px: 'px-3.5',
-                        py: 'py-2.5',
+                        width: 'w-14',
+                        height: 'h-[42px]',
                         textSize: 'text-sm',
                         textColor: 'text-white',
                         bgColor: 'bg-blue-500',
                         hover: 'hover:bg-blue-700',
                     }}
                     label='초대'
-                    value={selectedCoworkers.length > 0 && editorPermission === '전체 허용'} />
+                    value={selectedCoworkers.length > 0 && editorPermission === '전체 허용'}
+                    onClick={inviteUser} />
             </div>
             {
                 alreadyExistCoworkers.length > 0 && (

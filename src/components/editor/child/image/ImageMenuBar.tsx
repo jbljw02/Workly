@@ -27,7 +27,6 @@ export default function ImageMenuBar({ nodeViewRef, cropStart, resizableImgProps
     const dispatch = useAppDispatch();
     const editor = resizableImgProps.editor;
 
-    const openFullModal = useAppSelector(state => state.openFullModal);
     const [alignment, setAlignment] = useState<'flex-start' | 'center' | 'flex-end'>('flex-start');
 
     const alignmentSetUp = (justifyContent: 'flex-start' | 'center' | 'flex-end') => {
@@ -36,6 +35,7 @@ export default function ImageMenuBar({ nodeViewRef, cropStart, resizableImgProps
             imgContainer.style.justifyContent = justifyContent;
             setAlignment(justifyContent);
         }
+        
     };
 
     const deleteImage = async () => {

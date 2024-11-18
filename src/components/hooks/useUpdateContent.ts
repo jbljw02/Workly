@@ -4,6 +4,8 @@ import axios from "axios";
 import { DocumentProps } from "@/redux/features/documentSlice";
 import { showWarningAlert } from "@/redux/features/alertSlice";
 import { useAppDispatch } from "@/redux/hooks";
+import firestore from "@/firebase/firestore";
+import { getDoc, doc } from "firebase/firestore";
 
 export default function useUpdateContent() {
     const dispatch = useAppDispatch();
@@ -28,7 +30,7 @@ export default function useUpdateContent() {
         []);
 
     // 즉시 업데이트 요청
-    const updateContent = useCallback(async (latestDoc: DocumentProps) => {
+    const updateContent = async (latestDoc: DocumentProps) => {
         if (!latestDoc) return;
 
         try {
@@ -41,7 +43,7 @@ export default function useUpdateContent() {
             console.error(error);
             dispatch(showWarningAlert('변경사항 저장에 실패하였습니다.'));
         }
-    }, [dispatch]);
+    };
 
 
     return { updateContent, debouncedUpdateRequest };

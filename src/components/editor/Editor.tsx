@@ -8,7 +8,7 @@ import '@/styles/editor.css';
 import EditorHeader from './child/header/EditorHeader'
 import DragHandle from '@tiptap-pro/extension-drag-handle-react'
 import MenuIcon from '../../../public/svgs/editor/menu-vertical.svg'
-import { DocumentProps, renameDocuments, setSelectedDocument, updateDocuments } from '@/redux/features/documentSlice'
+import { DocumentProps, renameDocuments, setSelectedDocument, updateDocuments, updateSelectedDocContent } from '@/redux/features/documentSlice'
 import formatTimeDiff from '@/utils/formatTimeDiff'
 import MenuBar from './child/menu-bar/MenuBar'
 import useEditorExtension from '../hooks/useEditorExtension';
@@ -17,7 +17,9 @@ import useDocumentRealTime from '../hooks/useDocumentRealTime';
 import useUpdateContent from '../hooks/useUpdateContent';
 import useLeavePage from '../hooks/useLeavePage';
 import EditorTitleInput from './child/EditorTitleInput';
-import { useRouter } from 'next/navigation';
+import EditorHeaderSkeleton from '../placeholder/skeleton/editor/EditorHeaderSkeleton';
+import EditorContentSkeleton from '../placeholder/skeleton/editor/EditorContentSkeleton';
+import { usePathname } from 'next/navigation';
 
 export default function Editor({ docId }: { docId: string }) {
   const dispatch = useAppDispatch();
@@ -25,29 +27,46 @@ export default function Editor({ docId }: { docId: string }) {
   const extensions = useEditorExtension({ docId });
   const editorPermission = useAppSelector(state => state.editorPermission);
   const editor = useEditor({
-    extensions: extensions.filter(ext => ext !== false),
+    extensions: extensions,
     editorProps: {
       attributes: {
-        class: 'prose prose-sm sm:prose lg:prose-lg xl:prose-xl m-4 focus:outline-none',
+        class: 'prose prose-sm sm:prose lg:prose-lg xl:prose-xl m-4 focus:outline-none w-full h-full',
       },
     },
     editable: editorPermission !== '읽기 허용',
-  });
+  }, []);
 
   const { updateContent, debouncedUpdateRequest } = useUpdateContent();
 
+  const pathname = usePathname();
+  const pathParts = pathname.split('/');
+  const folderId = pathParts[2]; // '/editor/[folderId]/[documentId]'일 때 folderId는 2번째 인덱스
+  const documentId = pathParts[3]; // documentId는 3번째 인덱스
+  
+  const documents = useAppSelector(state => state.documents);
+  const folders = useAppSelector(state => state.folders);
   const openColorPicker = useAppSelector(state => state.openColorPicker);
   const selectedDocument = useAppSelector(state => state.selectedDocument);
 
   const docTitle = useMemo(() => selectedDocument.title, [selectedDocument.title]); // 문서 제목
   const [lastReadedTime, setLastReadedTime] = useState<string>('현재 편집 중'); // 문서의 마지막 편집 시간에 따른 출력값
 
+  // 현재 선택된 문서를 지정
+  // documents의 값이 변경될 때마다 현재 선택된 문서의 값도 업데이트
+  useEffect(() => {
+    const currentDocument = documents.find(doc => doc.id === documentId);
+    if (currentDocument) {
+      dispatch(setSelectedDocument(currentDocument));
+    }
+  }, [folders, documents]);
+
   // 에디터의 내용이 변경될 때마다 state와의 일관성을 유지
-  const updateDocument = useCallback(async () => {
-    if (editor && selectedDocument) {
+  useEffect(() => {
+    if (!editor || !selectedDocument) return;
+
+    const updateDocument = async () => {
       const content = editor.getJSON();
 
-      // 문서의 내용을 업데이트
       const updatedDoc: DocumentProps = {
         ...selectedDocument,
         docContent: content,
@@ -58,17 +77,16 @@ export default function Editor({ docId }: { docId: string }) {
       };
 
       dispatch(updateDocuments({ docId: updatedDoc.id, ...updatedDoc }));
+      // dispatch(updateSelectedDocContent(content));
       setLastReadedTime(formatTimeDiff(updatedDoc.readedAt));
-    }
-  }, [dispatch, editor, selectedDocument]);
+    };
 
-  useEffect(() => {
-    editor?.on('update', updateDocument);
+    editor.on('update', updateDocument);
 
     return () => {
-      editor?.off('update', updateDocument);
+      editor.off('update', updateDocument);
     };
-  }, [updateDocument]);
+  }, [editor, selectedDocument, dispatch]);
 
   // 문서명이 변경되었을 때
   const docTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -89,9 +107,7 @@ export default function Editor({ docId }: { docId: string }) {
 
   // 페이지를 떠나기 이전 변경사항 저장
   const updateContentBeforeLeave = async () => {
-    if (selectedDocument.id && selectedDocument.docContent) {
-      await updateContent(selectedDocument);
-    }
+    await updateContent(selectedDocument);
   };
 
   useDocumentRealTime({ docId }); // 문서의 실시간 변경을 감지
@@ -103,34 +119,46 @@ export default function Editor({ docId }: { docId: string }) {
   }
 
   return (
-    <div className="flex-grow h-full">
+    <div className="w-full h-full overflow-y-auto">
       {/* 에디터의 헤더 */}
-      <div className="sticky top-0 bg-white z-10">
-        <EditorHeader
-          editor={editor}
-          docTitle={docTitle} />
-        <MenuBar editor={editor} />
-      </div>
-      <div
-        className='p-4 h-full'>
-        <EditorTitleInput
-          docTitle={docTitle}
-          docTitleChange={docTitleChange} />
-        <DragHandle
-          tippyOptions={{
-            placement: 'left',
-          }}
-          editor={editor}>
-          <MenuIcon width="17" />
-        </DragHandle>
-        <EditorContent
-          editor={editor}
-          className="origin-top-left h-full"
-          style={{
-            pointerEvents: openColorPicker ? 'none' : undefined,
-          }}>
-        </EditorContent>
-      </div>
+      {
+        selectedDocument.title ?
+          <div className="sticky top-0 bg-white z-10">
+            <EditorHeader
+              editor={editor} />
+            <MenuBar editor={editor} />
+          </div> :
+          <EditorHeaderSkeleton />
+      }
+      {
+        selectedDocument.docContent ?
+          <>
+            <div
+              className='p-4'>
+              <EditorTitleInput
+                docTitle={docTitle}
+                docTitleChange={docTitleChange}
+                editor={editor} />
+              <DragHandle
+                tippyOptions={{
+                  placement: 'left',
+                }}
+                className='z-0'
+                editor={editor}>
+                <MenuIcon
+                  width="17" />
+              </DragHandle>
+              <EditorContent
+                editor={editor}
+                className="origin-top-left h-full w-full"
+                style={{
+                  pointerEvents: openColorPicker ? 'none' : undefined,
+                }}>
+              </EditorContent>
+            </div>
+          </> :
+          <EditorContentSkeleton />
+      }
     </div>
   )
 }

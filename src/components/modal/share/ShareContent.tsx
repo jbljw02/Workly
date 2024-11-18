@@ -1,17 +1,11 @@
 import UserProfile from '@/components/aside/child/user/UserProfile';
-import SubmitButton from '@/components/button/SubmitButton';
-import CommonInput from '@/components/input/CommonInput';
-import { updateDocuments, Collaborator } from '@/redux/features/documentSlice';
-import { setAllUsers, UserProps } from '@/redux/features/userSlice';
+import { Collaborator } from '@/redux/features/documentSlice';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
-import { useState, useCallback, useEffect, useMemo } from 'react';
-import ArrowIcon from '../../../../public/svgs/down-arrow.svg';
-import axios from 'axios';
+import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import AuthorityButton, { AuthorityCategory } from './AuthorityButton';
 import ShareForm from './ShareForm';
 import { setCoworkerList, setSearchedCoworkers, setSelectedCoworkers, setTargetSharingEmail } from '@/redux/features/shareDocumentSlice';
 import { emailRegex } from '@/components/auth/SignUp';
-import { WorkingDocModalProps } from '@/types/workingDocModalProps';
 import { DocumentProps } from '@/redux/features/documentSlice';
 
 type ShareContentProps = {
@@ -28,6 +22,7 @@ export default function ShareContent({ selectedDoc }: ShareContentProps) {
     const targetSharingEmail = useAppSelector(state => state.targetSharingEmail); // 공유할 사용자의 이메일
     const searchedCoworkers = useAppSelector(state => state.searchedCoworkers); // 검색된 협업자들
 
+    const scrollbarRef = useRef<HTMLDivElement>(null);
     const [selectedIndex, setSelectedIndex] = useState<number>(-1); // 선택된 협업자 인덱스
     const [isKeyboardNav, setIsKeyboardNav] = useState<boolean>(false); // 키보드 네비게이션 모드 여부
     const [isDropdownEnabled, setIsDropdownEnabled] = useState<boolean>(false); // 드롭다운 메뉴 활성화 여부
@@ -187,9 +182,11 @@ export default function ShareContent({ selectedDoc }: ShareContentProps) {
                     </div>
                 )}
             {/* 현재 문서에 접근 권한이 있는 사용자를 나열 */}
-            <div className='flex flex-col mt-7 px-5'>
+            <div className='flex flex-col mt-7 pl-5 pr-0.5'>
                 <div className='text-sm font-semibold mb-4'>접근 권한이 있는 사용자</div>
-                <div className='flex flex-col gap-4 pb-4 min-h-[105px] max-h-[600px] overflow-y-scroll scrollbar-thin'>
+                <div
+                    ref={scrollbarRef}
+                    className='flex flex-col gap-4 pb-4 min-h-[105px] max-h-[450px] overflow-y-scroll scrollbar-thin'>
                     <div className='flex flex-row items-center justify-between'>
                         <UserProfile user={selectedDoc.author} />
                         <AuthorityButton
@@ -202,14 +199,15 @@ export default function ShareContent({ selectedDoc }: ShareContentProps) {
                         selectedDoc.collaborators.map(coworker => (
                             <div
                                 key={coworker.email}
-                                className='flex flex-row items-center justify-between'>
+                                className='flex flex-row items-center justify-between mr-0.5'>
                                 <UserProfile user={coworker} />
                                 <AuthorityButton
                                     targetUser={coworker}
                                     isClickEnabled={true}
                                     initialAuthority={coworker.authority}
                                     isMember={true}
-                                    selectedDoc={selectedDoc} />
+                                    selectedDoc={selectedDoc}
+                                    scrollbarRef={scrollbarRef} />
                             </div>
                         ))
                     }

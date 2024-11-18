@@ -124,27 +124,44 @@ export const documentSlice = createSlice({
             if (document) {
                 document.isPublished = true;
                 document.publishedUser = user;
+                document.publishedDate = {
+                    seconds: Math.floor(Date.now() / 1000),
+                    nanoseconds: Math.floor((Date.now() % 1000) * 1000000),
+                };
+            }
+        },
+        // 문서의 게시를 취소
+        canclePublishContent: (state, action) => {
+            const { docId } = action.payload;
+            const document = state.find(doc => doc.id === docId);
+            if (document) {
+                document.isPublished = false;
+                document.publishedUser = undefined;
+                document.publishedDate = undefined;
             }
         }
     },
 })
 
-export const selectedDocument = createSlice({
+export const selectedDocumentSlice = createSlice({
     name: 'selectedDocument',
     initialState: selectedDocumentState,
     reducers: {
         setSelectedDocument: (state, action) => {
             return action.payload;
+        },
+        updateSelectedDocContent: (state, action) => {
+            state.docContent = action.payload;
         }
     }
 })
 
-export const { addDocuments, updateDocuments, renameDocuments, deleteAllDocumentsOfFolder, updateCollaboratorAuthority, addCollaborator, deleteCollaborator, setDocuments, deleteDocuments, toggleShortcut, publishContent } = documentSlice.actions;
-export const { setSelectedDocument } = selectedDocument.actions;
+export const { addDocuments, updateDocuments, renameDocuments, deleteAllDocumentsOfFolder, updateCollaboratorAuthority, addCollaborator, deleteCollaborator, setDocuments, deleteDocuments, toggleShortcut, publishContent, canclePublishContent } = documentSlice.actions;
+export const { setSelectedDocument, updateSelectedDocContent } = selectedDocumentSlice.actions;
 
 const reducers = {
     documents: documentSlice.reducer,
-    selectedDocument: selectedDocument.reducer,
+    selectedDocument: selectedDocumentSlice.reducer,
 }
 
 export default reducers;

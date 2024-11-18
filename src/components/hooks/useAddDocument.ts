@@ -5,7 +5,7 @@ import axios from "axios";
 import { addDocumentToFolder, Folder } from "@/redux/features/folderSlice";
 import { showCompleteAlert, showWarningAlert } from "@/redux/features/alertSlice";
 import { SetInvalidInfo } from "@/types/invalidInfoProps";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next-nprogress-bar";
 
 export default function useAddDocument() {
     const dispatch = useAppDispatch();
@@ -36,11 +36,15 @@ export default function useAddDocument() {
         }
 
         try {
-            // tiptap cloud 서버에 문서 생성
-            await axios.post('/api/tiptap-document',
-                {
-                    docName: newDocument.id,
-                });
+            // 모달을 통해 추가할 때만 tiptap cloud 서버에 미리 요청
+            // 라우팅을 통해 추가할 때는 문서를 생성하면 자동으로 생성됨
+            if (setInvalidInfo) {
+                // tiptap cloud 서버에 문서 생성
+                await axios.post('/api/tiptap-document',
+                    {
+                        docName: newDocument.id,
+                    });
+            }
 
             // 파이어베이스에 문서 추가
             await axios.post('/api/document',

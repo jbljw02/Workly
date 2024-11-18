@@ -15,7 +15,7 @@ export default function PublishedDocuments() {
     }, [documents]);
 
     return (
-        <div className="flex flex-col w-full">
+        <div className="flex flex-col w-full h-full overflow-y-auto">
             <DocumentHeader
                 title="웹 페이지로 게시된 문서"
                 description={`${publishedDocuments.length}개의 문서`} />

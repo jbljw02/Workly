@@ -48,12 +48,12 @@ export default function HeadingDropdown({ editor, headingLevel }: { editor: Edit
 
     return (
         <div
-            className="relative w-28"
+            className="relative w-28 z-30"
             ref={dropdownRef}>
             <HoverTooltip label='스타일'>
                 <div
                     onClick={() => setIsOpen(!isOpen)}
-                    onMouseDown={(e) => e.preventDefault()} // 드래그 상태을 유지
+                    onMouseDown={(e) => e.preventDefault()} // 드래그 상태 유지
                     className="flex flex-row items-center justify-between hover:bg-gray-100 rounded-sm px-2 py-1 cursor-pointer">
                     {/* 현재 선택된 옵션을 출력 */}
                     <div className="rounded-md text-sm pr-2">
@@ -67,26 +67,26 @@ export default function HeadingDropdown({ editor, headingLevel }: { editor: Edit
                 </div>
             </HoverTooltip>
             {
-                isOpen && (
-                    <div className="absolute -left-1 right-0 bg-white border border-gray-200 rounded-sm mt-1 shadow-lg z-10 w-36 text-sm cursor-pointer">
-                        {
-                            options.map(option => (
-                                <div
-                                    key={option.value}
-                                    onClick={() => changeHeading(option)}
-                                    className={`flex flex-row justify-between px-2 py-3 hover:bg-gray-100 
+                <div className={`absolute -left-1 right-0 bg-white border border-gray-200 rounded-sm mt-1 shadow-lg z-30 w-36 text-sm cursor-pointer
+                    transition-opacity duration-150 ease-in-out
+                    ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+                    {
+                        options.map(option => (
+                            <div
+                                key={option.value}
+                                onClick={() => changeHeading(option)}
+                                className={`flex flex-row justify-between px-2 py-3 hover:bg-gray-100 
                                         ${option.value === headingLevel ? 'bg-gray-100' : ''}
                                         ${option.value === 'h1' ? 'text-2xl leading-none' : ''} 
                                         ${option.value === 'h2' ? 'text-xl leading-none' : ''} 
                                         ${option.value === 'h3' ? 'text-lg leading-none' : ''} 
                                         ${option.value === '16' ? 'text-sm leading-none' : ''}`}>
-                                    <div className="pl-1">{option.label}</div>
-                                    <TriangleRightIcon width="17" />
-                                </div>
-                            ))
-                        }
-                    </div>
-                )
+                                <div className="pl-1">{option.label}</div>
+                                <TriangleRightIcon width="17" />
+                            </div>
+                        ))
+                    }
+                </div>
             }
         </div>
     )

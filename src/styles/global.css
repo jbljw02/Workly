@@ -6,13 +6,8 @@ body {
   font-family: 'Inter', system-ui, sans-serif;
 }
 
-.scrollbar-thin::-webkit-scrollbar {
-  width: 5px;
-}
-
-.scrollbar-thin::-webkit-scrollbar-thumb {
-  background-color: #b9b9b9;
-  border-radius: 2px;
+#nprogress .bar {
+  z-index: 99999 !important;
 }
 
 /* Chrome, Safari, Edge.. */

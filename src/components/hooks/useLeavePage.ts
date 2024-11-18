@@ -1,18 +1,22 @@
 'use client'
 
 import { useEffect, useCallback } from 'react'
-import { useRouter } from 'next/navigation'
+import { useAppSelector } from '@/redux/hooks'
+import { useRouter } from 'next/navigation';
 
 export default function useLeavePage(onLeavePage: () => void | Promise<void>) {
     const router = useRouter()
+    const selectedDocument = useAppSelector(state => state.selectedDocument);
 
     const leavePage = useCallback(async () => {
         try {
-            await onLeavePage()
+            if (selectedDocument && selectedDocument.id && selectedDocument.docContent) {
+                await onLeavePage();
+            }
         } catch (error) {
             console.error('페이지를 떠나는 도중 에러 발생: ', error)
         }
-    }, [onLeavePage])
+    }, [onLeavePage]);
 
     useEffect(() => {
         // 브라우저 탭 닫기, 새로고침 감지

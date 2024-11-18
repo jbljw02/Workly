@@ -16,7 +16,6 @@ const textSelectionState = {
     },
 }
 
-
 export const textSelectionSlice = createSlice({
     name: 'textSelection',
     initialState: textSelectionState,

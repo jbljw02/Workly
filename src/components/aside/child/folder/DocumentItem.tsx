@@ -12,7 +12,7 @@ import useDeleteDocument from '@/components/hooks/useDeleteDocument';
 
 type DocumentItemProps = {
     document: DocumentProps;
-    onClick: () => void;
+    onClick?: () => void;
 }
 
 export default function DocumentItem({ document, onClick }: DocumentItemProps) {

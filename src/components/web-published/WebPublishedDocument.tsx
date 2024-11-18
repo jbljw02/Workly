@@ -6,18 +6,18 @@ import { EditorContent, useEditor } from "@tiptap/react";
 import EditorHeader from "../editor/child/header/EditorHeader";
 import EditorTitleInput from "../editor/child/EditorTitleInput";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-
-import { useEffect } from "react";
+import { use, useEffect } from "react";
 import { setWebPublished } from "@/redux/features/webPublishedSlice";
 import convertTimestamp from "@/utils/convertTimestamp";
 import { Timestamp } from "firebase/firestore";
+import usePublishedExtension from "../hooks/usePublishedExtension";
 
 export default function PublishedDocument({ document }: { document: any }) {
     const dispatch = useAppDispatch();
 
-    const extension = useEditorExtension({ docId: document.id });
+    const extension = usePublishedExtension();
     const editor = useEditor({
-        extensions: extension.filter(ext => ext !== false),
+        extensions: extension,
         content: document.docContent,
         editable: false,
         editorProps: {
@@ -32,6 +32,7 @@ export default function PublishedDocument({ document }: { document: any }) {
             ...document,
             createdAt: convertTimestamp(document.createdAt),
             readedAt: convertTimestamp(document.readedAt),
+            publishedDate: document.publishedDate ? convertTimestamp(document.publishedDate) : undefined,
         }
         dispatch(setSelectedDocument(convertedData));
         dispatch(setWebPublished(true));
@@ -45,13 +46,12 @@ export default function PublishedDocument({ document }: { document: any }) {
         <div className="flex-grow h-full">
             <div className="sticky top-0 bg-white z-10">
                 <EditorHeader
-                    editor={editor}
-                    docTitle={document.title} />
+                    editor={editor} />
             </div>
-            <div
-                className='p-4 h-full'>
+            <div className='p-4 h-full'>
                 <EditorTitleInput
-                    docTitle={document.title} />
+                    docTitle={document.title}
+                    editor={editor} />
                 <EditorContent
                     editor={editor}
                     className="origin-top-left h-full" />

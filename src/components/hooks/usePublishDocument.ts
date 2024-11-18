@@ -1,5 +1,6 @@
 import { showWarningAlert, showCompleteAlert } from "@/redux/features/alertSlice";
 import { DocumentProps, publishContent } from "@/redux/features/documentSlice";
+import { setWorkingSpinner } from "@/redux/features/placeholderSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import axios from "axios";
 
@@ -13,18 +14,22 @@ export default function usePublishDocument() {
                 dispatch(showWarningAlert('이미 게시된 문서입니다.'));
                 return;
             }
-            
+
+            dispatch(setWorkingSpinner(true));
+
             await axios.post('/api/publish',
                 {
                     docId: selectedDoc.id,
                     user: user,
                 });
 
-            dispatch(publishContent(selectedDoc.id));
+            dispatch(publishContent({ docId: selectedDoc.id, user: user }));
             dispatch(showCompleteAlert('문서 게시에 성공했습니다.'));
         } catch (error) {
             console.log(error);
             dispatch(showWarningAlert('문서 게시에 실패했습니다.'));
+        } finally {
+            dispatch(setWorkingSpinner(false));
         }
     }
 

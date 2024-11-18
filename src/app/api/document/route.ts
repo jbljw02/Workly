@@ -3,6 +3,7 @@ import firestore from "../../../firebase/firestore";
 import { doc, getDoc, updateDoc, collection, addDoc, writeBatch, query, where, getDocs, orderBy, serverTimestamp, setDoc } from "firebase/firestore";
 import { Folder } from "@/redux/features/folderSlice";
 import { Collaborator, DocumentProps } from "@/redux/features/documentSlice";
+import { Timestamp } from 'firebase/firestore';
 
 // 사용자의 문서를 추가 - CREATE
 export async function POST(req: NextRequest) {
@@ -62,7 +63,39 @@ export async function GET(req: NextRequest) {
         const documentsSnapshot = await getDocs(documentsCollection);
 
         // 모든 문서를 추출
-        const documents = documentsSnapshot.docs.map(doc => doc.data());
+        const documents = documentsSnapshot.docs.map(doc => {
+            const data = doc.data();
+
+            // 타임스탬프 변환
+            const convertTimestamp = (timestamp: Timestamp | null) => {
+                if (!timestamp) {
+                    return { seconds: 0, nanoseconds: 0 }; // 기본값 설정
+                }
+                return {
+                    seconds: timestamp.seconds,
+                    nanoseconds: timestamp.nanoseconds,
+                };
+            };
+
+            // 타입 변환
+            const document: DocumentProps = {
+                id: doc.id,
+                title: data.title,
+                docContent: data.docContent || null,
+                createdAt: convertTimestamp(data.createdAt),
+                readedAt: convertTimestamp(data.readedAt),
+                author: data.author,
+                folderId: data.folderId,
+                folderName: data.folderName,
+                collaborators: data.collaborators || [],
+                shortcutsUsers: data.shortcutsUsers || [],
+                isPublished: data.isPublished,
+                publishedUser: data.publishedUser,
+                publishedDate: data.publishedDate ? convertTimestamp(data.publishedDate) : undefined,
+            };
+
+            return document;
+        });
 
         // 변환된 문서 데이터를 필터링
         const filteredDocuments = documents.filter(doc => {
@@ -79,6 +112,7 @@ export async function GET(req: NextRequest) {
 
         return NextResponse.json(filteredDocuments, { status: 200 });
     } catch (error) {
+        console.error("에러: ", error);
         return NextResponse.json({ error: "문서 정보 요청 실패" }, { status: 500 });
     }
 }
@@ -142,11 +176,7 @@ export async function PATCH(req: NextRequest) {
 // 문서 삭제 - DELETE
 export async function DELETE(req: NextRequest) {
     try {
-        const { searchParams } = new URL(req.url);
-
-        const email = searchParams.get('email');
-        const folderId = searchParams.get('folderId');
-        const docId = searchParams.get('docId');
+        const { email, folderId, docId, docContent } = await req.json();
 
         if (!email) return NextResponse.json({ error: "이메일이 제공되지 않음" }, { status: 400 });
         if (!folderId) return NextResponse.json({ error: "폴더 ID가 제공되지 않음" }, { status: 400 });
@@ -178,6 +208,8 @@ export async function DELETE(req: NextRequest) {
         const trashDocRef = doc(firestore, 'trash-documents', docId);
         batch.set(trashDocRef, {
             ...docData,
+            // 미처 문서의 변경사항이 저장되지 못한 상황이라면 변경사항 체크
+            ...(!docData.docContent && docContent && { docContent: docContent }),
         });
 
         // 원본 문서 삭제

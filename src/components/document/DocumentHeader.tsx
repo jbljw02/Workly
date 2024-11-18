@@ -30,7 +30,7 @@ export default function DocumentHeader({ title, description }: DocumentHeaderPro
 
     const modalProps = {
         document: {
-            title: '폴더에 문서 추가하기',
+            title: '내 폴더에 문서 추가하기',
             placeholder: "추가할 문서의 이름을 입력해주세요"
         },
         folder: {
@@ -53,8 +53,8 @@ export default function DocumentHeader({ title, description }: DocumentHeaderPro
             <div className='flex flex-row pt-5 gap-3.5'>
                 <CommonButton
                     style={{
-                        px: 'px-4',
-                        py: 'py-2',
+                        width: 'w-[74px]',
+                        height: 'h-[38px]',
                         textSize: 'text-sm',
                         textColor: 'text-black',
                         bgColor: 'bg-white',
@@ -64,8 +64,8 @@ export default function DocumentHeader({ title, description }: DocumentHeaderPro
                     onClick={() => openModal('document')} />
                 <CommonButton
                     style={{
-                        px: 'px-4',
-                        py: 'py-2',
+                        width: 'w-[74px]',
+                        height: 'h-[38px]',
                         textSize: 'text-sm',
                         textColor: 'text-white',
                         bgColor: 'bg-black',

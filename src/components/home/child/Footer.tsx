@@ -2,19 +2,18 @@
 
 import LogoIcon from '../../../../public/svgs/logo.svg';
 import GithubIcon from '../../../../public/svgs/github.svg';
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 export default function Footer() {
-    const router = useRouter();
-
     return (
         <div className="flex flex-row justify-between border-t border-gray-200 px-64 pt-8 pb-9 w-full">
             {/* Footer 좌측 */}
             <div className='flex flex-col gap-2 h-full'>
-                <LogoIcon
-                    onClick={() => router.push('/')}
-                    className="cursor-pointer"
-                    width="120" />
+                <Link href="/">
+                    <LogoIcon
+                        className="cursor-pointer"
+                        width="120" />
+                </Link>
                 <div className='text-sm'>
                     ©2024 by Workly. All Rights Reserved.
                 </div>

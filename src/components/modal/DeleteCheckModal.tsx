@@ -11,6 +11,8 @@ import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { showCompleteAlert, showWarningAlert } from "@/redux/features/alertSlice";
 import { deleteAllDocumentsTrashOfFolder, deleteDocumentsFromTrash, deleteFoldersFromTrash, removeDocumentFromFolderTrash, setDocumentsTrash, setFoldersTrash } from "@/redux/features/trashSlice";
 import useDeleteTrash from "../hooks/useDeleteTrash";
+import useOverlayLock from "../hooks/useOverlayLock";
+import { useEffect } from "react";
 
 type DeleteCheckModalProps = ModalProps & {
     searchCategory: SearchCategory;
@@ -110,9 +112,29 @@ export default function DeleteCheckModal({ isModalOpen, setIsModalOpen, searchCa
         }
     }
 
+    // 엔터키를 누를 시 삭제 작업 수행
+    useEffect(() => {
+        const keyPress = (event: KeyboardEvent) => {
+            if (event.key === 'Enter') {
+                deleteItemPermanently(item);
+            }
+        };
+
+        if (isModalOpen) {
+            window.addEventListener('keydown', keyPress);
+        }
+
+        return () => {
+            window.removeEventListener('keydown', keyPress);
+        };
+    }, [isModalOpen, item]);
+
+    useOverlayLock(isModalOpen);
+
     return (
         <Modal
             isOpen={isModalOpen}
+            onRequestClose={() => setIsModalOpen(false)}
             style={{
                 overlay: {
                     position: 'fixed',
@@ -121,7 +143,7 @@ export default function DeleteCheckModal({ isModalOpen, setIsModalOpen, searchCa
                     right: 0,
                     bottom: 0,
                     backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                    zIndex: 1000,
+                    zIndex: 500,
                 },
                 content: {
                     position: 'absolute',
@@ -130,7 +152,7 @@ export default function DeleteCheckModal({ isModalOpen, setIsModalOpen, searchCa
                     width: 500,
                     height: 240,
                     transform: 'translate(-50%, -50%)',
-                    zIndex: 1001,
+                    zIndex: 501,
                     padding: 0,
                 }
             }}>
@@ -150,8 +172,8 @@ export default function DeleteCheckModal({ isModalOpen, setIsModalOpen, searchCa
                 <div className='flex justify-end text-sm gap-3.5 px-6 pb-6'>
                     <CommonButton
                         style={{
-                            px: 'px-3.5',
-                            py: 'py-2',
+                            width: 'w-16',
+                            height: 'h-[38px]',
                             textSize: 'text-white',
                             textColor: 'text-gray-500',
                             bgColor: 'bg-red-500',
@@ -161,8 +183,8 @@ export default function DeleteCheckModal({ isModalOpen, setIsModalOpen, searchCa
                         onClick={() => deleteItemPermanently(item)} />
                     <CommonButton
                         style={{
-                            px: 'px-3.5',
-                            py: 'py-2',
+                            width: 'w-14',
+                            height: 'h-[38px]',
                             textSize: 'text-sm',
                             textColor: 'text-gray-500',
                             bgColor: 'bg-transparent',

@@ -7,19 +7,20 @@ import ArrowIcon from '../../../../../public/svgs/right-arrow.svg';
 import EditIcon from '../../../../../public/svgs/editor/pencil-edit.svg';
 import DeleteIcon from '../../../../../public/svgs/trash.svg';
 import GroupHoverItem from '../GroupHoverItem';
-import getUserFolder from '@/components/hooks/getUserFolder';
 import { deleteFolders } from '@/redux/features/folderSlice';
 import PlusIcon from '../../../../../public/svgs/plus.svg';
 import DocumentSection from './DocumentSection';
 import EditInput from './EditInput';
 import { addDocuments, deleteAllDocumentsOfFolder, DocumentProps } from '@/redux/features/documentSlice';
 import AddInputModal from '@/components/modal/AddInputModal';
-import { v4 as uuidv4 } from 'uuid';
 import HoverTooltip from '@/components/editor/child/menu-bar/HoverTooltip';
 import { showCompleteAlert, showWarningAlert } from '@/redux/features/alertSlice';
 import useAddDocument from '@/components/hooks/useAddDocument';
 import { addDocumentsToTrash, addFoldersToTrash, setDocumentsTrash } from '@/redux/features/trashSlice';
 import useUndoState from '@/components/hooks/useUndoState';
+import { usePathname } from 'next/navigation';
+import { Router } from 'next/router';
+import { useRouter } from 'next-nprogress-bar';
 
 type FolderItemProps = {
     folder: Folder;
@@ -27,15 +28,18 @@ type FolderItemProps = {
 
 export default function FolderItem({ folder }: FolderItemProps) {
     const dispatch = useAppDispatch();
+    const router = useRouter();
     
     const undoState = useUndoState();
     const addDocToFolder = useAddDocument();
 
     const user = useAppSelector(state => state.user);
-    const folders = useAppSelector(state => state.folders);
     const documents = useAppSelector(state => state.documents);
-    const foldersTrash = useAppSelector(state => state.foldersTrash);
-    const documentsTrash = useAppSelector(state => state.documentsTrash);
+
+    const pathname = usePathname();
+    const pathParts = pathname.split('/');
+    const folderId = pathParts[2]; // '/editor/[folderId]/[documentId]'일 때 folderId는 2번째 인덱스
+    const documentId = pathParts[3]; // documentId는 3번째 인덱스
 
     const [isHovered, setIsHovered] = useState(false);
     const [isEditing, setIsEditing] = useState(false); // 폴더명 수정중
@@ -84,6 +88,7 @@ export default function FolderItem({ folder }: FolderItemProps) {
     const deleteFolder = async () => {
         // 폴더 내의 문서들
         const documentsOfFolder = documents.filter(doc => folder.documentIds.includes(doc.id));
+        console.log(documentsOfFolder);
 
         try {
             // 폴더와 폴더 내의 모든 문서를 삭제
@@ -93,7 +98,12 @@ export default function FolderItem({ folder }: FolderItemProps) {
             // 삭제된 폴더와 문서들을 휴지통에 추가
             dispatch(addFoldersToTrash(folder));
             dispatch(addDocumentsToTrash(documentsOfFolder));
-            
+
+            if(documentsOfFolder.some(doc => doc.id === documentId)) {
+                router.push('/editor/home');
+            }
+
+            // 폴더 삭제 요청
             await axios.delete('/api/folder', {
                 params: {
                     email: user.email,
@@ -193,7 +203,7 @@ export default function FolderItem({ folder }: FolderItemProps) {
             <AddInputModal
                 isModalOpen={isAdding}
                 setIsModalOpen={setIsAdding}
-                title='폴더에 문서 추가하기'
+                title='내 폴더에 문서 추가하기'
                 value={docTitle}
                 setValue={setDocTitle}
                 submitFunction={() => addDocToFolder(docTitle, folder, setIsDocInvalidInfo)}

@@ -1,23 +1,27 @@
 'use client';
 
-import Favicon from '../../../public/svgs/favicon.svg';
 import { useState } from 'react';
 import SubmitButton from '@/components/button/SubmitButton';
-import CommonInput from '@/components/input/CommonInput';
 import GoogleLoginButton from '@/components/button/GoogleLoginButton';
 import HeaderButton from '@/app/header/HeaderButton';
 import DivideBar from './DivideBar';
 import AuthTop from './AuthTop';
-import { useRouter } from 'next/navigation';
 import FormInput from '../input/FormInput';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../firebase/firebasedb';
 import getEmailToken from '@/utils/getEmailToken';
 import { FirebaseError } from 'firebase/app';
 import EmailVerifyModal from '../modal/EmailVerifyModal';
+import Link from 'next/link';
+import { useRouter } from 'next-nprogress-bar';
+import 'nprogress/nprogress.css';
+import NProgress from 'nprogress';
+import { useAppDispatch, useAppSelector } from '@/redux/hooks';
+import { setWorkingSpinner } from '@/redux/features/placeholderSlice';
 
 export default function Login() {
     const router = useRouter();
+    const dispatch = useAppDispatch();
 
     const [formData, setFormData] = useState({
         email: '',
@@ -63,6 +67,8 @@ export default function Login() {
 
     const login = async () => {
         try {
+            dispatch(setWorkingSpinner(true));
+
             await signInWithEmailAndPassword(auth, formData.email, formData.password);
             const user = auth.currentUser;
 
@@ -97,6 +103,9 @@ export default function Login() {
                 }))
             }
         }
+        finally {
+            dispatch(setWorkingSpinner(false));
+        }
     }
 
     return (
@@ -127,8 +136,8 @@ export default function Login() {
                         isInvalidInfo={isInvalidInfo} />
                     <SubmitButton
                         style={{
-                            px: '',
-                            py: 'py-3.5',
+                            width: 'w-full',
+                            height: 'h-[52px]',
                             textSize: 'text-base',
                             textColor: 'text-white',
                             bgColor: 'bg-blue-500',
@@ -145,9 +154,9 @@ export default function Login() {
                 <div className='flex justify-between items-center text-sm w-full'>
                     <div className='flex flex-row gap-1.5'>
                         <div>아직 계정이 없으신가요?</div>
-                        <button
-                            onClick={() => router.push('/signup')}
-                            className='text-blue-600 underline'>회원가입</button>
+                        <Link
+                            href="/signup"
+                            className='text-blue-600 underline'>회원가입</Link>
                     </div>
                     <div className='flex flex-row gap-1.5'>
                         <div>비밀번호를 잊으셨나요?</div>

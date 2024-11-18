@@ -12,7 +12,7 @@ export default function SharedDocuments() {
     // 공유중인 문서 목록
     const sharedDocuments = useMemo(() => documents.filter(document => document.collaborators.length > 0), [documents]);
     return (
-        <div className="flex flex-col w-full">
+        <div className="flex flex-col w-full h-full overflow-y-auto">
             <DocumentHeader
                 title="공유중인 문서"
                 description="다른 사용자와 함께 작업하고 있는 문서" />

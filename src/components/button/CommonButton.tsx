@@ -1,6 +1,6 @@
 type StyleProps = {
-    px: string;
-    py: string;
+    width: string;
+    height: string;
     textSize: string;
     textColor: string;
     bgColor: string;
@@ -15,13 +15,12 @@ type CommonButtonProps = {
 };
 
 export default function CommonButton({ style, label, onClick, disabled }: CommonButtonProps) {
-    const { px, py, textSize, textColor, bgColor, hover } = style;
-
+    const { width, height, textSize, textColor, bgColor, hover } = style;
     return (
         <button
             type="button"
             onClick={disabled ? undefined : onClick}
-            className={`${px} ${py} ${textSize} ${textColor}
+            className={`${width} ${height} ${textSize} ${textColor}
             whitespace-nowrap rounded-lg border transform transition-all duration-200 select-none
             ${disabled ? 'border-gray-300 bg-gray-300 cursor-not-allowed' : `${hover} ${bgColor}`}`}>
             {label}

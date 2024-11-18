@@ -3,12 +3,11 @@
 import formatTimeDiff from "@/utils/formatTimeDiff";
 import MenuIcon from '../../../public/svgs/editor/menu-vertical.svg'
 import ShareDocumentIcon from '../../../public/svgs/shared-document.svg'
-import { useRouter } from "next/navigation";
 import { DocumentProps } from "@/redux/features/documentSlice";
 import { MenuItemProps } from "../editor/child/MenuItem";
 import useCopyDocument from "../hooks/useCopyDocument";
 import { useCopyURL } from "../hooks/useCopyURL";
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import MoveIcon from '../../../public/svgs/editor/move-folder.svg'
 import CopyIcon from '../../../public/svgs/editor/copy.svg'
 import DeleteIcon from '../../../public/svgs/trash.svg'
@@ -17,7 +16,6 @@ import useDeleteDocument from "../hooks/useDeleteDocument";
 import MenuList from "../editor/child/MenuList";
 import HoverTooltip from "../editor/child/menu-bar/HoverTooltip";
 import LabelButton from "../button/LabelButton";
-import ShareIcon from '../../../public/svgs/group.svg';
 import DocumentMoveModal from "../modal/DocumentMoveModal";
 import ShareDocumentModal from "../modal/share/ShareDocumentModal";
 import ShortcutsOffIcon from '../../../public/svgs/shortcuts-off.svg';
@@ -25,6 +23,16 @@ import ShortcutsOnIcon from '../../../public/svgs/shortcuts-on.svg';
 import { useAppSelector, useAppDispatch } from "@/redux/hooks";
 import useToggleShortcuts from "../hooks/useToggleShortcuts";
 import { useClickOutside } from "../hooks/useClickOutside";
+import { generateHTML } from "@tiptap/react";
+import extensions from "@/components/hooks/useEditorExtension";
+import usePublishedExtension from "../hooks/usePublishedExtension";
+import useDownloadPDF from "../hooks/useDownloadPDF";
+import useCancelPublish from "../hooks/useCancelPublish";
+import usePublishDocument from "../hooks/usePublishDocument";
+import WebIcon from '../../../public/svgs/web.svg'
+import useCheckPermission from "../hooks/useCheckPermission";
+import useDocumentMenu from "../hooks/useMenuItem";
+import { useRouter } from "next-nprogress-bar";
 
 type DocumentListItemProps = {
     document: DocumentProps;
@@ -33,7 +41,6 @@ type DocumentListItemProps = {
 }
 
 export default function DocumentListItem({ document, isShared, isPublished }: DocumentListItemProps) {
-    const dispatch = useAppDispatch();
     const router = useRouter();
 
     const user = useAppSelector(state => state.user);
@@ -43,51 +50,42 @@ export default function DocumentListItem({ document, isShared, isPublished }: Do
     const copyURL = useCopyURL();
     const deleteDoc = useDeleteDocument();
     const clickShortcut = useToggleShortcuts();
+    const downloadPDF = useDownloadPDF();
+    const cancelPublish = useCancelPublish();
+    const publishDocument = usePublishDocument();
+    const checkPermission = useCheckPermission();
+    const extensions = usePublishedExtension();
 
+    const editorPermission = useAppSelector(state => state.editorPermission);
     const [isMoving, setIsMoving] = useState(false); // 문서를 이동중인지
     const [isSharing, setIsSharing] = useState(false); // 문서를 공유중인지
     const [openMenuId, setOpenMenuId] = useState<string | null>(null);
     const [selectedDoc, setSelectedDoc] = useState<DocumentProps | null>(null);
 
-    const menuItems: MenuItemProps[] = [
-        {
-            Icon: MoveIcon,
-            IconWidth: "15",
-            label: "옮기기",
-            onClick: () => setIsMoving(true),
+    const menuItems = useDocumentMenu({
+        document: selectedDoc,
+        editorPermission: editorPermission || '',
+        isWebPublished: false,
+        onMove: () => setIsMoving(true),
+        onCopy: copyDoc,
+        onCopyURL: copyURL,
+        onDownload: () => {
+            if (selectedDoc?.docContent) {
+                downloadPDF(generateHTML(selectedDoc.docContent, extensions), selectedDoc.title)
+            }
         },
-        {
-            Icon: CopyIcon,
-            IconWidth: "16",
-            label: "사본 만들기",
-            onClick: () => copyDoc(selectedDoc!),
-        },
-        {
-            Icon: LinkCopyIcon,
-            IconWidth: "16",
-            label: "링크 복사",
-            onClick: () => copyURL(selectedDoc!.folderId, selectedDoc!.id),
-        },
-        {
-            Icon: ShareIcon,
-            IconWidth: "16",
-            label: "공유하기",
-            onClick: () => setIsSharing(true),
-        },
-        {
-            Icon: DeleteIcon,
-            IconWidth: "17",
-            label: "휴지통으로 이동",
-            onClick: (e) => deleteDoc(e, selectedDoc!),
-            horizonLine: true,
-        }
-    ];
+        onDelete: deleteDoc,
+        onPublish: publishDocument,
+        onCancelPublish: cancelPublish
+    });
 
     // 문서의 옵션을 클릭
     const clickDocMenu = (e: React.MouseEvent, document: DocumentProps) => {
         e.stopPropagation();
-        setOpenMenuId(openMenuId === document.id ? null : document.id);
         setSelectedDoc(document);
+        checkPermission(document); // 문서에 대한 현재 사용자의 권한을 확인
+
+        setOpenMenuId(openMenuId === document.id ? null : document.id);
     }
 
     useClickOutside(optionRef, () => setOpenMenuId(null));
@@ -97,7 +95,9 @@ export default function DocumentListItem({ document, isShared, isPublished }: Do
             <div
                 className='flex items-center w-full hover:bg-gray-100 cursor-pointer transition-all duration-150 group'
                 onClick={() => {
-                    router.push(`/editor/${document.folderId}/${document.id}`)
+                    isPublished ?
+                        window.open(`/web-published/${document.folderId}/${document.id}`, '_blank') :
+                        router.push(`/editor/${document.folderId}/${document.id}`)
                 }}>
                 <div
                     className='relative flex flex-1 items-center py-5 mx-12 border-b'>

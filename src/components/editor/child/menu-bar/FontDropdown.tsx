@@ -87,7 +87,7 @@ export default function FontDropdown({ editor }: { editor: Editor }) {
 
     return (
         <div
-            className="relative w-24"
+            className="relative w-24 z-20"
             ref={dropdownRef}>
             <HoverTooltip label='글꼴'>
                 <div
@@ -105,23 +105,23 @@ export default function FontDropdown({ editor }: { editor: Editor }) {
                 </div>
             </HoverTooltip>
             {
-                isOpen && (
-                    <div className="absolute -left-1 right-0 bg-white border border-gray-200 rounded-sm mt-1 shadow-lg z-10 w-40 text-sm cursor-pointer">
-                        {
-                            fonts.map((font, index) => (
-                                <div
-                                    key={index}
-                                    onClick={() => changeFont(font)}
-                                    className={`flex flex-row justify-between p-2 hover:bg-gray-100 pt-2.5 pb-2.5
+                <div className={`absolute -left-1 right-0 bg-white border border-gray-200 rounded-sm mt-1 shadow-lg z-20 w-40 text-sm cursor-pointer
+                    transition-opacity duration-150 ease-in-out
+                    ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+                    {
+                        fonts.map((font, index) => (
+                            <div
+                                key={index}
+                                onClick={() => changeFont(font)}
+                                className={`flex flex-row justify-between p-2 hover:bg-gray-100 pt-2.5 pb-2.5
                                         ${font.name === selectedFont ? 'bg-gray-100' : ''}`}
-                                    style={{ fontFamily: font.style, whiteSpace: 'nowrap' }}>
-                                    <div className="pl-1">{font.name}</div>
-                                    <TriangleRightIcon width="17" />
-                                </div>
-                            ))
-                        }
-                    </div>
-                )
+                                style={{ fontFamily: font.style, whiteSpace: 'nowrap' }}>
+                                <div className="pl-1">{font.name}</div>
+                                <TriangleRightIcon width="17" />
+                            </div>
+                        ))
+                    }
+                </div>
             }
         </div>
     );

@@ -7,7 +7,6 @@ import TrashIcon from '../../../public/svgs/trash.svg';
 import HomeIcon from '../../../public/svgs/home.svg';
 import DocumentIcon from '../../../public/svgs/document.svg';
 import { useAppSelector } from "@/redux/hooks";
-import { useRouter } from "next/navigation";
 import FolderSection from "./child/folder/FolderSection";
 import UserSection from "./child/user/UserSection";
 import GroupIcon from '../../../public/svgs/group.svg';
@@ -15,9 +14,9 @@ import useAddDocument from "../hooks/useAddDocument";
 import Trash from "../trash/Trash";
 import ShortcutIcon from '../../../public/svgs/shortcuts-off.svg';
 import WebIcon from '../../../public/svgs/web.svg';
+import Link from "next/link";
 
 export default function Aside() {
-    const router = useRouter();
     const addDocToFolder = useAddDocument();
 
     const folders = useAppSelector(state => state.folders);
@@ -78,7 +77,7 @@ export default function Aside() {
     return (
         <aside
             ref={sidebarRef}
-            className={`relative p-4 pt-5 flex flex-col transition-width duration-300 ease-in-out flex-shrink-0`}
+            className={`relative h-full p-4 pt-5 flex flex-col transition-width duration-300 ease-in-out flex-shrink-0`}
             style={{
                 width: `${sidebarWidth}px`,
                 transitionProperty: 'width',
@@ -105,43 +104,42 @@ export default function Aside() {
             <SearchInput isCollapsed={isCollapsed} />
             {/* 메뉴를 모아놓은 영역 */}
             <div className="border-b border-b-neutral-300 mb-6 mt-2 pb-5">
-                <SidebarItem
-                    Icon={HomeIcon}
-                    IconWidth="17"
-                    label="홈"
-                    isCollapsed={isCollapsed}
-                    onClick={() => router.push('/')} />
-                <SidebarItem
-                    Icon={DocumentIcon}
-                    IconWidth="17"
-                    label="문서"
-                    isCollapsed={isCollapsed}
-                    onClick={() => router.push('/editor/document')}
-                    addClick={() => addDocToFolder('', folders[0])} />
-                <SidebarItem
-                    Icon={GroupIcon}
-                    IconWidth="18"
-                    label="공유중인 문서"
-                    isCollapsed={isCollapsed}
-                    onClick={() => router.push('/editor/shared')}
-                    addClick={() => addDocToFolder('', folders[0])} />
-                <SidebarItem
-                    Icon={WebIcon}
-                    IconWidth="17"
-                    label="게시된 문서"
-                    isCollapsed={isCollapsed}
-                    onClick={() => router.push('/editor/published')} />
-                <SidebarItem
-                    Icon={ShortcutIcon}
-                    IconWidth="22"
-                    label="즐겨찾기"
-                    isCollapsed={isCollapsed}
-                    onClick={() => router.push('/editor/shortcuts')} />
-                {/* <SidebarItem
-                    Icon={TaskIcon}
-                    IconWidth="17"
-                    label="작업"
-                    isCollapsed={isCollapsed} /> */}
+                <Link href="/editor/home">
+                    <SidebarItem
+                        Icon={HomeIcon}
+                        IconWidth="17"
+                        label="홈"
+                        isCollapsed={isCollapsed} />
+                </Link>
+                <Link href="/editor/document">
+                    <SidebarItem
+                        Icon={DocumentIcon}
+                        IconWidth="17"
+                        label="문서"
+                        isCollapsed={isCollapsed}
+                        addClick={() => addDocToFolder('', folders[0])} />
+                </Link>
+                <Link href="/editor/shared">
+                    <SidebarItem
+                        Icon={GroupIcon}
+                        IconWidth="18"
+                        label="공유중인 문서"
+                        isCollapsed={isCollapsed} />
+                </Link>
+                <Link href="/editor/published">
+                    <SidebarItem
+                        Icon={WebIcon}
+                        IconWidth="17"
+                        label="게시된 문서"
+                        isCollapsed={isCollapsed} />
+                </Link>
+                <Link href="/editor/shortcuts">
+                    <SidebarItem
+                        Icon={ShortcutIcon}
+                        IconWidth="22"
+                        label="즐겨찾기"
+                        isCollapsed={isCollapsed} />
+                </Link>
             </div>
             {/* 폴더를 추가하고 보여주는 영역 */}
             <FolderSection isCollapsed={isCollapsed} />

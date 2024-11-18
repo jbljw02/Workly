@@ -1,4 +1,4 @@
-import { NodeViewWrapper, ReactNodeViewRenderer } from '@tiptap/react';
+import { mergeAttributes, NodeViewWrapper, ReactNodeViewRenderer } from '@tiptap/react';
 import { ResizableImage, ResizableImageComponent, ResizableImageNodeViewRendererProps } from 'tiptap-extension-resizable-image';
 import { useEffect, useRef, useState } from 'react';
 import 'react-image-crop/dist/ReactCrop.css';
@@ -12,6 +12,7 @@ import uploadImage from '@/utils/image/uploadImageToStorage';
 import cropImage from '@/utils/image/cropImage';
 import { showWarningAlert } from '@/redux/features/alertSlice';
 import ImageFullModal from './ImageFullModal';
+import { Plugin, TextSelection } from 'prosemirror-state';
 
 const NodeView = (resizableImgProps: ResizableImageNodeViewRendererProps) => {
   const dispatch = useAppDispatch();
@@ -181,55 +182,51 @@ const NodeView = (resizableImgProps: ResizableImageNodeViewRendererProps) => {
       <NodeViewWrapper
         ref={nodeViewRef}
         as="figure"
-        className="relative image-component"
+        className="image-component z-10"
         data-drag-handle
         style={{ justifyContent: alignment }}
         contentEditable={false}
         draggable={true}>
-        <div
-          // 문서가 게시중이거나 권한이 읽기 허용일 땐 클릭 시 즉시 전체화면
-          onClick={
-            () => (webPublished || editorPermission === '읽기 허용') &&
-              dispatch(setOpenFullModal(true))
-          }
-          className="inline-flex flex-col items-center relative h-auto">
-          {
-            // 이미지 자르기 모드
-            cropMode ? (
-              <ImageCropper
-                imgRef={imgRef}
-                resizableImgProps={resizableImgProps} />
-            ) :
-              (
-                <div
-                  onClick={() => setShowMenu(true)}
-                  className="flex cursor-pointer">
-                  <ResizableImageComponent {...resizableImgProps} />
-                </div>
-              )
-          }
-          {/* 이미지를 이용해 여러 작업을 하는 메뉴바 */}
-          {/* 게시된 문서를 열람중이 아니고, 권한이 읽기 허용보다 높을 때만 */}
-          {
+        {
+          // 이미지 자르기 모드
+          cropMode ? (
+            <ImageCropper
+              imgRef={imgRef}
+              resizableImgProps={resizableImgProps} />
+          ) :
             (
-              showMenu &&
-              !cropMode &&
-              !webPublished &&
-              (editorPermission === '전체 허용' || editorPermission === '쓰기 허용')) && (
-              <ImageMenuBar
-                nodeViewRef={nodeViewRef}
-                cropStart={cropStart}
-                resizableImgProps={resizableImgProps} />
+              <div
+                onClick={
+                  () => (webPublished || editorPermission === '읽기 허용') ?
+                    dispatch(setOpenFullModal(true)) :
+                    setShowMenu(true)
+                }
+                className="cursor-pointer inline-flex z-40">
+                <ResizableImageComponent {...resizableImgProps} />
+              </div>
             )
-          }
-          {
-            cropMode && (
-              <ImageCropBar
-                cropApply={cropApply}
-                cropCancel={cropCancel} />
-            )
-          }
-        </div>
+        }
+        {/* 이미지를 이용해 여러 작업을 하는 메뉴바 */}
+        {/* 게시된 문서를 열람중이 아니고, 권한이 읽기 허용보다 높을 때만 */}
+        {
+          (
+            showMenu &&
+            !cropMode &&
+            !webPublished &&
+            (editorPermission === '전체 허용' || editorPermission === '쓰기 허용')) && (
+            <ImageMenuBar
+              nodeViewRef={nodeViewRef}
+              cropStart={cropStart}
+              resizableImgProps={resizableImgProps} />
+          )
+        }
+        {
+          cropMode && (
+            <ImageCropBar
+              cropApply={cropApply}
+              cropCancel={cropCancel} />
+          )
+        }
       </NodeViewWrapper>
       <ImageFullModal resizableImgProps={resizableImgProps} />
     </>
@@ -248,17 +245,14 @@ const ImageNodeView = ResizableImage.extend({
       },
     };
   },
+
   group: 'block',
   inline: false,
-
-  renderHTML({ HTMLAttributes }) {
-    return ['figure', { class: 'image-component' }, ['img', HTMLAttributes]];
-  },
+  draggable: true,
 
   addNodeView() {
     return ReactNodeViewRenderer(NodeView as React.ComponentType<any>);
   },
-
 });
 
 export default ImageNodeView;

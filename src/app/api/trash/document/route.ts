@@ -2,6 +2,7 @@ import { Collaborator } from "@/redux/features/documentSlice";
 import { collection, doc, getDoc, getDocs, writeBatch } from "firebase/firestore";
 import { NextRequest, NextResponse } from "next/server";
 import firestore from "../../../../firebase/firestore";
+import { deleteObject, getStorage, ref } from "firebase/storage";
 
 // 휴지통에 있는 사용자의 문서 복원 - CREATE
 export async function POST(req: NextRequest) {
@@ -138,8 +139,44 @@ export async function DELETE(req: NextRequest) {
         // 배치 작업 실행
         await batch.commit();
 
-        return NextResponse.json({ success: "문서가 영구 삭제됨" }, { status: 200 });
+        const documentData = trashDocSnap.data();
+
+        // 문서 내용에서 이미지 URL 추출
+        const imageUrls: string[] = [];
+
+        const storage = getStorage();
+
+        // 문서의 내용 배열을 순회하면서 이미지 컴포넌트의 src 추출
+        if (documentData.docContent) {
+            documentData.docContent.content.forEach((block: any) => {
+                if (block.type === 'imageComponent' && block.attrs.src) {
+                    imageUrls.push(block.attrs.src);
+                }
+            });
+        }
+
+        // 스토리지에서 이미지 삭제
+        const deletePromises = imageUrls.map(async (url) => {
+            try {
+                // URL에서 파일 경로 추출
+                const filePathMatch = url.match(/o\/(.+?)\?/);
+                if (filePathMatch) {
+                    const filePath = decodeURIComponent(filePathMatch[1]);
+                    const imageRef = ref(storage, filePath);
+                    await deleteObject(imageRef);
+                }
+            } catch (error) {
+                // 개별 이미지 삭제 실패는 전체 프로세스를 중단하지 않음
+                console.error('이미지 삭제 실패:', error);
+            }
+        });
+
+        // 모든 이미지 삭제 작업 완료 대기
+        await Promise.all(deletePromises);
+
+        return NextResponse.json({ success: "문서와 삭제 성공" }, { status: 200 });
     } catch (error) {
+        console.error('문서 삭제 실패:', error);
         return NextResponse.json({ error: "문서 삭제 실패" }, { status: 500 });
     }
 }

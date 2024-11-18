@@ -4,6 +4,7 @@ import { useRef, ReactNode } from 'react';
 import { useClickOutside } from '../hooks/useClickOutside';
 import DownloadIcon from '../../../public/svgs/editor/download.svg';
 import CloseIcon from '../../../public/svgs/editor/close.svg';
+import useOverlayLock from '../hooks/useOverlayLock';
 
 interface FileFullModal extends ModalProps {
     children: ReactNode;
@@ -31,6 +32,8 @@ export default function FileFullModal({
         document.body.removeChild(link);
     };
 
+    useOverlayLock(isModalOpen);
+
     return (
         <Modal
             isOpen={isModalOpen}
@@ -43,8 +46,8 @@ export default function FileFullModal({
                     left: 0,
                     right: 0,
                     bottom: 0,
-                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                    zIndex: 1000, 
+                    backgroundColor: 'rgba(0, 0, 0, 0.65)',
+                    zIndex: 500, 
                 },
                 content: {
                     display: 'flex',
@@ -56,7 +59,7 @@ export default function FileFullModal({
                     width: '100vw',
                     height: '100vh',
                     padding: 0,
-                    zIndex: 1001,
+                    zIndex: 501,
                     inset: 0, // 모달을 화면 전체에 꽉 채우도록
                 },
             }}>

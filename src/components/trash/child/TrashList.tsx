@@ -4,6 +4,7 @@ import TrashItem from "./TrashItem";
 import { useMemo } from "react";
 import EmptyTrashIcon from '../../../../public/svgs/empty-trash.svg';
 import React from "react";
+import TrashSkeleton from "@/components/placeholder/skeleton/TrashSkeleton";
 
 type TrashListProps = {
     searchedInput: string;
@@ -13,6 +14,7 @@ type TrashListProps = {
 export default function TrashList({ searchedInput, searchCategory }: TrashListProps) {
     const documentsTrash = useAppSelector(state => state.documentsTrash);
     const foldersTrash = useAppSelector(state => state.foldersTrash);
+    const isTrashLoading = useAppSelector(state => state.loading.isTrashLoading);
 
     // 문서와 폴더 중 출력하는 항목에 따라 다른 값 반환
     const trashList = useMemo(() => searchCategory === '문서' ?
@@ -21,26 +23,30 @@ export default function TrashList({ searchedInput, searchCategory }: TrashListPr
         [searchCategory, documentsTrash, foldersTrash, searchedInput]);
 
     return (
-        <div className="flex flex-col mt-1 flex-grow overflow-y-auto">
+        <div className="flex flex-col mt-1 flex-grow overflow-y-auto overflow-x-hidden scrollbar-thin">
             {
-                trashList.length ?
-                    trashList.map(document => (
-                        <React.Fragment key={document.id}>
-                            <TrashItem
-                                item={document}
-                                searchCategory={searchCategory} />
-                        </React.Fragment>
-                    )) :
-                    <div className="flex flex-col items-center justify-center text-neutral-500 h-full gap-3 pb-6">
-                        <EmptyTrashIcon width="33" />
-                        <div className="text-sm">
-                            {
-                                searchedInput.length > 0 ?
-                                    '일치하는 검색 결과가 없습니다.' :
-                                    '휴지통이 비어있습니다.'
-                            }
-                        </div>
-                    </div>
+                isTrashLoading && trashList.length === 0 ?
+                    <TrashSkeleton /> :
+                    (
+                        trashList.length ?
+                            trashList.map(document => (
+                                <React.Fragment key={document.id}>
+                                    <TrashItem
+                                        item={document}
+                                        searchCategory={searchCategory} />
+                                </React.Fragment>
+                            )) :
+                            <div className="flex flex-col items-center justify-center text-neutral-500 h-full gap-3 pb-6">
+                                <EmptyTrashIcon width="33" />
+                                <div className="text-sm">
+                                    {
+                                        searchedInput.length > 0 ?
+                                            '일치하는 검색 결과가 없습니다.' :
+                                            '휴지통이 비어있습니다.'
+                                    }
+                                </div>
+                            </div>
+                    )
             }
         </div>
     )

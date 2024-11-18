@@ -5,6 +5,9 @@ import CommonInput from '../input/CommonInput';
 import SubmitButton from '../button/SubmitButton';
 import CommonButton from '../button/CommonButton';
 import ModalHeader from './ModalHeader';
+import useOverlayLock from '../hooks/useOverlayLock';
+import { useAppDispatch } from '@/redux/hooks';
+import { setWorkingSpinner } from '@/redux/features/placeholderSlice';
 
 export interface AddInputModal extends ModalProps {
     title: string;
@@ -26,12 +29,15 @@ export default function AddInputModal({
     isInvalidInfo,
     setIsInvalidInfo,
     placeholder }: AddInputModal) {
+    const dispatch = useAppDispatch();
+    
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const modalSubmit = async (e: React.FormEvent) => {
         e.preventDefault(); // 폼 제출 시 페이지 리로드 방지
         // 중복 제출을 방지하기 위해 제출 중일 때는 무시
         if (value && !isSubmitting) {
+            dispatch(setWorkingSpinner(true));
             setIsSubmitting(true); // 현재 제출중
             try {
                 const isFailed = await submitFunction();
@@ -40,6 +46,7 @@ export default function AddInputModal({
                 setValue('');
             } finally {
                 setIsSubmitting(false);
+                dispatch(setWorkingSpinner(false));
             }
         }
     }
@@ -60,9 +67,12 @@ export default function AddInputModal({
         }
     }
 
+    useOverlayLock(isModalOpen);
+
     return (
         <Modal
             isOpen={isModalOpen}
+            onRequestClose={closeModal}
             style={{
                 overlay: {
                     position: 'fixed',
@@ -71,7 +81,7 @@ export default function AddInputModal({
                     right: 0,
                     bottom: 0,
                     backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                    zIndex: 1000,
+                    zIndex: 500,
                 },
                 content: {
                     position: 'absolute',
@@ -80,7 +90,7 @@ export default function AddInputModal({
                     width: 500,
                     height: 240,
                     transform: 'translate(-50%, -50%)',
-                    zIndex: 1001,
+                    zIndex: 501,
                     padding: 0,
                 }
             }}>
@@ -112,8 +122,8 @@ export default function AddInputModal({
                 <div className='flex justify-end text-sm gap-3.5 px-6 pb-6'>
                     <SubmitButton
                         style={{
-                            px: 'px-3.5',
-                            py: 'py-2',
+                            width: 'w-16',
+                            height: 'h-[38px]',
                             textSize: 'text-sm',
                             textColor: 'text-white',
                             bgColor: 'bg-blue-500',
@@ -123,8 +133,8 @@ export default function AddInputModal({
                         value={value} />
                     <CommonButton
                         style={{
-                            px: 'px-3.5',
-                            py: 'py-2',
+                            width: 'w-14',
+                            height: 'h-[38px]',
                             textSize: 'text-sm',
                             textColor: 'text-gray-500',
                             bgColor: 'bg-transparent',

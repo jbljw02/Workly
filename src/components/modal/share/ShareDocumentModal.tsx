@@ -1,19 +1,18 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Modal from 'react-modal';
 import CommonInput from '../../input/CommonInput';
 import CommonButton from '../../button/CommonButton';
 import ModalHeader from '../ModalHeader';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
-import { showCompleteAlert, showWarningAlert } from '@/redux/features/alertSlice';
 import { useCopyURL } from '../../hooks/useCopyURL';
 import PublishContent from './PublishContent';
 import ShareContent from './ShareContent';
 import { setTargetSharingEmail } from '@/redux/features/shareDocumentSlice';
 import { WorkingDocModalProps } from '@/types/workingDocModalProps';
-import axios from 'axios';
-import { publishContent } from '@/redux/features/documentSlice';
 import useCancelPublish from '@/components/hooks/useCancelPublish';
 import usePublishDocument from '@/components/hooks/usePublishDocument';
+import useOverlayLock from '@/components/hooks/useOverlayLock';
+import SubmitButton from '@/components/button/SubmitButton';
 
 export default function ShareDocumentModal({ isModalOpen, setIsModalOpen, selectedDoc }: WorkingDocModalProps) {
     const dispatch = useAppDispatch();
@@ -21,7 +20,7 @@ export default function ShareDocumentModal({ isModalOpen, setIsModalOpen, select
     const copyURL = useCopyURL();
     const cancelPublish = useCancelPublish();
     const publishDocument = usePublishDocument();
-    
+
     const editorPermission = useAppSelector(state => state.editorPermission);
 
     const [workCategory, setWorkCategory] = useState<'공유' | '게시'>('공유');
@@ -31,13 +30,21 @@ export default function ShareDocumentModal({ isModalOpen, setIsModalOpen, select
         setIsModalOpen(false);
     }
 
+    useOverlayLock(isModalOpen);
+
     return (
         <Modal
             isOpen={isModalOpen}
+            onRequestClose={closeModal}
             style={{
                 overlay: {
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
                     backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                    zIndex: 48,
+                    zIndex: 500,
                 },
                 content: {
                     position: 'absolute',
@@ -46,7 +53,7 @@ export default function ShareDocumentModal({ isModalOpen, setIsModalOpen, select
                     width: 600,
                     height: 'fit-content', // h-auto와 같이 크기에 맞춰서 height 조절
                     transform: 'translate(-50%, -50%)',
-                    zIndex: 49,
+                    zIndex: 501,
                     padding: 0,
                     overflow: 'hidden',
                 }
@@ -87,8 +94,8 @@ export default function ShareDocumentModal({ isModalOpen, setIsModalOpen, select
                         <div className='flex items-center justify-end w-full text-sm p-5 border-t'>
                             <CommonButton
                                 style={{
-                                    px: 'px-3.5',
-                                    py: 'py-2',
+                                    width: 'w-20',
+                                    height: 'h-9',
                                     textSize: 'text-sm',
                                     textColor: 'text-white',
                                     bgColor: 'bg-blue-500',
@@ -98,18 +105,20 @@ export default function ShareDocumentModal({ isModalOpen, setIsModalOpen, select
                                 onClick={() => copyURL(selectedDoc.folderId, selectedDoc.id)} />
                         </div> :
                         <div className='flex items-center justify-center w-full text-sm p-5 border-t'>
-                            <CommonButton
+                            <SubmitButton
                                 style={{
-                                    px: `${selectedDoc.isPublished ? 'px-[255px]' : 'px-[270px]'}`,
-                                    py: 'py-2',
+                                    width: 'w-full',
+                                    height: 'h-9',
                                     textSize: 'text-sm',
                                     textColor: 'text-white',
                                     bgColor: 'bg-blue-500',
                                     hover: 'hover:bg-blue-700',
                                 }}
                                 label={`${selectedDoc.isPublished ? '게시 취소' : '게시'}`}
-                                onClick={() => selectedDoc.isPublished ? cancelPublish(selectedDoc.id) : publishDocument(selectedDoc)}
-                                disabled={editorPermission !== '전체 허용'} />
+                                onClick={() => selectedDoc.isPublished ?
+                                    cancelPublish(selectedDoc.id) :
+                                    publishDocument(selectedDoc)}
+                                value={editorPermission === '전체 허용'} />
                         </div>
                 }
             </div>

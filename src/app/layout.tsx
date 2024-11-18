@@ -2,12 +2,10 @@
 
 import '@/styles/global.css'
 import { makeStore, AppStore } from "@/redux/store";
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 import { Provider } from "react-redux";
-import Aside from '@/components/aside/Aside';
 import EmailVerifyCheck from '@/components/global/EmailVerifyCheck';
-import { usePathname } from 'next/navigation';
-import NextNProgress from 'nextjs-progressbar';
+import { AppProgressBar as ProgressBar } from 'next-nprogress-bar';
 
 export default function RootLayout({
   children,
@@ -16,9 +14,9 @@ export default function RootLayout({
 }>) {
   const storeRef = useRef<AppStore>()
   if (!storeRef.current) {
-    // 첫 렌더링 시에 스토어를 생성
     storeRef.current = makeStore();
   }
+
   return (
     <html lang="en" className="w-full h-full text-[#212121]">
       <head>
@@ -27,13 +25,15 @@ export default function RootLayout({
       <body className="min-w-full min-h-screen">
         <Provider store={storeRef.current}>
           <EmailVerifyCheck />
-          <NextNProgress
-            color="#29D"
-            startPosition={0.3}
-            stopDelayMs={200}
-            height={2.5}
-            showOnShallow={true} />
           {children}
+          <ProgressBar
+            height="2.5px"
+            color="#29D"
+            options={{ showSpinner: true }} // 로딩 스피너 표시
+            startPosition={0} // 프로그레스 바 시작 위치
+            stopDelay={200} // 프로그레스 바가 완료된 후 사라지는 지연 시간(200ms)
+            disableSameURL={true} // 같은 URL로 이동할 때는 비활성화
+          />
         </Provider>
       </body>
     </html>
