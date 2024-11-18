@@ -5,7 +5,7 @@ import TriangleDownIcon from '../../../../../public/svgs/editor/triangle-down.sv
 import TriangleRightIcon from '../../../../../public/svgs/editor/triangle-right.svg'
 import TriangleUpIcon from '../../../../../public/svgs/editor/triangle-up.svg'
 import { useClickOutside } from "@/components/hooks/useClickOutside";
-import HoverTooltip from "./HoverTooltip";
+import HoverTooltip from "../../../tooltip/HoverTooltip";
 
 type Option = {
     value: string;
@@ -48,7 +48,7 @@ export default function HeadingDropdown({ editor, headingLevel }: { editor: Edit
 
     return (
         <div
-            className="relative w-28 z-30"
+            className="relative w-28 z-20"
             ref={dropdownRef}>
             <HoverTooltip label='스타일'>
                 <div

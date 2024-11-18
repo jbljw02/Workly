@@ -1,7 +1,7 @@
 import { RefObject, useRef, useState } from "react";
 import BarDivider from "../divider/VerticalDivider";
-import HoverTooltip from "../menu-bar/HoverTooltip";
-import ToolbarButton from "../menu-bar/ToolbarButton";
+import HoverTooltip from "../../../tooltip/HoverTooltip";
+import ToolbarButton from "../../../button/ToolbarButton";
 import AlignLeftIcon from '../../../../../public/svgs/editor/align-left.svg';
 import AlignCenterIcon from '../../../../../public/svgs/editor/align-center.svg';
 import AlignRightIcon from '../../../../../public/svgs/editor/align-right.svg';
@@ -35,7 +35,7 @@ export default function ImageMenuBar({ nodeViewRef, cropStart, resizableImgProps
             imgContainer.style.justifyContent = justifyContent;
             setAlignment(justifyContent);
         }
-        
+
     };
 
     const deleteImage = async () => {

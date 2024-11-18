@@ -1,4 +1,4 @@
-import MenuItem, { MenuItemProps } from "@/components/editor/child/MenuItem";
+import MenuItem, { MenuItemProps } from "@/components/menu/MenuItem";
 import UserIcon from '../../../../../public/svgs/user.svg';
 import LogoutIcon from '../../../../../public/svgs/logout.svg';
 import logout from "@/utils/logout";

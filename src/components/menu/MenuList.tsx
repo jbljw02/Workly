@@ -1,7 +1,7 @@
 import React from "react";
 import MenuItem from "./MenuItem";
 import { MenuItemProps } from "./MenuItem";
-import HorizontalDivider from "./divider/HorizontalDivider";
+import HorizontalDivider from "../editor/child/divider/HorizontalDivider";
 
 type ListPosition = {
     top: string;

@@ -12,9 +12,9 @@ import LinkCopyIcon from '../../../../../public/svgs/editor/link.svg'
 import DownloadIcon from '../../../../../public/svgs/editor/download.svg'
 import CopyIcon from '../../../../../public/svgs/editor/copy.svg'
 import DeleteIcon from '../../../../../public/svgs/trash.svg'
-import MenuList from '../MenuList';
+import MenuList from '../../../menu/MenuList';
 import { v4 as uuidv4 } from 'uuid';
-import { MenuItemProps } from '../MenuItem';
+import { MenuItemProps } from '../../../menu/MenuItem';
 import { useClickOutside } from '@/components/hooks/useClickOutside';
 import { FileNodeAttrs } from '../../../../../lib/fileNode';
 

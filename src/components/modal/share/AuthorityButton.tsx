@@ -94,7 +94,7 @@ export default function AuthorityButton({
                 onClick={toggleDropdown}
                 className={`flex items-center gap-1 px-2 py-1 text-neutral-400 rounded select-none 
                     ${currentAuthority === '관리자' ? '' :
-                        (isClickEnabled && isAuthor ? 'hover:bg-gray-200 cursor-pointer' : '')}`}>
+                    (isClickEnabled && isAuthor ? 'hover:bg-gray-200 cursor-pointer' : '')}`}>
                 <div className={`whitespace-nowrap text-sm
                     ${currentAuthority === '관리자' ? 'mr-9' : ''}`}>
                     {initialAuthority}

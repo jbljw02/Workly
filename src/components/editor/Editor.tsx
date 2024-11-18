@@ -10,7 +10,7 @@ import DragHandle from '@tiptap-pro/extension-drag-handle-react'
 import MenuIcon from '../../../public/svgs/editor/menu-vertical.svg'
 import { DocumentProps, renameDocuments, setSelectedDocument, updateDocuments, updateSelectedDocContent } from '@/redux/features/documentSlice'
 import formatTimeDiff from '@/utils/formatTimeDiff'
-import MenuBar from './child/menu-bar/MenuBar'
+import MenuBar from './child/header/MenuBar'
 import useEditorExtension from '../hooks/useEditorExtension';
 import useVisitDocument from '../hooks/useVisitDocument';
 import useDocumentRealTime from '../hooks/useDocumentRealTime';
@@ -122,7 +122,7 @@ export default function Editor({ docId }: { docId: string }) {
     <div className="w-full h-full overflow-y-auto">
       {/* 에디터의 헤더 */}
       {
-        selectedDocument.title ?
+        selectedDocument.id ?
           <div className="sticky top-0 bg-white z-10">
             <EditorHeader
               editor={editor} />
@@ -131,7 +131,7 @@ export default function Editor({ docId }: { docId: string }) {
           <EditorHeaderSkeleton />
       }
       {
-        selectedDocument.docContent ?
+        selectedDocument.id ?
           <>
             <div
               className='p-4'>

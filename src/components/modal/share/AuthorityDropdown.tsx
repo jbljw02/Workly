@@ -128,12 +128,11 @@ export default function AuthorityDropdown({
         <div
             ref={dropdownRef}
             style={{
-                position: 'absolute',
                 top: `${dropdownPosition.top}px`,
                 left: `${dropdownPosition.left}px`,
                 zIndex: 503,
             }}
-            className='flex flex-col bg-white border border-gray-200 rounded shadow-xl'
+            className='fixed flex flex-col bg-white border border-gray-200 rounded shadow-xl'
             onClick={(e) => e.stopPropagation()}>
             {
                 authorityList.map((authority, index) => (

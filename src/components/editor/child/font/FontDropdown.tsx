@@ -5,7 +5,7 @@ import TriangleRightIcon from '../../../../../public/svgs/editor/triangle-right.
 import TriangleUpIcon from '../../../../../public/svgs/editor/triangle-up.svg'
 import { Roboto, Noto_Sans_KR, Open_Sans, Nanum_Gothic } from "@next/font/google";
 import { useClickOutside } from "@/components/hooks/useClickOutside";
-import HoverTooltip from "./HoverTooltip";
+import HoverTooltip from "../../../tooltip/HoverTooltip";
 
 type Font = {
     name: string;

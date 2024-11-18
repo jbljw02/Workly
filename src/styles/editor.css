@@ -79,6 +79,7 @@ hr {
 }
 
 .resizable-img {
+  z-index: 10;
 }
 
 .node-file {

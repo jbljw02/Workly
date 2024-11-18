@@ -11,20 +11,19 @@ import AlignLeftIcon from '../../../../../public/svgs/editor/align-left.svg'
 import ImageIcon from '../../../../../public/svgs/editor/image.svg'
 import LinkIcon from '../../../../../public/svgs/editor/link.svg'
 import CodeIcon from '../../../../../public/svgs/editor/code.svg'
-import ToolbarButton from './ToolbarButton'
-import AlignDropdown from './AlignDropdown'
+import ToolbarButton from '../../../button/ToolbarButton'
+import AlignDropdown from '../align/AlignDropdown'
 import { Editor, useCurrentEditor } from '@tiptap/react'
-import HeadingDropdown from './HeadingDropdown'
-import FontSizeCal from './FontSizeCal'
-import FontDropdwon from './FontDropdown'
-import HoverTooltip from './HoverTooltip'
+import FontSizeCal from '../font/FontSizeCal'
+import FontDropdwon from '../font/FontDropdown'
+import HoverTooltip from '../../../tooltip/HoverTooltip'
 import LineIcon from '../../../../../public/svgs/editor/horizontal-rule.svg'
 import FileSearchIcon from '../../../../../public/svgs/editor/file-search.svg'
 import { v4 as uuidv4 } from 'uuid';
 import AddLinkSection, { SelectionPosition } from '../link/AddLinkSection'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import LinkTooltip from '../link/LinkTooltip'
-import ColorPicker from './ColorPicker'
+import ColorPicker from '../color/ColorPicker'
 import { setTextColor } from '@/redux/features/textColorSlice'
 import VerticalDivider from '../divider/VerticalDivider'
 import WarningAlert from '@/components/alert/WarningAlert'
@@ -32,7 +31,9 @@ import uploadImage from '@/utils/uploadImage'
 import uploadFile from '@/utils/uploadFile'
 import StrikeIcon from '../../../../../public/svgs/editor/strike.svg'
 import BlockquoteIcon from '../../../../../public/svgs/editor/blockquote.svg'
-import ManagementLink from '../link/ManagementLink'
+import ManageLink from '../link/ManageLink'
+import ManageAlign from '../align/ManageAlign'
+import HeadingDropdown from '../heading/HeadingDropdown'
 
 export default function MenuBar({ editor }: { editor: Editor }) {
     const dispatch = useAppDispatch();
@@ -41,19 +42,12 @@ export default function MenuBar({ editor }: { editor: Editor }) {
 
     const [fontSize, setFontSize] = useState<number>(16);
     const [headingLevel, setHeadingLevel] = useState<string>('16');
-    const [alignDropdownOpen, setAlignDropdownOpen] = useState(false);
     const [isBold, setIsBold] = useState<boolean>(false);
     const [isItalic, setIsItalic] = useState<boolean>(false);
     const [isUnderline, setIsUnderline] = useState<boolean>(false);
     const [isStrike, setIsStrike] = useState<boolean>(false);
     const [isHighlight, setIsHighlight] = useState<boolean>(false);
     const [selectedFont, setSelectedFont] = useState<string>('Arial');
-    const [selectedImage, setSelectedImage] = useState<string | null>(null);
-    const [addingLink, setAddingLink] = useState<boolean>(false);
-    const [selectionPos, setSelectionPos] = useState<SelectionPosition>({ top: 0, left: 0 });
-    const [linkNoticeModal, setLinkNoticeModal] = useState<boolean>(false);
-
-    const linkRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         // 에디터가 초기화 되지 않았을 시
@@ -132,7 +126,6 @@ export default function MenuBar({ editor }: { editor: Editor }) {
                 fileReader.onload = () => {
                     const src = fileReader.result as string;
                     const blobUrl = URL.createObjectURL(file);
-                    const fileId = uuidv4(); // 파일의 고유 ID 생성
 
                     // 이미지 파일일 경우
                     if (file.type.startsWith('image/')) {
@@ -161,32 +154,6 @@ export default function MenuBar({ editor }: { editor: Editor }) {
         inputElement.click();
     };
 
-    // 선택된 텍스트의 위치를 찾고 링크를 추가하는 컴포넌트를 열기
-    const addLink = () => {
-        const selection = window.getSelection();
-        console.log('selection: ', selection?.toString().trim());
-
-        if (addingLink) {
-            setAddingLink(false);
-        }
-
-        if (selection && selection.rangeCount > 0 && selection.toString().trim() !== "") {
-            const range = selection.getRangeAt(0);
-            const rect = range.getBoundingClientRect();
-            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-
-            setSelectionPos({
-                top: rect.bottom + scrollTop, // 선택 영역 하단
-                left: rect.left, // 선택 영역 왼쪽 시작점
-            });
-            setAddingLink(!addingLink);
-        }
-        else if (selection && !selection.toString().trim() && !addingLink) {
-            setAddingLink(false);
-            setLinkNoticeModal(true);
-        }
-    };
-
     return (
         // 사용자에게 문서 편집 권한이 있을 시에만 메뉴바 표시
         editorPermission && editorPermission !== '읽기 허용' && (
@@ -206,6 +173,7 @@ export default function MenuBar({ editor }: { editor: Editor }) {
                     setFontSize={setFontSize} />
                 <VerticalDivider />
                 <div className="flex flex-row items-center gap-1">
+                    {/* 글씨 굵기 */}
                     <HoverTooltip label='굵게'>
                         <ToolbarButton
                             onClick={() => editor.chain().focus().toggleBold().run()}
@@ -213,6 +181,7 @@ export default function MenuBar({ editor }: { editor: Editor }) {
                             Icon={BoldIcon}
                             iconWidth={16} />
                     </HoverTooltip>
+                    {/* 글씨 기울임 */}
                     <HoverTooltip label='기울임'>
                         <ToolbarButton
                             onClick={() => editor.chain().focus().toggleItalic().run()}
@@ -220,6 +189,7 @@ export default function MenuBar({ editor }: { editor: Editor }) {
                             Icon={ItalicIcon}
                             iconWidth={14} />
                     </HoverTooltip>
+                    {/* 글씨 밑줄 */}
                     <HoverTooltip label='밑줄'>
                         <ToolbarButton
                             onClick={() => editor.chain().focus().toggleUnderline().run()}
@@ -227,6 +197,7 @@ export default function MenuBar({ editor }: { editor: Editor }) {
                             Icon={UnderlineIcon}
                             iconWidth={14} />
                     </HoverTooltip>
+                    {/* 글씨 취소선 */}
                     <HoverTooltip label='취소선'>
                         <ToolbarButton
                             onClick={() => editor.chain().focus().toggleStrike().run()}
@@ -236,6 +207,7 @@ export default function MenuBar({ editor }: { editor: Editor }) {
                     </HoverTooltip>
                     {/* 글씨의 색상을 변경할 수 있는 버튼과 컬러 선택자 */}
                     <ColorPicker editor={editor} />
+                    {/* 글씨 형광펜 */}
                     <HoverTooltip label='강조'>
                         <ToolbarButton
                             onClick={() => editor.chain().focus().toggleHighlight().run()}
@@ -246,6 +218,7 @@ export default function MenuBar({ editor }: { editor: Editor }) {
                 </div>
                 <VerticalDivider />
                 <div className="flex flex-row items-center gap-1">
+                    {/* 순서 없는 리스트 */}
                     <HoverTooltip label='순서 없는 리스트'>
                         <ToolbarButton
                             onClick={() => editor.chain().focus().toggleBulletList().run()}
@@ -253,6 +226,7 @@ export default function MenuBar({ editor }: { editor: Editor }) {
                             Icon={UlIcon}
                             iconWidth={22} />
                     </HoverTooltip>
+                    {/* 순서 있는 리스트 */}
                     <HoverTooltip label='순서 있는 리스트'>
                         <ToolbarButton
                             onClick={() => editor.chain().focus().toggleOrderedList().run()}
@@ -261,21 +235,8 @@ export default function MenuBar({ editor }: { editor: Editor }) {
                             iconWidth={22} />
                     </HoverTooltip>
                     {/* 텍스트의 정렬 기준을 정하는 드롭다운 영역 */}
-                    <div className="relative">
-                        <HoverTooltip label='정렬'>
-                            <ToolbarButton
-                                onClick={() => setAlignDropdownOpen(!alignDropdownOpen)}
-                                Icon={AlignLeftIcon}
-                                iconWidth={21} />
-                        </HoverTooltip>
-                        {
-                            alignDropdownOpen && (
-                                <AlignDropdown
-                                    editor={editor}
-                                    setAlignDropdownOpen={setAlignDropdownOpen} />
-                            )
-                        }
-                    </div>
+                    <ManageAlign editor={editor} />
+                    {/* 수평 구분선 */}
                     <HoverTooltip label='구분선'>
                         <ToolbarButton
                             onClick={() => editor.chain().focus().setHorizontalRule().run()}
@@ -285,12 +246,14 @@ export default function MenuBar({ editor }: { editor: Editor }) {
                 </div>
                 <VerticalDivider />
                 <div className="flex flex-row items-center gap-1">
+                    {/* 이미지 삽입 */}
                     <HoverTooltip label='이미지 삽입'>
                         <ToolbarButton
                             onClick={() => openFileExplorer('image')}
                             Icon={ImageIcon}
                             iconWidth={20} />
                     </HoverTooltip>
+                    {/* 파일 삽입 */}
                     <HoverTooltip label='파일 삽입'>
                         <ToolbarButton
                             onClick={() => openFileExplorer('file')}
@@ -298,9 +261,8 @@ export default function MenuBar({ editor }: { editor: Editor }) {
                             iconWidth={20} />
                     </HoverTooltip>
                     {/* 링크를 추가하는 영역 */}
-                    <ManagementLink editor={editor} />
-                    {/* 링크에 hover를 했을 시 보여지는 툴팁 */}
-                    <LinkTooltip editor={editor} />
+                    <ManageLink editor={editor} />
+                    {/* 코드 삽입 */}
                     <HoverTooltip label='코드 삽입'>
                         <ToolbarButton
                             onClick={() => editor.chain().focus().insertContent('<pre><code></code></pre>').run()}

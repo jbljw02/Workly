@@ -1,17 +1,19 @@
 import WarningAlert from "@/components/alert/WarningAlert";
 import { Editor } from "@tiptap/react";
 import { useRef, useState } from "react";
-import HoverTooltip from "../menu-bar/HoverTooltip";
-import ToolbarButton from "../menu-bar/ToolbarButton";
+import HoverTooltip from "../../../tooltip/HoverTooltip";
+import ToolbarButton from "../../../button/ToolbarButton";
 import AddLinkSection, { SelectionPosition } from "./AddLinkSection";
 import LinkIcon from '../../../../../public/svgs/editor/link.svg'
+import LinkTooltip from "./LinkTooltip";
 
 type ManagementLinkProps = {
     editor: Editor;
 }
 
-export default function ManagementLink({ editor }: ManagementLinkProps) {
+export default function ManageLink({ editor }: ManagementLinkProps) {
     const linkRef = useRef<HTMLDivElement>(null);
+
     const [selectionPos, setSelectionPos] = useState<SelectionPosition>({ top: 0, left: 0 });
     const [addingLink, setAddingLink] = useState<boolean>(false);
     const [linkNoticeModal, setLinkNoticeModal] = useState<boolean>(false);
@@ -53,9 +55,11 @@ export default function ManagementLink({ editor }: ManagementLinkProps) {
             <AddLinkSection
                 editor={editor}
                 position={selectionPos}
-                setAddingLink={setAddingLink}
+                setIsOpen={setAddingLink}
                 isOpen={addingLink}
                 linkRef={linkRef} />
+            {/* 링크 hover 시에 보일 풍선 */}
+            <LinkTooltip editor={editor} />
             <WarningAlert
                 isModalOpen={linkNoticeModal}
                 setIsModalOpen={setLinkNoticeModal}

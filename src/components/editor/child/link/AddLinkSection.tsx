@@ -15,7 +15,7 @@ export type SelectionPosition = {
 export type AddLinkSectionProps = {
     editor: Editor;
     position: SelectionPosition;
-    setAddingLink: React.Dispatch<React.SetStateAction<boolean>>;
+    setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
     isOpen: boolean;
     linkRef: React.RefObject<HTMLDivElement>;
 }
@@ -37,7 +37,7 @@ function FolderItem({ onClick, label }: FolderItem) {
     );
 }
 
-export default function AddLinkSection({ editor, position, setAddingLink, isOpen, linkRef }: AddLinkSectionProps) {
+export default function AddLinkSection({ editor, position, setIsOpen, isOpen, linkRef }: AddLinkSectionProps) {
     const inputRef = useRef<HTMLInputElement>(null);
     
     const [link, setLink] = useState<string>('');
@@ -90,19 +90,18 @@ export default function AddLinkSection({ editor, position, setAddingLink, isOpen
 
             const id = uuidv4(); // 각 a태그를 구분할 고유값
             (editor.chain() as any).focus().extendMarkRange('link').setLink({ href, id }).run();
-            setAddingLink(false);
+            setIsOpen(false);
         }
         // ESC를 누르면 창 닫음
         if (e.key === 'Escape') {
-            setAddingLink(false);
+            setIsOpen(false);
         }
     }
 
-    useClickOutside(linkRef, () => setAddingLink(false));
+    useClickOutside(linkRef, () => setIsOpen(false));
 
     return (
         <div
-            ref={linkRef}
             className={`fixed w-80 flex flex-col bg-white text-sm rounded-md p-3 border border-neutral-300 z-10 shadow-[0px_4px_10px_rgba(0,0,0,0.25)]
                 transition-opacity duration-200 ease-in-out
                 ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}

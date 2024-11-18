@@ -7,7 +7,7 @@ import { DocumentProps, renameDocuments, setDocuments } from "@/redux/features/d
 import EditInput from "./EditInput";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import axios from 'axios';
-import HoverTooltip from '@/components/editor/child/menu-bar/HoverTooltip';
+import HoverTooltip from '@/components/tooltip/HoverTooltip';
 import useDeleteDocument from '@/components/hooks/useDeleteDocument';
 
 type DocumentItemProps = {
