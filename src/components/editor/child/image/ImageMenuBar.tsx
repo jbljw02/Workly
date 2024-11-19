@@ -8,9 +8,7 @@ import AlignRightIcon from '../../../../../public/svgs/editor/align-right.svg';
 import CropIcon from '../../../../../public/svgs/editor/crop.svg';
 import TrashIcon from '../../../../../public/svgs/trash.svg';
 import FullIcon from '../../../../../public/svgs/editor/full-screen.svg';
-import CaptionIcon from '../../../../../public/svgs/editor/comment.svg';
 import { ResizableImageNodeViewRendererProps } from "tiptap-extension-resizable-image";
-import FileFullModal from "@/components/modal/FileFullModal";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { setOpenFullModal } from "@/redux/features/editorImageSlice";
 import { showWarningAlert } from "@/redux/features/alertSlice";
@@ -21,9 +19,11 @@ type ImageMenuBarProps = {
     nodeViewRef: RefObject<HTMLDivElement>;
     cropStart: () => void;
     resizableImgProps: ResizableImageNodeViewRendererProps;
+    setShowMenu: React.Dispatch<React.SetStateAction<boolean>>;
+    isSelected: boolean;
 }
 
-export default function ImageMenuBar({ nodeViewRef, cropStart, resizableImgProps }: ImageMenuBarProps) {
+export default function ImageMenuBar({ nodeViewRef, cropStart, resizableImgProps, setShowMenu, isSelected }: ImageMenuBarProps) {
     const dispatch = useAppDispatch();
     const editor = resizableImgProps.editor;
 
@@ -58,7 +58,9 @@ export default function ImageMenuBar({ nodeViewRef, cropStart, resizableImgProps
     }
 
     return (
-        <div className='flex flex-row items-center absolute bottom-[-48px] left-[-5px] font-normal rounded-md p-1 z-[9999] bg-white shadow-[0px_4px_10px_rgba(0,0,0,0.25)]'>
+        <div className={`flex flex-row items-center absolute bottom-[-48px] left-[-5px] font-normal rounded-md p-1 z-[10] bg-white shadow-[0px_4px_10px_rgba(0,0,0,0.25)]
+            transition-opacity duration-200 ease-in-out
+            ${isSelected ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
             <div className="flex flex-row items-center gap-0.5">
                 <HoverTooltip label="좌측 정렬">
                     <ToolbarButton

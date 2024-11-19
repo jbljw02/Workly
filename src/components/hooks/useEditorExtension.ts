@@ -31,6 +31,10 @@ import Blockquote from "@tiptap/extension-blockquote";
 import Strike from "@tiptap/extension-strike";
 import CustomTextMark from "../../../lib/textMark";
 import { setConnection } from "@/redux/features/connectionSlice";
+import GlobalDragHandle from 'tiptap-extension-global-drag-handle'
+import DragHandle from '@tiptap-pro/extension-drag-handle'
+import { Node as ProsemirrorNode } from 'prosemirror-model';
+import { setSelectedNode } from "@/redux/features/selectedNodeSlice";
 
 const appId = process.env.NEXT_PUBLIC_TIPTAP_APP_ID;
 
@@ -243,6 +247,13 @@ export default function useEditorExtension({ docId }: useEditorExtensionProps) {
                 connectedAt: Date.now(),
             },
         }),
+        DragHandle.configure({
+            onNodeChange: ({ node, editor }) => {
+                if (!node) {
+                    return;
+                }
+            },
+        })
     ];
 
     return extensions;

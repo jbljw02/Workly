@@ -53,10 +53,9 @@ export default function HeadingDropdown({ editor, headingLevel }: { editor: Edit
             <HoverTooltip label='스타일'>
                 <div
                     onClick={() => setIsOpen(!isOpen)}
-                    onMouseDown={(e) => e.preventDefault()} // 드래그 상태 유지
-                    className="flex flex-row items-center justify-between hover:bg-gray-100 rounded-sm px-2 py-1 cursor-pointer">
-                    {/* 현재 선택된 옵션을 출력 */}
-                    <div className="rounded-md text-sm pr-2">
+                    onMouseDown={(e) => e.preventDefault()}
+                    className="flex flex-row items-center flex-grow justify-between hover:bg-gray-100 rounded-sm w-28 px-2 py-1 cursor-pointer">
+                    <div className="rounded-md text-sm pr-2 truncate">
                         {selectedLabel}
                     </div>
                     {
@@ -81,7 +80,7 @@ export default function HeadingDropdown({ editor, headingLevel }: { editor: Edit
                                         ${option.value === 'h2' ? 'text-xl leading-none' : ''} 
                                         ${option.value === 'h3' ? 'text-lg leading-none' : ''} 
                                         ${option.value === '16' ? 'text-sm leading-none' : ''}`}>
-                                <div className="pl-1">{option.label}</div>
+                                <div className="pl-1 truncate overflow-hidden">{option.label}</div>
                                 <TriangleRightIcon width="17" />
                             </div>
                         ))

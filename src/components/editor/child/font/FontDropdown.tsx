@@ -93,8 +93,8 @@ export default function FontDropdown({ editor }: { editor: Editor }) {
                 <div
                     onClick={() => setIsOpen(!isOpen)}
                     onMouseDown={(e) => e.preventDefault()} // 드래그 상태를 유지
-                    className="flex flex-row items-center justify-between hover:bg-gray-100 rounded-sm px-2 py-1 cursor-pointer">
-                    <div className="rounded-md whitespace-nowrap overflow-hidden text-ellipsis text-sm pr-2">
+                    className="flex flex-row items-center justify-between hover:bg-gray-100 rounded-sm w-24 px-2 py-1 cursor-pointer">
+                    <div className="rounded-md truncate text-sm pr-2">
                         {selectedFont}
                     </div>
                     {

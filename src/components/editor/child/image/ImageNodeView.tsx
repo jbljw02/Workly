@@ -12,7 +12,7 @@ import uploadImage from '@/utils/image/uploadImageToStorage';
 import cropImage from '@/utils/image/cropImage';
 import { showWarningAlert } from '@/redux/features/alertSlice';
 import ImageFullModal from './ImageFullModal';
-import { Plugin, TextSelection } from 'prosemirror-state';
+import useCheckSelected from '@/components/hooks/useCheckSelected';
 
 const NodeView = (resizableImgProps: ResizableImageNodeViewRendererProps) => {
   const dispatch = useAppDispatch();
@@ -20,6 +20,7 @@ const NodeView = (resizableImgProps: ResizableImageNodeViewRendererProps) => {
 
   const [showMenu, setShowMenu] = useState(false); // 이미지 메뉴바를 보여줄지
   const [alignment, setAlignment] = useState<'flex-start' | 'center' | 'flex-end'>('flex-start');
+  const [isSelected, setIsSelected] = useState(false);
 
   const crop = useAppSelector(state => state.crop);
   const [cropMode, setCropMode] = useState(false);
@@ -177,12 +178,16 @@ const NodeView = (resizableImgProps: ResizableImageNodeViewRendererProps) => {
     }
   }, [resizableImgProps.node.attrs.width, resizableImgProps.node.attrs.height]);
 
+  console.log('imageNodeView: ', isSelected);
+
+  useCheckSelected({ editor, node: resizableImgProps.node, setIsSelected });
+
   return (
     <>
       <NodeViewWrapper
         ref={nodeViewRef}
         as="figure"
-        className="image-component z-10"
+        className="image-component z-0"
         data-drag-handle
         style={{ justifyContent: alignment }}
         contentEditable={false}
@@ -201,7 +206,7 @@ const NodeView = (resizableImgProps: ResizableImageNodeViewRendererProps) => {
                     dispatch(setOpenFullModal(true)) :
                     setShowMenu(true)
                 }
-                className="cursor-pointer inline-flex z-40">
+                className="cursor-pointer inline-flex">
                 <ResizableImageComponent {...resizableImgProps} />
               </div>
             )
@@ -210,14 +215,15 @@ const NodeView = (resizableImgProps: ResizableImageNodeViewRendererProps) => {
         {/* 게시된 문서를 열람중이 아니고, 권한이 읽기 허용보다 높을 때만 */}
         {
           (
-            showMenu &&
             !cropMode &&
             !webPublished &&
             (editorPermission === '전체 허용' || editorPermission === '쓰기 허용')) && (
             <ImageMenuBar
               nodeViewRef={nodeViewRef}
               cropStart={cropStart}
-              resizableImgProps={resizableImgProps} />
+              resizableImgProps={resizableImgProps}
+              setShowMenu={setShowMenu}
+              isSelected={isSelected} />
           )
         }
         {

@@ -17,6 +17,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { MenuItemProps } from '../../../menu/MenuItem';
 import { useClickOutside } from '@/components/hooks/useClickOutside';
 import { FileNodeAttrs } from '../../../../../lib/fileNode';
+import { NodeSelection } from 'prosemirror-state';
+import useCheckSelected from '@/components/hooks/useCheckSelected';
 
 export interface FileNodeViewProps {
     editor: Editor;
@@ -38,6 +40,7 @@ export default function FileNodeView({ editor, node, }: FileNodeViewProps) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [menuListOpen, setMenuListOpen] = useState(false);
     const [isEditing, setIsEditing] = useState(false); // 파일명을 수정중인지
+    const [isSelected, setIsSelected] = useState(false);
 
     const fileRef = useRef<HTMLDivElement | null>(null);
 
@@ -209,6 +212,10 @@ export default function FileNodeView({ editor, node, }: FileNodeViewProps) {
         }
     }, [fileNode, editorPermission]);
 
+    console.log('fileNodeView: ', isSelected);
+
+    useCheckSelected({ editor, node, setIsSelected });
+
     useClickOutside(fileRef, () => setMenuListOpen(false), fileRef);
 
     return (
@@ -222,8 +229,9 @@ export default function FileNodeView({ editor, node, }: FileNodeViewProps) {
                     data-file={title}
                     onClick={fileClick}
                     ref={fileRef}
-                    className={`data-file relative inline-flex flex-row items-center justify-center w-auto rounded-md p-2 mt-2 mb-3 hover:bg-gray-200 cursor-pointer duration-200 
-                    ${menuListOpen ? 'bg-gray-200' : 'bg-gray-100'}`}>
+                    className={`data-file relative inline-flex flex-row items-center justify-center w-auto rounded-md p-2 mt-2 mb-3 hover:bg-gray-200 duration-200 cursor-pointer z-0  
+                        ${menuListOpen ? 'bg-gray-200' : 'bg-gray-100'}
+                        ${isSelected ? 'border-2 border-blue-600 ' : 'border-2 border-transparent'}`}>
                     <FileInfoIcon width="26" />
                     <div className='flex justify-between items-center mt-0.5'>
                         {
@@ -242,7 +250,7 @@ export default function FileNodeView({ editor, node, }: FileNodeViewProps) {
                             className={`ml-4 -mr-0.5 hover:bg-gray-300 p-1 rounded-sm 
                             ${menuListOpen ? 'bg-gray-200' : ''}`}>
                             {
-                                // 문서가 게시중이 아닐 때 리스트 확인 불가
+                                // 문서가 게시중일 때 리스트 확인 불가
                                 !webPublished && (
                                     <MenuIcon width="18" />
                                 )
@@ -250,7 +258,7 @@ export default function FileNodeView({ editor, node, }: FileNodeViewProps) {
                         </div>
                     </div>
                     {
-                        // 문서가 게시중이 아닐 때 리스트 확인 불가
+                        // 문서가 게시중일 때 리스트 확인 불가
                         !webPublished && (
                             <MenuList
                                 isOpen={menuListOpen}

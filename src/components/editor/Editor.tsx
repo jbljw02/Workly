@@ -20,12 +20,15 @@ import EditorTitleInput from './child/EditorTitleInput';
 import EditorHeaderSkeleton from '../placeholder/skeleton/editor/EditorHeaderSkeleton';
 import EditorContentSkeleton from '../placeholder/skeleton/editor/EditorContentSkeleton';
 import { usePathname } from 'next/navigation';
-
+import { setSelectedNode } from '@/redux/features/selectedNodeSlice';
+import { NodeSelection } from 'prosemirror-state';
+import { Node as ProsemirrorNode } from 'prosemirror-model';
 export default function Editor({ docId }: { docId: string }) {
   const dispatch = useAppDispatch();
 
   const extensions = useEditorExtension({ docId });
   const editorPermission = useAppSelector(state => state.editorPermission);
+
   const editor = useEditor({
     extensions: extensions,
     editorProps: {
@@ -42,7 +45,7 @@ export default function Editor({ docId }: { docId: string }) {
   const pathParts = pathname.split('/');
   const folderId = pathParts[2]; // '/editor/[folderId]/[documentId]'일 때 folderId는 2번째 인덱스
   const documentId = pathParts[3]; // documentId는 3번째 인덱스
-  
+
   const documents = useAppSelector(state => state.documents);
   const folders = useAppSelector(state => state.folders);
   const openColorPicker = useAppSelector(state => state.openColorPicker);
@@ -140,10 +143,10 @@ export default function Editor({ docId }: { docId: string }) {
                 docTitleChange={docTitleChange}
                 editor={editor} />
               <DragHandle
+                pluginKey="drag-handle"
                 tippyOptions={{
                   placement: 'left',
                 }}
-                className='z-0'
                 editor={editor}>
                 <MenuIcon
                   width="17" />
