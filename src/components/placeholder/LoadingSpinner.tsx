@@ -6,14 +6,15 @@ const loaderStyle = {
 
 type LoadingSpinnerProps = {
     size: number,
+    color: string
 }
 
-export default function LoadingSpinner({ size }: LoadingSpinnerProps) {
+export default function LoadingSpinner({ size, color }: LoadingSpinnerProps) {
     return (
         <div
             className="flex items-center justify-center w-full h-full">
             <ClipLoader
-                color="#ffffff"
+                color={color}
                 size={size}
                 loading={true}
                 cssOverride={loaderStyle} />

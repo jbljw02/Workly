@@ -203,10 +203,7 @@ export default function useEditorExtension({ docId }: useEditorExtensionProps) {
         }),
         Dropcursor,
         CustomTextMark,
-        ImageNodeView.configure({
-            defaultWidth: 600,
-            defaultHeight: 600,
-        }),
+        ImageNodeView,
         FileNode,
         FileHandler.configure({
             onDrop: (currentEditor: Editor, files: File[], pos: number) => {

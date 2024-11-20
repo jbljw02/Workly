@@ -15,17 +15,17 @@ export default function useCheckSelected({ editor, node, setIsSelected }: UseChe
         const { state } = editor.view;
         const { selection } = state;
 
-        const selectedNode = state.doc.nodeAt(selection.from);
-        console.log('selectedNode: ', selectedNode);
 
         // 선택된 노드가 현재 노드인지 확인
         if (selection instanceof NodeSelection) {
             const selectedNode = state.doc.nodeAt(selection.from);
 
-            // 선택된 노드가 'file' 타입이고 현재 노드인지 확인
-            if (selectedNode && selectedNode.type.name === node.type.name && selectedNode.attrs.id === node.attrs.id) {
+            if (selectedNode &&
+                selectedNode.type.name === node.type.name &&
+                selectedNode.attrs.id === node.attrs.id) {
                 setIsSelected(true);
-            } else {
+            }
+            else {
                 setIsSelected(false);
             }
         } else {

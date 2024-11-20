@@ -212,8 +212,6 @@ export default function FileNodeView({ editor, node, }: FileNodeViewProps) {
         }
     }, [fileNode, editorPermission]);
 
-    console.log('fileNodeView: ', isSelected);
-
     useCheckSelected({ editor, node, setIsSelected });
 
     useClickOutside(fileRef, () => setMenuListOpen(false), fileRef);
@@ -229,7 +227,7 @@ export default function FileNodeView({ editor, node, }: FileNodeViewProps) {
                     data-file={title}
                     onClick={fileClick}
                     ref={fileRef}
-                    className={`data-file relative inline-flex flex-row items-center justify-center w-auto rounded-md p-2 mt-2 mb-3 hover:bg-gray-200 duration-200 cursor-pointer z-0  
+                    className={`data-file relative inline-flex flex-row items-center justify-center w-auto rounded-md p-2 mt-2 mb-3 hover:bg-gray-200 duration-200 cursor-pointer 
                         ${menuListOpen ? 'bg-gray-200' : 'bg-gray-100'}
                         ${isSelected ? 'border-2 border-blue-600 ' : 'border-2 border-transparent'}`}>
                     <FileInfoIcon width="26" />

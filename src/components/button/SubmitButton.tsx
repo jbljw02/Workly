@@ -31,7 +31,10 @@ export default function SubmitButton({ style, label, value, onClick }: SubmitBut
             rounded-lg border transform transition-all duration-200 whitespace-nowrap`}>
             {!workingSpinner && label}
             {
-                workingSpinner && <LoadingSpinner size={20} />
+                workingSpinner &&
+                <LoadingSpinner
+                    size={20}
+                    color="#ffffff" />
             }
         </button>
     )

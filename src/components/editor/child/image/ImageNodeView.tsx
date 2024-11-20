@@ -13,6 +13,7 @@ import cropImage from '@/utils/image/cropImage';
 import { showWarningAlert } from '@/redux/features/alertSlice';
 import ImageFullModal from './ImageFullModal';
 import useCheckSelected from '@/components/hooks/useCheckSelected';
+import { SetResizableImageProps } from '../../../../../lib/ImageNode';
 
 const NodeView = (resizableImgProps: ResizableImageNodeViewRendererProps) => {
   const dispatch = useAppDispatch();
@@ -34,9 +35,19 @@ const NodeView = (resizableImgProps: ResizableImageNodeViewRendererProps) => {
 
   // 자르기 시작
   const cropStart = () => {
-    setShowMenu(false);
-    setCropMode(true);
-  };
+    if (resizableImgProps.node.attrs.width && resizableImgProps.node.attrs.height) {
+      // crop 상태를 이미지 전체 크기로 초기화
+      dispatch(setCrop({
+        unit: 'px',
+        x: 0,
+        y: 0,
+        width: resizableImgProps.node.attrs.width,
+        height: resizableImgProps.node.attrs.height
+      }));
+      setShowMenu(false);
+      setCropMode(true);
+    };
+  }
 
   // 자르기 취소
   const cropCancel = () => {
@@ -74,15 +85,19 @@ const NodeView = (resizableImgProps: ResizableImageNodeViewRendererProps) => {
 
           // editor 내부에서 이미지 자르기 적용
           editor.chain().focus().deleteSelection().run();
-          editor.commands.setResizableImage({
+          (editor.commands.setResizableImage as SetResizableImageProps)({
+            id: resizableImgProps.node.attrs.id,
             src: croppedImage,
-            alt: '',
-            title: '',
+            alt: resizableImgProps.node.attrs.alt || '',
+            title: resizableImgProps.node.attrs.title || '',
             width: crop.width,
             height: crop.height,
             className: 'resizable-img',
             'data-keep-ratio': true,
+            textAlign: resizableImgProps.node.attrs.textAlign,
           });
+
+          setCropMode(false);
 
           try {
             await cropImage({
@@ -100,62 +115,26 @@ const NodeView = (resizableImgProps: ResizableImageNodeViewRendererProps) => {
             dispatch(showWarningAlert('이미지를 자르지 못했습니다.'));
           }
 
-          setCropMode(false);
         };
         img.src = imgRef.current.src;
       }
     }
   };
 
-  // 요소 바깥을 클릭하면 이미지 메뉴바를 닫고, 자르기 작업 취소
-  useClickOutside(nodeViewRef, () => {
-    if (!openFullModal) {
-      if (cropMode) {
-        setCropMode(false);
-      } else {
-        setShowMenu(false);
-      }
-    }
-  });
-
   // ESC를 누르면 자르기 작업 취소
   useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
+    const keyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         setCropMode(false);
       }
     };
 
-    document.addEventListener('keydown', handleKeyDown);
+    document.addEventListener('keydown', keyDown);
 
     return () => {
-      document.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener('keydown', keyDown);
     };
   }, [cropMode]);
-
-  // 이미지의 크기 변화를 감지하여 Crop 요소들의 값을 업데이트
-  useEffect(() => {
-    if (nodeViewRef.current) {
-      const resizeObserver = new ResizeObserver((entries) => {
-        const { width, height } = entries[0].contentRect;
-        dispatch(setImageDimension({
-          width: width,
-          height: height,
-        }));
-        dispatch(setCrop({
-          ...crop,
-          width: width,
-          height: height,
-        }));
-      });
-
-      resizeObserver.observe(nodeViewRef.current);
-
-      return () => {
-        resizeObserver.disconnect();
-      };
-    }
-  }, []);
 
   // 이미지의 크기가 변경되면 스토리지에 업데이트
   useEffect(() => {
@@ -178,7 +157,39 @@ const NodeView = (resizableImgProps: ResizableImageNodeViewRendererProps) => {
     }
   }, [resizableImgProps.node.attrs.width, resizableImgProps.node.attrs.height]);
 
-  console.log('imageNodeView: ', isSelected);
+  // 이미지 크기가 변경되면 자르기 영역 크기 업데이트
+  useEffect(() => {
+    if (nodeViewRef.current) {
+      const resizeObserver = new ResizeObserver((entries) => {
+        const { width, height } = entries[0].contentRect;
+
+        // 자르기 영역의 크기를 동일하게 업데이트
+        dispatch(setCrop({
+          unit: 'px',
+          x: 0,
+          y: 0,
+          width: width,
+          height: height,
+        }));
+      });
+
+      resizeObserver.observe(nodeViewRef.current);
+
+      return () => {
+        resizeObserver.disconnect();
+      };
+    }
+  }, []);
+
+  useClickOutside(nodeViewRef, () => {
+    if (!openFullModal) {
+      if (cropMode) {
+        setCropMode(false);
+      } else {
+        setShowMenu(false);
+      }
+    }
+  });
 
   useCheckSelected({ editor, node: resizableImgProps.node, setIsSelected });
 
@@ -206,6 +217,7 @@ const NodeView = (resizableImgProps: ResizableImageNodeViewRendererProps) => {
                     dispatch(setOpenFullModal(true)) :
                     setShowMenu(true)
                 }
+                ref={imgRef}
                 className="cursor-pointer inline-flex">
                 <ResizableImageComponent {...resizableImgProps} />
               </div>
