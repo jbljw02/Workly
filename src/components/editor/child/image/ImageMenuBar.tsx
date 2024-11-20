@@ -27,7 +27,12 @@ export default function ImageMenuBar({ nodeViewRef, cropStart, resizableImgProps
     const dispatch = useAppDispatch();
     const editor = resizableImgProps.editor;
 
+    console.log('isSelected : ', isSelected)
+
     const [alignment, setAlignment] = useState<'flex-start' | 'center' | 'flex-end'>('flex-start');
+
+    console.log('ㅁㅁㅁ : ', resizableImgProps.node)
+
 
     const alignmentSetUp = (justifyContent: 'flex-start' | 'center' | 'flex-end') => {
         const imgContainer = nodeViewRef.current?.closest('.node-imageComponent') as HTMLElement;
@@ -42,9 +47,9 @@ export default function ImageMenuBar({ nodeViewRef, cropStart, resizableImgProps
             // 스토리지 내부 이미지 삭제
             const storage = getStorage();
             const imageRef = ref(storage, `images/${id}`);
-    
+
             await deleteObject(imageRef);
-    
+
             // 에디터에서 이미지 삭제
             editor.chain().focus().deleteSelection().run();
         } catch (error) {
@@ -99,7 +104,9 @@ export default function ImageMenuBar({ nodeViewRef, cropStart, resizableImgProps
                         iconWidth={21}
                         onClick={() => dispatch(setOpenFullModal(true))} />
                 </HoverTooltip>
-                <ImageFullModal resizableImgProps={resizableImgProps} />
+                {
+                    isSelected && <ImageFullModal resizableImgProps={resizableImgProps} />
+                }
             </div>
         </div>
     )

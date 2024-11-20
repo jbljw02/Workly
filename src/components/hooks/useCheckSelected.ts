@@ -15,7 +15,6 @@ export default function useCheckSelected({ editor, node, setIsSelected }: UseChe
         const { state } = editor.view;
         const { selection } = state;
 
-
         // 선택된 노드가 현재 노드인지 확인
         if (selection instanceof NodeSelection) {
             const selectedNode = state.doc.nodeAt(selection.from);

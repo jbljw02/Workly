@@ -194,60 +194,57 @@ const NodeView = (resizableImgProps: ResizableImageNodeViewRendererProps) => {
   useCheckSelected({ editor, node: resizableImgProps.node, setIsSelected });
 
   return (
-    <>
-      <NodeViewWrapper
-        ref={nodeViewRef}
-        as="figure"
-        className="image-component z-0"
-        data-drag-handle
-        style={{ justifyContent: alignment }}
-        contentEditable={false}
-        draggable={true}>
-        {
-          // 이미지 자르기 모드
-          cropMode ? (
-            <ImageCropper
-              imgRef={imgRef}
-              resizableImgProps={resizableImgProps} />
-          ) :
-            (
-              <div
-                onClick={
-                  () => (webPublished || editorPermission === '읽기 허용') ?
-                    dispatch(setOpenFullModal(true)) :
-                    setShowMenu(true)
-                }
-                ref={imgRef}
-                className="cursor-pointer inline-flex">
-                <ResizableImageComponent {...resizableImgProps} />
-              </div>
-            )
-        }
-        {/* 이미지를 이용해 여러 작업을 하는 메뉴바 */}
-        {/* 게시된 문서를 열람중이 아니고, 권한이 읽기 허용보다 높을 때만 */}
-        {
+    <NodeViewWrapper
+      ref={nodeViewRef}
+      as="figure"
+      className="image-component z-0"
+      data-drag-handle
+      style={{ justifyContent: alignment }}
+      contentEditable={false}
+      draggable={true}>
+      {
+        // 이미지 자르기 모드
+        cropMode ? (
+          <ImageCropper
+            imgRef={imgRef}
+            resizableImgProps={resizableImgProps} />
+        ) :
           (
-            !cropMode &&
-            !webPublished &&
-            (editorPermission === '전체 허용' || editorPermission === '쓰기 허용')) && (
-            <ImageMenuBar
-              nodeViewRef={nodeViewRef}
-              cropStart={cropStart}
-              resizableImgProps={resizableImgProps}
-              setShowMenu={setShowMenu}
-              isSelected={isSelected} />
+            <div
+              onClick={
+                () => (webPublished || editorPermission === '읽기 허용') ?
+                  dispatch(setOpenFullModal(true)) :
+                  setShowMenu(true)
+              }
+              ref={imgRef}
+              className="cursor-pointer inline-flex">
+              <ResizableImageComponent {...resizableImgProps} />
+            </div>
           )
-        }
-        {
-          cropMode && (
-            <ImageCropBar
-              cropApply={cropApply}
-              cropCancel={cropCancel} />
-          )
-        }
-      </NodeViewWrapper>
-      <ImageFullModal resizableImgProps={resizableImgProps} />
-    </>
+      }
+      {/* 이미지를 이용해 여러 작업을 하는 메뉴바 */}
+      {/* 게시된 문서를 열람중이 아니고, 권한이 읽기 허용보다 높을 때만 */}
+      {
+        (
+          !cropMode &&
+          !webPublished &&
+          (editorPermission === '전체 허용' || editorPermission === '쓰기 허용')) && (
+          <ImageMenuBar
+            nodeViewRef={nodeViewRef}
+            cropStart={cropStart}
+            resizableImgProps={resizableImgProps}
+            setShowMenu={setShowMenu}
+            isSelected={isSelected} />
+        )
+      }
+      {
+        cropMode && (
+          <ImageCropBar
+            cropApply={cropApply}
+            cropCancel={cropCancel} />
+        )
+      }
+    </NodeViewWrapper>
   );
 };
 
