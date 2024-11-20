@@ -18,10 +18,6 @@ export default function RootLayout({
     storeRef.current = makeStore();
   }
 
-  useEffect(() => {
-    Modal.setAppElement('body');
-}, []);
-
   return (
     <html lang="en" className="w-full h-full text-[#212121]">
       <head>

@@ -33,6 +33,8 @@ export default function useUpdateContent() {
     const updateContent = async (latestDoc: DocumentProps) => {
         if (!latestDoc) return;
 
+        console.log('latestDoc : ', latestDoc)
+
         try {
             await axios.put('/api/document', {
                 docId: latestDoc.id,

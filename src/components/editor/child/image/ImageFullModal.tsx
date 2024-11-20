@@ -10,7 +10,6 @@ type ImageFullModalProps = {
 export default function ImageFullModal({ resizableImgProps }: ImageFullModalProps) {
     const dispatch = useAppDispatch();
     const openFullModal = useAppSelector(state => state.openFullModal);
-    console.log('resizableImgProps : ', resizableImgProps.node)
     return (
         <FileFullModal
             isModalOpen={openFullModal}

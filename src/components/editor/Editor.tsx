@@ -20,9 +20,7 @@ import EditorTitleInput from './child/EditorTitleInput';
 import EditorHeaderSkeleton from '../placeholder/skeleton/editor/EditorHeaderSkeleton';
 import EditorContentSkeleton from '../placeholder/skeleton/editor/EditorContentSkeleton';
 import { usePathname } from 'next/navigation';
-import { setSelectedNode } from '@/redux/features/selectedNodeSlice';
-import { NodeSelection } from 'prosemirror-state';
-import { Node as ProsemirrorNode } from 'prosemirror-model';
+
 export default function Editor({ docId }: { docId: string }) {
   const dispatch = useAppDispatch();
 
@@ -51,7 +49,7 @@ export default function Editor({ docId }: { docId: string }) {
   const openColorPicker = useAppSelector(state => state.openColorPicker);
   const selectedDocument = useAppSelector(state => state.selectedDocument);
 
-  const docTitle = useMemo(() => selectedDocument.title, [selectedDocument.title]); // 문서 제목
+  const [docTitle, setDocTitle] = useState(selectedDocument.title);
   const [lastReadedTime, setLastReadedTime] = useState<string>('현재 편집 중'); // 문서의 마지막 편집 시간에 따른 출력값
 
   // 현재 선택된 문서를 지정
@@ -100,6 +98,7 @@ export default function Editor({ docId }: { docId: string }) {
       };
 
       dispatch(renameDocuments({ docId: updatedDoc.id, newTitle: e.target.value }));
+      setDocTitle(e.target.value);
       setLastReadedTime(formatTimeDiff(updatedDoc.readedAt));
 
       if (updatedDoc.id) {
@@ -139,7 +138,7 @@ export default function Editor({ docId }: { docId: string }) {
             <div
               className='p-4'>
               <EditorTitleInput
-                docTitle={docTitle}
+                docTitle={docTitle || selectedDocument.title}
                 docTitleChange={docTitleChange}
                 editor={editor} />
               <DragHandle

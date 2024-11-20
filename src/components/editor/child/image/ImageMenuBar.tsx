@@ -27,12 +27,7 @@ export default function ImageMenuBar({ nodeViewRef, cropStart, resizableImgProps
     const dispatch = useAppDispatch();
     const editor = resizableImgProps.editor;
 
-    console.log('isSelected : ', isSelected)
-
     const [alignment, setAlignment] = useState<'flex-start' | 'center' | 'flex-end'>('flex-start');
-
-    console.log('ㅁㅁㅁ : ', resizableImgProps.node)
-
 
     const alignmentSetUp = (justifyContent: 'flex-start' | 'center' | 'flex-end') => {
         const imgContainer = nodeViewRef.current?.closest('.node-imageComponent') as HTMLElement;
