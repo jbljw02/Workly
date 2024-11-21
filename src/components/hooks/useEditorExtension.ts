@@ -34,6 +34,7 @@ import DragHandle from '@tiptap-pro/extension-drag-handle'
 import { Node as ProsemirrorNode } from 'prosemirror-model';
 import { setSelectedNode } from "@/redux/features/selectedNodeSlice";
 import uploadNewImage from "@/utils/image/uploadNewImage";
+import { EnsureLastParagraph } from "../../../lib/ensureLastParagraph";
 
 const appId = process.env.NEXT_PUBLIC_TIPTAP_APP_ID;
 
@@ -95,7 +96,7 @@ export default function useEditorExtension({ docId }: useEditorExtensionProps) {
         onConnect: () => dispatch(setConnection(true)),
         onDisconnect: () => {
             dispatch(setConnection(false));
-            console.log('onDisconnect');
+            dispatch(setDocSynced(false));
         },
         onSynced: () => dispatch(setDocSynced(true)),
     }), [docId, doc]);
@@ -198,6 +199,7 @@ export default function useEditorExtension({ docId }: useEditorExtensionProps) {
         Blockquote,
         FontSize,
         FontFamily,
+        EnsureLastParagraph,
         LinkNode.configure({
             openOnClick: true,
             autolink: true,

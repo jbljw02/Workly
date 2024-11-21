@@ -37,6 +37,9 @@ export default function Editor({ docId }: { docId: string }) {
     editable: editorPermission !== '읽기 허용',
   }, []);
 
+  console.log('editor: ', editor?.getJSON());
+
+
   const { updateContent, debouncedUpdateRequest } = useUpdateContent();
 
   const pathname = usePathname();
