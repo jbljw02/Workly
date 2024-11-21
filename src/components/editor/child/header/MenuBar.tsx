@@ -27,13 +27,13 @@ import ColorPicker from '../color/ColorPicker'
 import { setTextColor } from '@/redux/features/textColorSlice'
 import VerticalDivider from '../divider/VerticalDivider'
 import WarningAlert from '@/components/alert/WarningAlert'
-import uploadImage from '@/utils/uploadImage'
 import uploadFile from '@/utils/uploadFile'
 import StrikeIcon from '../../../../../public/svgs/editor/strike.svg'
 import BlockquoteIcon from '../../../../../public/svgs/editor/blockquote.svg'
 import ManageLink from '../link/ManageLink'
 import ManageAlign from '../align/ManageAlign'
 import HeadingDropdown from '../heading/HeadingDropdown'
+import uploadNewImage from '@/utils/image/uploadNewImage'
 
 export default function MenuBar({ editor }: { editor: Editor }) {
     const dispatch = useAppDispatch();
@@ -129,7 +129,7 @@ export default function MenuBar({ editor }: { editor: Editor }) {
 
                     // 이미지 파일일 경우
                     if (file.type.startsWith('image/')) {
-                        uploadImage(editor, file, src)
+                        uploadNewImage(editor, file.name, src);
                     }
                     else {
                         // 이미지가 아닌 일반 파일일 경우

@@ -18,7 +18,6 @@ import CollaborationCursor from '@tiptap/extension-collaboration-cursor'
 import FileHandler from '@tiptap-pro/extension-file-handler'
 import ImageNodeView from '@/components/editor/child/image/ImageNodeView'
 import { setLinkTooltip } from '@/redux/features/linkSlice'
-import uploadImage from '@/utils/uploadImage'
 import uploadFile from '@/utils/uploadFile'
 import { FontSize } from "../../../lib/fontSize";
 import { FontFamily } from "../../../lib/fontFamily";
@@ -35,6 +34,7 @@ import GlobalDragHandle from 'tiptap-extension-global-drag-handle'
 import DragHandle from '@tiptap-pro/extension-drag-handle'
 import { Node as ProsemirrorNode } from 'prosemirror-model';
 import { setSelectedNode } from "@/redux/features/selectedNodeSlice";
+import uploadNewImage from "@/utils/image/uploadNewImage";
 
 const appId = process.env.NEXT_PUBLIC_TIPTAP_APP_ID;
 
@@ -214,7 +214,7 @@ export default function useEditorExtension({ docId }: useEditorExtensionProps) {
                         const blobUrl = URL.createObjectURL(file);
 
                         if (file.type.startsWith('image/')) {
-                            uploadImage(currentEditor, file, src)
+                            uploadNewImage(currentEditor, file.name, src)
                         } else {
                             uploadFile(currentEditor, file, blobUrl, pos)
                         }

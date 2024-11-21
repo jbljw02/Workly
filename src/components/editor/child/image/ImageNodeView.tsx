@@ -8,12 +8,12 @@ import ImageCropper from './ImageCropper';
 import ImageCropBar from './ImageCropBar';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { setCrop, setImageDimension, setOpenFullModal } from '@/redux/features/editorImageSlice';
-import uploadImage from '@/utils/image/uploadImageToStorage';
 import cropImage from '@/utils/image/cropImage';
 import { showWarningAlert } from '@/redux/features/alertSlice';
 import ImageFullModal from './ImageFullModal';
 import useCheckSelected from '@/components/hooks/useCheckSelected';
 import { SetResizableImageProps } from '../../../../../lib/ImageNode';
+import updateExistingImage from '@/utils/image/updateExistingImage';
 
 const NodeView = (resizableImgProps: ResizableImageNodeViewRendererProps) => {
   const dispatch = useAppDispatch();
@@ -143,7 +143,7 @@ const NodeView = (resizableImgProps: ResizableImageNodeViewRendererProps) => {
       resizableImgProps.node.attrs.src &&
       resizableImgProps.node.attrs.title &&
       resizableImgProps.node.attrs.className) {
-      uploadImage({
+      updateExistingImage({
         id: resizableImgProps.node.attrs.id,
         src: resizableImgProps.node.attrs.src,
         alt: resizableImgProps.node.attrs.alt || '',

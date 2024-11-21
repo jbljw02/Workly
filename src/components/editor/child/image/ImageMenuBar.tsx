@@ -53,7 +53,7 @@ export default function ImageMenuBar({ nodeViewRef, cropStart, resizableImgProps
     }
 
     return (
-        <div className={`flex flex-row items-center absolute bottom-[-48px] right-[-5px] font-normal rounded-md p-1 z-[10] bg-white border border-gray-200 shadow-[0px_4px_10px_rgba(0,0,0,0.25)]
+        <div className={`flex flex-row items-center absolute bottom-[-48px] left-[-5px] font-normal rounded-md p-1 z-[10] bg-white border border-gray-200 shadow-[0px_4px_10px_rgba(0,0,0,0.25)]
             transition-opacity duration-200 ease-in-out
             ${isSelected ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
             <div className="flex flex-row items-center gap-0.5">

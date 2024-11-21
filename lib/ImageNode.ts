@@ -2,6 +2,7 @@ import { ReactNodeViewRenderer } from "@tiptap/react";
 import { ResizableImage, ResizableImageHTMLAttributes } from "tiptap-extension-resizable-image";
 import { Plugin, PluginKey } from "prosemirror-state"; // Plugin을 prosemirror-state에서 가져옴
 import ImageNodeView from "@/components/editor/child/image/ImageNodeView";
+import { ImageMetadata } from "@/types/imageMedata";
 
 // ResizableImageHTMLAttributes 타입을 ID를 포함하여 확장
 export interface IdIncluededResizableImagAttrs extends ResizableImageHTMLAttributes {
@@ -15,16 +16,10 @@ export type SetResizableImageProps = (
   position?: number | Range,
 ) => boolean;
 
-export type ImageAttrs = {
-  id: string;
-  alt: string;
+export type ImageAttrs = ImageMetadata & {
   className: string;
   'data-keep-ratio': boolean;
-  width: string;
-  height: string;
   src: string;
-  title: string;
-  textAlign: string;
 }
 
 const ImageNode = ResizableImage.extend({
