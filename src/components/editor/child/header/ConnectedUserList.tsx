@@ -2,8 +2,8 @@ import { useAppSelector } from "@/redux/hooks";
 import GreenCircleIcon from '../../../../../public/svgs/green-circle.svg';
 import Image from "next/image";
 import HoverTooltip from "../../../tooltip/HoverTooltip";
-import { ConnectedUser } from "@/redux/features/shareDocumentSlice";
 import React from "react";
+import { ConnectedUser } from "@/redux/features/connectionSlice";
 
 type ConnectedUserItemProps = {
     user: ConnectedUser;

@@ -39,7 +39,6 @@ const combinedReducer = combineReducers({
     selectedCoworkers: shareDocumentReducers.selectedCoworkers,
     targetSharingEmail: shareDocumentReducers.targetSharingEmail,
     editorPermission: shareDocumentReducers.editorPermission,
-    connectedUsers: shareDocumentReducers.connectedUsers,
     documentsTrash: trashReducers.documentsTrash,
     foldersTrash: trashReducers.foldersTrash,
     webPublished: webPublishedReducers.webPublished,
@@ -48,6 +47,8 @@ const combinedReducer = combineReducers({
     workingSpinner: placeholderReducers.workingSpinner,
     loading: placeholderReducers.loading,
     connection: connectionReducers.connection,
+    connectedUsers: connectionReducers.connectedUsers,
+    docSynced: connectionReducers.docSynced,
 })
 
 // RootState가 Redux 스토어의 상태 타입임을 나타냄
