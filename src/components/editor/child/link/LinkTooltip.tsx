@@ -39,7 +39,7 @@ export default function LinkTooltip({ editor }: { editor: Editor }) {
     return (
         <div
             ref={tooltipRef}
-            className={`absolute z-10 transform link-tooltip`}
+            className={`fixed z-10 transform link-tooltip`}
             style={{
                 transform: `scale(${editorScale})`, // 에디터의 scale 값을 동일하게 적용
                 transformOrigin: 'top left', // 원점 설정

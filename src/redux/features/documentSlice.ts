@@ -139,7 +139,7 @@ export const documentSlice = createSlice({
                 document.publishedUser = undefined;
                 document.publishedDate = undefined;
             }
-        }
+        },
     },
 })
 
@@ -156,12 +156,24 @@ export const selectedDocumentSlice = createSlice({
     }
 })
 
+export const sortRuleSlice = createSlice({
+    name: 'sortRule',
+    initialState: '생성된 날짜',
+    reducers: {
+        setSortRule: (state, action) => {
+            return action.payload;
+        }
+    }
+})
+
 export const { addDocuments, updateDocuments, renameDocuments, deleteAllDocumentsOfFolder, updateCollaboratorAuthority, addCollaborator, deleteCollaborator, setDocuments, deleteDocuments, toggleShortcut, publishContent, canclePublishContent } = documentSlice.actions;
 export const { setSelectedDocument, updateSelectedDocContent } = selectedDocumentSlice.actions;
+export const { setSortRule } = sortRuleSlice.actions;
 
 const reducers = {
     documents: documentSlice.reducer,
     selectedDocument: selectedDocumentSlice.reducer,
+    sortRule: sortRuleSlice.reducer,
 }
 
 export default reducers;

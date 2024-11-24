@@ -15,8 +15,6 @@ export default function DocumentPreviewList() {
     const documents = useAppSelector(state => state.documents);
     const isDocumentLoading = useAppSelector(state => state.loading.isDocumentLoading);
 
-    console.log('isDocumentLoading', isDocumentLoading);
-
     const [sortCategory, setSortCategory] = useState<'최근 문서' | '공유중인 문서'>('최근 문서');
     const [isAdding, setIsAdding] = useState(false);
     const [docTitle, setDocTitle] = useState('');

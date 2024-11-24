@@ -12,7 +12,7 @@ export default function LabelButton({ onClick, Icon, iconWidth, hover, label }: 
     return (
         <button
             onClick={onClick}
-            className={`flex flex-row items-center justify-center p-1 rounded-sm cursor-pointer
+            className={`flex flex-row items-center justify-center p-1 text-xs rounded-sm cursor-pointer
             ${hover}`}>
             <Icon
                 width={iconWidth}

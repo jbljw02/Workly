@@ -1,4 +1,4 @@
-import { getStorage, ref, getMetadata, updateMetadata, uploadString, getDownloadURL } from "firebase/storage";
+import { getStorage, ref, getMetadata, updateMetadata, uploadString, getDownloadURL, deleteObject } from "firebase/storage";
 import { ImageAttrs } from '../../../lib/ImageNode';
 
 // 이미지 자르기 후 업로드

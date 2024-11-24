@@ -13,7 +13,7 @@ import DocumentSection from './DocumentSection';
 import EditInput from './EditInput';
 import { addDocuments, deleteAllDocumentsOfFolder, DocumentProps } from '@/redux/features/documentSlice';
 import AddInputModal from '@/components/modal/AddInputModal';
-import HoverTooltip from '@/components/editor/child/menu-bar/HoverTooltip';
+import HoverTooltip from '@/components/tooltip/HoverTooltip';
 import { showCompleteAlert, showWarningAlert } from '@/redux/features/alertSlice';
 import useAddDocument from '@/components/hooks/useAddDocument';
 import { addDocumentsToTrash, addFoldersToTrash, setDocumentsTrash } from '@/redux/features/trashSlice';
@@ -29,7 +29,7 @@ type FolderItemProps = {
 export default function FolderItem({ folder }: FolderItemProps) {
     const dispatch = useAppDispatch();
     const router = useRouter();
-    
+
     const undoState = useUndoState();
     const addDocToFolder = useAddDocument();
 
@@ -99,7 +99,7 @@ export default function FolderItem({ folder }: FolderItemProps) {
             dispatch(addFoldersToTrash(folder));
             dispatch(addDocumentsToTrash(documentsOfFolder));
 
-            if(documentsOfFolder.some(doc => doc.id === documentId)) {
+            if (documentsOfFolder.some(doc => doc.id === documentId)) {
                 router.push('/editor/home');
             }
 
@@ -116,7 +116,7 @@ export default function FolderItem({ folder }: FolderItemProps) {
             console.error(error);
             // 삭제에 실패하면 롤백
             undoState();
-            
+
             dispatch(showWarningAlert(`${folder.name}의 삭제에 실패했습니다.`));
         }
     }

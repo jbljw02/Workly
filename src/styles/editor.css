@@ -70,15 +70,26 @@ hr {
 .image-resizer-s,
 .image-resizer-w {
   visibility: hidden;
+  border-radius: 5px;
 }
 
 .node-imageComponent {
-  margin-right: 6px;
+  margin-right: 5px;
   display: inline-block;
   position: relative;
+  margin-top: 10px;
+  margin-bottom: 8px;
+  height: fit-content;
+}
+
+.image-component {
+  --box-color: #4d63fe;
+  height: fit-content;
+  display: flex;
 }
 
 .resizable-img {
+  border-radius: 5px;
 }
 
 .node-file {

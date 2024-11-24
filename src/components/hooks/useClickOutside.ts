@@ -7,7 +7,6 @@ export function useClickOutside(
     excludedRef?: RefObject<HTMLElement>
 ) {
     useEffect(() => {
-
         const handleClickOutside = (event: MouseEvent) => {
             // ref 바깥을 클릭했고 excludedRef를 클릭한 것이 아닐 때
             if (ref.current &&

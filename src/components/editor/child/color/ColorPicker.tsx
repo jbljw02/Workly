@@ -1,8 +1,8 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { Editor } from '@tiptap/react';
-import ToolbarButton from './ToolbarButton';
+import ToolbarButton from '../../../button/ToolbarButton';
 import FontColorIcon from '../../../../../public/svgs/editor/font-color.svg';
-import HoverTooltip from './HoverTooltip';
+import HoverTooltip from '../../../tooltip/HoverTooltip';
 import { SketchPicker, ColorResult } from 'react-color';
 import { useClickOutside } from '@/components/hooks/useClickOutside';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';

@@ -10,7 +10,7 @@ import DragHandle from '@tiptap-pro/extension-drag-handle-react'
 import MenuIcon from '../../../public/svgs/editor/menu-vertical.svg'
 import { DocumentProps, renameDocuments, setSelectedDocument, updateDocuments, updateSelectedDocContent } from '@/redux/features/documentSlice'
 import formatTimeDiff from '@/utils/formatTimeDiff'
-import MenuBar from './child/menu-bar/MenuBar'
+import MenuBar from './child/header/MenuBar'
 import useEditorExtension from '../hooks/useEditorExtension';
 import useVisitDocument from '../hooks/useVisitDocument';
 import useDocumentRealTime from '../hooks/useDocumentRealTime';
@@ -26,6 +26,7 @@ export default function Editor({ docId }: { docId: string }) {
 
   const extensions = useEditorExtension({ docId });
   const editorPermission = useAppSelector(state => state.editorPermission);
+
   const editor = useEditor({
     extensions: extensions,
     editorProps: {
@@ -36,20 +37,29 @@ export default function Editor({ docId }: { docId: string }) {
     editable: editorPermission !== '읽기 허용',
   }, []);
 
+  console.log('editor: ', editor?.getJSON());
+
+
   const { updateContent, debouncedUpdateRequest } = useUpdateContent();
 
   const pathname = usePathname();
   const pathParts = pathname.split('/');
   const folderId = pathParts[2]; // '/editor/[folderId]/[documentId]'일 때 folderId는 2번째 인덱스
   const documentId = pathParts[3]; // documentId는 3번째 인덱스
-  
+
   const documents = useAppSelector(state => state.documents);
   const folders = useAppSelector(state => state.folders);
   const openColorPicker = useAppSelector(state => state.openColorPicker);
   const selectedDocument = useAppSelector(state => state.selectedDocument);
+  const docSynced = useAppSelector(state => state.docSynced);
 
-  const docTitle = useMemo(() => selectedDocument.title, [selectedDocument.title]); // 문서 제목
+  const [docTitle, setDocTitle] = useState('');
   const [lastReadedTime, setLastReadedTime] = useState<string>('현재 편집 중'); // 문서의 마지막 편집 시간에 따른 출력값
+
+  // 문서가 변경될 때 문서명의 초기값 지정
+  useEffect(() => {
+    setDocTitle(selectedDocument.title);
+  }, [selectedDocument.id]);
 
   // 현재 선택된 문서를 지정
   // documents의 값이 변경될 때마다 현재 선택된 문서의 값도 업데이트
@@ -97,6 +107,7 @@ export default function Editor({ docId }: { docId: string }) {
       };
 
       dispatch(renameDocuments({ docId: updatedDoc.id, newTitle: e.target.value }));
+      setDocTitle(e.target.value);
       setLastReadedTime(formatTimeDiff(updatedDoc.readedAt));
 
       if (updatedDoc.id) {
@@ -122,7 +133,7 @@ export default function Editor({ docId }: { docId: string }) {
     <div className="w-full h-full overflow-y-auto">
       {/* 에디터의 헤더 */}
       {
-        selectedDocument.title ?
+        selectedDocument.id && docSynced ?
           <div className="sticky top-0 bg-white z-10">
             <EditorHeader
               editor={editor} />
@@ -131,32 +142,30 @@ export default function Editor({ docId }: { docId: string }) {
           <EditorHeaderSkeleton />
       }
       {
-        selectedDocument.docContent ?
-          <>
-            <div
-              className='p-4'>
-              <EditorTitleInput
-                docTitle={docTitle}
-                docTitleChange={docTitleChange}
-                editor={editor} />
-              <DragHandle
-                tippyOptions={{
-                  placement: 'left',
-                }}
-                className='z-0'
-                editor={editor}>
-                <MenuIcon
-                  width="17" />
-              </DragHandle>
-              <EditorContent
-                editor={editor}
-                className="origin-top-left h-full w-full"
-                style={{
-                  pointerEvents: openColorPicker ? 'none' : undefined,
-                }}>
-              </EditorContent>
-            </div>
-          </> :
+        selectedDocument.id && docSynced ?
+          <div
+            className='p-4'>
+            <EditorTitleInput
+              docTitle={docTitle || selectedDocument.title}
+              docTitleChange={docTitleChange}
+              editor={editor} />
+            <DragHandle
+              pluginKey="drag-handle"
+              tippyOptions={{
+                placement: 'left',
+              }}
+              editor={editor}>
+              <MenuIcon
+                width="17" />
+            </DragHandle>
+            <EditorContent
+              editor={editor}
+              className="origin-top-left h-full w-full"
+              style={{
+                pointerEvents: openColorPicker ? 'none' : undefined,
+              }}>
+            </EditorContent>
+          </div> :
           <EditorContentSkeleton />
       }
     </div>

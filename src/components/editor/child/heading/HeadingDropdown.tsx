@@ -5,7 +5,7 @@ import TriangleDownIcon from '../../../../../public/svgs/editor/triangle-down.sv
 import TriangleRightIcon from '../../../../../public/svgs/editor/triangle-right.svg'
 import TriangleUpIcon from '../../../../../public/svgs/editor/triangle-up.svg'
 import { useClickOutside } from "@/components/hooks/useClickOutside";
-import HoverTooltip from "./HoverTooltip";
+import HoverTooltip from "../../../tooltip/HoverTooltip";
 
 type Option = {
     value: string;
@@ -48,15 +48,14 @@ export default function HeadingDropdown({ editor, headingLevel }: { editor: Edit
 
     return (
         <div
-            className="relative w-28 z-30"
+            className="relative w-28 z-20"
             ref={dropdownRef}>
             <HoverTooltip label='스타일'>
                 <div
                     onClick={() => setIsOpen(!isOpen)}
-                    onMouseDown={(e) => e.preventDefault()} // 드래그 상태 유지
-                    className="flex flex-row items-center justify-between hover:bg-gray-100 rounded-sm px-2 py-1 cursor-pointer">
-                    {/* 현재 선택된 옵션을 출력 */}
-                    <div className="rounded-md text-sm pr-2">
+                    onMouseDown={(e) => e.preventDefault()}
+                    className="flex flex-row items-center flex-grow justify-between hover:bg-gray-100 rounded-sm w-28 px-2 py-1 cursor-pointer">
+                    <div className="rounded-md text-sm pr-2 truncate">
                         {selectedLabel}
                     </div>
                     {
@@ -81,7 +80,7 @@ export default function HeadingDropdown({ editor, headingLevel }: { editor: Edit
                                         ${option.value === 'h2' ? 'text-xl leading-none' : ''} 
                                         ${option.value === 'h3' ? 'text-lg leading-none' : ''} 
                                         ${option.value === '16' ? 'text-sm leading-none' : ''}`}>
-                                <div className="pl-1">{option.label}</div>
+                                <div className="pl-1 truncate overflow-hidden">{option.label}</div>
                                 <TriangleRightIcon width="17" />
                             </div>
                         ))

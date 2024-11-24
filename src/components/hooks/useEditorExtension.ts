@@ -18,7 +18,6 @@ import CollaborationCursor from '@tiptap/extension-collaboration-cursor'
 import FileHandler from '@tiptap-pro/extension-file-handler'
 import ImageNodeView from '@/components/editor/child/image/ImageNodeView'
 import { setLinkTooltip } from '@/redux/features/linkSlice'
-import uploadImage from '@/utils/uploadImage'
 import uploadFile from '@/utils/uploadFile'
 import { FontSize } from "../../../lib/fontSize";
 import { FontFamily } from "../../../lib/fontFamily";
@@ -26,11 +25,16 @@ import LinkNode from "../../../lib/linkNode";
 import FileNode from "../../../lib/fileNode";
 import { Editor } from "@tiptap/react";
 import '@/styles/editor.css'
-import { ConnectedUser, setConnectedUsers } from "@/redux/features/shareDocumentSlice";
 import Blockquote from "@tiptap/extension-blockquote";
 import Strike from "@tiptap/extension-strike";
 import CustomTextMark from "../../../lib/textMark";
-import { setConnection } from "@/redux/features/connectionSlice";
+import { ConnectedUser, setConnectedUsers, setConnection, setDocSynced } from "@/redux/features/connectionSlice";
+import GlobalDragHandle from 'tiptap-extension-global-drag-handle'
+import DragHandle from '@tiptap-pro/extension-drag-handle'
+import { Node as ProsemirrorNode } from 'prosemirror-model';
+import { setSelectedNode } from "@/redux/features/selectedNodeSlice";
+import uploadNewImage from "@/utils/image/uploadNewImage";
+import { EnsureLastParagraph } from "../../../lib/ensureLastParagraph";
 
 const appId = process.env.NEXT_PUBLIC_TIPTAP_APP_ID;
 
@@ -90,7 +94,11 @@ export default function useEditorExtension({ docId }: useEditorExtensionProps) {
         appId: appId!,
         document: doc,
         onConnect: () => dispatch(setConnection(true)),
-        onDisconnect: () => dispatch(setConnection(false)),
+        onDisconnect: () => {
+            dispatch(setConnection(false));
+            dispatch(setDocSynced(false));
+        },
+        onSynced: () => dispatch(setDocSynced(true)),
     }), [docId, doc]);
 
     // 접속자 목록 업데이트
@@ -99,7 +107,8 @@ export default function useEditorExtension({ docId }: useEditorExtensionProps) {
             const users: ConnectedUser[] = [];
             provider.awareness?.getStates().forEach((state: any) => {
                 const user = state.user;
-                if (user) {
+                // 이미 연결된 사용자가 아니라면 접속자 목록에 추가
+                if (user && !users.some(u => u.id === user.id)) {
                     users.push({
                         name: user.name,
                         id: user.id,
@@ -190,6 +199,7 @@ export default function useEditorExtension({ docId }: useEditorExtensionProps) {
         Blockquote,
         FontSize,
         FontFamily,
+        EnsureLastParagraph,
         LinkNode.configure({
             openOnClick: true,
             autolink: true,
@@ -198,10 +208,7 @@ export default function useEditorExtension({ docId }: useEditorExtensionProps) {
         }),
         Dropcursor,
         CustomTextMark,
-        ImageNodeView.configure({
-            defaultWidth: 600,
-            defaultHeight: 600,
-        }),
+        ImageNodeView,
         FileNode,
         FileHandler.configure({
             onDrop: (currentEditor: Editor, files: File[], pos: number) => {
@@ -212,7 +219,7 @@ export default function useEditorExtension({ docId }: useEditorExtensionProps) {
                         const blobUrl = URL.createObjectURL(file);
 
                         if (file.type.startsWith('image/')) {
-                            uploadImage(currentEditor, file, src)
+                            uploadNewImage(currentEditor, file.name, src)
                         } else {
                             uploadFile(currentEditor, file, blobUrl, pos)
                         }
@@ -242,6 +249,13 @@ export default function useEditorExtension({ docId }: useEditorExtensionProps) {
                 connectedAt: Date.now(),
             },
         }),
+        DragHandle.configure({
+            onNodeChange: ({ node, editor }) => {
+                if (!node) {
+                    return;
+                }
+            },
+        })
     ];
 
     return extensions;

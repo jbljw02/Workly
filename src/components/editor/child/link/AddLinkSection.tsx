@@ -15,8 +15,9 @@ export type SelectionPosition = {
 export type AddLinkSectionProps = {
     editor: Editor;
     position: SelectionPosition;
-    setAddingLink: React.Dispatch<React.SetStateAction<boolean>>;
+    setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
     isOpen: boolean;
+    linkRef: React.RefObject<HTMLDivElement>;
 }
 
 type FolderItem = {
@@ -36,24 +37,40 @@ function FolderItem({ onClick, label }: FolderItem) {
     );
 }
 
-export default function AddLinkSection({ editor, position, setAddingLink, isOpen }: AddLinkSectionProps) {
+export default function AddLinkSection({ editor, position, setIsOpen, isOpen, linkRef }: AddLinkSectionProps) {
+    const inputRef = useRef<HTMLInputElement>(null);
+    
     const [link, setLink] = useState<string>('');
-    const containerRef = useRef<HTMLDivElement>(null);
-
     const folders = useAppSelector(state => state.folders);
 
     // 컴포넌트가 열리면 input으로 포커스하고 드래그된 텍스트를 표시
     useEffect(() => {
         const selection = window.getSelection();
-        if (selection && selection.rangeCount > 0) {
-            editor.chain().toggleHighlight({ color: '#F3F3F3' }).run()
+        if (selection && selection.rangeCount > 0 && isOpen) {
+            editor.chain().setHighlight({ color: '#F3F3F3' }).run()
+            inputRef.current?.focus();
+        }
+        else if (!isOpen) {
+            editor.commands.unsetMark('highlight');
         }
 
         return () => {
-            // 컴포넌트가 닫힐 때 하이라이트 제거
             editor.commands.unsetMark('highlight');
         };
-    }, []);
+    }, [isOpen]);
+
+    // 페이지를 떠날 때 하이라이트 마크를 제거
+    useEffect(() => {
+        const unsetHighlight = () => {
+            editor.commands.unsetMark('highlight');
+        };
+
+        window.addEventListener('beforeunload', unsetHighlight);
+
+        return () => {
+            window.removeEventListener('beforeunload', unsetHighlight);
+        };
+    }, [editor]);
 
     const linkChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setLink(e.target.value);
@@ -73,23 +90,24 @@ export default function AddLinkSection({ editor, position, setAddingLink, isOpen
 
             const id = uuidv4(); // 각 a태그를 구분할 고유값
             (editor.chain() as any).focus().extendMarkRange('link').setLink({ href, id }).run();
-            setAddingLink(false);
+            setIsOpen(false);
         }
         // ESC를 누르면 창 닫음
         if (e.key === 'Escape') {
-            setAddingLink(false);
+            setIsOpen(false);
         }
     }
 
-    useClickOutside(containerRef, () => setAddingLink(false));
+    useClickOutside(linkRef, () => setIsOpen(false));
 
     return (
         <div
-            ref={containerRef}
-            className="absolute flex flex-col bg-white text-sm rounded-md p-3 border border-neutral-300 z-10 shadow-[0px_4px_10px_rgba(0,0,0,0.25)]"
+            className={`fixed w-80 flex flex-col bg-white text-sm rounded-md p-3 border border-neutral-300 z-10 shadow-[0px_4px_10px_rgba(0,0,0,0.25)]
+                transition-opacity duration-200 ease-in-out
+                ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
             style={{
-                top: position.top + window.scrollY + 8, // 스크롤된 양까지 계산
-                left: position.left
+                top: `${position.top + 10}px`,
+                left: `${position.left}px`,
             }}>
             {/* 링크 input */}
             <div className="flex flex-row items-center bg-neutral-100 p-2 rounded-sm min-w-72">
@@ -97,6 +115,7 @@ export default function AddLinkSection({ editor, position, setAddingLink, isOpen
                     <WorldIcon width="14" />
                 </div>
                 <input
+                    ref={inputRef}
                     type="text"
                     className="bg-transparent border-none outline-none box-border w-full"
                     value={link}

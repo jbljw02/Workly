@@ -4,7 +4,7 @@ import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import DocumentIcon from '../../../../public/svgs/shared-document.svg';
 import RestoreIcon from '../../../../public/svgs/restore.svg';
 import TrashIcon from '../../../../public/svgs/trash.svg';
-import HoverTooltip from "@/components/editor/child/menu-bar/HoverTooltip";
+import HoverTooltip from "@/components/tooltip/HoverTooltip";
 import LabelButton from "@/components/button/LabelButton";
 import { SearchCategory } from "../Trash";
 import TrashFolderIcon from '../../../../public/svgs/trash-folder.svg';

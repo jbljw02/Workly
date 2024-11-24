@@ -1,8 +1,8 @@
 import { Editor } from "@tiptap/react";
-import ToolbarButton from "./ToolbarButton";
+import ToolbarButton from "../../../button/ToolbarButton";
 import PlusIcon from '../../../../../public/svgs/editor/plus.svg';
 import MinusIcon from '../../../../../public/svgs/editor/minus.svg';
-import HoverTooltip from "./HoverTooltip";
+import HoverTooltip from "../../../tooltip/HoverTooltip";
 
 type FontSizeCal = {
     editor: Editor;

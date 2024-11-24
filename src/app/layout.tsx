@@ -6,6 +6,7 @@ import { useRef, useEffect } from "react";
 import { Provider } from "react-redux";
 import EmailVerifyCheck from '@/components/global/EmailVerifyCheck';
 import { AppProgressBar as ProgressBar } from 'next-nprogress-bar';
+import Modal from 'react-modal';
 
 export default function RootLayout({
   children,

@@ -4,7 +4,7 @@ import formatTimeDiff from "@/utils/formatTimeDiff";
 import MenuIcon from '../../../public/svgs/editor/menu-vertical.svg'
 import ShareDocumentIcon from '../../../public/svgs/shared-document.svg'
 import { DocumentProps } from "@/redux/features/documentSlice";
-import { MenuItemProps } from "../editor/child/MenuItem";
+import { MenuItemProps } from "../menu/MenuItem";
 import useCopyDocument from "../hooks/useCopyDocument";
 import { useCopyURL } from "../hooks/useCopyURL";
 import { useMemo, useRef, useState } from "react";
@@ -13,8 +13,8 @@ import CopyIcon from '../../../public/svgs/editor/copy.svg'
 import DeleteIcon from '../../../public/svgs/trash.svg'
 import LinkCopyIcon from '../../../public/svgs/editor/link.svg'
 import useDeleteDocument from "../hooks/useDeleteDocument";
-import MenuList from "../editor/child/MenuList";
-import HoverTooltip from "../editor/child/menu-bar/HoverTooltip";
+import MenuList from "../menu/MenuList";
+import HoverTooltip from "../tooltip/HoverTooltip";
 import LabelButton from "../button/LabelButton";
 import DocumentMoveModal from "../modal/DocumentMoveModal";
 import ShareDocumentModal from "../modal/share/ShareDocumentModal";

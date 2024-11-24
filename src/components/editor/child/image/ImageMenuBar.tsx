@@ -1,16 +1,14 @@
 import { RefObject, useRef, useState } from "react";
 import BarDivider from "../divider/VerticalDivider";
-import HoverTooltip from "../menu-bar/HoverTooltip";
-import ToolbarButton from "../menu-bar/ToolbarButton";
+import HoverTooltip from "../../../tooltip/HoverTooltip";
+import ToolbarButton from "../../../button/ToolbarButton";
 import AlignLeftIcon from '../../../../../public/svgs/editor/align-left.svg';
 import AlignCenterIcon from '../../../../../public/svgs/editor/align-center.svg';
 import AlignRightIcon from '../../../../../public/svgs/editor/align-right.svg';
 import CropIcon from '../../../../../public/svgs/editor/crop.svg';
 import TrashIcon from '../../../../../public/svgs/trash.svg';
 import FullIcon from '../../../../../public/svgs/editor/full-screen.svg';
-import CaptionIcon from '../../../../../public/svgs/editor/comment.svg';
 import { ResizableImageNodeViewRendererProps } from "tiptap-extension-resizable-image";
-import FileFullModal from "@/components/modal/FileFullModal";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { setOpenFullModal } from "@/redux/features/editorImageSlice";
 import { showWarningAlert } from "@/redux/features/alertSlice";
@@ -21,9 +19,11 @@ type ImageMenuBarProps = {
     nodeViewRef: RefObject<HTMLDivElement>;
     cropStart: () => void;
     resizableImgProps: ResizableImageNodeViewRendererProps;
+    setShowMenu: React.Dispatch<React.SetStateAction<boolean>>;
+    isSelected: boolean;
 }
 
-export default function ImageMenuBar({ nodeViewRef, cropStart, resizableImgProps }: ImageMenuBarProps) {
+export default function ImageMenuBar({ nodeViewRef, cropStart, resizableImgProps, setShowMenu, isSelected }: ImageMenuBarProps) {
     const dispatch = useAppDispatch();
     const editor = resizableImgProps.editor;
 
@@ -35,17 +35,13 @@ export default function ImageMenuBar({ nodeViewRef, cropStart, resizableImgProps
             imgContainer.style.justifyContent = justifyContent;
             setAlignment(justifyContent);
         }
-        
     };
 
-    const deleteImage = async () => {
-        const imageNode = resizableImgProps.node;
-        const imageId = imageNode.attrs.id;
-
+    const deleteImage = async (id: string) => {
         try {
             // 스토리지 내부 이미지 삭제
             const storage = getStorage();
-            const imageRef = ref(storage, `images/${imageId}`);
+            const imageRef = ref(storage, `images/${id}`);
 
             await deleteObject(imageRef);
 
@@ -53,12 +49,13 @@ export default function ImageMenuBar({ nodeViewRef, cropStart, resizableImgProps
             editor.chain().focus().deleteSelection().run();
         } catch (error) {
             console.error(error);
-            dispatch(showWarningAlert('이미지 삭제에 실패했습니다.'));
         }
     }
 
     return (
-        <div className='flex flex-row items-center absolute bottom-[-48px] left-[-5px] font-normal rounded-md p-1 z-[9999] bg-white shadow-[0px_4px_10px_rgba(0,0,0,0.25)]'>
+        <div className={`flex flex-row items-center absolute bottom-[-48px] left-[-5px] font-normal rounded-md p-1 z-[10] bg-white border border-gray-200 shadow-[0px_4px_10px_rgba(0,0,0,0.25)]
+            transition-opacity duration-200 ease-in-out
+            ${isSelected ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
             <div className="flex flex-row items-center gap-0.5">
                 <HoverTooltip label="좌측 정렬">
                     <ToolbarButton
@@ -94,7 +91,7 @@ export default function ImageMenuBar({ nodeViewRef, cropStart, resizableImgProps
                     <ToolbarButton
                         Icon={TrashIcon}
                         iconWidth={19}
-                        onClick={deleteImage} />
+                        onClick={() => deleteImage(resizableImgProps.node.attrs.id)} />
                 </HoverTooltip>
                 <HoverTooltip label='펼치기'>
                     <ToolbarButton
@@ -102,7 +99,9 @@ export default function ImageMenuBar({ nodeViewRef, cropStart, resizableImgProps
                         iconWidth={21}
                         onClick={() => dispatch(setOpenFullModal(true))} />
                 </HoverTooltip>
-                <ImageFullModal resizableImgProps={resizableImgProps} />
+                {
+                    isSelected && <ImageFullModal resizableImgProps={resizableImgProps} />
+                }
             </div>
         </div>
     )

@@ -1,16 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { Collaborator } from "./documentSlice";
 
-export type ConnectedUser = {
-    name: string;
-    id: string;
-    color: string;
-    photoURL: string;
-    connectedAt: number;
-}
-
-const initialConnectedUsers: ConnectedUser[] = [];
-
 export const targetSharingEmailSlice = createSlice({
     name: 'targetSharingEmail',
     initialState: '',
@@ -92,22 +82,11 @@ export const editorPermissionSlice = createSlice({
     },
 })
 
-export const connectedUsersSlice = createSlice({
-    name: 'connectedUsers',
-    initialState: initialConnectedUsers,
-    reducers: {
-        setConnectedUsers: (state, action) => {
-            return action.payload;
-        },
-    },
-})
-
 export const { setTargetSharingEmail } = targetSharingEmailSlice.actions;
 export const { setSearchedCoworkers, updateSearchedCoworkerAuthority } = searchedCoworkersSlice.actions;
 export const { setCoworkerList, addCoworker, updateCoworkerAuthority, deleteCoworker } = coworkerListSlice.actions;
 export const { setSelectedCoworkers, updateAuthority } = selectedCoworkersSlice.actions;
 export const { setEditorPermission } = editorPermissionSlice.actions;
-export const { setConnectedUsers } = connectedUsersSlice.actions;
 
 const reducers = {
     targetSharingEmail: targetSharingEmailSlice.reducer,
@@ -115,7 +94,6 @@ const reducers = {
     coworkerList: coworkerListSlice.reducer,
     selectedCoworkers: selectedCoworkersSlice.reducer,
     editorPermission: editorPermissionSlice.reducer,
-    connectedUsers: connectedUsersSlice.reducer,
 }
 
 export default reducers;
