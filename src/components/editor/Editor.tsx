@@ -37,9 +37,6 @@ export default function Editor({ docId }: { docId: string }) {
     editable: editorPermission !== '읽기 허용',
   }, []);
 
-  console.log('editor: ', editor?.getJSON());
-
-
   const { updateContent, debouncedUpdateRequest } = useUpdateContent();
 
   const pathname = usePathname();
@@ -115,6 +112,8 @@ export default function Editor({ docId }: { docId: string }) {
       }
     }
   }
+
+  console.log('editor: ', editor?.getJSON());
 
   // 페이지를 떠나기 이전 변경사항 저장
   const updateContentBeforeLeave = async () => {

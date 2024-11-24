@@ -18,7 +18,7 @@ import CollaborationCursor from '@tiptap/extension-collaboration-cursor'
 import FileHandler from '@tiptap-pro/extension-file-handler'
 import ImageNodeView from '@/components/editor/child/image/ImageNodeView'
 import { setLinkTooltip } from '@/redux/features/linkSlice'
-import uploadFile from '@/utils/uploadFile'
+import uploadNewFile from '@/utils/file/uploadNewFile'
 import { FontSize } from "../../../lib/fontSize";
 import { FontFamily } from "../../../lib/fontFamily";
 import LinkNode from "../../../lib/linkNode";
@@ -216,12 +216,11 @@ export default function useEditorExtension({ docId }: useEditorExtensionProps) {
                     const fileReader = new FileReader()
                     fileReader.onload = async () => {
                         const src = fileReader.result as string
-                        const blobUrl = URL.createObjectURL(file);
 
                         if (file.type.startsWith('image/')) {
                             uploadNewImage(currentEditor, file.name, src)
                         } else {
-                            uploadFile(currentEditor, file, blobUrl, pos)
+                            uploadNewFile(currentEditor, file, src, pos)
                         }
                     }
                     fileReader.readAsDataURL(file)
