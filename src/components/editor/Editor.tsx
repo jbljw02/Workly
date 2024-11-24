@@ -56,7 +56,7 @@ export default function Editor({ docId }: { docId: string }) {
   // 문서가 변경될 때 문서명의 초기값 지정
   useEffect(() => {
     setDocTitle(selectedDocument.title);
-  }, [selectedDocument.id]);
+  }, [selectedDocument.title]);
 
   // 현재 선택된 문서를 지정
   // documents의 값이 변경될 때마다 현재 선택된 문서의 값도 업데이트
