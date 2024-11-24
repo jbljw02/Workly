@@ -20,7 +20,6 @@ export default function useUpdateContent() {
                 await axios.put('/api/document', {
                     docId: latestDoc.id,
                     newDocName: latestDoc.title,
-                    newDocContent: latestDoc.docContent,
                 });
             } catch (error) {
                 console.error(error);
@@ -32,6 +31,8 @@ export default function useUpdateContent() {
     // 즉시 업데이트 요청
     const updateContent = async (latestDoc: DocumentProps) => {
         if (!latestDoc) return;
+
+        console.log('latestDoc: ', latestDoc);
 
         try {
             await axios.put('/api/document', {

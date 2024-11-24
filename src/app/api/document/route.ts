@@ -4,6 +4,8 @@ import { doc, getDoc, updateDoc, collection, addDoc, writeBatch, query, where, g
 import { Folder } from "@/redux/features/folderSlice";
 import { Collaborator, DocumentProps } from "@/redux/features/documentSlice";
 import { Timestamp } from 'firebase/firestore';
+import { getDownloadURL, getStorage, ref, uploadString } from "firebase/storage";
+import convertTimestamp from "@/utils/convertTimestamp";
 
 // 사용자의 문서를 추가 - CREATE
 export async function POST(req: NextRequest) {
@@ -25,19 +27,26 @@ export async function POST(req: NextRequest) {
         // 원자성: 모든 작업이 성공하지 못하면 작업은 실패
         const batch = writeBatch(firestore);
 
+        // 스토리지에 문서 내용 생성
+        const storage = getStorage();
+        const contentRef = ref(storage, `documents/${document.id}/content.json`);
+        const emptyContent = JSON.stringify(null); // 빈 문서 내용
+        await uploadString(contentRef, emptyContent);
+        const contentUrl = await getDownloadURL(contentRef);
+
         // documents 컬렉션에 새 문서 추가
         const newDocRef = doc(firestore, 'documents', document.id);
         const newDocument = {
             ...document,
+            docContent: contentUrl, // 문서 내용에 대한 참조
             createdAt: serverTimestamp(),
             readedAt: serverTimestamp(),
         };
         batch.set(newDocRef, newDocument);
 
         // 폴더에 문서 업데이트(documentIds에 새 문서 ID 추가)
-        const updatedDocumentIds = [...(folderData.documentIds || []), document.id];
         batch.update(folderDocRef, {
-            documentIds: updatedDocumentIds,
+            documentIds: [...(folderData.documentIds || []), document.id],
             readedAt: serverTimestamp() // 폴더의 readedAt도 업데이트
         });
 
@@ -59,29 +68,25 @@ export async function GET(req: NextRequest) {
         if (!email) return NextResponse.json({ error: "이메일이 제공되지 않음" }, { status: 400 });
 
         // documents 컬렉션에서 모든 문서 가져오기
-        const documentsCollection = collection(firestore, 'documents');
-        const documentsSnapshot = await getDocs(documentsCollection);
+        const documentsSnapshot = await getDocs(collection(firestore, 'documents'));
 
         // 모든 문서를 추출
-        const documents = documentsSnapshot.docs.map(doc => {
+        const documents = await Promise.all(documentsSnapshot.docs.map(async doc => {
             const data = doc.data();
 
-            // 타임스탬프 변환
-            const convertTimestamp = (timestamp: Timestamp | null) => {
-                if (!timestamp) {
-                    return { seconds: 0, nanoseconds: 0 }; // 기본값 설정
-                }
-                return {
-                    seconds: timestamp.seconds,
-                    nanoseconds: timestamp.nanoseconds,
-                };
-            };
+            let docContent = null;
+            // 문서 내용이 존재하는 경우에만 스토리지에서 가져오기
+            if (data.docContent) {
+                const response = await fetch(data.docContent);
+                docContent = await response.json();
 
-            // 타입 변환
-            const document: DocumentProps = {
+                console.log('docContent: ', docContent);
+            }
+
+            return {
                 id: doc.id,
                 title: data.title,
-                docContent: data.docContent || null,
+                docContent: docContent,
                 createdAt: convertTimestamp(data.createdAt),
                 readedAt: convertTimestamp(data.readedAt),
                 author: data.author,
@@ -93,9 +98,7 @@ export async function GET(req: NextRequest) {
                 publishedUser: data.publishedUser,
                 publishedDate: data.publishedDate ? convertTimestamp(data.publishedDate) : undefined,
             };
-
-            return document;
-        });
+        }));
 
         // 변환된 문서 데이터를 필터링
         const filteredDocuments = documents.filter(doc => {
@@ -117,27 +120,26 @@ export async function GET(req: NextRequest) {
     }
 }
 
-// 문서명 수정 - UPDATE
+// 문서명, 내용 수정 - UPDATE
 export async function PUT(req: NextRequest) {
     try {
         const { docId, newDocName, newDocContent } = await req.json();
 
         if (!docId) return NextResponse.json({ error: "문서 아이디가 제공되지 않음" }, { status: 400 });
-
-        // 문서 참조 가져오기
+        
         const docRef = doc(firestore, 'documents', docId);
-        const docSnap = await getDoc(docRef);
-
-        if (!docSnap.exists()) {
-            return NextResponse.json({ error: "문서를 찾을 수 없음" }, { status: 404 });
-        }
-
-        // 문서명, 문서 내용, 수정 시간 업데이트
         const updateData = {
             readedAt: serverTimestamp(),
-            ...(newDocName !== undefined && { title: newDocName }),
-            ...(newDocContent !== undefined && { docContent: newDocContent }),
+            ...(newDocName !== undefined && { title: newDocName })
         };
+
+        // 문서 내용 변경을 요청할 경우에만 스토리지 업데이트
+        if (newDocContent !== undefined) {
+            console.log('변경된 문서 내용: ', newDocContent);
+            const storage = getStorage();
+            const contentRef = ref(storage, `documents/${docId}/content.json`);
+            await uploadString(contentRef, JSON.stringify(newDocContent));
+        }
 
         await updateDoc(docRef, updateData);
 

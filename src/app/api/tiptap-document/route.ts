@@ -85,6 +85,13 @@ export async function DELETE(req: NextRequest, res: NextResponse) {
 
     return NextResponse.json(response.data, { status: 200 });
   } catch (error) {
+    console.log(error);
+    if (axios.isAxiosError(error)) {
+      return NextResponse.json(
+        { error: 'tiptap cloud 문서 삭제 실패' },
+        { status: error.response?.status || 500 }
+      );
+    }
     return NextResponse.json({ error: 'tiptap cloud 문서 삭제 실패' }, { status: 500 });
   }
 }

@@ -113,8 +113,6 @@ export default function Editor({ docId }: { docId: string }) {
     }
   }
 
-  console.log('editor: ', editor?.getJSON());
-
   // 페이지를 떠나기 이전 변경사항 저장
   const updateContentBeforeLeave = async () => {
     await updateContent(selectedDocument);

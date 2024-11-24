@@ -3,7 +3,6 @@ import { Folder } from "@/redux/features/folderSlice";
 import { deleteAllDocumentsTrashOfFolder, deleteDocumentsFromTrash, deleteFoldersFromTrash, removeDocumentFromFolderTrash } from "@/redux/features/trashSlice";
 import { useAppDispatch } from "@/redux/hooks";
 
-
 const useDeleteTrash = () => {
     const dispatch = useAppDispatch();
 

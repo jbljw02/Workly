@@ -17,8 +17,8 @@ export default function PublishedDocuments() {
     return (
         <div className="flex flex-col w-full h-full overflow-y-auto">
             <DocumentHeader
-                title="웹 페이지로 게시된 문서"
-                description={`${publishedDocuments.length}개의 문서`} />
+                title="게시된 문서"
+                description='웹 페이지로 생성된 문서' />
             {/* 목록의 헤더 */}
             <DocumentListHeader />
             {/* 공유중인 문서 목록 나열 */}

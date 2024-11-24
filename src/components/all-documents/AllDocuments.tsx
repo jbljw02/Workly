@@ -35,7 +35,7 @@ export default function AllDocuments() {
         <div className="flex flex-col w-full h-full overflow-y-auto">
             <DocumentHeader
                 title="문서"
-                description={`${usersDocuments.length}개의 문서`} />
+                description='내가 생성한 문서' />
             {/* 목록의 헤더 */}
             <DocumentListHeader />
             {/* 공유중인 문서 목록 나열 */}
