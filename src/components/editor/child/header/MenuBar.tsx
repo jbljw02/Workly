@@ -27,7 +27,7 @@ import ColorPicker from '../color/ColorPicker'
 import { setTextColor } from '@/redux/features/textColorSlice'
 import VerticalDivider from '../divider/VerticalDivider'
 import WarningAlert from '@/components/alert/WarningAlert'
-import uploadFile from '@/utils/uploadFile'
+import uploadFile from '@/utils/file/uploadNewFile'
 import StrikeIcon from '../../../../../public/svgs/editor/strike.svg'
 import BlockquoteIcon from '../../../../../public/svgs/editor/blockquote.svg'
 import ManageLink from '../link/ManageLink'
@@ -125,7 +125,6 @@ export default function MenuBar({ editor }: { editor: Editor }) {
 
                 fileReader.onload = () => {
                     const src = fileReader.result as string;
-                    const blobUrl = URL.createObjectURL(file);
 
                     // 이미지 파일일 경우
                     if (file.type.startsWith('image/')) {
@@ -134,7 +133,7 @@ export default function MenuBar({ editor }: { editor: Editor }) {
                     else {
                         // 이미지가 아닌 일반 파일일 경우
                         const pos = editor.state.selection.anchor; // 현재 커서 위치
-                        uploadFile(editor, file, blobUrl, pos)
+                        uploadFile(editor, file, src, pos)
                     }
                 };
 

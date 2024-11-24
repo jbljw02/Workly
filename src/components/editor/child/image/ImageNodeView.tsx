@@ -8,12 +8,10 @@ import ImageCropper from './ImageCropper';
 import ImageCropBar from './ImageCropBar';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { setCrop, setImageDimension, setOpenFullModal } from '@/redux/features/editorImageSlice';
-import cropImage from '@/utils/image/cropImage';
 import { showWarningAlert } from '@/redux/features/alertSlice';
 import ImageFullModal from './ImageFullModal';
 import useCheckSelected from '@/components/hooks/useCheckSelected';
 import { SetResizableImageProps } from '../../../../../lib/ImageNode';
-import updateExistingImage from '@/utils/image/updateExistingImage';
 
 const NodeView = (resizableImgProps: ResizableImageNodeViewRendererProps) => {
   const dispatch = useAppDispatch();
@@ -98,23 +96,6 @@ const NodeView = (resizableImgProps: ResizableImageNodeViewRendererProps) => {
           });
 
           setCropMode(false);
-
-          try {
-            await cropImage({
-              id: resizableImgProps.node.attrs.id,
-              src: croppedImage,
-              alt: resizableImgProps.node.attrs.alt || '',
-              title: resizableImgProps.node.attrs.title || '',
-              width: String(crop.width),
-              height: String(crop.height),
-              className: 'resizable-img',
-              'data-keep-ratio': true,
-              textAlign: resizableImgProps.node.attrs.textAlign,
-            });
-          } catch (error) {
-            dispatch(showWarningAlert('이미지를 자르지 못했습니다.'));
-          }
-
         };
         img.src = imgRef.current.src;
       }
@@ -135,27 +116,6 @@ const NodeView = (resizableImgProps: ResizableImageNodeViewRendererProps) => {
       document.removeEventListener('keydown', keyDown);
     };
   }, [cropMode]);
-
-  // 이미지의 크기가 변경되면 스토리지에 업데이트
-  useEffect(() => {
-    if (resizableImgProps.node.attrs.width &&
-      resizableImgProps.node.attrs.height &&
-      resizableImgProps.node.attrs.src &&
-      resizableImgProps.node.attrs.title &&
-      resizableImgProps.node.attrs.className) {
-      updateExistingImage({
-        id: resizableImgProps.node.attrs.id,
-        src: resizableImgProps.node.attrs.src,
-        alt: resizableImgProps.node.attrs.alt || '',
-        title: resizableImgProps.node.attrs.title,
-        width: String(resizableImgProps.node.attrs.width),
-        height: String(resizableImgProps.node.attrs.height),
-        className: resizableImgProps.node.attrs.className,
-        'data-keep-ratio': true,
-        textAlign: resizableImgProps.node.attrs.textAlign,
-      });
-    }
-  }, [resizableImgProps.node.attrs.width, resizableImgProps.node.attrs.height]);
 
   // 이미지 크기가 변경되면 자르기 영역 크기 업데이트
   useEffect(() => {

@@ -37,18 +37,11 @@ export default function ImageMenuBar({ nodeViewRef, cropStart, resizableImgProps
         }
     };
 
-    const deleteImage = async (id: string) => {
+    const deleteImage = () => {
         try {
-            // 스토리지 내부 이미지 삭제
-            const storage = getStorage();
-            const imageRef = ref(storage, `images/${id}`);
-
-            await deleteObject(imageRef);
-
-            // 에디터에서 이미지 삭제
             editor.chain().focus().deleteSelection().run();
         } catch (error) {
-            console.error(error);
+            dispatch(showWarningAlert('이미지를 삭제하지 못했습니다.'));
         }
     }
 
@@ -91,7 +84,7 @@ export default function ImageMenuBar({ nodeViewRef, cropStart, resizableImgProps
                     <ToolbarButton
                         Icon={TrashIcon}
                         iconWidth={19}
-                        onClick={() => deleteImage(resizableImgProps.node.attrs.id)} />
+                        onClick={deleteImage} />
                 </HoverTooltip>
                 <HoverTooltip label='펼치기'>
                     <ToolbarButton

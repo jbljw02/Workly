@@ -213,7 +213,6 @@ export default function FileNodeView({ editor, node, }: FileNodeViewProps) {
     }, [fileNode, editorPermission]);
 
     useCheckSelected({ editor, node, setIsSelected });
-
     useClickOutside(fileRef, () => setMenuListOpen(false), fileRef);
 
     return (
@@ -243,17 +242,19 @@ export default function FileNodeView({ editor, node, }: FileNodeViewProps) {
                                 <div className='ml-1'>{title}</div>
                         }
                         <div className='ml-3 text-sm text-neutral-500'>{formatSize(size)}</div>
-                        <div
-                            onClick={fileMenuClick}
-                            className={`ml-4 -mr-0.5 hover:bg-gray-300 p-1 rounded-sm 
-                            ${menuListOpen ? 'bg-gray-200' : ''}`}>
-                            {
-                                // 문서가 게시중일 때 리스트 확인 불가
-                                !webPublished && (
-                                    <MenuIcon width="18" />
-                                )
-                            }
-                        </div>
+                        {
+                            // 게시된 문서를 확인중이라면 리스트 확인 불가
+                            !webPublished && (
+                                <div
+                                    onClick={fileMenuClick}
+                                    className={`ml-4 -mr-0.5 hover:bg-gray-300 p-1 rounded-sm 
+                                    ${menuListOpen ? 'bg-gray-200' : ''}`}>
+                                    {
+                                        <MenuIcon width="18" />
+                                    }
+                                </div>
+                            )
+                        }
                     </div>
                     {
                         // 문서가 게시중일 때 리스트 확인 불가
