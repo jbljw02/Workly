@@ -49,6 +49,7 @@ const combinedReducer = combineReducers({
     connection: connectionReducers.connection,
     connectedUsers: connectionReducers.connectedUsers,
     docSynced: connectionReducers.docSynced,
+    sortRule: documentReducers.sortRule,
 })
 
 // RootState가 Redux 스토어의 상태 타입임을 나타냄
