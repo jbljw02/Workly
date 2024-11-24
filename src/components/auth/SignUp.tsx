@@ -1,6 +1,6 @@
 'use client';
 
-import HeaderButton from "@/app/header/HeaderButton";
+import HeaderButton from "@/components/header/HeaderButton";
 import { useMemo, useState } from "react";
 import GoogleLoginButton from "../button/GoogleLoginButton";
 import SubmitButton from "../button/SubmitButton";
@@ -174,7 +174,7 @@ export default function SignUp() {
     const signUp = async () => {
         try {
             dispatch(setWorkingSpinner(true));
-            
+
             const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password)
             const user = userCredential.user;
 
@@ -283,7 +283,7 @@ export default function SignUp() {
                         <Link
                             href="/login"
                             className="text-blue-600 underline">
-                                로그인
+                            로그인
                         </Link>
                     </div>
                 </div>
