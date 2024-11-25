@@ -41,7 +41,6 @@ export default function ImageMenuBar({ nodeViewRef, cropStart, resizableImgProps
         try {
             const storage = getStorage();
             const imageRef = ref(storage, `images/${id}`);
-
             await deleteObject(imageRef);
 
             editor.chain().focus().deleteSelection().run();

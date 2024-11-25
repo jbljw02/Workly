@@ -1,17 +1,20 @@
 import { useEffect } from "react";
 import { NodeSelection } from "prosemirror-state";
-import { Node as ProsemirrorNode } from 'prosemirror-model';
 import { Editor } from "@tiptap/react";
 
 type UseCheckSelectedProps = {
     editor: Editor;
     node: any;
     setIsSelected: React.Dispatch<React.SetStateAction<boolean>>;
+    className?: string;
 }
 
-export default function useCheckSelected({ editor, node, setIsSelected }: UseCheckSelectedProps) {
+export default function useCheckSelected({ editor, node, setIsSelected, className }: UseCheckSelectedProps) {
     // 파일 노드가 선택됐음을 표시
     useEffect(() => {
+        // uploading중일 경우 실행 X
+        if (className?.includes('uploading')) return;
+
         const { state } = editor.view;
         const { selection } = state;
 
@@ -23,12 +26,11 @@ export default function useCheckSelected({ editor, node, setIsSelected }: UseChe
                 selectedNode.type.name === node.type.name &&
                 selectedNode.attrs.id === node.attrs.id) {
                 setIsSelected(true);
-            }
-            else {
+            } else {
                 setIsSelected(false);
             }
         } else {
             setIsSelected(false);
         }
-    }, [editor.view.state.selection, node.attrs.id]);
+    }, [editor.view.state.selection, node.attrs.id, className]);
 }

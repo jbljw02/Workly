@@ -18,7 +18,6 @@ import CollaborationCursor from '@tiptap/extension-collaboration-cursor'
 import FileHandler from '@tiptap-pro/extension-file-handler'
 import ImageNodeView from '@/components/editor/child/image/ImageNodeView'
 import { setLinkTooltip } from '@/redux/features/linkSlice'
-import uploadNewFile from '@/utils/file/uploadNewFile'
 import { FontSize } from "../../../lib/fontSize";
 import { FontFamily } from "../../../lib/fontFamily";
 import LinkNode from "../../../lib/linkNode";
@@ -35,6 +34,7 @@ import { Node as ProsemirrorNode } from 'prosemirror-model';
 import { setSelectedNode } from "@/redux/features/selectedNodeSlice";
 import { EnsureLastParagraph } from "../../../lib/ensureLastParagraph";
 import useUploadNewImage from "./useUploadNewImage";
+import useUploadNewFile from "./useUploadNewFile";
 
 const appId = process.env.NEXT_PUBLIC_TIPTAP_APP_ID;
 
@@ -75,6 +75,7 @@ export default function useEditorExtension({ docId }: useEditorExtensionProps) {
     const dispatch = useAppDispatch();
 
     const uploadNewImage = useUploadNewImage();
+    const uploadNewFile = useUploadNewFile();
 
     const user = useAppSelector(state => state.user);
     const selectedDocument = useAppSelector(state => state.selectedDocument);

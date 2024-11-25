@@ -27,18 +27,18 @@ import ColorPicker from '../color/ColorPicker'
 import { setTextColor } from '@/redux/features/textColorSlice'
 import VerticalDivider from '../divider/VerticalDivider'
 import WarningAlert from '@/components/alert/WarningAlert'
-import uploadFile from '@/utils/file/uploadNewFile'
 import StrikeIcon from '../../../../../public/svgs/editor/strike.svg'
 import BlockquoteIcon from '../../../../../public/svgs/editor/blockquote.svg'
 import ManageLink from '../link/ManageLink'
 import ManageAlign from '../align/ManageAlign'
 import HeadingDropdown from '../heading/HeadingDropdown'
 import useUploadNewImage from '@/components/hooks/useUploadNewImage'
-
+import useUploadNewFile from '@/components/hooks/useUploadNewFile'
 export default function MenuBar({ editor }: { editor: Editor }) {
     const dispatch = useAppDispatch();
 
     const uploadNewImage = useUploadNewImage();
+    const uploadNewFile = useUploadNewFile();
 
     const editorPermission = useAppSelector(state => state.editorPermission);
 
@@ -135,7 +135,7 @@ export default function MenuBar({ editor }: { editor: Editor }) {
                     else {
                         // 이미지가 아닌 일반 파일일 경우
                         const pos = editor.state.selection.anchor; // 현재 커서 위치
-                        uploadFile(editor, file, src, pos)
+                        uploadNewFile(editor, file, src, pos);
                     }
                 };
 

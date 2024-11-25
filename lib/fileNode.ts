@@ -10,6 +10,7 @@ export interface FileNodeAttrs {
     mimeType: string;
     size: number;
     fileName: string;
+    className: string;
 }
 
 const FileNode = Node.create({
@@ -25,7 +26,8 @@ const FileNode = Node.create({
             title: { default: null }, // 파일명
             mimeType: { default: null }, // 파일 형식
             size: { default: null }, // 파일 크기
-            fileName: { default: null }
+            fileName: { default: null },
+            className: { default: null }
         };
     },
     parseHTML() {

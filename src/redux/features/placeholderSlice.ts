@@ -52,7 +52,7 @@ export const loadingSlice = createSlice({
             state.isTrashLoading = action.payload;
         },
         setImageCropping: (state, action) => {
-            state.isImageCropping = action.payload;
+            state.isImageCropping = action.payload; 
         },
     }
 });

@@ -19,6 +19,8 @@ import { useClickOutside } from '@/components/hooks/useClickOutside';
 import { FileNodeAttrs } from '../../../../../lib/fileNode';
 import { NodeSelection } from 'prosemirror-state';
 import useCheckSelected from '@/components/hooks/useCheckSelected';
+import LoadingSpinner from '@/components/placeholder/LoadingSpinner';
+import { getStorage, ref, deleteObject } from 'firebase/storage';
 
 export interface FileNodeViewProps {
     editor: Editor;
@@ -31,7 +33,7 @@ export interface FileNodeViewProps {
 export default function FileNodeView({ editor, node, }: FileNodeViewProps) {
     const dispatch = useAppDispatch();
 
-    const { id, href, title, mimeType, size } = node.attrs;
+    const { id, href, title, mimeType, size, className } = node.attrs;
 
     const fileNode = useAppSelector(state => state.fileNode);
     const webPublished = useAppSelector(state => state.webPublished);
@@ -135,7 +137,7 @@ export default function FileNodeView({ editor, node, }: FileNodeViewProps) {
     };
 
     // 현재 선택된 파일을 삭제
-    const deleteFile = (editor: Editor, id: string) => {
+    const deleteFile = async (editor: Editor, id: string) => {
         // editor.view === EditorView 객체
         // state: 현재 에디터의 상태
         // dispatch: 트랜잭션을 적용해 에디터의 상태를 업데이트
@@ -154,6 +156,9 @@ export default function FileNodeView({ editor, node, }: FileNodeViewProps) {
             return true; // 현재 노드가 삭제할 대상이 아닌 경우 계속 탐색
         });
 
+        const storage = getStorage();
+        const fileRef = ref(storage, `files/${id}`);
+        await deleteObject(fileRef);
         if (isFound) {
             dispatch(tr); // 트랜잭션을 적용
         }
@@ -212,7 +217,7 @@ export default function FileNodeView({ editor, node, }: FileNodeViewProps) {
         }
     }, [fileNode, editorPermission]);
 
-    useCheckSelected({ editor, node, setIsSelected });
+    useCheckSelected({ editor, node, setIsSelected, className });
     useClickOutside(fileRef, () => setMenuListOpen(false), fileRef);
 
     return (
@@ -228,8 +233,17 @@ export default function FileNodeView({ editor, node, }: FileNodeViewProps) {
                     ref={fileRef}
                     className={`data-file relative inline-flex flex-row items-center justify-center w-auto rounded-md p-2 mt-2 mb-3 hover:bg-gray-200 duration-200 cursor-pointer 
                         ${menuListOpen ? 'bg-gray-200' : 'bg-gray-100'}
-                        ${isSelected ? 'border-2 border-blue-600 ' : 'border-2 border-transparent'}`}>
-                    <FileInfoIcon width="26" />
+                        ${isSelected ? 'border-2 border-blue-600 ' : 'border-2 border-transparent'}
+                        ${className?.includes('uploading') ? 'opacity-60 pointer-events-none cursor-not-allowed' : ''}`}>
+                    <div className='flex items-center justify-center'>
+                        {
+                            className?.includes('uploading') ? (
+                                <LoadingSpinner size={15} color="#212121" />
+                            ) : (
+                                <FileInfoIcon width="26" />
+                            )
+                        }
+                    </div>
                     <div className='flex justify-between items-center mt-0.5'>
                         {
                             // 파일명을 현재 수정중인지에 따라서 분기
