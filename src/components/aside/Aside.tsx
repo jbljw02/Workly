@@ -19,12 +19,10 @@ import { useRouter } from "next-nprogress-bar";
 
 export default function Aside() {
     const router = useRouter();
-    
+
     const addDocToFolder = useAddDocument();
     const folders = useAppSelector(state => state.folders);
     const documents = useAppSelector(state => state.documents);
-
-    console.log("documents: ", documents);
 
     const expandedWidth = 240; // 넓은 상태의 너비
     const collapsedWidth = 70; // 좁은 상태의 너비
@@ -116,17 +114,15 @@ export default function Aside() {
                         label="홈"
                         isCollapsed={isCollapsed} />
                 </Link>
-                {/* <Link href="/editor/document"> */}
-                    <SidebarItem
-                        Icon={DocumentIcon}
-                        IconWidth="17"
-                        label="문서"
-                        isCollapsed={isCollapsed}
-                        addClick={() => {
-                            addDocToFolder('', folders[0]);
-                            router.push('/editor/document');
-                        }} />
-                {/* </Link> */}
+                <SidebarItem
+                    Icon={DocumentIcon}
+                    IconWidth="17"
+                    label="문서"
+                    isCollapsed={isCollapsed}
+                    onClick={() => router.push('/editor/document')}
+                    addClick={() => {
+                        addDocToFolder('', folders[0]);
+                    }} />
                 <Link href="/editor/shared">
                     <SidebarItem
                         Icon={GroupIcon}

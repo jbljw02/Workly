@@ -7,15 +7,26 @@ import { deleteObject, getStorage, ref } from "firebase/storage";
 // 휴지통에 있는 사용자의 문서 복원 - CREATE
 export async function POST(req: NextRequest) {
     try {
-        const { folderId, document } = await req.json();
+        const { folderId, documentId } = await req.json();
 
         if (!folderId) return NextResponse.json({ error: "폴더 ID가 제공되지 않음" }, { status: 400 });
-        if (!document) return NextResponse.json({ error: "문서 정보가 제공되지 않음" }, { status: 400 });
+        if (!documentId) return NextResponse.json({ error: "문서 ID가 제공되지 않음" }, { status: 400 });
 
+        // 휴지통에서 문서 조회
+        const trashDocRef = doc(firestore, 'trash-documents', documentId);
+        const trashDocSnap = await getDoc(trashDocRef);
+
+        if (!trashDocSnap.exists()) {
+            return NextResponse.json({ error: "휴지통에서 문서를 찾을 수 없음" }, { status: 404 });
+        }
+
+        // 폴더 조회
         const folderDocRef = doc(firestore, 'folders', folderId);
         const folderDocSnap = await getDoc(folderDocRef);
 
-        if (!folderDocSnap.exists()) return NextResponse.json({ error: "폴더를 찾을 수 없음" }, { status: 404 });
+        if (!folderDocSnap.exists()) {
+            return NextResponse.json({ error: "폴더를 찾을 수 없음" }, { status: 404 });
+        }
 
         const folderData = folderDocSnap.data();
 
@@ -24,33 +35,27 @@ export async function POST(req: NextRequest) {
         const batch = writeBatch(firestore);
 
         // documents 컬렉션에 새 문서 추가
-        const newDocRef = doc(firestore, 'documents', document.id);
-        const newDocument = {
-            ...document,
-        };
-        batch.set(newDocRef, newDocument);
+        const newDocRef = doc(firestore, 'documents', documentId);
+        batch.set(newDocRef, trashDocSnap.data());
 
         // 폴더에 문서 업데이트(documentIds에 새 문서 ID 추가)
-        const updatedDocumentIds = [...(folderData.documentIds || []), document.id];
         batch.update(folderDocRef, {
-            documentIds: updatedDocumentIds,
+            documentIds: [...(folderData.documentIds || []), documentId]
         });
 
         // 휴지통에서 문서 삭제
-        const trashDocRef = doc(firestore, 'trash-documents', document.id);
         batch.delete(trashDocRef);
 
-        // 휴지ㅇ의 폴더 참조 가져오기
+        // 휴지통의 폴더 참조 가져오기
         const trashFolderRef = doc(firestore, 'trash-folders', folderId);
         const trashFolderSnap = await getDoc(trashFolderRef);
 
         const trashFolderData = trashFolderSnap.data();
 
-
         // 삭제할 문서가 참조하고 있는 폴더가 휴지통에 있을 수도, 없을 수도 있음
         // 있다면 폴더에서 문서 ID를 제거해줘야 함
         if (trashFolderSnap && trashFolderData) {
-            const updatedDocumentIds = trashFolderData.documentIds.filter((id: string) => id !== document.id);
+            const updatedDocumentIds = trashFolderData.documentIds.filter((id: string) => id !== documentId);
             batch.update(trashFolderRef, { documentIds: updatedDocumentIds });
         }
 
@@ -75,8 +80,33 @@ export async function GET(req: NextRequest) {
         const trashDocumentsCollection = collection(firestore, 'trash-documents');
         const trashDocumentsSnapshot = await getDocs(trashDocumentsCollection);
 
-        // 모든 문서를 추출
-        const trashDocuments = trashDocumentsSnapshot.docs.map(doc => doc.data());
+        // 휴지통의 모든 문서를 추출
+        const trashDocuments = await Promise.all(trashDocumentsSnapshot.docs.map(async doc => {
+            const data = doc.data();
+
+            let docContent = null;
+            // 문서 내용이 존재하는 경우에만 스토리지에서 가져오기
+            if (data.contentUrl) {
+                const response = await fetch(data.contentUrl);
+                docContent = await response.json();
+            }
+
+            return {
+                id: doc.id,
+                title: data.title,
+                docContent: docContent,
+                createdAt: data.createdAt,
+                readedAt: data.readedAt,
+                author: data.author,
+                folderId: data.folderId,
+                folderName: data.folderName,
+                collaborators: data.collaborators || [],
+                shortcutsUsers: data.shortcutsUsers || [],
+                isPublished: data.isPublished,
+                publishedUser: data.publishedUser,
+                publishedDate: data.publishedDate,
+            };
+        }));
 
         // 변환된 문서 데이터를 필터링
         const filteredDocuments = trashDocuments.filter(doc => {

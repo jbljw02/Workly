@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
         // 스토리지에 문서 내용 생성
         const storage = getStorage();
         const contentRef = ref(storage, `documents/${document.id}/content.json`);
-        const emptyContent = JSON.stringify(null); // 빈 문서 내용
+        const emptyContent = JSON.stringify(document.docContent); // 빈 문서 내용
         await uploadString(contentRef, emptyContent);
         const contentUrl = await getDownloadURL(contentRef);
 
@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
         const newDocRef = doc(firestore, 'documents', document.id);
         const newDocument = {
             ...document,
-            docContent: contentUrl, // 문서 내용에 대한 참조
+            contentUrl: contentUrl, // 문서 내용에 대한 참조
             createdAt: serverTimestamp(),
             readedAt: serverTimestamp(),
         };
@@ -76,11 +76,9 @@ export async function GET(req: NextRequest) {
 
             let docContent = null;
             // 문서 내용이 존재하는 경우에만 스토리지에서 가져오기
-            if (data.docContent) {
-                const response = await fetch(data.docContent);
+            if (data.contentUrl) {
+                const response = await fetch(data.contentUrl);
                 docContent = await response.json();
-
-                console.log('docContent: ', docContent);
             }
 
             return {
@@ -135,7 +133,6 @@ export async function PUT(req: NextRequest) {
 
         // 문서 내용 변경을 요청할 경우에만 스토리지 업데이트
         if (newDocContent !== undefined) {
-            console.log('변경된 문서 내용: ', newDocContent);
             const storage = getStorage();
             const contentRef = ref(storage, `documents/${docId}/content.json`);
             await uploadString(contentRef, JSON.stringify(newDocContent));
@@ -210,8 +207,6 @@ export async function DELETE(req: NextRequest) {
         const trashDocRef = doc(firestore, 'trash-documents', docId);
         batch.set(trashDocRef, {
             ...docData,
-            // 미처 문서의 변경사항이 저장되지 못한 상황이라면 변경사항 체크
-            ...(!docData.docContent && docContent && { docContent: docContent }),
         });
 
         // 원본 문서 삭제

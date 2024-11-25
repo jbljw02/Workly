@@ -66,7 +66,7 @@ export default function EditorHeader({ editor }: EditorHeaderProps) {
     const menuItems = useDocumentMenu({
         document: selectedDocument,
         editorPermission: editorPermission || '',
-        isWebPublished: false,
+        isWebPublished: webPublished,
         onMove: () => setIsMoving(true),
         onCopy: copyDoc,
         onCopyURL: copyURL,
@@ -106,12 +106,12 @@ export default function EditorHeader({ editor }: EditorHeaderProps) {
                     {
                         <ToolbarButton
                             Icon={webPublished ? WebIcon : (isShared ? UnLockIcon : LockIcon)}
-                            iconWidth={webPublished ? 17 : 20} />
+                            iconWidth={webPublished ? 19 : 20} />
                     }
                 </HoverTooltip>
                 {/* 게시된 문서라면 아이콘 표시 */}
                 {
-                    isPublished &&
+                    !webPublished && isPublished &&
                     <HoverTooltip label='게시된 문서'>
                         <ToolbarButton
                             Icon={WebIcon}

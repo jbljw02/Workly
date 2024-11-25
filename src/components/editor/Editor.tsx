@@ -67,12 +67,15 @@ export default function Editor({ docId }: { docId: string }) {
     }
   }, [folders, documents]);
 
+  console.log('editor: ', editor?.getJSON());
+
   // 에디터의 내용이 변경될 때마다 state와의 일관성을 유지
   useEffect(() => {
     if (!editor || !selectedDocument) return;
 
     const updateDocument = async () => {
       const content = editor.getJSON();
+      console.log("실행")
 
       const updatedDoc: DocumentProps = {
         ...selectedDocument,
@@ -121,6 +124,8 @@ export default function Editor({ docId }: { docId: string }) {
   useDocumentRealTime({ docId }); // 문서의 실시간 변경을 감지
   useVisitDocument({ docId }); // 페이지에 초기 방문 시에 열람일 업데이트
   useLeavePage(updateContentBeforeLeave); // 페이지를 떠날 때 업데이트
+
+  console.log('selectedDocument: ', selectedDocument);
 
   if (!editor) {
     return null;

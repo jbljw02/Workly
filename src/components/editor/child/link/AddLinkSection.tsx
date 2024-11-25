@@ -45,24 +45,26 @@ export default function AddLinkSection({ editor, position, setIsOpen, isOpen, li
 
     // 컴포넌트가 열리면 input으로 포커스하고 드래그된 텍스트를 표시
     useEffect(() => {
+        if (!editor?.chain) return;
+
         const selection = window.getSelection();
         if (selection && selection.rangeCount > 0 && isOpen) {
-            editor.chain().setHighlight({ color: '#F3F3F3' }).run()
+            editor?.chain()?.setHighlight({ color: '#F3F3F3' })?.run()
             inputRef.current?.focus();
         }
         else if (!isOpen) {
-            editor.commands.unsetMark('highlight');
+            editor?.chain()?.unsetMark('highlight')?.run()
         }
 
         return () => {
-            editor.commands.unsetMark('highlight');
+            editor?.chain()?.unsetMark('highlight')?.run()
         };
-    }, [isOpen]);
+    }, [isOpen, editor]);
 
     // 페이지를 떠날 때 하이라이트 마크를 제거
     useEffect(() => {
         const unsetHighlight = () => {
-            editor.commands.unsetMark('highlight');
+            editor?.chain()?.unsetMark('highlight')?.run()
         };
 
         window.addEventListener('beforeunload', unsetHighlight);
