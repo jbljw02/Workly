@@ -12,14 +12,11 @@ import ModalHeader from "./ModalHeader";
 import { showCompleteAlert, showWarningAlert } from "@/redux/features/alertSlice";
 import { WorkingDocModalProps } from "@/types/workingDocModalProps";
 import useOverlayLock from "../hooks/useOverlayLock";
-import { setWorkingSpinner } from "@/redux/features/placeholderSlice";
-import LoadingSpinner from "../placeholder/LoadingSpinner";
 
 export default function DocumentMoveModal({ isModalOpen, setIsModalOpen, selectedDoc }: WorkingDocModalProps) {
     const dispatch = useAppDispatch();
 
     const folders = useAppSelector(state => state.folders);
-    const workingSpinner = useAppSelector(state => state.workingSpinner);
 
     // 검색을 통해 필터링 된 폴더들
     const [searchedFolders, setSearchedFolders] = useState<Folder[]>(folders);

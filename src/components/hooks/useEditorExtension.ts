@@ -33,8 +33,8 @@ import GlobalDragHandle from 'tiptap-extension-global-drag-handle'
 import DragHandle from '@tiptap-pro/extension-drag-handle'
 import { Node as ProsemirrorNode } from 'prosemirror-model';
 import { setSelectedNode } from "@/redux/features/selectedNodeSlice";
-import uploadNewImage from "@/utils/image/uploadNewImage";
 import { EnsureLastParagraph } from "../../../lib/ensureLastParagraph";
+import useUploadNewImage from "./useUploadNewImage";
 
 const appId = process.env.NEXT_PUBLIC_TIPTAP_APP_ID;
 
@@ -73,6 +73,8 @@ type useEditorExtensionProps = {
 
 export default function useEditorExtension({ docId }: useEditorExtensionProps) {
     const dispatch = useAppDispatch();
+
+    const uploadNewImage = useUploadNewImage();
 
     const user = useAppSelector(state => state.user);
     const selectedDocument = useAppSelector(state => state.selectedDocument);

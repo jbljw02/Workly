@@ -1,17 +1,20 @@
 import ReactDOMServer from 'react-dom/server';
 import PdfFileNode from '@/components/editor/child/file/PdfFileNode';
-import { useAppDispatch } from '@/redux/hooks';
+import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { showWarningAlert } from '@/redux/features/alertSlice';
 import Nprogress from 'nprogress';
+import { setWorkingSpinner } from '@/redux/features/placeholderSlice';
 
 export default function useDownloadPDF() {
     const dispatch = useAppDispatch();
 
+    const workingSpinner = useAppSelector(state => state.workingSpinner);
+
     // 에디터 내용을 PDF로 변환하고 다운로드하는 함수
     const downloadPDF = async (content: string, docTitle: string) => {
         try {
-            Nprogress.start();
-
+            dispatch(setWorkingSpinner(true));
+            
             // 에디터에서 가져온 HTML을 임시 div에 파싱
             const container = document.createElement('div');
             container.innerHTML = content;
@@ -73,7 +76,7 @@ export default function useDownloadPDF() {
             console.error('PDF 다운로드 중 오류 발생:', error);
             dispatch(showWarningAlert('파일을 다운로드 하는 데 실패했습니다.'));
         } finally {
-            Nprogress.done();
+            dispatch(setWorkingSpinner(false));
         }
     };
 

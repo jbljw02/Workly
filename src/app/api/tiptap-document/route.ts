@@ -54,8 +54,6 @@ export async function GET(req: NextRequest, res: NextResponse) {
   const { searchParams } = req.nextUrl;
   const docName = searchParams.get('docName');
 
-  console.log('docName: ', docName);
-
   try {
     const response = await axios.get(`${wsUrl}/api/documents/${docName}?format=yjs`, {
       headers: {

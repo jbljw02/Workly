@@ -12,6 +12,7 @@ import { showWarningAlert } from '@/redux/features/alertSlice';
 import ImageFullModal from './ImageFullModal';
 import useCheckSelected from '@/components/hooks/useCheckSelected';
 import { SetResizableImageProps } from '../../../../../lib/ImageNode';
+import LoadingSpinner from '@/components/placeholder/LoadingSpinner';
 
 const NodeView = (resizableImgProps: ResizableImageNodeViewRendererProps) => {
   const dispatch = useAppDispatch();
@@ -163,23 +164,32 @@ const NodeView = (resizableImgProps: ResizableImageNodeViewRendererProps) => {
       contentEditable={false}
       draggable={true}>
       {
-        // 이미지 자르기 모드
+        // 자르기 모드
         cropMode ? (
           <ImageCropper
             imgRef={imgRef}
             resizableImgProps={resizableImgProps} />
         ) :
           (
-            <div
-              onClick={
-                () => (webPublished || editorPermission === '읽기 허용') ?
-                  dispatch(setOpenFullModal(true)) :
-                  setShowMenu(true)
+            <>
+              {/* 수정이 불가능한 권한일 경우 즉시 펼치기 */}
+              <div onClick={() => (webPublished || editorPermission === '읽기 허용') ?
+                dispatch(setOpenFullModal(true)) :
+                setShowMenu(true)}
+                ref={imgRef}
+                className="cursor-pointer inline-flex">
+                <ResizableImageComponent {...resizableImgProps} />
+              </div>
+              {/* 이미지가 업로드 중일 때 로딩 스피너 표시 */}
+              {
+                resizableImgProps.node.attrs.className?.includes('uploading') &&
+                (
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/10">
+                    <LoadingSpinner size={60} color="#ffffff" />
+                  </div>
+                )
               }
-              ref={imgRef}
-              className="cursor-pointer inline-flex">
-              <ResizableImageComponent {...resizableImgProps} />
-            </div>
+            </>
           )
       }
       {/* 이미지를 이용해 여러 작업을 하는 메뉴바 */}
@@ -194,10 +204,11 @@ const NodeView = (resizableImgProps: ResizableImageNodeViewRendererProps) => {
             cropStart={cropStart}
             resizableImgProps={resizableImgProps}
             setShowMenu={setShowMenu}
-            isSelected={isSelected} />
+            isSelected={!resizableImgProps.node.attrs.className?.includes('uploading') && isSelected} />
         )
       }
       {
+        // 자르기 모드일 때 바 표시
         cropMode && (
           <ImageCropBar
             cropApply={cropApply}

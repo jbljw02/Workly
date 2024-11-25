@@ -26,17 +26,10 @@ export default function useCopyDocument() {
             // 문서 ID를 폴더에 추가
             dispatch(addDocumentToFolder({ folderId: copiedDocument.folderId, docId: copiedDocument.id }));
 
-            // const res = await axios.get('/api/tiptap-document', {
-            //     params: {
-            //         docName: selectedDocument.id
-            //     }
-            // });
-            // console.log('응답: ', res.data)
-
             // tiptap cloud에 문서 복사
             await axios.post('/api/tiptap-document', {
                 docName: copiedDocument.id,
-                docContent: selectedDocument.docContent
+                docContent: copiedDocument.docContent
             });
 
             // 파이어베이스에 문서 복사

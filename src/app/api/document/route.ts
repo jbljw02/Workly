@@ -34,6 +34,8 @@ export async function POST(req: NextRequest) {
         await uploadString(contentRef, emptyContent);
         const contentUrl = await getDownloadURL(contentRef);
 
+        console.log('contentUrl: ', contentUrl);
+
         // documents 컬렉션에 새 문서 추가
         const newDocRef = doc(firestore, 'documents', document.id);
         const newDocument = {
@@ -55,6 +57,7 @@ export async function POST(req: NextRequest) {
 
         return NextResponse.json({ success: "문서 추가 성공" }, { status: 200 });
     } catch (error) {
+        console.error(error);
         return NextResponse.json({ error: "문서 추가 실패" }, { status: 500 });
     }
 }

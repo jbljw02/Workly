@@ -33,10 +33,12 @@ import BlockquoteIcon from '../../../../../public/svgs/editor/blockquote.svg'
 import ManageLink from '../link/ManageLink'
 import ManageAlign from '../align/ManageAlign'
 import HeadingDropdown from '../heading/HeadingDropdown'
-import uploadNewImage from '@/utils/image/uploadNewImage'
+import useUploadNewImage from '@/components/hooks/useUploadNewImage'
 
 export default function MenuBar({ editor }: { editor: Editor }) {
     const dispatch = useAppDispatch();
+
+    const uploadNewImage = useUploadNewImage();
 
     const editorPermission = useAppSelector(state => state.editorPermission);
 
