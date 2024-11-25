@@ -142,19 +142,67 @@ export async function DELETE(req: NextRequest) {
 
         const trashDocRef = doc(firestore, 'trash-documents', docId);
         const trashDocSnap = await getDoc(trashDocRef);
-
         if (!trashDocSnap.exists()) {
             return NextResponse.json({ error: "문서를 찾을 수 없음" }, { status: 404 });
         }
 
+        const trashData = trashDocSnap.data();
+
         // 스토리지에 있는 문서 내용 삭제
         const storage = getStorage();
         const contentRef = ref(storage, `documents/${docId}/content.json`);
-        try {
-            await deleteObject(contentRef);
-        } catch (error) {
-            console.warn('스토리지 파일 삭제 실패: ', error);
+
+        // 문서 내용에서 이미지 URL 추출
+        const imageUrls: string[] = [];
+        const fileUrls: string[] = [];
+
+        // 문서의 내용 배열을 순회하면서 이미지 및 파일의 src 추출
+        if (trashData.contentUrl) {
+            try {
+                // contentUrl을 통해 스토리지에 저장된 문서 내용 가져오기
+                const response = await fetch(trashData.contentUrl);
+                if (response.ok) {
+                    const docContent = await response.json();
+
+                    if (docContent?.content) {
+                        docContent.content.forEach((block: any) => {
+                            if (block.type === 'imageComponent' && block.attrs.id) {
+                                imageUrls.push(`images/${block.attrs.id}`);
+                            }
+                            if (block.type === 'file' && block.attrs.id) {
+                                fileUrls.push(`files/${block.attrs.id}`);
+                            }
+                        });
+                    }
+                }
+            } catch (error) {
+                console.warn('문서 내용 처리 중 오류:', error);
+            }
         }
+
+        const storageDeletePromises = [
+            // 문서 내용 삭제
+            deleteObject(contentRef).catch(error => {
+                console.error('스토리지 파일 삭제 실패: ', error);
+            }),
+            
+            // 이미지 삭제
+            ...imageUrls.map(path => 
+                deleteObject(ref(storage, path)).catch(error => {
+                    console.error('이미지 삭제 실패:', error, path);
+                })
+            ),
+            
+            // 파일 삭제
+            ...fileUrls.map(path => 
+                deleteObject(ref(storage, path)).catch(error => {
+                    console.error('파일 삭제 실패:', error, path);
+                })
+            )
+        ];
+
+        // 모든 스토리지 삭제 작업을 병렬로 실행
+        await Promise.allSettled(storageDeletePromises);
 
         // 휴지통의 폴더 참조 가져오기
         const trashFolderRef = doc(firestore, 'trash-folders', folderId);
