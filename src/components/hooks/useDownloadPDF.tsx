@@ -1,6 +1,6 @@
 import ReactDOMServer from 'react-dom/server';
 import PdfFileNode from '@/components/editor/child/file/PdfFileNode';
-import { useAppDispatch } from '@/redux/hooks';
+import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { showWarningAlert } from '@/redux/features/alertSlice';
 import Nprogress from 'nprogress';
 
@@ -11,7 +11,7 @@ export default function useDownloadPDF() {
     const downloadPDF = async (content: string, docTitle: string) => {
         try {
             Nprogress.start();
-
+            
             // 에디터에서 가져온 HTML을 임시 div에 파싱
             const container = document.createElement('div');
             container.innerHTML = content;

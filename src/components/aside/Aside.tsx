@@ -15,11 +15,14 @@ import Trash from "../trash/Trash";
 import ShortcutIcon from '../../../public/svgs/shortcuts-off.svg';
 import WebIcon from '../../../public/svgs/web.svg';
 import Link from "next/link";
+import { useRouter } from "next-nprogress-bar";
 
 export default function Aside() {
-    const addDocToFolder = useAddDocument();
+    const router = useRouter();
 
+    const addDocToFolder = useAddDocument();
     const folders = useAppSelector(state => state.folders);
+    const documents = useAppSelector(state => state.documents);
 
     const expandedWidth = 240; // 넓은 상태의 너비
     const collapsedWidth = 70; // 좁은 상태의 너비
@@ -111,14 +114,15 @@ export default function Aside() {
                         label="홈"
                         isCollapsed={isCollapsed} />
                 </Link>
-                <Link href="/editor/document">
-                    <SidebarItem
-                        Icon={DocumentIcon}
-                        IconWidth="17"
-                        label="문서"
-                        isCollapsed={isCollapsed}
-                        addClick={() => addDocToFolder('', folders[0])} />
-                </Link>
+                <SidebarItem
+                    Icon={DocumentIcon}
+                    IconWidth="17"
+                    label="문서"
+                    isCollapsed={isCollapsed}
+                    onClick={() => router.push('/editor/document')}
+                    addClick={() => {
+                        addDocToFolder('', folders[0]);
+                    }} />
                 <Link href="/editor/shared">
                     <SidebarItem
                         Icon={GroupIcon}

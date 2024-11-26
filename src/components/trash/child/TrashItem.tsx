@@ -52,7 +52,7 @@ export default function TrashItem({ searchCategory, item }: TrashItemProps) {
             dispatch(addDocuments(item));
 
             await axios.post('/api/trash/document', {
-                document: item,
+                documentId: item.id,
                 folderId: (item as DocumentProps).folderId,
             });
 

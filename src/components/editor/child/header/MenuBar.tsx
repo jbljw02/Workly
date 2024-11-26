@@ -27,13 +27,13 @@ import ColorPicker from '../color/ColorPicker'
 import { setTextColor } from '@/redux/features/textColorSlice'
 import VerticalDivider from '../divider/VerticalDivider'
 import WarningAlert from '@/components/alert/WarningAlert'
-import uploadFile from '@/utils/file/uploadNewFile'
 import StrikeIcon from '../../../../../public/svgs/editor/strike.svg'
 import BlockquoteIcon from '../../../../../public/svgs/editor/blockquote.svg'
 import ManageLink from '../link/ManageLink'
 import ManageAlign from '../align/ManageAlign'
 import HeadingDropdown from '../heading/HeadingDropdown'
-import uploadNewImage from '@/utils/image/uploadNewImage'
+import uploadNewImage from '@/utils/editor/uploadNewImage'
+import uploadNewFile from '@/utils/editor/uploadNewFile'
 
 export default function MenuBar({ editor }: { editor: Editor }) {
     const dispatch = useAppDispatch();
@@ -120,6 +120,8 @@ export default function MenuBar({ editor }: { editor: Editor }) {
         const target = event.target as HTMLInputElement;
         const files = target.files;
         if (files) {
+            const cursorPos = editor.state.selection.from;
+
             Array.from(files).forEach(file => {
                 const fileReader = new FileReader();
 
@@ -128,12 +130,11 @@ export default function MenuBar({ editor }: { editor: Editor }) {
 
                     // 이미지 파일일 경우
                     if (file.type.startsWith('image/')) {
-                        uploadNewImage(editor, file.name, src);
+                        uploadNewImage(editor, file.name, src, dispatch);
                     }
                     else {
                         // 이미지가 아닌 일반 파일일 경우
-                        const pos = editor.state.selection.anchor; // 현재 커서 위치
-                        uploadFile(editor, file, src, pos)
+                        uploadNewFile(editor, file, src, cursorPos, dispatch);
                     }
                 };
 

@@ -133,7 +133,7 @@ export default function ShareForm({ selectedDoc }: ShareFormProps) {
                 <SubmitButton
                     style={{
                         width: 'w-14',
-                        height: 'h-[42px]',
+                        height: 'h-[40px]',
                         textSize: 'text-sm',
                         textColor: 'text-white',
                         bgColor: 'bg-blue-500',

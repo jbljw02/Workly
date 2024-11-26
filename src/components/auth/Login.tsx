@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import SubmitButton from '@/components/button/SubmitButton';
 import GoogleLoginButton from '@/components/button/GoogleLoginButton';
-import HeaderButton from '@/app/header/HeaderButton';
+import HeaderButton from '@/components/header/HeaderButton';
 import DivideBar from './DivideBar';
 import AuthTop from './AuthTop';
 import FormInput from '../input/FormInput';

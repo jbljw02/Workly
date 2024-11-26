@@ -12,6 +12,7 @@ export default function useDocumentRealTime({ docId }: { docId: string }) {
     const router = useRouter();
 
     const user = useAppSelector(state => state.user);
+    const selectedDocument = useAppSelector(state => state.selectedDocument);
 
     // onSnapshot을 이용해 문서의 실시간 변경을 감지
     useEffect(() => {
@@ -35,6 +36,7 @@ export default function useDocumentRealTime({ docId }: { docId: string }) {
 
                 const convertedData = {
                     ...documentData,
+                    docContent: selectedDocument.docContent,
                     createdAt: convertTimestamp(documentData.createdAt),
                     readedAt: convertTimestamp(documentData.readedAt),
                     publishedDate: documentData.publishedDate ? convertTimestamp(documentData.publishedDate) : undefined,

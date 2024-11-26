@@ -1,7 +1,7 @@
 import FolderIcon from '../../../../../public/svgs/folder.svg';
 import { useEffect, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { addDocumentToFolder, addFolders, Folder, renameFolders, setFolders } from "@/redux/features/folderSlice";
+import {  Folder, renameFolders, setFolders } from "@/redux/features/folderSlice";
 import axios from 'axios';
 import ArrowIcon from '../../../../../public/svgs/right-arrow.svg';
 import EditIcon from '../../../../../public/svgs/editor/pencil-edit.svg';

@@ -21,7 +21,7 @@ export default function FileEditInput({
     setIsEditing }: FileEditInput) {
     const dispatch = useAppDispatch();
 
-    const { title } = node.attrs;
+    const { name } = node.attrs;
 
     const containerRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
@@ -36,16 +36,16 @@ export default function FileEditInput({
 
     useEffect(() => {
         // 파일명과 확장자 분리
-        const dotIndex = title.lastIndexOf('.'); // 마지막 .의 인덱스를 찾음
+        const dotIndex = name.lastIndexOf('.'); // 마지막 .의 인덱스를 찾음
         if (dotIndex !== -1) {
             // '파일명.pdf'가 파일명이라면
-            setFileTitle(title.substring(0, dotIndex)); // '파일명'
-            setFileMimeType(title.substring(dotIndex)); // .pdf
+            setFileTitle(name.substring(0, dotIndex)); // '파일명'
+            setFileMimeType(name.substring(dotIndex)); // .pdf
         } else {
-            setFileTitle(title);
+            setFileTitle(name);
             setFileMimeType(''); // 확장자가 없는 경우
         }
-    }, [title]);
+    }, [name]);
 
     // span을 이용해 요소의 크기를 구하여 input의 width 요소에 맞춤
     useEffect(() => {
@@ -75,7 +75,7 @@ export default function FileEditInput({
 
             dispatch(setFileNode({
                 ...fileNode,
-                title: updatedTitle,
+                name: updatedTitle,
             }));
 
             const { tr } = editor.state;
@@ -97,7 +97,7 @@ export default function FileEditInput({
                 editor.view.dispatch(
                     tr.setNodeMarkup(pos, undefined, {
                         ...fileNode,
-                        title: updatedTitle,
+                        name: updatedTitle,
                     })
                 );
             }

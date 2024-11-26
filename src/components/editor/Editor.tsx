@@ -5,6 +5,7 @@ import React, { CSSProperties, useCallback, useEffect, useMemo, useRef, useState
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import 'tiptap-extension-resizable-image/styles.css';
 import '@/styles/editor.css';
+import '@/styles/imageNode.css';
 import EditorHeader from './child/header/EditorHeader'
 import DragHandle from '@tiptap-pro/extension-drag-handle-react'
 import MenuIcon from '../../../public/svgs/editor/menu-vertical.svg'
@@ -56,7 +57,7 @@ export default function Editor({ docId }: { docId: string }) {
   // 문서가 변경될 때 문서명의 초기값 지정
   useEffect(() => {
     setDocTitle(selectedDocument.title);
-  }, [selectedDocument.id]);
+  }, [selectedDocument.title]);
 
   // 현재 선택된 문서를 지정
   // documents의 값이 변경될 때마다 현재 선택된 문서의 값도 업데이트
@@ -84,7 +85,6 @@ export default function Editor({ docId }: { docId: string }) {
       };
 
       dispatch(updateDocuments({ docId: updatedDoc.id, ...updatedDoc }));
-      // dispatch(updateSelectedDocContent(content));
       setLastReadedTime(formatTimeDiff(updatedDoc.readedAt));
     };
 
@@ -112,8 +112,6 @@ export default function Editor({ docId }: { docId: string }) {
       }
     }
   }
-
-  console.log('editor: ', editor?.getJSON());
 
   // 페이지를 떠나기 이전 변경사항 저장
   const updateContentBeforeLeave = async () => {

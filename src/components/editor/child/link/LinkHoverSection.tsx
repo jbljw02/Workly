@@ -1,4 +1,4 @@
-import deleteLink from '@/components/hooks/deleteLink';
+import deleteLink from '@/utils/editor/deleteLink';
 import InputControlSpan from '@/components/input/InputControlSpan';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { useEffect, useRef } from 'react';

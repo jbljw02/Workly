@@ -79,7 +79,7 @@ export default function DocumentPreviewItem({ document }: DocumentPreviewItemPro
             // 파일 블록
             else if (block.type === 'file') {
                 return <p key={index}>
-                    <PdfFileNode fileTitle={block.attrs?.title} fileUrl={block.attrs?.src} />
+                    <PdfFileNode fileTitle={block.attrs?.name} fileUrl={block.attrs?.src} />
                 </p>;
             }
             // 코드 블록

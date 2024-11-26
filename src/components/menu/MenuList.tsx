@@ -15,7 +15,7 @@ type MenuListProps = {
     isOpen: boolean;
     menuList: MenuItemProps[];
     setListOpen: React.Dispatch<React.SetStateAction<boolean>>;
-    listPositon: ListPosition
+    listPositon: ListPosition;
 }
 
 export default function MenuList({ isOpen, menuList, setListOpen, listPositon }: MenuListProps) {
@@ -25,7 +25,7 @@ export default function MenuList({ isOpen, menuList, setListOpen, listPositon }:
                 transition-opacity duration-200 ease-in-out
                 ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
             style={{ top: listPositon.top, right: listPositon.right }}>
-            <ul className="list-none text-sm m-0 p-0">
+            <ul className="list-none text-sm m-0 p-0 relative">
                 {
                     menuList.map((item, index) => (
                         <React.Fragment key={index}>

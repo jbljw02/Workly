@@ -5,8 +5,19 @@ import admin from "@/firebase/firebaseAdmin";
 import axios from 'axios';
 import { doc, getDoc } from "firebase/firestore";
 import firestore from '@/firebase/firestore';
+import { Metadata } from "next";
+import { getDocumentMetadata } from "@/utils/getDocumentMetadata";
 
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
+
+// 예약 함수 - 메타데이터를 생성
+export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
+    const metadata = await getDocumentMetadata(params.id);
+    if (!metadata) {
+        return redirect('/document-not-found');
+    }
+    return metadata;
+}
 
 export default async function EditorPage({ params }: { params: { id: string } }) {
     const { id } = params;

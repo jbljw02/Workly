@@ -1,6 +1,7 @@
 import { collection, getDocs, query, where, orderBy, getDoc, doc, writeBatch } from "firebase/firestore";
 import { NextRequest, NextResponse } from "next/server";
 import firestore from "../../../../firebase/firestore";
+import { getStorage, ref, deleteObject } from "firebase/storage";
 
 // 휴지통에 있는 폴더 복원 - POST
 export async function POST(req: NextRequest) {
@@ -104,6 +105,7 @@ export async function DELETE(req: NextRequest) {
 
         // 배치 작업 시작
         const batch = writeBatch(firestore);
+        const storage = getStorage();
 
         // 폴더를 trash-folders 컬렉션으로 이동
         const trashFolderRef = doc(firestore, 'trash-folders', folderId);
@@ -121,11 +123,15 @@ export async function DELETE(req: NextRequest) {
             const docSnap = await getDoc(docRef);
 
             if (docSnap.exists()) {
-                const docData = docSnap.data();
-                const trashDocRef = doc(firestore, 'trash-documents', docId);
-                batch.set(trashDocRef, {
-                    ...docData
-                });
+                // Storage에서 문서 내용 삭제
+                const contentRef = ref(storage, `documents/${docId}/content.json`);
+                try {
+                    await deleteObject(contentRef);
+                } catch (error) {
+                    console.warn(`스토리지 파일 삭제 실패(문서 ID: ${docId}):`, error);
+                }
+
+                // Firestore에서 문서 삭제
                 batch.delete(docRef);
             }
         }

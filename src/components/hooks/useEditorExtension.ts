@@ -18,7 +18,6 @@ import CollaborationCursor from '@tiptap/extension-collaboration-cursor'
 import FileHandler from '@tiptap-pro/extension-file-handler'
 import ImageNodeView from '@/components/editor/child/image/ImageNodeView'
 import { setLinkTooltip } from '@/redux/features/linkSlice'
-import uploadNewFile from '@/utils/file/uploadNewFile'
 import { FontSize } from "../../../lib/fontSize";
 import { FontFamily } from "../../../lib/fontFamily";
 import LinkNode from "../../../lib/linkNode";
@@ -33,8 +32,9 @@ import GlobalDragHandle from 'tiptap-extension-global-drag-handle'
 import DragHandle from '@tiptap-pro/extension-drag-handle'
 import { Node as ProsemirrorNode } from 'prosemirror-model';
 import { setSelectedNode } from "@/redux/features/selectedNodeSlice";
-import uploadNewImage from "@/utils/image/uploadNewImage";
 import { EnsureLastParagraph } from "../../../lib/ensureLastParagraph";
+import uploadNewImage from "@/utils/editor/uploadNewImage";
+import uploadNewFile from "@/utils/editor/uploadNewFile";
 
 const appId = process.env.NEXT_PUBLIC_TIPTAP_APP_ID;
 
@@ -218,9 +218,9 @@ export default function useEditorExtension({ docId }: useEditorExtensionProps) {
                         const src = fileReader.result as string
 
                         if (file.type.startsWith('image/')) {
-                            uploadNewImage(currentEditor, file.name, src)
+                            uploadNewImage(currentEditor, file.name, src, dispatch)
                         } else {
-                            uploadNewFile(currentEditor, file, src, pos)
+                            uploadNewFile(currentEditor, file, src, pos, dispatch)
                         }
                     }
                     fileReader.readAsDataURL(file)

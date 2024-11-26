@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import * as Y from 'yjs'
 import axios from 'axios';
 
 const wsUrl = process.env.NEXT_PUBLIC_WEBSOCKET_URL;
@@ -12,36 +11,34 @@ export async function POST(req: NextRequest) {
   if (!docName) return NextResponse.json({ error: '문서 이름이 필요합니다.' }, { status: 400 });
 
   try {
-    const ydoc = new Y.Doc();
+    // 빈 문서의 기본 구조 정의
+    const emptyDocument = {
+      type: 'doc',
+      content: [
+        {
+          type: 'paragraph',
+          attrs: { textAlign: 'left' }
+        }
+      ]
+    };
 
-    // 초기 내용 설정
-    // 전달된 내용이 있다면 해당 내용으로 문서 초기화, 없다면 빈 문서 생성
-    const ytext = ydoc.getText('default');
-    if (docContent) {
-      ytext.insert(0, docContent);
-    }
-    else {
-      ytext.insert(0, '');
-    }
-
-    // Y.Doc을 바이너리 업데이트로 인코딩
-    const update = Y.encodeStateAsUpdate(ydoc);
+    // docContent가 null이면 빈 문서 구조 사용
+    const documentContent = docContent || emptyDocument;
 
     const response = await axios.post(
-      `${wsUrl}/api/documents/${encodeURIComponent(docName)}`,
-      update,
+      `${wsUrl}/api/documents/${encodeURIComponent(docName)}?format=json`,
+      documentContent,
       {
         headers: {
           'Authorization': tiptapCloudSecret,
-          'Content-Type': 'application/octet-stream' // 요청 본문이 바이너리 형식임을 명시
+          'Content-Type': 'application/json'
         },
       }
     );
 
     if (response.status === 204) {
       return new NextResponse(null, { status: 204 });
-    }
-    else {
+    } else {
       return NextResponse.json({ error: '예상치 못한 응답' }, { status: response.status });
     }
   } catch (error) {
@@ -58,7 +55,7 @@ export async function GET(req: NextRequest, res: NextResponse) {
   const docName = searchParams.get('docName');
 
   try {
-    const response = await axios.get(`${wsUrl}/api/documents/${docName}`, {
+    const response = await axios.get(`${wsUrl}/api/documents/${docName}?format=yjs`, {
       headers: {
         Authorization: tiptapCloudSecret,
       },
@@ -85,6 +82,16 @@ export async function DELETE(req: NextRequest, res: NextResponse) {
 
     return NextResponse.json(response.data, { status: 200 });
   } catch (error) {
+    if (axios.isAxiosError(error)) {
+      // 404 에러는 문서가 이미 없는 상태이므로 성공으로 처리
+      if (error.response?.status === 404) {
+        return NextResponse.json({ success: "문서가 이미 삭제됨" }, { status: 200 });
+      }
+      return NextResponse.json(
+        { error: 'tiptap cloud 문서 삭제 실패' },
+        { status: error.response?.status || 500 }
+      );
+    }
     return NextResponse.json({ error: 'tiptap cloud 문서 삭제 실패' }, { status: 500 });
   }
 }

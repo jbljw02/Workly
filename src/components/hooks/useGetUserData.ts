@@ -12,7 +12,7 @@ export default function useGetUserData() {
     const pathname = usePathname();
 
     const user = useAppSelector(state => state.user);
-    const isDeleting = useAppSelector(state => state.isDeleting);
+    const isDeleting = useAppSelector(state => state.loading.isDeleting);
 
     // 사용자의 전체 문서 요청
     const getUserDocument = async () => {
@@ -20,6 +20,7 @@ export default function useGetUserData() {
             const response = await axios.get('/api/document', {
                 params: { email: user.email }
             });
+            console.log("response: ", response.data);
             dispatch(setDocuments(response.data));
         } catch (error) {
             console.error(error);

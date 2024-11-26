@@ -6,7 +6,6 @@ import ShareDocumentIcon from '../../../public/svgs/shared-document.svg'
 import { DocumentProps } from "@/redux/features/documentSlice";
 import { MenuItemProps } from "../menu/MenuItem";
 import useCopyDocument from "../hooks/useCopyDocument";
-import { useCopyURL } from "../hooks/useCopyURL";
 import { useMemo, useRef, useState } from "react";
 import MoveIcon from '../../../public/svgs/editor/move-folder.svg'
 import CopyIcon from '../../../public/svgs/editor/copy.svg'
@@ -33,6 +32,7 @@ import WebIcon from '../../../public/svgs/web.svg'
 import useCheckPermission from "../hooks/useCheckPermission";
 import useDocumentMenu from "../hooks/useMenuItem";
 import { useRouter } from "next-nprogress-bar";
+import copyURL from "@/utils/editor/copyURL";
 
 type DocumentListItemProps = {
     document: DocumentProps;
@@ -40,14 +40,16 @@ type DocumentListItemProps = {
     isPublished?: boolean;
 }
 
+const baseURL = process.env.NEXT_PUBLIC_API_URL;
+
 export default function DocumentListItem({ document, isShared, isPublished }: DocumentListItemProps) {
+    const dispatch = useAppDispatch();
     const router = useRouter();
 
     const user = useAppSelector(state => state.user);
     const optionRef = useRef<HTMLDivElement>(null);
 
     const copyDoc = useCopyDocument();
-    const copyURL = useCopyURL();
     const deleteDoc = useDeleteDocument();
     const clickShortcut = useToggleShortcuts();
     const downloadPDF = useDownloadPDF();
@@ -68,7 +70,7 @@ export default function DocumentListItem({ document, isShared, isPublished }: Do
         isWebPublished: false,
         onMove: () => setIsMoving(true),
         onCopy: copyDoc,
-        onCopyURL: copyURL,
+        onCopyURL: () => copyURL(`${baseURL}/editor/${document.folderId}/${document.id}`, dispatch),
         onDownload: () => {
             if (selectedDoc?.docContent) {
                 downloadPDF(generateHTML(selectedDoc.docContent, extensions), selectedDoc.title)
