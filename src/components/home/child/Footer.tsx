@@ -20,14 +20,18 @@ export default function Footer() {
             </div>
             {/* Footer 우측 */}
             <div className='flex flex-col h-full gap-2.5'>
-                <button className='flex justify-start mt-2 items-center gap-2 group cursor-pointer'>
+                <Link
+                    href="https://github.com/jbljw02/Workly"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className='flex justify-start mt-2 items-center gap-2 group cursor-pointer'>
                     <GithubIcon
                         className='text-black group-hover:text-gray-600'
                         width="22" />
                     <div className='text-sm group-hover:underline'>
                         Workly&apos;s Github
                     </div>
-                </button>
+                </Link>
                 <div className='flex flex-row gap-3 mt-auto text-sm'>
                     <button className='hover:underline'>쿠키 설정</button>
                     <button className='hover:underline'>개인정보 처리방침</button>
