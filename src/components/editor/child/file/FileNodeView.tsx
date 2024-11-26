@@ -21,8 +21,10 @@ import { NodeSelection } from 'prosemirror-state';
 import useCheckSelected from '@/components/hooks/useCheckSelected';
 import LoadingSpinner from '@/components/placeholder/LoadingSpinner';
 import { getStorage, ref, deleteObject } from 'firebase/storage';
-import useUploadNewFile from '@/components/hooks/useUploadNewFile';
-import useDuplicateFile from '@/components/hooks/useDuplicateFile';
+import Nprogress from 'nprogress';
+import { showWarningAlert } from '@/redux/features/alertSlice';
+import downloadFile from '@/utils/editor/downloadFile';
+import duplicateFile from '@/utils/editor/duplicateFile';
 
 export interface FileNodeViewProps {
     editor: Editor;
@@ -34,8 +36,6 @@ export interface FileNodeViewProps {
 
 export default function FileNodeView({ editor, node, }: FileNodeViewProps) {
     const dispatch = useAppDispatch();
-
-    const duplicateFile = useDuplicateFile();
 
     const { id, href, name, mimeType, size, className } = node.attrs;
 
@@ -115,16 +115,6 @@ export default function FileNodeView({ editor, node, }: FileNodeViewProps) {
         navigator.clipboard.writeText(href);
     };
 
-    // 파일 다운로드
-    const downloadFile = (href: string, download: string) => {
-        if (href && download) {
-            const link = document.createElement('a');
-            link.href = href;
-            link.download = download;
-            link.click();
-        }
-    }
-
     // 현재 선택된 파일을 삭제
     const deleteFile = async (editor: Editor, id: string) => {
         // editor.view === EditorView 객체
@@ -166,7 +156,7 @@ export default function FileNodeView({ editor, node, }: FileNodeViewProps) {
                 Icon: DownloadIcon,
                 IconWidth: "14",
                 label: "다운로드",
-                onClick: () => downloadFile(fileNode.href, fileNode.name),
+                onClick: () => downloadFile(fileNode.href, fileNode.name, dispatch),
             }
         ];
 
@@ -183,7 +173,7 @@ export default function FileNodeView({ editor, node, }: FileNodeViewProps) {
                 Icon: CopyIcon,
                 IconWidth: "14",
                 label: "복제",
-                onClick: () => duplicateFile(editor, fileNode),
+                onClick: () => duplicateFile(editor, fileNode, dispatch),
                 horizonLine: true,
             },
             {

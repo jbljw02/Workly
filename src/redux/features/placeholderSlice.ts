@@ -7,10 +7,9 @@ type LoadingProps = {
     isDocumentPreviewLoading: boolean;
     isTrashLoading: boolean;
     isImageCropping: boolean;
-    isMenuListLoading: boolean;
 }
 
-// 화면이 마운트 될 때 즉시 스켈레톤 UI를 출력하기 위해 초기값을 true로 설정
+// 화면이 마운트 될 때 즉시 스켈레톤 UI를 출력하기 위한 요소들은 초기값을 true로 설정
 // finally문에서 false로 처리해주므로 상관 X
 const loadingState: LoadingProps = {
     isDocumentLoading: true,
@@ -18,8 +17,7 @@ const loadingState: LoadingProps = {
     isSidebarLoading: true,
     isDocumentPreviewLoading: true,
     isTrashLoading: true,
-    isImageCropping: false, // 이미지 자르기는 화면 초기 렌더링 시 보여지는 요소가 아니므로 false
-    isMenuListLoading: false,
+    isImageCropping: false,
 }
 
 export const workingSpinnerSlice = createSlice({
@@ -52,13 +50,20 @@ export const loadingSlice = createSlice({
             state.isTrashLoading = action.payload;
         },
         setImageCropping: (state, action) => {
-            state.isImageCropping = action.payload; 
+            state.isImageCropping = action.payload;
         },
     }
 });
 
 export const { setWorkingSpinner } = workingSpinnerSlice.actions;
-export const { setDocumentLoading, setFolderLoading, setSidebarLoading, setDocumentPreviewLoading, setTrashLoading, setImageCropping } = loadingSlice.actions;
+export const {
+    setDocumentLoading,
+    setFolderLoading,
+    setSidebarLoading,
+    setDocumentPreviewLoading,
+    setTrashLoading,
+    setImageCropping,
+} = loadingSlice.actions;
 
 const reducers = {
     workingSpinner: workingSpinnerSlice.reducer,

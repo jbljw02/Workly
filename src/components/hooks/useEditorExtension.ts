@@ -33,8 +33,8 @@ import DragHandle from '@tiptap-pro/extension-drag-handle'
 import { Node as ProsemirrorNode } from 'prosemirror-model';
 import { setSelectedNode } from "@/redux/features/selectedNodeSlice";
 import { EnsureLastParagraph } from "../../../lib/ensureLastParagraph";
-import useUploadNewImage from "./useUploadNewImage";
-import useUploadNewFile from "./useUploadNewFile";
+import uploadNewImage from "@/utils/editor/uploadNewImage";
+import uploadNewFile from "@/utils/editor/uploadNewFile";
 
 const appId = process.env.NEXT_PUBLIC_TIPTAP_APP_ID;
 
@@ -73,9 +73,6 @@ type useEditorExtensionProps = {
 
 export default function useEditorExtension({ docId }: useEditorExtensionProps) {
     const dispatch = useAppDispatch();
-
-    const uploadNewImage = useUploadNewImage();
-    const uploadNewFile = useUploadNewFile();
 
     const user = useAppSelector(state => state.user);
     const selectedDocument = useAppSelector(state => state.selectedDocument);
@@ -222,9 +219,9 @@ export default function useEditorExtension({ docId }: useEditorExtensionProps) {
                         const src = fileReader.result as string
 
                         if (file.type.startsWith('image/')) {
-                            uploadNewImage(currentEditor, file.name, src)
+                            uploadNewImage(currentEditor, file.name, src, dispatch)
                         } else {
-                            uploadNewFile(currentEditor, file, src, pos)
+                            uploadNewFile(currentEditor, file, src, pos, dispatch)
                         }
                     }
                     fileReader.readAsDataURL(file)

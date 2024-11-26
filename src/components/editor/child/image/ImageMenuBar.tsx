@@ -39,11 +39,11 @@ export default function ImageMenuBar({ nodeViewRef, cropStart, resizableImgProps
 
     const deleteImage = async (id: string) => {
         try {
+            editor.chain().focus().deleteSelection().run();
+
             const storage = getStorage();
             const imageRef = ref(storage, `images/${id}`);
             await deleteObject(imageRef);
-
-            editor.chain().focus().deleteSelection().run();
         } catch (error) {
             dispatch(showWarningAlert('이미지를 삭제하지 못했습니다.'));
         }

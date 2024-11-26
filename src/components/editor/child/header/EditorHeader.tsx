@@ -6,14 +6,13 @@ import LockIcon from '../../../../../public/svgs/editor/lock.svg'
 import UnLockIcon from '../../../../../public/svgs/editor/un-lock.svg'
 import { Editor } from '@tiptap/react'
 import { useClickOutside } from '@/components/hooks/useClickOutside'
-import { useAppSelector } from '@/redux/hooks'
+import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import HeaderTitle from './HeaderTitle'
 import DocumentMoveModal from '@/components/modal/DocumentMoveModal'
 import HoverTooltip from '../../../tooltip/HoverTooltip'
 import ToolbarButton from '../../../button/ToolbarButton'
 import ShareDocumentModal from '@/components/modal/share/ShareDocumentModal'
 import useDeleteDocument from '@/components/hooks/useDeleteDocument'
-import { useCopyURL } from '@/components/hooks/useCopyURL'
 import useDownloadPDF from '@/components/hooks/useDownloadPDF'
 import useCopyDocument from '@/components/hooks/useCopyDocument'
 import ConnectedUsers from './ConnectedUserList'
@@ -22,15 +21,17 @@ import useCancelPublish from '@/components/hooks/useCancelPublish'
 import usePublishDocument from '@/components/hooks/usePublishDocument'
 import useCheckPermission from '@/components/hooks/useCheckPermission'
 import useDocumentMenu from '@/components/hooks/useMenuItem'
+import copyURL from '@/utils/editor/copyURL'
 
 type EditorHeaderProps = {
     editor: Editor,
 }
 
 export default function EditorHeader({ editor }: EditorHeaderProps) {
+    const dispatch = useAppDispatch();
+
     const deleteDoc = useDeleteDocument();
     const copyDoc = useCopyDocument();
-    const copyURL = useCopyURL();
     const downloadPDF = useDownloadPDF();
     const cancelPublish = useCancelPublish();
     const publishDocument = usePublishDocument();
@@ -69,7 +70,7 @@ export default function EditorHeader({ editor }: EditorHeaderProps) {
         isWebPublished: webPublished,
         onMove: () => setIsMoving(true),
         onCopy: copyDoc,
-        onCopyURL: copyURL,
+        onCopyURL: () => copyURL(selectedDocument.folderId, selectedDocument.id, dispatch),
         onDownload: () => {
             if (selectedDocument.docContent) {
                 downloadPDF(editor.getHTML(), selectedDocument.title)

@@ -1,5 +1,3 @@
-
-
 export default function CategoryButton({ label, activated, onClick }: { label: string, activated: boolean, onClick: () => void }) {
     return (
         <button

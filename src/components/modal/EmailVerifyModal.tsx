@@ -12,7 +12,6 @@ import { sendEmailVerification, updateProfile } from '@firebase/auth';
 import { getDownloadURL, getStorage, ref } from 'firebase/storage';
 import { useRouter } from 'next-nprogress-bar';
 import { showWarningAlert } from '@/redux/features/alertSlice';
-import { setWorkingSpinner } from '@/redux/features/placeholderSlice';
 import NProgress from 'nprogress';
 
 export default function EmailVerifyModal({ isModalOpen, setIsModalOpen }: ModalProps) {

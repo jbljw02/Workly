@@ -4,7 +4,6 @@ import CommonInput from '../../input/CommonInput';
 import CommonButton from '../../button/CommonButton';
 import ModalHeader from '../ModalHeader';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
-import { useCopyURL } from '../../hooks/useCopyURL';
 import PublishContent from './PublishContent';
 import ShareContent from './ShareContent';
 import { setTargetSharingEmail } from '@/redux/features/shareDocumentSlice';
@@ -13,11 +12,11 @@ import useCancelPublish from '@/components/hooks/useCancelPublish';
 import usePublishDocument from '@/components/hooks/usePublishDocument';
 import useOverlayLock from '@/components/hooks/useOverlayLock';
 import SubmitButton from '@/components/button/SubmitButton';
+import copyURL from '@/utils/editor/copyURL';
 
 export default function ShareDocumentModal({ isModalOpen, setIsModalOpen, selectedDoc }: WorkingDocModalProps) {
     const dispatch = useAppDispatch();
 
-    const copyURL = useCopyURL();
     const cancelPublish = useCancelPublish();
     const publishDocument = usePublishDocument();
 
@@ -102,7 +101,7 @@ export default function ShareDocumentModal({ isModalOpen, setIsModalOpen, select
                                     hover: 'hover:bg-blue-700',
                                 }}
                                 label="링크 복사"
-                                onClick={() => copyURL(selectedDoc.folderId, selectedDoc.id)} />
+                                onClick={() => copyURL(selectedDoc.folderId, selectedDoc.id, dispatch)} />
                         </div> :
                         <div className='flex items-center justify-center w-full text-sm p-5 border-t'>
                             <SubmitButton

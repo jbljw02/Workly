@@ -3,6 +3,7 @@ import { DocumentProps, publishContent } from "@/redux/features/documentSlice";
 import { setWorkingSpinner } from "@/redux/features/placeholderSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import axios from "axios";
+import Nprogress from 'nprogress';
 
 export default function usePublishDocument() {
     const dispatch = useAppDispatch();
@@ -14,7 +15,7 @@ export default function usePublishDocument() {
                 dispatch(showWarningAlert('이미 게시된 문서입니다.'));
                 return;
             }
-
+            Nprogress.start();
             dispatch(setWorkingSpinner(true));
 
             await axios.post('/api/publish',
@@ -29,6 +30,7 @@ export default function usePublishDocument() {
             console.log(error);
             dispatch(showWarningAlert('문서 게시에 실패했습니다.'));
         } finally {
+            Nprogress.done();
             dispatch(setWorkingSpinner(false));
         }
     }

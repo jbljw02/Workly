@@ -1,10 +1,7 @@
-import { useAppDispatch } from '@/redux/hooks';
-import { showCompleteAlert, showWarningAlert } from '@/redux/features/alertSlice';
+import { showCompleteAlert, showWarningAlert } from "@/redux/features/alertSlice";
+import { AppDispatch } from "@/redux/store";
 
-export const useCopyURL = () => {
-  const dispatch = useAppDispatch();
-
-  const copyURL = (folderId: string, docId: string) => {
+const copyURL = (folderId: string, docId: string, dispatch: AppDispatch) => {
     const baseURL = window.location.origin;
     const documentURL = `${baseURL}/editor/${folderId}/${docId}`;
     navigator.clipboard.writeText(documentURL)
@@ -16,5 +13,4 @@ export const useCopyURL = () => {
       });
   };
 
-  return copyURL;
-};
+export default copyURL;

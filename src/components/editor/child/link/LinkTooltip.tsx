@@ -4,7 +4,7 @@ import { Editor } from '@tiptap/react';
 import LinkEditSection from './LinkEditSection';
 import { SelectionPosition } from './AddLinkSection';
 import { useClickOutside } from '@/components/hooks/useClickOutside';
-import deleteLink from '@/components/hooks/deleteLink';
+import deleteLink from '@/utils/editor/deleteLink';
 import IconButton from '@/components/button/LabelButton';
 import LinkHoverSection from './LinkHoverSection';
 
