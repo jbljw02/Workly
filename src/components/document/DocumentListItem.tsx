@@ -40,6 +40,8 @@ type DocumentListItemProps = {
     isPublished?: boolean;
 }
 
+const baseURL = process.env.NEXT_PUBLIC_API_URL;
+
 export default function DocumentListItem({ document, isShared, isPublished }: DocumentListItemProps) {
     const dispatch = useAppDispatch();
     const router = useRouter();
@@ -68,7 +70,7 @@ export default function DocumentListItem({ document, isShared, isPublished }: Do
         isWebPublished: false,
         onMove: () => setIsMoving(true),
         onCopy: copyDoc,
-        onCopyURL: () => copyURL(document.folderId, document.id, dispatch),
+        onCopyURL: () => copyURL(`${baseURL}/editor/${document.folderId}/${document.id}`, dispatch),
         onDownload: () => {
             if (selectedDoc?.docContent) {
                 downloadPDF(generateHTML(selectedDoc.docContent, extensions), selectedDoc.title)

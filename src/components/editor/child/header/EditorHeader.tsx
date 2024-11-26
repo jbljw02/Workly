@@ -27,6 +27,8 @@ type EditorHeaderProps = {
     editor: Editor,
 }
 
+const baseURL = process.env.NEXT_PUBLIC_API_URL;
+
 export default function EditorHeader({ editor }: EditorHeaderProps) {
     const dispatch = useAppDispatch();
 
@@ -70,7 +72,7 @@ export default function EditorHeader({ editor }: EditorHeaderProps) {
         isWebPublished: webPublished,
         onMove: () => setIsMoving(true),
         onCopy: copyDoc,
-        onCopyURL: () => copyURL(selectedDocument.folderId, selectedDocument.id, dispatch),
+        onCopyURL: () => copyURL(`${baseURL}/editor/${selectedDocument.folderId}/${selectedDocument.id}`, dispatch),
         onDownload: () => {
             if (selectedDocument.docContent) {
                 downloadPDF(editor.getHTML(), selectedDocument.title)

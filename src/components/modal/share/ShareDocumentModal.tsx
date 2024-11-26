@@ -14,6 +14,8 @@ import useOverlayLock from '@/components/hooks/useOverlayLock';
 import SubmitButton from '@/components/button/SubmitButton';
 import copyURL from '@/utils/editor/copyURL';
 
+const baseURL = process.env.NEXT_PUBLIC_API_URL;
+
 export default function ShareDocumentModal({ isModalOpen, setIsModalOpen, selectedDoc }: WorkingDocModalProps) {
     const dispatch = useAppDispatch();
 
@@ -101,7 +103,7 @@ export default function ShareDocumentModal({ isModalOpen, setIsModalOpen, select
                                     hover: 'hover:bg-blue-700',
                                 }}
                                 label="링크 복사"
-                                onClick={() => copyURL(selectedDoc.folderId, selectedDoc.id, dispatch)} />
+                                onClick={() => copyURL(`${baseURL}/editor/${selectedDoc.folderId}/${selectedDoc.id}`, dispatch)} />
                         </div> :
                         <div className='flex items-center justify-center w-full text-sm p-5 border-t'>
                             <SubmitButton

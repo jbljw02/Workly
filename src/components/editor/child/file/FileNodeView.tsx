@@ -25,6 +25,7 @@ import Nprogress from 'nprogress';
 import { showWarningAlert } from '@/redux/features/alertSlice';
 import downloadFile from '@/utils/editor/downloadFile';
 import duplicateFile from '@/utils/editor/duplicateFile';
+import copyURL from '@/utils/editor/copyURL';
 
 export interface FileNodeViewProps {
     editor: Editor;
@@ -110,11 +111,6 @@ export default function FileNodeView({ editor, node, }: FileNodeViewProps) {
         setIsEditing(true);
     }
 
-    // 파일 링크를 클립보드에 복사
-    const copyLink = (href: string) => {
-        navigator.clipboard.writeText(href);
-    };
-
     // 현재 선택된 파일을 삭제
     const deleteFile = async (editor: Editor, id: string) => {
         // editor.view === EditorView 객체
@@ -150,7 +146,7 @@ export default function FileNodeView({ editor, node, }: FileNodeViewProps) {
                 Icon: LinkCopyIcon,
                 IconWidth: "16",
                 label: "링크 복사",
-                onClick: () => copyLink(fileNode.href),
+                onClick: () => copyURL(fileNode.href, dispatch),
             },
             {
                 Icon: DownloadIcon,
