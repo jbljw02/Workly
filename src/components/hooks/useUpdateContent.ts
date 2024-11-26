@@ -34,21 +34,12 @@ export default function useUpdateContent() {
     const updateContent = async (latestDoc: DocumentProps) => {
         if (!latestDoc) return;
 
-        const docRef = doc(firestore, 'documents', latestDoc.id);
-        const docSnap = await getDoc(docRef);
-
         try {
-            if (docSnap.exists()) {
-                console.log('문서가 존재합니다. :', docSnap.data());
-                await axios.put('/api/document', {
-                    docId: latestDoc.id,
-                    newDocName: latestDoc.title,
-                    newDocContent: docSnap.data()?.docContent || latestDoc.docContent,
-                });
-            }
-            else {
-                console.log('문서가 존재하지 않습니다.');
-            }
+            await axios.put('/api/document', {
+                docId: latestDoc.id,
+                newDocName: latestDoc.title,
+                newDocContent: latestDoc.docContent,
+            });
         } catch (error) {
             console.error(error);
             dispatch(showWarningAlert('변경사항 저장에 실패하였습니다.'));

@@ -36,6 +36,9 @@ export default function HoverTooltip({ label, children }: HoverTooltipProps) {
                             top: `${tooltipPosition.top}px`,
                             left: `${tooltipPosition.left}px`,
                             zIndex: 503,
+                            visibility: `${tooltipPosition.top === 0 || tooltipPosition.left === 0 ?
+                                'hidden' :
+                                'visible'}`
                         }}>
                         <div className="bg-black text-white text-xs rounded py-1 px-2 whitespace-nowrap">
                             {label}
