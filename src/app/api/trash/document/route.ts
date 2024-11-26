@@ -176,27 +176,27 @@ export async function DELETE(req: NextRequest) {
                     }
                 }
             } catch (error) {
-                console.warn('문서 내용 처리 중 오류:', error);
+                console.error('문서 내용 처리 중 오류:', error);
             }
         }
 
         const storageDeletePromises = [
             // 문서 내용 삭제
             deleteObject(contentRef).catch(error => {
-                console.error('스토리지 파일 삭제 실패: ', error);
+                console.warn('스토리지 파일 삭제 실패: ', error);
             }),
             
             // 이미지 삭제
             ...imageUrls.map(path => 
                 deleteObject(ref(storage, path)).catch(error => {
-                    console.error('이미지 삭제 실패:', error, path);
+                    console.warn('이미지 삭제 실패:', error, path);
                 })
             ),
             
             // 파일 삭제
             ...fileUrls.map(path => 
                 deleteObject(ref(storage, path)).catch(error => {
-                    console.error('파일 삭제 실패:', error, path);
+                    console.warn('파일 삭제 실패:', error, path);
                 })
             )
         ];

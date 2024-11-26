@@ -1,17 +1,18 @@
 import { showWarningAlert } from "@/redux/features/alertSlice";
 import { useAppDispatch } from "@/redux/hooks";
 import { Editor } from "@tiptap/react";
-import { getDownloadURL, getStorage, ref, uploadString } from "firebase/storage";
+import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import { v4 as uuidv4 } from 'uuid';
+import { FileNodeAttrs } from "../../../lib/fileNode";
 
 export default function useUploadNewFile() {
     const dispatch = useAppDispatch();
 
     const uploadNewFile = async (editor: Editor, file: File, src: string, pos: number) => {
-        const fileAttrs = {
+        const fileAttrs: FileNodeAttrs = {
             id: uuidv4(),
             href: src,
-            title: file.name,
+            name: file.name,
             mimeType: file.type,
             size: file.size,
             className: 'uploading'
@@ -25,7 +26,12 @@ export default function useUploadNewFile() {
         try {
             const storage = getStorage();
             const fileRef = ref(storage, `files/${fileAttrs.id}`);
-            await uploadString(fileRef, src, 'data_url');
+            
+            // URL을 Blob으로 변환
+            const response = await fetch(src);
+            const blob = await response.blob();
+            
+            await uploadBytes(fileRef, blob);
             const url = await getDownloadURL(fileRef);
 
             // 업로드 완료 후 파일 주소 변경

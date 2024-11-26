@@ -21,6 +21,8 @@ import { NodeSelection } from 'prosemirror-state';
 import useCheckSelected from '@/components/hooks/useCheckSelected';
 import LoadingSpinner from '@/components/placeholder/LoadingSpinner';
 import { getStorage, ref, deleteObject } from 'firebase/storage';
+import useUploadNewFile from '@/components/hooks/useUploadNewFile';
+import useDuplicateFile from '@/components/hooks/useDuplicateFile';
 
 export interface FileNodeViewProps {
     editor: Editor;
@@ -33,7 +35,9 @@ export interface FileNodeViewProps {
 export default function FileNodeView({ editor, node, }: FileNodeViewProps) {
     const dispatch = useAppDispatch();
 
-    const { id, href, title, mimeType, size, className } = node.attrs;
+    const duplicateFile = useDuplicateFile();
+
+    const { id, href, name, mimeType, size, className } = node.attrs;
 
     const fileNode = useAppSelector(state => state.fileNode);
     const webPublished = useAppSelector(state => state.webPublished);
@@ -58,9 +62,10 @@ export default function FileNodeView({ editor, node, }: FileNodeViewProps) {
         dispatch(setFileNode({
             id: id,
             href: href,
-            title: title,
+            name: name,
             mimeType: mimeType,
             size: size,
+            className: className,
         }));
         setIsModalOpen(true);
     };
@@ -72,9 +77,10 @@ export default function FileNodeView({ editor, node, }: FileNodeViewProps) {
             dispatch(setFileNode({
                 id: id,
                 href: href,
-                title: title,
+                name: name,
                 mimeType: mimeType,
                 size: size,
+                className: className,
             }));
 
             setMenuListOpen(!menuListOpen);
@@ -119,23 +125,6 @@ export default function FileNodeView({ editor, node, }: FileNodeViewProps) {
         }
     }
 
-    // 파일을 복제
-    const duplicateFile = (editor: Editor, fileNode: FileNode) => {
-        const { state, dispatch } = editor.view;
-        const { tr } = state;
-        const position = state.selection.anchor; // 현재 커서 위치
-
-        // 복제할 파일의 새로운 고유 ID 생성
-        const newFileNode = {
-            ...fileNode,
-            id: uuidv4(), // 새로운 고유 ID 생성
-        };
-
-        // 복제할 파일 노드 삽입
-        tr.insert(position, state.schema.nodes.file.create(newFileNode));
-        dispatch(tr); // 트랜잭션을 적용
-    };
-
     // 현재 선택된 파일을 삭제
     const deleteFile = async (editor: Editor, id: string) => {
         // editor.view === EditorView 객체
@@ -177,7 +166,7 @@ export default function FileNodeView({ editor, node, }: FileNodeViewProps) {
                 Icon: DownloadIcon,
                 IconWidth: "14",
                 label: "다운로드",
-                onClick: () => downloadFile(fileNode.href, fileNode.title),
+                onClick: () => downloadFile(fileNode.href, fileNode.name),
             }
         ];
 
@@ -228,22 +217,22 @@ export default function FileNodeView({ editor, node, }: FileNodeViewProps) {
                 contentEditable={false}
                 draggable="true">
                 <div
-                    data-file={title}
+                    data-file={name}
                     onClick={fileClick}
                     ref={fileRef}
                     className={`data-file relative inline-flex flex-row items-center justify-center w-auto rounded-md p-2 mt-2 mb-3 hover:bg-gray-200 duration-200 cursor-pointer 
                         ${menuListOpen ? 'bg-gray-200' : 'bg-gray-100'}
                         ${isSelected ? 'border-2 border-blue-600 ' : 'border-2 border-transparent'}
                         ${className?.includes('uploading') ? 'opacity-60 pointer-events-none cursor-not-allowed' : ''}`}>
-                    <div className='flex items-center justify-center'>
-                        {
-                            className?.includes('uploading') ? (
-                                <LoadingSpinner size={15} color="#212121" />
-                            ) : (
-                                <FileInfoIcon width="26" />
-                            )
-                        }
-                    </div>
+                    {
+                        className?.includes('uploading') ? (
+                            <div className='pt-0.5 pl-1 pr-1'>
+                                <LoadingSpinner size={16} color="#212121" />
+                            </div>
+                        ) : (
+                            <FileInfoIcon width="26" />
+                        )
+                    }
                     <div className='flex justify-between items-center mt-0.5'>
                         {
                             // 파일명을 현재 수정중인지에 따라서 분기
@@ -253,7 +242,7 @@ export default function FileNodeView({ editor, node, }: FileNodeViewProps) {
                                     node={node}
                                     isEditing={isEditing}
                                     setIsEditing={setIsEditing} /> :
-                                <div className='ml-1'>{title}</div>
+                                <div className='ml-1'>{name}</div>
                         }
                         <div className='ml-3 text-sm text-neutral-500'>{formatSize(size)}</div>
                         {
@@ -286,26 +275,26 @@ export default function FileNodeView({ editor, node, }: FileNodeViewProps) {
                 isModalOpen={isModalOpen}
                 setIsModalOpen={setIsModalOpen}
                 href={fileNode.href}
-                download={fileNode.title}>
+                download={fileNode.name}>
                 {
                     // 파일 형식이 PDF일 경우 PDF 뷰어를 통해 보여주고, 다른 형식일 경우 대체 화면 출력
                     mimeType === 'application/pdf' ? (
                         <iframe
                             className='absolute w-full h-full max-w-[90vw] max-h-[90vh] rounded-md'
                             src={href}
-                            title={title} />
+                            title={name} />
                     ) :
                         (
                             <div className="flex flex-col items-center justify-center text-zinc-50">
                                 <div className='flex flex-row justify-center items-center mb-4'>
                                     <FileBlockIcon class="mb-1" width="32" />
-                                    <div className='text-lg ml-2'>{title}</div>
+                                    <div className='text-lg ml-2'>{name}</div>
                                 </div>
                                 <div>미리보기를 제공하지 않는 파일입니다.</div>
                                 <a
                                     className="text-base underline"
                                     href={href}
-                                    download={title}>
+                                    download={name}>
                                     파일 다운로드
                                 </a>
                             </div>

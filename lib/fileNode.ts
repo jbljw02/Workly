@@ -6,10 +6,9 @@ import FileNodeView from '@/components/editor/child/file/FileNodeView';
 export interface FileNodeAttrs {
     id: string;
     href: string;
-    title: string;
+    name: string;
     mimeType: string;
     size: number;
-    fileName: string;
     className: string;
 }
 
@@ -23,10 +22,9 @@ const FileNode = Node.create({
         return {
             id: { default: null }, // 파일의 고유 ID
             href: { default: null }, // 파일 경로
-            title: { default: null }, // 파일명
+            name: { default: null }, // 파일명
             mimeType: { default: null }, // 파일 형식
             size: { default: null }, // 파일 크기
-            fileName: { default: null },
             className: { default: null }
         };
     },

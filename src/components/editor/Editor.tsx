@@ -59,8 +59,6 @@ export default function Editor({ docId }: { docId: string }) {
     setDocTitle(selectedDocument.title);
   }, [selectedDocument.title]);
 
-  console.log('editor: ', editor?.getJSON());
-
   // 현재 선택된 문서를 지정
   // documents의 값이 변경될 때마다 현재 선택된 문서의 값도 업데이트
   useEffect(() => {
@@ -69,8 +67,6 @@ export default function Editor({ docId }: { docId: string }) {
       dispatch(setSelectedDocument(currentDocument));
     }
   }, [folders, documents]);
-
-  console.log('editor: ', editor?.getJSON());
 
   // 에디터의 내용이 변경될 때마다 state와의 일관성을 유지
   useEffect(() => {

@@ -1,6 +1,6 @@
 import getDimensions from "@/utils/image/getDimensions";
 import { Editor } from "@tiptap/react";
-import { getStorage, ref, uploadString, getDownloadURL } from "firebase/storage";
+import { getStorage, ref, uploadString, getDownloadURL, uploadBytes } from "firebase/storage";
 import { SetResizableImageProps } from "../../../lib/ImageNode";
 import { v4 as uuidv4 } from 'uuid';
 import { useAppDispatch } from "@/redux/hooks";
@@ -33,7 +33,12 @@ export default function useUploadImage() {
             // 스토리지에 이미지 업로드
             const storage = getStorage();
             const imageRef = ref(storage, `images/${imageId}`);
-            await uploadString(imageRef, src, 'data_url');
+
+            // URL을 Blob으로 변환
+            const response = await fetch(src);
+            const blob = await response.blob();
+            
+            await uploadBytes(imageRef, blob);
             const url = await getDownloadURL(imageRef);
 
             // 업로드 완료 후 실제 이미지로 교체
