@@ -201,6 +201,9 @@ export async function DELETE(req: NextRequest) {
             )
         ];
 
+        console.log('imageUrls: ', imageUrls);
+        console.log('fileUrls: ', fileUrls);
+
         // 모든 스토리지 삭제 작업을 병렬로 실행
         await Promise.allSettled(storageDeletePromises);
 

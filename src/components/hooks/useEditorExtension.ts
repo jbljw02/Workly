@@ -214,7 +214,6 @@ export default function useEditorExtension({ docId }: useEditorExtensionProps) {
             onDrop: (currentEditor: Editor, files: File[], pos: number) => {
                 files.forEach(file => {
                     const fileReader = new FileReader()
-                    console.log('file', file);
                     fileReader.onload = async () => {
                         const src = fileReader.result as string
 

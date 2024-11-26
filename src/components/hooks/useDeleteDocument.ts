@@ -6,9 +6,8 @@ import { showCompleteAlert, showWarningAlert } from '@/redux/features/alertSlice
 import { addDocumentsToTrash, addDocumentToFolderTrash, setDocumentsTrash, setFoldersTrash } from '@/redux/features/trashSlice';
 import { removeDocumentFromFolder, setFolders } from '@/redux/features/folderSlice';
 import useUndoState from './useUndoState';
-import useUpdateContent from './useUpdateContent';
-import { setIsDeleting } from '@/redux/features/loadingSlice';
 import { useRouter } from 'next-nprogress-bar';
+import { setDeleting } from '@/redux/features/placeholderSlice';
 
 export default function useDeleteDocument() {
     const dispatch = useAppDispatch();
@@ -28,7 +27,7 @@ export default function useDeleteDocument() {
         e.stopPropagation();
 
         try {
-            dispatch(setIsDeleting(true));
+            dispatch(setDeleting(true)); // 삭제 중 상태로 변경
 
             // 문서를 폴더에서 삭제하고, 전체 문서 목록에서 삭제
             dispatch(removeDocumentFromFolder({
@@ -44,12 +43,9 @@ export default function useDeleteDocument() {
                 docId: document.id,
             }));
 
-            // 문서의 상세 페이지일 경우
-            if (pathParts.length === 4) {
-                // 현재 페이지를 삭제했다면 홈으로 라우팅
-                if ((document.id).trim() === documentId.trim()) {
-                    router.push('/editor/home');
-                }
+            // 현재 페이지를 삭제했다면 홈으로 라우팅
+            if ((document.id).trim() === documentId.trim()) {
+                router.push('/editor/home');
             }
 
             // 파이어베이스의 문서 삭제
@@ -62,14 +58,14 @@ export default function useDeleteDocument() {
                 }
             });
 
+            dispatch(setDeleting(false));
+            // 문서의 상세 페이지일 경우
             dispatch(showCompleteAlert(`${document.title || '제목 없는 문서'}의 삭제를 완료했습니다.`));
         } catch (error) {
             console.log('error: ', error);
             // 삭제에 실패하면 롤백
             undoState();
             dispatch(showWarningAlert(`${document.title || '제목 없는 문서'}의 삭제에 실패했습니다.`))
-        } finally {
-            dispatch(setIsDeleting(false));
         }
     }
 

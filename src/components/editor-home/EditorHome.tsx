@@ -7,6 +7,8 @@ import { useAppSelector } from '@/redux/hooks';
 
 export default function EditorHome() {
     const user = useAppSelector(state => state.user);
+    const documents = useAppSelector(state => state.documents);
+    console.log('documents: ', documents);
 
     return (
         <div className="flex flex-col w-full h-full overflow-y-auto">

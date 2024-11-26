@@ -1,10 +1,13 @@
 'use client'
 
 import { useEffect, useCallback } from 'react'
-import { useAppSelector } from '@/redux/hooks'
+import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import { useRouter } from 'next/navigation';
+import { setSelectedDocument } from '@/redux/features/documentSlice';
 
 export default function useLeavePage(onLeavePage: () => void | Promise<void>) {
+    const dispatch = useAppDispatch();
+    
     const router = useRouter()
     const selectedDocument = useAppSelector(state => state.selectedDocument);
 

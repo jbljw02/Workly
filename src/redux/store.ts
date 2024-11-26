@@ -14,7 +14,6 @@ import shareDocumentReducers from './features/shareDocumentSlice';
 import trashReducers from './features/trashSlice';
 import webPublishedReducers from './features/webPublishedSlice';
 import selectedNodeReducers from './features/selectedNodeSlice';
-import loadingReducers from './features/loadingSlice';
 import placeholderReducers from './features/placeholderSlice';
 import connectionReducers from './features/connectionSlice';
 
@@ -43,7 +42,6 @@ const combinedReducer = combineReducers({
     foldersTrash: trashReducers.foldersTrash,
     webPublished: webPublishedReducers.webPublished,
     selectedNode: selectedNodeReducers.selectedNode,
-    isDeleting: loadingReducers.isDeleting,
     workingSpinner: placeholderReducers.workingSpinner,
     loading: placeholderReducers.loading,
     connection: connectionReducers.connection,

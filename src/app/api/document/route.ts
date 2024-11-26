@@ -34,8 +34,6 @@ export async function POST(req: NextRequest) {
         await uploadString(contentRef, emptyContent);
         const contentUrl = await getDownloadURL(contentRef);
 
-        console.log('contentUrl: ', contentUrl);
-
         // documents 컬렉션에 새 문서 추가
         const newDocRef = doc(firestore, 'documents', document.id);
         const newDocument = {
@@ -127,8 +125,9 @@ export async function PUT(req: NextRequest) {
         const { docId, newDocName, newDocContent } = await req.json();
 
         if (!docId) return NextResponse.json({ error: "문서 아이디가 제공되지 않음" }, { status: 400 });
-        
+
         const docRef = doc(firestore, 'documents', docId);
+
         const updateData = {
             readedAt: serverTimestamp(),
             ...(newDocName !== undefined && { title: newDocName })
@@ -186,22 +185,27 @@ export async function DELETE(req: NextRequest) {
 
         const docRef = doc(firestore, 'documents', docId);
         const docSnap = await getDoc(docRef);
-
-        if (!docSnap.exists()) {
-            return NextResponse.json({ error: "문서를 찾을 수 없음" }, { status: 404 });
-        }
+        if (!docSnap.exists()) return NextResponse.json({ error: "문서를 찾을 수 없음" }, { status: 404 });
 
         const docData = docSnap.data();
 
         // 폴더 참조 가져오기
         const folderRef = doc(firestore, 'folders', folderId);
         const folderSnap = await getDoc(folderRef);
-
-        if (!folderSnap.exists()) {
-            return NextResponse.json({ error: "폴더를 찾을 수 없음" }, { status: 404 });
-        }
+        if (!folderSnap.exists()) return NextResponse.json({ error: "폴더를 찾을 수 없음" }, { status: 404 });
 
         const folderData = folderSnap.data();
+
+        // 스토리지 문서 내용 가져오기
+        const storage = getStorage();
+        const contentRef = ref(storage, `documents/${docId}/content.json`);
+        const response = await fetch(docData.contentUrl);
+        const content = await response.json();
+
+        // 삭제되기 전에, 미처 내용이 저장되지 못했을 상황을 대비해서 저장
+        if (!content) {
+            await uploadString(contentRef, JSON.stringify(docContent));
+        }
 
         // 배치 작업 시작
         const batch = writeBatch(firestore);
