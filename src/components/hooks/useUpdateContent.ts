@@ -10,8 +10,6 @@ import { getDoc, doc } from "firebase/firestore";
 export default function useUpdateContent() {
     const dispatch = useAppDispatch();
 
-    const selectedDocument = useAppSelector(state => state.selectedDocument);
-
     // 문서명을 DB에 저장하기 위해 서버로 요청 전송
     // 디바운싱을 이용하여 과도한 요청 방지
     const debouncedUpdateRequest = useCallback(
@@ -33,6 +31,7 @@ export default function useUpdateContent() {
     // 즉시 업데이트 요청
     const updateContent = async (latestDoc: DocumentProps) => {
         if (!latestDoc) return;
+        console.log('latestDoc: ', latestDoc);
 
         try {
             await axios.put('/api/document', {
