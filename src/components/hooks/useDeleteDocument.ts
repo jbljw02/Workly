@@ -43,9 +43,11 @@ export default function useDeleteDocument() {
                 docId: document.id,
             }));
 
-            // 현재 페이지를 삭제했다면 홈으로 라우팅
-            if ((document.id).trim() === documentId.trim()) {
-                router.push('/editor/home');
+            if (pathParts.length === 4) {
+                // 현재 페이지를 삭제했다면 홈으로 라우팅
+                if ((document.id).trim() === documentId.trim()) {
+                    router.push('/editor/home');
+                }
             }
 
             // 파이어베이스의 문서 삭제

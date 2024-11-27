@@ -7,7 +7,7 @@ import { setSelectedDocument } from '@/redux/features/documentSlice';
 
 export default function useLeavePage(onLeavePage: () => void | Promise<void>) {
     const dispatch = useAppDispatch();
-    
+
     const router = useRouter()
     const selectedDocument = useAppSelector(state => state.selectedDocument);
 
@@ -40,8 +40,9 @@ export default function useLeavePage(onLeavePage: () => void | Promise<void>) {
         }
 
         const originalPush = router.push // 기존 route.push 함수를 저장
+        
         // route.push 함수를 새로운 함수로 덮어씀
-        // 페이지를 떠나기 전에 leavePage 함수를 호출하고 기존 route.push 함수를 호출
+        // 페이지를 떠나기 전에 leavePage 함수를 호출을 완료
         router.push = async (href, options) => {
             await leavePage();
             return originalPush(href, options);
