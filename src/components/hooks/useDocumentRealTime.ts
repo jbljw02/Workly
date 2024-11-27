@@ -23,6 +23,8 @@ export default function useDocumentRealTime({ docId }: { docId: string }) {
             if (docSnap.exists()) {
                 const documentData = docSnap.data();
 
+                console.log('documentData', documentData);  
+
                 // 사용자가 협업자 목록에 있는지 확인
                 const isCollaborator = documentData.collaborators.some((collaborator: UserProps) => collaborator.email === user.email);
                 // 사용자가 관리자인지 확인

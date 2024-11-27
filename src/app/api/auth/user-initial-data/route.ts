@@ -9,6 +9,11 @@ export async function POST(req: NextRequest) {
         const { user } = await req.json();
 
         const userDocRef = doc(firestore, 'users', user.email);
+        const userDocSnap = await getDoc(userDocRef);
+
+        if (userDocSnap.exists()) {
+            return NextResponse.json({ success: "회원이 이미 존재" }, { status: 200 });
+        }
 
         // 파이어베이스 스토리지에서 아바타 이미지 가져오기
         const storage = getStorage();

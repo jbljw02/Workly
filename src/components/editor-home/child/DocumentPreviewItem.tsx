@@ -5,6 +5,7 @@ import { JSONContent } from "@tiptap/react";
 import Image from "next/image";
 import Link from 'next/link';
 import GroupIcon from '../../../../public/svgs/group.svg';
+import WebIcon from '../../../../public/svgs/web.svg';
 import HoverTooltip from "@/components/tooltip/HoverTooltip";
 import { useAppSelector } from "@/redux/hooks";
 import ShortcutsOnIcon from '../../../../public/svgs/shortcuts-on.svg';
@@ -150,6 +151,10 @@ export default function DocumentPreviewItem({ document }: DocumentPreviewItemPro
                     {
                         document.collaborators.length > 0 &&
                         <GroupIcon width={13} />
+                    }
+                    {
+                        document.isPublished &&
+                        <WebIcon width={13} />
                     }
                     {/* 즐겨찾기로 추가한 문서일 경우 */}
                     {

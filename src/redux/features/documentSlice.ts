@@ -17,6 +17,7 @@ export type DocumentProps = {
     folderName: string;
     collaborators: Collaborator[];
     shortcutsUsers: string[];
+    contentUrl?: string;
     isPublished?: boolean;
     publishedUser?: UserProps;
     publishedDate?: { seconds: number, nanoseconds: number };

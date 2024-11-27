@@ -15,6 +15,7 @@ import { FirebaseError } from "firebase-admin";
 import Link from "next/link";
 import { useAppDispatch } from "@/redux/hooks";
 import { setWorkingSpinner } from "@/redux/features/placeholderSlice";
+import axios from "axios";
 
 export const emailRegex = /^[A-Za-z0-9_\.\-]+@[A-Za-z0-9\-]+\.[A-Za-z]{2,}$/;
 export const pwdRegex = /^(?=.*[!@#$%^&*(),.?":{}|<>]).{6,}$/;
@@ -184,6 +185,8 @@ export default function SignUp() {
 
             // 이메일을 전송한 후,
             await sendEmailVerification(user);
+
+            await axios.post('/api/auth/user-initial-data', { user });
 
             // 이메일 인증 여부를 확인하는 모달을 띄움
             setEmailVerifyModal(true);
