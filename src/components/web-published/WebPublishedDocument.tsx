@@ -2,30 +2,35 @@
 
 import { DocumentProps, setSelectedDocument } from "@/redux/features/documentSlice";
 import useEditorExtension from "../hooks/useEditorExtension";
-import { EditorContent, useEditor } from "@tiptap/react";
+import { EditorContent, JSONContent, useEditor } from "@tiptap/react";
 import EditorHeader from "../editor/child/header/EditorHeader";
 import EditorTitleInput from "../editor/child/EditorTitleInput";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { use, useEffect } from "react";
+import { use, useEffect, useState } from "react";
 import { setWebPublished } from "@/redux/features/webPublishedSlice";
 import convertTimestamp from "@/utils/convertTimestamp";
 import { Timestamp } from "firebase/firestore";
 import usePublishedExtension from "../hooks/usePublishedExtension";
 
-export default function PublishedDocument({ document }: { document: any }) {
+type PublishedDocumentProps = {
+    document: any;
+    content: JSONContent;
+}
+
+export default function PublishedDocument({ document, content }: PublishedDocumentProps) {
     const dispatch = useAppDispatch();
 
     const extension = usePublishedExtension();
     const editor = useEditor({
         extensions: extension,
-        content: document.docContent,
+        content: content,
         editable: false,
         editorProps: {
             attributes: {
                 class: 'prose prose-sm sm:prose lg:prose-lg xl:prose-xl m-4 focus:outline-none',
             },
         },
-    });
+    }, [content]);
 
     useEffect(() => {
         const convertedData = {
@@ -37,6 +42,8 @@ export default function PublishedDocument({ document }: { document: any }) {
         dispatch(setSelectedDocument(convertedData));
         dispatch(setWebPublished(true));
     }, [document]);
+
+    console.log('document', document);
 
     if (!editor) {
         return null;

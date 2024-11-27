@@ -47,6 +47,7 @@ export default function useGetUserData() {
                     await getUserDocument();
                     await getUserFolder();
                 } catch (error) {
+                    console.error("error: ", error);
                     dispatch(showWarningAlert('사용자의 데이터를 불러오는 데 실패했습니다.'))
                 } finally {
                     dispatch(setDocumentLoading(false));

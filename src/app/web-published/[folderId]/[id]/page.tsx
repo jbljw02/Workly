@@ -24,6 +24,9 @@ export default async function PublishedPage({ params }: {
     const docRef = doc(firestore, 'documents', params.id);
     const docSnap = await getDoc(docRef);
 
+    const response = await fetch(docSnap.data()?.contentUrl);
+    const content = await response.json();
+
     // 문서가 존재하지 않거나 게시되지 않은 경우 리다이렉트
     if (!docSnap.exists() || !docSnap.data().isPublished) {
         redirect('/document-not-found');
@@ -31,6 +34,8 @@ export default async function PublishedPage({ params }: {
 
     const document = docSnap.data();
     return (
-        <PublishedDocument document={document} />
+        <PublishedDocument
+            document={document}
+            content={content} />
     );
 }

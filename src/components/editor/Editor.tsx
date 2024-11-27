@@ -21,6 +21,7 @@ import EditorTitleInput from './child/EditorTitleInput';
 import EditorHeaderSkeleton from '../placeholder/skeleton/editor/EditorHeaderSkeleton';
 import EditorContentSkeleton from '../placeholder/skeleton/editor/EditorContentSkeleton';
 import { usePathname } from 'next/navigation';
+import { setConnection, setDocSynced } from '@/redux/features/connectionSlice';
 
 export default function Editor({ docId }: { docId: string }) {
   const dispatch = useAppDispatch();
