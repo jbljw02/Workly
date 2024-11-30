@@ -6,37 +6,40 @@ import { AppDispatch } from "@/redux/store";
 import { v4 as uuidv4 } from 'uuid';
 import getDimensions from "./getDimensions";
 
-const uploadNewImage = async (editor: Editor, title: string, src: string, dispatch: AppDispatch) => {
+const uploadNewImage = async (editor: Editor, file: File, src: string, dispatch: AppDispatch) => {
     const dimensions = await getDimensions(src);
     const imageId = uuidv4();
 
     // 로딩 상태의 이미지 삽입
     const imageAttrs = {
         id: imageId,
-        src: src,  // 원본 이미지를 흐리게 표시
-        title: title,
+        src: '/pngs/image-placeholder.png',
+        title: file.name,
         width: dimensions.width,
         height: dimensions.height,
-        className: 'resizable-img uploading', // 업로드 중임을 표시
+        className: 'resizable-img uploading',
         'data-keep-ratio': true,
         textAlign: 'left',
-        alt: '',
     };
 
-    // 흐린 이미지 먼저 삽입
-    (editor.commands.setResizableImage as SetResizableImageProps)(imageAttrs);
-
+    
     try {
+        (editor.commands.setResizableImage as SetResizableImageProps)(imageAttrs);
+
         // 스토리지에 이미지 업로드
         const storage = getStorage();
         const imageRef = ref(storage, `images/${imageId}`);
 
-        // URL을 Blob으로 변환
-        const response = await fetch(src);
-        const blob = await response.blob();
-
-        await uploadBytes(imageRef, blob);
+        await uploadBytes(imageRef, file);
         const url = await getDownloadURL(imageRef);
+
+        // 이미지 로드 확인
+        const img = new Image();
+        await new Promise((resolve, reject) => {
+            img.onload = resolve;
+            img.onerror = reject;
+            img.src = url;
+        });
 
         // 업로드 완료 후 실제 이미지로 교체
         editor.view.state.doc.descendants((node, pos) => {

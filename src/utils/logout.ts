@@ -6,8 +6,8 @@ import { useRouter } from "next-nprogress-bar";
 const logout = async (router: ReturnType<typeof useRouter>) => {
     try {
         await signOut(auth);
-        await axios.post('/api/auth/logout', null);
         router.push('/');
+        await axios.post('/api/auth/logout', null);
     } catch (error) {
         throw error;
     }

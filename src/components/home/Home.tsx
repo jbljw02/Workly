@@ -53,28 +53,49 @@ export default function Home() {
             {/* 기존 Hero 섹션은 유지 */}
 
             {/* 주요 기능 소개 섹션 */}
-            <section className="py-24 bg-gray-50">
+            <section className="py-24 bg-white">
                 <div className="max-w-7xl mx-auto px-4">
-                    <h2 className="text-4xl font-bold text-center mb-16">
-                        하나의 워크스페이스에서 모든 것을 관리하세요
-                    </h2>
                     <div className="grid grid-cols-3 gap-8">
                         <div className="p-6 bg-white rounded-lg shadow-sm">
-                            <h3 className="text-xl font-semibold mb-4">실시간 협업</h3>
+                            <div className="flex items-center gap-3 mb-4">
+                                <Image 
+                                    src="/pngs/sync.png" 
+                                    alt="실시간 협업" 
+                                    width={40} 
+                                    height={40}
+                                />
+                                <h3 className="text-xl font-semibold">실시간 협업</h3>
+                            </div>
                             <p className="text-gray-600">
                                 팀원들과 실시간으로 문서를 편집하고 의견을 나눌 수 있습니다.
                                 변경사항이 즉시 반영되어 효율적인 협업이 가능합니다.
                             </p>
                         </div>
                         <div className="p-6 bg-white rounded-lg shadow-sm">
-                            <h3 className="text-xl font-semibold mb-4">웹 페이지 게시</h3>
+                            <div className="flex items-center gap-3 mb-4">
+                                <Image 
+                                    src="/svgs/publish.svg" 
+                                    alt="웹 페이지 게시" 
+                                    width={40} 
+                                    height={40}
+                                />
+                                <h3 className="text-xl font-semibold">웹 페이지 게시</h3>
+                            </div>
                             <p className="text-gray-600">
                                 문서를 몇 번의 클릭만으로 웹 페이지로 변환하여 공유할 수 있습니다.
                                 복잡한 설정 없이 전문적인 페이지를 만들어보세요.
                             </p>
                         </div>
                         <div className="p-6 bg-white rounded-lg shadow-sm">
-                            <h3 className="text-xl font-semibold mb-4">검색 & 즐겨찾기</h3>
+                            <div className="flex items-center gap-3 mb-4">
+                                <Image 
+                                    src="/icons/search-icon.svg" 
+                                    alt="검색 & 즐겨찾기" 
+                                    width={40} 
+                                    height={40}
+                                />
+                                <h3 className="text-xl font-semibold">검색 & 즐겨찾기</h3>
+                            </div>
                             <p className="text-gray-600">
                                 강력한 검색 기능으로 필요한 정보를 빠르게 찾고,
                                 자주 사용하는 문서는 즐겨찾기로 쉽게 접근하세요.

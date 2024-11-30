@@ -20,6 +20,8 @@ type PublishedDocumentProps = {
 export default function PublishedDocument({ document, content }: PublishedDocumentProps) {
     const dispatch = useAppDispatch();
 
+    console.log('content', content);
+
     const extension = usePublishedExtension();
     const editor = useEditor({
         extensions: extension,
@@ -42,8 +44,6 @@ export default function PublishedDocument({ document, content }: PublishedDocume
         dispatch(setSelectedDocument(convertedData));
         dispatch(setWebPublished(true));
     }, [document]);
-
-    console.log('document', document);
 
     if (!editor) {
         return null;

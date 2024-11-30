@@ -5,31 +5,27 @@ import { v4 as uuidv4 } from 'uuid';
 import { AppDispatch } from "@/redux/store";
 import { FileNodeAttrs } from "../../../lib/fileNode";
 
-const uploadNewFile = async (editor: Editor, file: File, src: string, pos: number, dispatch: AppDispatch) => {
+const uploadNewFile = async (editor: Editor, file: File, pos: number, dispatch: AppDispatch) => {
     const fileAttrs: FileNodeAttrs = {
         id: uuidv4(),
-        href: src,
+        href: '',
         name: file.name,
         mimeType: file.type,
         size: file.size,
         className: 'uploading'
     }
 
-    editor.chain().insertContentAt(pos, {
-        type: 'file',
-        attrs: fileAttrs,
-    }).focus().run();
-
     try {
+        editor.chain().insertContentAt(pos, {
+            type: 'file',
+            attrs: fileAttrs,
+        }).focus().run();
+
         const storage = getStorage();
         const fileRef = ref(storage, `files/${fileAttrs.id}`);
 
-        // URL을 Blob으로 변환
-        const response = await fetch(src);
-        const blob = await response.blob();
-
-        await uploadBytes(fileRef, blob);
-        const url = await getDownloadURL(fileRef);
+        await uploadBytes(fileRef, file); // 파일 객체 자체를 업로드
+        const url = await getDownloadURL(fileRef); // 업로드한 파일 객체의 주소 가져오기
 
         // 업로드 완료 후 파일 주소 변경
         editor.view.state.doc.descendants((node, pos) => {

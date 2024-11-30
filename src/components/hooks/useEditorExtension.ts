@@ -94,9 +94,18 @@ export default function useEditorExtension({ docId }: useEditorExtensionProps) {
         appId: appId!,
         document: doc,
         onConnect: () => dispatch(setConnection(true)),
-        onDisconnect: () => {
+        onDisconnect: (error) => {
+            console.log("연결 끊김", error);
             dispatch(setConnection(false));
             dispatch(setDocSynced(false));
+
+            // 연결이 끊어진 후 3초 후에 재연결 시도
+            setTimeout(() => {
+                if (provider) {
+                    console.log("재연결 시도 중...");
+                    provider.connect();
+                }
+            }, 3000);
         },
         onSynced: () => dispatch(setDocSynced(true)),
     }), [docId, doc]);
@@ -218,9 +227,9 @@ export default function useEditorExtension({ docId }: useEditorExtensionProps) {
                         const src = fileReader.result as string
 
                         if (file.type.startsWith('image/')) {
-                            uploadNewImage(currentEditor, file.name, src, dispatch)
+                            uploadNewImage(currentEditor, file, src, dispatch)
                         } else {
-                            uploadNewFile(currentEditor, file, src, pos, dispatch)
+                            uploadNewFile(currentEditor, file, pos, dispatch)
                         }
                     }
                     fileReader.readAsDataURL(file)
