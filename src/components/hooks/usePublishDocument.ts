@@ -25,6 +25,7 @@ export default function usePublishDocument() {
                 {
                     docId: selectedDoc.id,
                     user: user,
+                    docContent: selectedDoc.docContent,
                 });
 
             await updateContent(selectedDoc); // 게시되기 전에 변경사항 저장
