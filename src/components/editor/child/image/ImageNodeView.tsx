@@ -13,6 +13,9 @@ import ImageFullModal from './ImageFullModal';
 import useCheckSelected from '@/components/hooks/useCheckSelected';
 import { SetResizableImageProps } from '../../../../../lib/ImageNode';
 import LoadingSpinner from '@/components/placeholder/LoadingSpinner';
+import { setWorkingSpinner } from '@/redux/features/placeholderSlice';
+import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
+import { v4 as uuidv4 } from 'uuid';
 
 const NodeView = (resizableImgProps: ResizableImageNodeViewRendererProps) => {
   const dispatch = useAppDispatch();
@@ -57,49 +60,89 @@ const NodeView = (resizableImgProps: ResizableImageNodeViewRendererProps) => {
   // 자르기 적용
   const cropApply = () => {
     if (imgRef.current && crop.width && crop.height) {
+      dispatch(setWorkingSpinner(true));
+
+      // 이미지를 자르기 위한 캔버스 생성
       const canvas = document.createElement('canvas');
+
+      // 실제 이미지와 화면에 표시된 이미지 사이의 비율 계산
+      // naturalWidth/Height: 이미지 원본 크기
+      // width/height: 화면에 표시된 크기
       const scaleX = imgRef.current.naturalWidth / imgRef.current.width;
       const scaleY = imgRef.current.naturalHeight / imgRef.current.height;
+
+      // 자를 영역의 크기를 실제 이미지 크기에 맞게 조정
       canvas.width = crop.width * scaleX;
       canvas.height = crop.height * scaleY;
 
+      // 캔버스 2D 컨텍스트 가져오기
       const ctx = canvas.getContext('2d');
       if (ctx) {
+        // 새로운 이미지 객체 생성
         const img = new Image();
-        img.crossOrigin = "anonymous"; // 파이어베이스 스토리에 저장하기 위해 cors 설정
+        // Firebase Storage에 업로드하기 위해 CORS 설정
+        img.crossOrigin = "anonymous";
 
+        // 이미지 로드 완료 시 실행될 콜백
         img.onload = async () => {
+          // drawImage(이미지, 
+          //    원본 이미지에서 자를 x좌표, y좌표, 너비, 높이,
+          //    캔버스에 그릴 x좌표, y좌표, 너비, 높이)
           ctx.drawImage(
             img,
-            crop.x * scaleX,
-            crop.y * scaleY,
-            crop.width * scaleX,
-            crop.height * scaleY,
-            0,
-            0,
-            canvas.width,
-            canvas.height,
+            crop.x * scaleX, // 자를 영역의 시작 x좌표
+            crop.y * scaleY, // 자를 영역의 시작 y좌표
+            crop.width * scaleX, // 자를 영역의 너비
+            crop.height * scaleY, // 자를 영역의 높이
+            0, // 캔버스에 그릴 x좌표
+            0, // 캔버스에 그릴 y좌표
+            canvas.width, // 캔버스에 그릴 너비
+            canvas.height, // 캔버스에 그릴 높이
           );
-          const croppedImage = canvas.toDataURL('image/jpeg', 1.0);
 
-          // editor 내부에서 이미지 자르기 적용
-          editor.chain().focus().deleteSelection().run();
-          (editor.commands.setResizableImage as SetResizableImageProps)({
-            id: resizableImgProps.node.attrs.id,
-            src: croppedImage,
-            alt: resizableImgProps.node.attrs.alt || '',
-            title: resizableImgProps.node.attrs.title || '',
-            width: crop.width,
-            height: crop.height,
-            className: 'resizable-img',
-            'data-keep-ratio': true,
-            textAlign: resizableImgProps.node.attrs.textAlign,
-          });
+          try {
+            // Canvas를 Blob으로 변환
+            const blob = await new Promise<Blob>((resolve) => {
+              canvas.toBlob((blob) => {
+                resolve(blob!);
+              }, 'image/jpeg', 1.0);
+            });
 
-          setCropMode(false);
+            // 자른 이미지를 스토리지에 업로드하고 URL 가져오기
+            const storage = getStorage();
+            const newImageId = uuidv4();
+            const imageRef = ref(storage, `images/${newImageId}`);
+
+            await uploadBytes(imageRef, blob);
+            const url = await getDownloadURL(imageRef);
+
+            // 원본 이미지 삭제
+            const oldImageRef = ref(storage, `images/${resizableImgProps.node.attrs.id}`);
+            await deleteObject(oldImageRef).catch(() => { }); // 에러 무시
+
+            // editor 내부에서 이미지 자르기 적용
+            editor.chain().focus().deleteSelection().run();
+            (editor.commands.setResizableImage as SetResizableImageProps)({
+              id: newImageId, // 새로운 ID 사용
+              src: url,
+              alt: resizableImgProps.node.attrs.alt || '',
+              title: resizableImgProps.node.attrs.title || '',
+              width: crop.width,
+              height: crop.height,
+              className: 'resizable-img',
+              'data-keep-ratio': true,
+              textAlign: resizableImgProps.node.attrs.textAlign,
+            });
+          } catch (error) {
+            dispatch(showWarningAlert('이미지 자르기에 실패했습니다.'));
+          } finally {
+            dispatch(setWorkingSpinner(false));
+            setCropMode(false);
+          }
         };
         img.src = imgRef.current.src;
       }
+
     }
   };
 
@@ -209,11 +252,10 @@ const NodeView = (resizableImgProps: ResizableImageNodeViewRendererProps) => {
       }
       {
         // 자르기 모드일 때 바 표시
-        cropMode && (
-          <ImageCropBar
-            cropApply={cropApply}
-            cropCancel={cropCancel} />
-        )
+        <ImageCropBar
+          cropMode={cropMode}
+          cropApply={cropApply}
+          cropCancel={cropCancel} />
       }
     </NodeViewWrapper>
   );
