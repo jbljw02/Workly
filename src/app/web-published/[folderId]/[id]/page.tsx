@@ -5,6 +5,7 @@ import { doc, getDoc } from "firebase/firestore";
 import { redirect } from "next/navigation";
 import { Metadata } from "next";
 import { getDocumentMetadata } from "@/utils/getDocumentMetadata";
+import { getStorage, ref, getDownloadURL } from "firebase/storage";
 
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
     const metadata = await getDocumentMetadata(params.id);
@@ -24,17 +25,25 @@ export default async function PublishedPage({ params }: {
     const docRef = doc(firestore, 'documents', params.id);
     const docSnap = await getDoc(docRef);
 
-    const response = await fetch(docSnap.data()?.contentUrl);
-    const content = await response.json();
-
-    console.log('aacontent', content);
-
     // 문서가 존재하지 않거나 게시되지 않은 경우 리다이렉트
     if (!docSnap.exists() || !docSnap.data().isPublished) {
         redirect('/document-not-found');
     }
-
+    
     const document = docSnap.data();
+
+    // 게시된 문서 내용 가져오기
+    const storage = getStorage();
+    const contentRef = ref(storage, `documents/published/${params.id}/content.json`);
+    const contentUrl = await getDownloadURL(contentRef);
+
+    const response = await fetch(contentUrl);
+    if (!response.ok) {
+        redirect('/document-not-found');
+    }
+    
+    const content = await response.json();
+
     return (
         <PublishedDocument
             document={document}

@@ -150,7 +150,8 @@ export async function DELETE(req: NextRequest) {
 
         // 스토리지에 있는 문서 내용 삭제
         const storage = getStorage();
-        const contentRef = ref(storage, `documents/${docId}/content.json`);
+        const draftContentRef = ref(storage, `documents/drafts/${docId}/content.json`);
+        const publishedContentRef = ref(storage, `documents/published/${docId}/content.json`);
 
         // 문서 내용에서 이미지 URL 추출
         const imageUrls: string[] = [];
@@ -182,7 +183,10 @@ export async function DELETE(req: NextRequest) {
 
         const storageDeletePromises = [
             // 문서 내용 삭제
-            deleteObject(contentRef).catch(error => {
+            deleteObject(draftContentRef).catch(error => {
+                console.warn('스토리지 파일 삭제 실패: ', error);
+            }),
+            deleteObject(publishedContentRef).catch(error => {
                 console.warn('스토리지 파일 삭제 실패: ', error);
             }),
             
@@ -200,9 +204,6 @@ export async function DELETE(req: NextRequest) {
                 })
             )
         ];
-
-        console.log('imageUrls: ', imageUrls);
-        console.log('fileUrls: ', fileUrls);
 
         // 모든 스토리지 삭제 작업을 병렬로 실행
         await Promise.allSettled(storageDeletePromises);

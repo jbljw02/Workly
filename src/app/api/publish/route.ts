@@ -1,6 +1,7 @@
 import { doc, getDoc, serverTimestamp, updateDoc } from '@firebase/firestore';
 import { NextRequest, NextResponse } from 'next/server';
 import firestore from '@/firebase/firestore';
+import { deleteObject, getStorage, ref, uploadString } from 'firebase/storage';
 
 // 문서를 게시 - CREATE
 export async function POST(req: NextRequest, res: NextResponse) {
@@ -13,8 +14,15 @@ export async function POST(req: NextRequest, res: NextResponse) {
         // 문서 정보 가져오기
         const docRef = doc(firestore, 'documents', docId);
         const docSnap = await getDoc(docRef);
-
         if (!docSnap.exists()) return NextResponse.json({ error: "문서를 찾을 수 없음" }, { status: 404 });
+
+        // 문서 내용을 가져와 스토리지에 업로드
+        const storage = getStorage();
+        const contentRef = ref(storage, `documents/published/${docId}/content.json`);
+        const response = await fetch(docSnap.data().contentUrl);
+        const content = await response.json();
+
+        await uploadString(contentRef, JSON.stringify(content));
 
         await updateDoc(docRef, {
             isPublished: true,
@@ -37,8 +45,12 @@ export async function DELETE(req: NextRequest, res: NextResponse) {
 
         const docRef = doc(firestore, 'documents', docId);
         const docSnap = await getDoc(docRef);
-
         if (!docSnap.exists()) return NextResponse.json({ error: "문서를 찾을 수 없음" }, { status: 404 });
+
+        const storage = getStorage();
+        const contentRef = ref(storage, `documents/published/${docId}/content.json`);
+
+        await deleteObject(contentRef);
 
         await updateDoc(docRef, {
             isPublished: false,

@@ -35,6 +35,12 @@ export default function PublishedDocument({ document, content }: PublishedDocume
     }, [content]);
 
     useEffect(() => {
+        if (editor && content) {
+            editor.commands.setContent(content);
+        }
+    }, [editor, content]);
+
+    useEffect(() => {
         const convertedData = {
             ...document,
             createdAt: convertTimestamp(document.createdAt),
