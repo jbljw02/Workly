@@ -3,7 +3,7 @@ import RealTimeAuthorityIcon from '../../../../public/svgs/home/animate/real-tim
 import PublishIcon from '../../../../public/svgs/home/animate/publish.svg';
 import LinkShareIcon from '../../../../public/svgs/home/animate/link-share.svg';
 import LastReadIcon from '../../../../public/svgs/home/animate/last-read.svg';
-import ShortcutsIcon from '../../../../public/svgs/home/animate/shortcuts.svg';
+import ShortcutsIcon from '../../../../public/svgs/shortcuts-on.svg';
 
 export default function UseCaseSection() {
     const useCases: UseCase[] = [
@@ -20,7 +20,10 @@ export default function UseCaseSection() {
                     text: "실시간 동시 편집",
                 },
                 {
-                    icon: <RealTimeAuthorityIcon />,
+                    icon: <RealTimeAuthorityIcon
+                        width={16}
+                        height={16}
+                        className="text-blue-500 animate-pulse" />,
                     text: "실시간 권한 관리",
                 }
             ],
@@ -39,11 +42,17 @@ export default function UseCaseSection() {
             ],
             statusButtons: [
                 {
-                    icon: <PublishIcon />,
+                    icon: <PublishIcon
+                        width={16}
+                        height={16}
+                        className="text-green-500 animate-pulse" />,
                     text: "웹 페이지 게시",
                 },
                 {
-                    icon: <LinkShareIcon />,
+                    icon: <LinkShareIcon
+                        width={16}
+                        height={16}
+                        className="text-blue-500 animate-pulse" />,
                     text: "링크 공유",
                 }
             ],
@@ -62,11 +71,17 @@ export default function UseCaseSection() {
             ],
             statusButtons: [
                 {
-                    icon: <LastReadIcon />,
+                    icon: <LastReadIcon
+                        width={16}
+                        height={16}
+                        className="text-green-500 animate-pulse" />,
                     text: "최근 열람 시간 표시",
                 },
                 {
-                    icon: <ShortcutsIcon />,
+                    icon: <ShortcutsIcon
+                        width={16}
+                        height={16}
+                        className="text-blue-500 animate-pulse" />,
                     text: "즐겨찾기",
                 }
             ],
@@ -86,7 +101,7 @@ export default function UseCaseSection() {
                         복잡한 매뉴얼은 잊으세요.
                     </h2>
                     <p className="text-gray-600 text-lg max-w-2xl">
-                        복잡한 기능, 불필요한 기능은 모두 빼고, 꼭 필요한 것만 담았습니다. <br />
+                        복잡한 기능, 불필요한 기능은 전부 빼고 꼭 필요한 것만 담았습니다. <br />
                         Workly가 처음이신가요? 5분이면 충분합니다.
                     </p>
                 </div>

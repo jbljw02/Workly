@@ -22,19 +22,26 @@ export default function FeaturesSection() {
             <div className="max-w-7xl mx-auto">
                 <div className="flex flex-row gap-8">
                     <FeatureCard
-                        icon={<CollaborationIcon />}
+                        icon={<CollaborationIcon
+                            width={32}
+                            height={32}
+                            className="text-emerald-500" />}
                         title="실시간 협업"
                         description="팀원들과 실시간으로 문서를 편집하고 의견을 나눌 수 있습니다. 변경사항이 즉시 반영되어 효율적인 협업이 가능합니다." />
                     <FeatureCard
-                        icon={<PublishIcon />}
+                        icon={<PublishIcon
+                            width={32}
+                            height={32}
+                            className="text-blue-500" />}
                         title="웹 페이지 게시"
-                        description="문서를 단 한 번의 클릭만으로 웹 페이지로 변환할 수 있습니다. 작성한 문서를 모두에게 공유해보세요."
-                    />
+                        description="문서를 단 한 번의 클릭만으로 웹 페이지로 변환할 수 있습니다. 작성한 문서를 모두에게 공유해보세요." />
                     <FeatureCard
-                        icon={<SearchIcon />}
+                        icon={<SearchIcon
+                            width={40}
+                            height={40}
+                            className="text-violet-500" />}
                         title="검색 & 즐겨찾기"
-                        description="강력한 검색 기능으로 필요한 정보를 빠르게 찾고, 자주 사용하는 문서는 즐겨찾기로 쉽게 접근하세요."
-                    />
+                        description="강력한 검색 기능으로 필요한 정보를 빠르게 찾고, 자주 사용하는 문서는 즐겨찾기로 쉽게 접근하세요." />
                 </div>
             </div>
         </section>
