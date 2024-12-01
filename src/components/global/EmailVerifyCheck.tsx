@@ -34,7 +34,7 @@ export default function EmailVerifyCheck() {
         const checkBeforeUnload = async () => {
             const user = auth.currentUser;
             if (user && !user.emailVerified) {
-                logout(router);
+                logout(router, dispatch);
             }
         };
 
