@@ -11,7 +11,7 @@ export default function Trash({ isCollapsed }: { isCollapsed: boolean }) {
     const [isTrashOpen, setIsTrashOpen] = useState(false);
 
     useClickOutside(trashRef, () => setIsTrashOpen(false));
-    
+
     return (
         <div ref={trashRef}>
             {/* 휴지통 */}
@@ -22,7 +22,11 @@ export default function Trash({ isCollapsed }: { isCollapsed: boolean }) {
                 isCollapsed={isCollapsed}
                 onClick={() => setIsTrashOpen(!isTrashOpen)} />
             {/* 휴지통 내용 */}
-            <TrashContent isTrashOpen={isTrashOpen} />
+            {
+                isTrashOpen && (
+                    <TrashContent />
+                )
+            }
         </div>
     )
 }

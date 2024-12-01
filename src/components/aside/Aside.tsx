@@ -2,7 +2,7 @@
 
 import { useState, useRef } from "react";
 import SidebarItem from "./child/SidebarItem";
-import SearchInput from "./child/SearchInput";
+import SearchInput from "./child/search/SearchInputButton";
 import TrashIcon from '../../../public/svgs/trash.svg';
 import HomeIcon from '../../../public/svgs/home.svg';
 import DocumentIcon from '../../../public/svgs/document.svg';

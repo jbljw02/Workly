@@ -6,6 +6,7 @@ import DocumentListItem from "./DocumentListItem";
 import React from "react";
 import DocumentListSkeleton from "../placeholder/skeleton/DocumentListSkeleton";
 import { useAppSelector } from "@/redux/hooks";
+import EmptyList from "../placeholder/EmptyList";
 
 type DocumentListProps = {
     documents: DocumentProps[];
@@ -32,10 +33,11 @@ export default function DocumentList({ documents, isShared, isPublished }: Docum
                             ))
                         ) :
                         (
-                            <div className="flex items-center justify-center w-full h-full text-neutral-500 gap-4 mb-14">
-                                <EmptyFolderIcon width="48" />
-                                <div className="text-lg">아직 문서가 존재하지 않습니다.</div>
-                            </div>
+                            <EmptyList
+                                type="document"
+                                textSize="lg"
+                                iconWidth="48"
+                                description="아직 문서가 존재하지 않습니다." />
                         )
             }
         </div>
