@@ -9,7 +9,7 @@ import { SearchCategory } from "../Trash";
 import TrashList from "./TrashList";
 import { setTrashLoading } from "@/redux/features/placeholderSlice";
 
-export default function TrashContent({ isTrashOpen }: { isTrashOpen: boolean }) {
+export default function TrashContent() {
     const dispatch = useAppDispatch();
 
     const user = useAppSelector(state => state.user);
@@ -56,9 +56,7 @@ export default function TrashContent({ isTrashOpen }: { isTrashOpen: boolean }) 
 
     return (
         <div
-            className={`flex flex-col absolute z-20 w-[380px] h-[450px] left-full bottom-6 -ml-10 py-4 gap-2 bg-white rounded-lg shadow-[0px_4px_10px_rgba(0,0,0,0.25)] border border-neutral-200
-            transition-opacity duration-200 ease-in-out
-            ${isTrashOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+            className='flex flex-col absolute z-20 w-[380px] h-[450px] left-full bottom-6 -ml-10 py-4 gap-2 bg-white rounded-lg shadow-[0px_4px_10px_rgba(0,0,0,0.25)] border border-neutral-200'>
             <div className="font-semibold px-4 ml-0.5">휴지통</div>
             <div className="px-4">
                 <CommonInput

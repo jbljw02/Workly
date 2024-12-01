@@ -26,9 +26,12 @@ export default function SearchInput({ isCollapsed }: { isCollapsed: boolean }) {
                 )
             }
             {/* 문서를 검색하는 영역 */}
-            <SearchContent 
-                isSearching={isSearching}
-                setIsSearching={setIsSearching} />
+            {
+                isSearching && (
+                    <SearchContent
+                        setIsSearching={setIsSearching} />
+                )
+            }
         </div>
     )
 }

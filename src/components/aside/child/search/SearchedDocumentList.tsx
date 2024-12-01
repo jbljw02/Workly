@@ -64,8 +64,10 @@ export default function SearchedDocumentList({ searchedInput, setIsSearching }: 
     return (
         <div className="flex flex-col mt-1 flex-grow overflow-y-auto overflow-x-hidden scrollbar-thin">
             {
+                // 문서 리스트 자체가 로딩중이면 스켈레톤 출력
                 isDocumentLoading && documents.length == 0 ?
                     <HoverListSkeleton /> :
+                    // 검색 결과가 있으면 검색 결과 출력
                     searchedDocuments.length > 0 ?
                         searchedDocuments.map(document => (
                             <React.Fragment key={document.id}>
