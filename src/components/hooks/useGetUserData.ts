@@ -20,7 +20,6 @@ export default function useGetUserData() {
             const response = await axios.get('/api/document', {
                 params: { email: user.email }
             });
-            console.log("response: ", response.data);
             dispatch(setDocuments(response.data));
         } catch (error) {
             console.error(error);
@@ -37,6 +36,8 @@ export default function useGetUserData() {
             dispatch(setFolders(response.data));
         } catch (error) {
             console.error(error);
+        } finally {
+            dispatch(setFolderLoading(false));
         }
     }
 

@@ -20,8 +20,6 @@ type PublishedDocumentProps = {
 export default function PublishedDocument({ document, content }: PublishedDocumentProps) {
     const dispatch = useAppDispatch();
 
-    console.log('content', content);
-
     const extension = usePublishedExtension();
     const editor = useEditor({
         extensions: extension,
@@ -34,11 +32,7 @@ export default function PublishedDocument({ document, content }: PublishedDocume
         },
     }, [content]);
 
-    useEffect(() => {
-        if (editor && content) {
-            editor.commands.setContent(content);
-        }
-    }, [editor, content]);
+    console.log('content', content);
 
     useEffect(() => {
         const convertedData = {

@@ -5,7 +5,7 @@ import logout from "@/utils/logout";
 import HorizontalDivider from "@/components/editor/child/divider/HorizontalDivider";
 import UserProfile from "./UserProfile";
 import ContactIcon from '../../../../../public/svgs/contact.svg';
-import { useAppSelector } from "@/redux/hooks";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { useRouter } from "next-nprogress-bar";
 import React from "react";
 
@@ -15,6 +15,7 @@ type UserMenuList = {
 }
 
 export default function UserMenuList({ menuListOpen, setListOpen }: UserMenuList) {
+    const dispatch = useAppDispatch();
     const router = useRouter();
     const user = useAppSelector(state => state.user);
 
@@ -35,7 +36,7 @@ export default function UserMenuList({ menuListOpen, setListOpen }: UserMenuList
             Icon: LogoutIcon,
             IconWidth: "15",
             label: "로그아웃",
-            onClick: () => logout(router),
+            onClick: () => logout(router, dispatch),
             horizonLine: true,
         },
     ];
