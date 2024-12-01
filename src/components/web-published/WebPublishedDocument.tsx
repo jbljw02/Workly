@@ -32,6 +32,8 @@ export default function PublishedDocument({ document, content }: PublishedDocume
         },
     }, [content]);
 
+    console.log('content', content);
+
     useEffect(() => {
         const convertedData = {
             ...document,
@@ -42,8 +44,6 @@ export default function PublishedDocument({ document, content }: PublishedDocume
         dispatch(setSelectedDocument(convertedData));
         dispatch(setWebPublished(true));
     }, [document]);
-
-    console.log('document', document);
 
     if (!editor) {
         return null;

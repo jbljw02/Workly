@@ -130,11 +130,11 @@ export default function MenuBar({ editor }: { editor: Editor }) {
 
                     // 이미지 파일일 경우
                     if (file.type.startsWith('image/')) {
-                        uploadNewImage(editor, file.name, src, dispatch);
+                        uploadNewImage(editor, file, src, dispatch);
                     }
                     else {
                         // 이미지가 아닌 일반 파일일 경우
-                        uploadNewFile(editor, file, src, cursorPos, dispatch);
+                        uploadNewFile(editor, file, cursorPos, dispatch);
                     }
                 };
 
