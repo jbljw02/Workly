@@ -69,7 +69,7 @@ export default function FailedModal() {
                     <div className='text-base mb-5 text-neutral-600 text-center'>
                         죄송합니다. 일시적인 에러로 사용자 정보를 불러오지 못했습니다.
                         <br />
-                        해당 문제가 지속된다면 '문의하기'를 통해 문의해주세요.
+                        해당 문제가 지속된다면 &apos;문의하기&apos;를 통해 문의해주세요.
                     </div>
                 </div>
                 <div className='flex flex-row items-center justify-center mt-5 gap-4'>
