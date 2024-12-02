@@ -74,7 +74,7 @@ export default function EditorHeader({ editor }: EditorHeaderProps) {
         onCopy: copyDoc,
         onCopyURL: () => copyURL(`${baseURL}/editor/${selectedDocument.folderId}/${selectedDocument.id}`, dispatch),
         onDownload: () => {
-            if (selectedDocument.docContent) {
+            if (editor.getHTML()) {
                 downloadPDF(editor.getHTML(), selectedDocument.title)
             }
         },
@@ -109,7 +109,8 @@ export default function EditorHeader({ editor }: EditorHeaderProps) {
                     {
                         <ToolbarButton
                             Icon={webPublished ? WebIcon : (isShared ? UnLockIcon : LockIcon)}
-                            iconWidth={webPublished ? 19 : 20} />
+                            iconWidth={webPublished ? 19 : 20}
+                            nonClick={true} />
                     }
                 </HoverTooltip>
                 {/* 게시된 문서라면 아이콘 표시 */}
@@ -118,7 +119,8 @@ export default function EditorHeader({ editor }: EditorHeaderProps) {
                     <HoverTooltip label='게시된 문서'>
                         <ToolbarButton
                             Icon={WebIcon}
-                            iconWidth={19} />
+                            iconWidth={19}
+                            nonClick={true} />
                     </HoverTooltip>
                 }
                 <div

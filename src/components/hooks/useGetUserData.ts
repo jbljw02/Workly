@@ -1,4 +1,4 @@
-import { showWarningAlert } from "@/redux/features/alertSlice";
+import { setFailedAlert, showWarningAlert } from "@/redux/features/alertSlice";
 import { setDocuments } from "@/redux/features/documentSlice";
 import { setFolders } from "@/redux/features/folderSlice";
 import { setDocumentLoading, setFolderLoading } from "@/redux/features/placeholderSlice";
@@ -22,7 +22,9 @@ export default function useGetUserData() {
             });
             dispatch(setDocuments(response.data));
         } catch (error) {
-            console.error(error);
+            throw error;
+        } finally {
+            dispatch(setDocumentLoading(false));
         }
     }
 
@@ -35,30 +37,31 @@ export default function useGetUserData() {
             });
             dispatch(setFolders(response.data));
         } catch (error) {
-            console.error(error);
+            throw error;
         } finally {
             dispatch(setFolderLoading(false));
         }
     }
 
-    useEffect(() => {
-        const getUserData = async () => {
-            if (user.email && !isDeleting) {
-                try {
-                    await getUserDocument();
-                    await getUserFolder();
-                } catch (error) {
-                    console.error("error: ", error);
-                    dispatch(showWarningAlert('사용자의 데이터를 불러오는 데 실패했습니다.'))
-                } finally {
-                    dispatch(setDocumentLoading(false));
-                    dispatch(setFolderLoading(false));
-                }
+    const getUserData = async () => {
+        if (user.email && !isDeleting) {
+            try {
+                await getUserDocument();
+                await getUserFolder();
+            } catch (error) {
+                dispatch(showWarningAlert('사용자의 데이터를 불러오는 데 실패했습니다.'))
+                dispatch(setFailedAlert(true));
+                throw error;
+            } finally {
+                dispatch(setDocumentLoading(false));
+                dispatch(setFolderLoading(false));
             }
         }
+    }
 
+    useEffect(() => {
         getUserData();
     }, [user.email, pathname, isDeleting]);
 
-    return null;
+    return getUserData;
 }

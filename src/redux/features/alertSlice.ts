@@ -45,10 +45,22 @@ const globalAlertSlice = createSlice({
     },
 });
 
+const failedAlertSlice = createSlice({
+    name: 'failedAlert',
+    initialState: false,
+    reducers: {
+        setFailedAlert: (state, action: PayloadAction<boolean>) => {
+            return action.payload;
+        },
+    },
+});
+
 export const { showCompleteAlert, hideCompleteAlert, showWarningAlert, hideWarningAlert } = globalAlertSlice.actions;
+export const { setFailedAlert } = failedAlertSlice.actions;
 
 const reducers = {
     globalAlert: globalAlertSlice.reducer,
+    failedAlert: failedAlertSlice.reducer,
 }
 
 export default reducers;
