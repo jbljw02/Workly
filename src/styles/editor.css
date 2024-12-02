@@ -29,6 +29,14 @@ ol {
   list-style-type: decimal;
 }
 
+ul p {
+  padding: 0px !important;
+}
+
+ol p {
+  padding: 0px !important;
+}
+
 ol li::marker {
   font-size: inherit;
   font-family: inherit;

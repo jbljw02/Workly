@@ -60,9 +60,6 @@ export default function Login() {
             formData.password) {
             login();
         }
-        else {
-            console.log("불만족")
-        }
     }
 
     const login = async () => {

@@ -88,7 +88,6 @@ export default function FolderItem({ folder }: FolderItemProps) {
     const deleteFolder = async () => {
         // 폴더 내의 문서들
         const documentsOfFolder = documents.filter(doc => folder.documentIds.includes(doc.id));
-        console.log(documentsOfFolder);
 
         try {
             // 폴더와 폴더 내의 모든 문서를 삭제

@@ -7,7 +7,7 @@ import Aside from "@/components/aside/Aside";
 import '@/styles/scrollbar.css';
 import { useAppSelector } from "@/redux/hooks";
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+export default function EditorLayout({ children }: { children: React.ReactNode }) {
     useGetUserData();
     useGetAllUsers();
     return (

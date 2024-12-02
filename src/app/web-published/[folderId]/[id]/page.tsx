@@ -27,7 +27,7 @@ export default async function PublishedPage({ params }: {
 
     // 문서가 존재하지 않거나 게시되지 않은 경우 리다이렉트
     if (!docSnap.exists() || !docSnap.data().isPublished) {
-        redirect('/document-not-found');
+        return redirect('/document-not-found');
     }
     
     const document = docSnap.data();
@@ -39,7 +39,7 @@ export default async function PublishedPage({ params }: {
 
     const response = await fetch(contentUrl);
     if (!response.ok) {
-        redirect('/document-not-found');
+        return redirect('/document-not-found');
     }
     
     const content = await response.json();
