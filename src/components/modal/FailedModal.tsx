@@ -58,7 +58,7 @@ export default function FailedModal() {
                     padding: 0,
                 }
             }}>
-            <div className='flex flex-col justify-center items-center w-full h-full py-10 px-10'>
+            <div className='flex flex-col justify-center items-center w-full h-full p-10'>
                 <div className='flex flex-col items-center'>
                     <div className={`flex items-center justify-center mb-7`}>
                         <ErrorIcon

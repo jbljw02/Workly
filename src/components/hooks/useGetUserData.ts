@@ -17,7 +17,7 @@ export default function useGetUserData() {
     // 사용자의 전체 문서 요청
     const getUserDocument = async () => {
         try {
-            const response = await axios.get('/api/doccument', {
+            const response = await axios.get('/api/document', {
                 params: { email: user.email }
             });
             dispatch(setDocuments(response.data));
