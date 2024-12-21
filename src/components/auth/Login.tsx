@@ -14,9 +14,7 @@ import { FirebaseError } from 'firebase/app';
 import EmailVerifyModal from '../modal/EmailVerifyModal';
 import Link from 'next/link';
 import { useRouter } from 'next-nprogress-bar';
-import 'nprogress/nprogress.css';
-import NProgress from 'nprogress';
-import { useAppDispatch, useAppSelector } from '@/redux/hooks';
+import { useAppDispatch } from '@/redux/hooks';
 import { setWorkingSpinner } from '@/redux/features/placeholderSlice';
 
 export default function Login() {
