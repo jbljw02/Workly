@@ -8,7 +8,6 @@ export interface Collaborator extends UserProps {
 
 export type DocumentProps = {
     id: string;
-    uid: string;
     title: string;
     docContent: JSONContent | null;
     createdAt: { seconds: number, nanoseconds: number };
@@ -27,7 +26,6 @@ export type DocumentProps = {
 const DocumentsState: DocumentProps[] = [];
 const selectedDocumentState: DocumentProps = {
     id: '',
-    uid: '',
     title: '',
     docContent: null,
     createdAt: { seconds: 0, nanoseconds: 0 },

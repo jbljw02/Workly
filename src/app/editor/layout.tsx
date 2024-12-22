@@ -1,6 +1,5 @@
 'use client';
 
-import GlobalAlert from "@/components/global/GlobalAlert";
 import useGetUserData from "@/components/hooks/useGetUserData";
 import useGetAllUsers from "@/components/hooks/useGetAllUsers";
 import Aside from "@/components/aside/Aside";
@@ -12,7 +11,6 @@ export default function EditorLayout({ children }: { children: React.ReactNode }
     useGetAllUsers();
     return (
         <div className="flex flex-row w-full h-screen overflow-hidden">
-            <GlobalAlert />
             <FailedModal />
             <Aside />
             {children}

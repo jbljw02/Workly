@@ -19,8 +19,6 @@ export default function UserMenuList({ menuListOpen, setListOpen }: UserMenuList
     const router = useRouter();
     const user = useAppSelector(state => state.user);
 
-    const [isAccountOpen, setIsAccountOpen] = useState(false);
-
     const menuItems: MenuItemProps[] = [
         {
             Icon: UserIcon,
@@ -32,7 +30,7 @@ export default function UserMenuList({ menuListOpen, setListOpen }: UserMenuList
             Icon: ContactIcon,
             IconWidth: "16",
             label: "문의하기",
-            onClick: () => console.log("A"),
+            onClick: () => router.push('/contact'),
         },
         {
             Icon: LogoutIcon,

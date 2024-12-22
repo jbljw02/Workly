@@ -17,7 +17,7 @@ export default function ProfileSection() {
                     <span className="text-white text-sm">변경</span>
                 </div>
             </div>
-            <div className="text-[22px] font-semibold mb-1">{user.displayName}</div>
+            <h1 className="text-[22px] font-semibold">{user.displayName}</h1>
             <div className="text-[15px] text-zinc-500">{user.email}</div>
         </div>
     )
