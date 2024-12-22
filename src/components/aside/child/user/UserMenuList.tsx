@@ -7,7 +7,7 @@ import UserProfile from "./UserProfile";
 import ContactIcon from '../../../../../public/svgs/contact.svg';
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { useRouter } from "next-nprogress-bar";
-import React, { useState } from "react";
+import React from "react";
 
 type UserMenuList = {
     menuListOpen: boolean;
@@ -24,7 +24,7 @@ export default function UserMenuList({ menuListOpen, setListOpen }: UserMenuList
             Icon: UserIcon,
             IconWidth: "18",
             label: "회원 정보",
-            onClick: () => router.push('/editor/account'),
+            onClick: () => router.push('/account'),
         },
         {
             Icon: ContactIcon,
