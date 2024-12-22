@@ -1,8 +1,7 @@
 import { doc, getDoc, updateDoc, arrayUnion } from "firebase/firestore";
-import { NextApiRequest, NextApiResponse } from "next";
 import firestore from "../../../../firebase/firestore";
 import { NextRequest, NextResponse } from "next/server";
-import { Collaborator, DocumentProps } from "@/redux/features/documentSlice";
+import { Collaborator } from "@/redux/features/documentSlice";
 import { getDownloadURL, getStorage, ref } from "firebase/storage";
 
 // 문서에 협업자 추가하기 - CREATE
@@ -17,9 +16,7 @@ export async function POST(req: NextRequest) {
         const docRef = doc(firestore, 'documents', docId);
         const docSnap = await getDoc(docRef);
 
-        if (!docSnap.exists()) {
-            return NextResponse.json({ error: "문서를 찾을 수 없음" }, { status: 404 });
-        }
+        if (!docSnap.exists()) return NextResponse.json({ error: "문서를 찾을 수 없음" }, { status: 404 });
 
         // 파이어베이스 스토리지에서 기본 아바타 이미지 가져오기
         const storage = getStorage();
@@ -55,9 +52,7 @@ export async function GET(req: NextRequest) {
         const docRef = doc(firestore, 'documents', docId);
         const docSnap = await getDoc(docRef);
 
-        if (!docSnap.exists()) {
-            return NextResponse.json({ error: "문서를 찾을 수 없음" }, { status: 404 });
-        }
+        if (!docSnap.exists()) return NextResponse.json({ error: "문서를 찾을 수 없음" }, { status: 404 });
 
         const docData = docSnap.data();
         const collaborators = docData.collaborators || [];
@@ -82,9 +77,7 @@ export async function PUT(req: NextRequest) {
         const docRef = doc(firestore, 'documents', docId);
         const docSnap = await getDoc(docRef);
 
-        if (!docSnap.exists()) {
-            return NextResponse.json({ error: "문서를 찾을 수 없음" }, { status: 404 });
-        }
+        if (!docSnap.exists()) return NextResponse.json({ error: "문서를 찾을 수 없음" }, { status: 404 });
 
         const docData = docSnap.data();
 
@@ -97,7 +90,9 @@ export async function PUT(req: NextRequest) {
 
         // 변경할 협업자의 이메일을 찾아 권한 업데이트
         const updatedCollaborators = collaborators.map(collab =>
-            collab.email === targetEmail ? { ...collab, authority: newAuthority } : collab
+            collab.email === targetEmail ?
+                { ...collab, authority: newAuthority } :
+                collab
         );
 
         // 문서 업데이트
@@ -128,9 +123,7 @@ export async function DELETE(req: NextRequest) {
         const docRef = doc(firestore, 'documents', docId);
         const docSnap = await getDoc(docRef);
 
-        if (!docSnap.exists()) {
-            return NextResponse.json({ error: "문서를 찾을 수 없음" }, { status: 404 });
-        }
+        if (!docSnap.exists()) return NextResponse.json({ error: "문서를 찾을 수 없음" }, { status: 404 });
 
         const docData = docSnap.data();
 

@@ -69,7 +69,8 @@ export default function DocumentHeader({ title, description }: DocumentHeaderPro
                         textSize: 'text-sm',
                         textColor: 'text-white',
                         bgColor: 'bg-black',
-                        hover: 'hover:bg-zinc-800'
+                        hover: 'hover:bg-zinc-800',
+                        borderColor: 'border-black',
                     }}
                     label="새 폴더"
                     onClick={() => openModal('folder')} />

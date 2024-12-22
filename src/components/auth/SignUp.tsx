@@ -183,8 +183,6 @@ export default function SignUp() {
             // 이메일을 전송한 후,
             await sendEmailVerification(user);
 
-            await axios.post('/api/auth/user-initial-data', { user });
-
             // 이메일 인증 여부를 확인하는 모달을 띄움
             setEmailVerifyModal(true);
         }

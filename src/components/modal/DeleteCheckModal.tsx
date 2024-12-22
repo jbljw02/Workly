@@ -9,7 +9,7 @@ import { Folder } from "@/redux/features/folderSlice";
 import axios from "axios";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { showCompleteAlert, showWarningAlert } from "@/redux/features/alertSlice";
-import { deleteAllDocumentsTrashOfFolder, deleteDocumentsFromTrash, deleteFoldersFromTrash, removeDocumentFromFolderTrash, setDocumentsTrash, setFoldersTrash } from "@/redux/features/trashSlice";
+import { setDocumentsTrash, setFoldersTrash } from "@/redux/features/trashSlice";
 import useDeleteTrash from "../hooks/useDeleteTrash";
 import useOverlayLock from "../hooks/useOverlayLock";
 import { useEffect } from "react";
@@ -21,6 +21,7 @@ type DeleteCheckModalProps = ModalProps & {
 
 export default function DeleteCheckModal({ isModalOpen, setIsModalOpen, searchCategory, item }: DeleteCheckModalProps) {
     const dispatch = useAppDispatch();
+    console.log('item: ', item);
 
     const { deleteTrashDocument, deleteTrashFolder } = useDeleteTrash();
 
@@ -65,6 +66,7 @@ export default function DeleteCheckModal({ isModalOpen, setIsModalOpen, searchCa
 
     // 폴더를 영구 삭제
     const deleteFolderPermanently = async (folder: Folder) => {
+        console.log("folder: ", folder);
         const prevDocumentsTrash = [...documentsTrash];
         const prevFoldersTrash = [...foldersTrash];
 
@@ -93,7 +95,6 @@ export default function DeleteCheckModal({ isModalOpen, setIsModalOpen, searchCa
 
             dispatch(showCompleteAlert('해당 폴더는 영구적으로 삭제되었습니다.'));
         } catch (error) {
-            console.log(error);
             dispatch(showWarningAlert('삭제에 실패했습니다.'));
 
             // 삭제 실패 시 롤백

@@ -19,6 +19,7 @@ export default function EmailVerifyCheck() {
                     displayName: user.displayName,
                     email: user.email,
                     photoURL: user.photoURL!,
+                    uid: user.uid,
                 }))
                 getEmailToken();
             }
@@ -40,7 +41,6 @@ export default function EmailVerifyCheck() {
 
         window.addEventListener('beforeunload', checkBeforeUnload);
 
-        // 컴포넌트가 언마운트될 때 이벤트 리스너 제거
         return () => {
             window.removeEventListener('beforeunload', checkBeforeUnload);
         };

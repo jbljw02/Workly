@@ -46,13 +46,14 @@ export default function EmailVerifyModal({ isModalOpen, setIsModalOpen }: ModalP
                         });
     
                         // 사용자의 초기 정보를 설정
-                        await axios.post('/api/auth/user-initial-data', { user });
+                        await axios.post('/api/auth/user', { user });
     
-                        if (user.displayName && user.email) {
+                        if (user.displayName && user.email && user.uid) {
                             dispatch(setUser({
                                 displayName: user.displayName,
                                 email: user.email,
                                 photoURL: user.photoURL ? user.photoURL : avatarURL,
+                                uid: user.uid,
                             }))
                         }
     

@@ -16,9 +16,7 @@ export async function POST(req: NextRequest) {
         const trashDocRef = doc(firestore, 'trash-documents', documentId);
         const trashDocSnap = await getDoc(trashDocRef);
 
-        if (!trashDocSnap.exists()) {
-            return NextResponse.json({ error: "휴지통에서 문서를 찾을 수 없음" }, { status: 404 });
-        }
+        if (!trashDocSnap.exists()) return NextResponse.json({ error: "휴지통에서 문서를 찾을 수 없음" }, { status: 404 });
 
         // 폴더 조회
         const folderDocRef = doc(firestore, 'folders', folderId);
@@ -191,14 +189,14 @@ export async function DELETE(req: NextRequest) {
             }),
 
             // 이미지 삭제
-            ...imageUrls.map(path => 
+            ...imageUrls.map(path =>
                 deleteObject(ref(storage, path)).catch(error => {
                     console.warn('이미지 삭제 실패:', error, path);
                 })
             ),
-            
+
             // 파일 삭제
-            ...fileUrls.map(path => 
+            ...fileUrls.map(path =>
                 deleteObject(ref(storage, path)).catch(error => {
                     console.warn('파일 삭제 실패:', error, path);
                 })
@@ -232,7 +230,6 @@ export async function DELETE(req: NextRequest) {
 
         return NextResponse.json({ success: "문서와 삭제 성공" }, { status: 200 });
     } catch (error) {
-        console.error('문서 삭제 실패:', error);
         return NextResponse.json({ error: "문서 삭제 실패" }, { status: 500 });
     }
 }

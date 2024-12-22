@@ -4,12 +4,14 @@ export type UserProps = {
     email: string;
     displayName: string;
     photoURL: string;
+    uid: string;
 };
 
 const UserState: UserProps = {
     email: '',
     displayName: '',
     photoURL: '',
+    uid: '',
 };
 
 export const userSlice = createSlice({
@@ -20,11 +22,13 @@ export const userSlice = createSlice({
             state.email = action.payload.email;
             state.displayName = action.payload.displayName;
             state.photoURL = action.payload.photoURL;
+            state.uid = action.payload.uid;
         },
         clearUser: (state) => {
             state.email = '';
             state.displayName = '';
             state.photoURL = '';
+            state.uid = '';
         }
     },
 })

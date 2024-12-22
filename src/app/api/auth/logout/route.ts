@@ -3,10 +3,7 @@ import cookie from 'cookie';
 
 export async function POST(req: NextRequest) {
     try {
-        const response = NextResponse.json(
-            { success: "로그아웃 및 토큰 삭제 성공" },
-            { status: 200 }
-        );
+        const response = NextResponse.json({ success: "로그아웃 및 토큰 삭제 성공" }, { status: 200 });
 
         response.headers.set(
             'Set-Cookie',
@@ -21,9 +18,6 @@ export async function POST(req: NextRequest) {
 
         return response;
     } catch (error) {
-        return NextResponse.json(
-            { error: "로그아웃 및 토큰 삭제 실패" },
-            { status: 500 }
-        );
+        return NextResponse.json({ error: "로그아웃 및 토큰 삭제 실패" }, { status: 500 });
     }
 }

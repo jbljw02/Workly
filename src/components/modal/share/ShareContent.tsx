@@ -33,6 +33,7 @@ export default function ShareContent({ selectedDoc }: ShareContentProps) {
         email: targetSharingEmail,
         photoURL: 'unknown-user',
         authority: '전체 허용',
+        uid: '',
     }), [targetSharingEmail]);
 
     // 협업자를 선택하는 함수

@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import firestore from "../../../firebase/firestore";
 import { doc, getDoc, updateDoc, collection, addDoc, writeBatch, query, where, getDocs, orderBy, serverTimestamp, setDoc } from "firebase/firestore";
-import { Folder } from "@/redux/features/folderSlice";
-import { Collaborator, DocumentProps } from "@/redux/features/documentSlice";
-import { Timestamp } from 'firebase/firestore';
+import { Collaborator } from "@/redux/features/documentSlice";
 import { getDownloadURL, getStorage, ref, uploadString } from "firebase/storage";
 import convertTimestamp from "@/utils/convertTimestamp";
 
@@ -55,7 +53,6 @@ export async function POST(req: NextRequest) {
 
         return NextResponse.json({ success: "문서 추가 성공" }, { status: 200 });
     } catch (error) {
-        console.error(error);
         return NextResponse.json({ error: "문서 추가 실패" }, { status: 500 });
     }
 }
@@ -75,17 +72,10 @@ export async function GET(req: NextRequest) {
         const documents = await Promise.all(documentsSnapshot.docs.map(async doc => {
             const data = doc.data();
 
-            let docContent = null;
-            // 문서 내용이 존재하는 경우에만 스토리지에서 가져오기
-            if (data.contentUrl) {
-                const response = await fetch(data.contentUrl);
-                docContent = await response.json();
-            }
-
             return {
                 id: doc.id,
                 title: data.title,
-                docContent: docContent,
+                docContent: await fetch(data.contentUrl).then(res => res.json()) || null,
                 createdAt: convertTimestamp(data.createdAt),
                 readedAt: convertTimestamp(data.readedAt),
                 author: data.author,
@@ -114,7 +104,6 @@ export async function GET(req: NextRequest) {
 
         return NextResponse.json(filteredDocuments, { status: 200 });
     } catch (error) {
-        console.error("에러: ", error);
         return NextResponse.json({ error: "문서 정보 요청 실패" }, { status: 500 });
     }
 }
@@ -159,9 +148,7 @@ export async function PATCH(req: NextRequest) {
         const docRef = doc(firestore, 'documents', docId);
         const docSnap = await getDoc(docRef);
 
-        if (!docSnap.exists()) {
-            return NextResponse.json({ error: "문서를 찾을 수 없음" }, { status: 404 });
-        }
+        if (!docSnap.exists()) return NextResponse.json({ error: "문서를 찾을 수 없음" }, { status: 404 });
 
         await updateDoc(docRef, {
             readedAt: serverTimestamp(),

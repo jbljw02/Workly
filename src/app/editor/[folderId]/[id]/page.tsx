@@ -2,11 +2,11 @@ import Editor from "@/components/editor/Editor";
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import admin from "@/firebase/firebaseAdmin";
-import axios from 'axios';
 import { doc, getDoc } from "firebase/firestore";
 import firestore from '@/firebase/firestore';
 import { Metadata } from "next";
 import { getDocumentMetadata } from "@/utils/getDocumentMetadata";
+import { Collaborator, DocumentProps } from "@/redux/features/documentSlice";
 
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
@@ -42,15 +42,23 @@ export default async function EditorPage({ params }: { params: { id: string } })
     // 사용자에게 현재 폴더에 접근 권한이 있는지 확인
     // 권한이 없다면 접근 제한
     try {
+        // 사용자 인증 확인
         const decodedToken = await admin.auth().verifyIdToken(firebaseToken.value);
         const userEmail = decodedToken.email;
 
-        await axios.get(`${baseUrl}/api/auth/verify-permission`, {
-            params: {
-                email: userEmail,
-                docId: docId,
-            },
-        });
+        if (!userEmail) {
+            return redirect('/access-denied');
+        }
+
+        // 문서 접근 권한 확인
+        const targetDoc = docSnap.data() as DocumentProps;
+        const isValidAccess = targetDoc?.collaborators.find(
+            (collaborator: Collaborator) => collaborator.email === userEmail
+        ) || targetDoc?.author.email === userEmail;
+
+        if (!isValidAccess) {
+            return redirect('/access-denied');
+        }
 
         return <Editor docId={id} />
     } catch (error) {
