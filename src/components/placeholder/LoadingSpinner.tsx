@@ -11,8 +11,7 @@ type LoadingSpinnerProps = {
 
 export default function LoadingSpinner({ size, color }: LoadingSpinnerProps) {
     return (
-        <div
-            className="flex items-center justify-center w-full h-full">
+        <div className="flex items-center justify-center w-full h-full">
             <ClipLoader
                 color={color}
                 size={size}

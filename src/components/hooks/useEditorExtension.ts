@@ -227,7 +227,7 @@ export default function useEditorExtension({ docId }: useEditorExtensionProps) {
                         const src = fileReader.result as string
 
                         if (file.type.startsWith('image/')) {
-                            uploadNewImage(currentEditor, file, src, dispatch)
+                            uploadNewImage(currentEditor, file, src, docId, dispatch)
                         } else {
                             uploadNewFile(currentEditor, file, pos, dispatch)
                         }

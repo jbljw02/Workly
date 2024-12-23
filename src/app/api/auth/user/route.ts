@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
 
         // 파이어베이스 스토리지에서 아바타 이미지 가져오기
         const storage = getStorage();
-        const avatarRef = ref(storage, 'images/avatar.png');
+        const avatarRef = ref(storage, 'profile/avatar.png');
         const avatarURL = await getDownloadURL(avatarRef);
 
         // 배치 작업 시작
