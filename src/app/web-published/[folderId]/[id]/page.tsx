@@ -1,6 +1,5 @@
 import PublishedDocument from "@/components/web-published/WebPublishedDocument";
 import firestore from "@/firebase/firestore";
-import { DocumentProps } from "@/redux/features/documentSlice";
 import { doc, getDoc } from "firebase/firestore";
 import { redirect } from "next/navigation";
 import { Metadata } from "next";

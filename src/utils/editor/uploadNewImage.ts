@@ -6,7 +6,7 @@ import { AppDispatch } from "@/redux/store";
 import { v4 as uuidv4 } from 'uuid';
 import getDimensions from "./getDimensions";
 
-const uploadNewImage = async (editor: Editor, file: File, src: string, dispatch: AppDispatch) => {
+const uploadNewImage = async (editor: Editor, file: File, src: string, docId: string, dispatch: AppDispatch) => {
     const dimensions = await getDimensions(src);
     const imageId = uuidv4();
 

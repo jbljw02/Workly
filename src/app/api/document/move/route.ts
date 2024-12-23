@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import firestore from "../../../../firebase/firestore";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
-import { Folder } from "@/redux/features/folderSlice";
-import { DocumentProps } from "@/redux/features/documentSlice";
 
+// 문서의 폴더를 이동
 export async function PUT(req: NextRequest) {
     try {
         const { folderId, document } = await req.json();
@@ -41,7 +40,6 @@ export async function PUT(req: NextRequest) {
 
         return NextResponse.json({ success: "문서 이동 성공" }, { status: 200 });
     } catch (error) {
-        console.error(error);
         return NextResponse.json({ error: "문서 이동 실패" }, { status: 500 });
     }
 }

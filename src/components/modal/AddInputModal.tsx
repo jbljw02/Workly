@@ -10,27 +10,25 @@ import { useAppDispatch } from '@/redux/hooks';
 import { setWorkingSpinner } from '@/redux/features/placeholderSlice';
 
 export interface AddInputModal extends ModalProps {
-    title: string;
     value: string;
     setValue: React.Dispatch<React.SetStateAction<string>>;
     submitFunction: () => Promise<boolean>;
+    category: 'document' | 'folder';
     isInvalidInfo?: { isInvalid: boolean, msg: string };
     setIsInvalidInfo?: React.Dispatch<React.SetStateAction<{ isInvalid: boolean; msg: string }>>;
-    placeholder: string;
 }
 
 export default function AddInputModal({
     isModalOpen,
     setIsModalOpen,
-    title,
     value,
     setValue,
     submitFunction,
+    category,
     isInvalidInfo,
-    setIsInvalidInfo,
-    placeholder }: AddInputModal) {
+    setIsInvalidInfo }: AddInputModal) {
     const dispatch = useAppDispatch();
-    
+
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const modalSubmit = async (e: React.FormEvent) => {
@@ -100,10 +98,12 @@ export default function AddInputModal({
                 className='flex flex-col h-full justify-between'>
                 <div>
                     <ModalHeader
-                        label={<div className='font-semibold'>{title}</div>}
+                        label={<div className='font-semibold'>{category === 'document' ? '내 폴더에 문서 추가하기' : '새 폴더 만들기'}</div>}
                         closeModal={closeModal} />
                     <div className="flex flex-col px-6">
-                        <div className='text-sm mt-2 mb-2 pl-0.5'>폴더</div>
+                        <div className='text-sm font-medium mt-2 mb-2 pl-0.5'>
+                            {category === 'document' ? '문서명' : '폴더명'}
+                        </div>
                         <CommonInput
                             style={{
                                 px: 'px-3',
@@ -113,7 +113,7 @@ export default function AddInputModal({
                             type="text"
                             value={value}
                             setValue={setValue}
-                            placeholder={placeholder}
+                            placeholder={category === 'document' ? '추가할 문서의 이름을 입력해주세요' : '새 폴더의 이름을 입력해주세요'}
                             isInvalidInfo={isInvalidInfo}
                             autoFocus={true} />
                     </div>

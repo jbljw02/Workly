@@ -24,13 +24,13 @@ export default function UserMenuList({ menuListOpen, setListOpen }: UserMenuList
             Icon: UserIcon,
             IconWidth: "18",
             label: "회원 정보",
-            onClick: () => console.log("A"),
+            onClick: () => router.push('/account'),
         },
         {
             Icon: ContactIcon,
             IconWidth: "16",
             label: "문의하기",
-            onClick: () => console.log("A"),
+            onClick: () => router.push('/contact'),
         },
         {
             Icon: LogoutIcon,

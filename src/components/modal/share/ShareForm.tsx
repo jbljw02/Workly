@@ -4,7 +4,6 @@ import { DocumentProps, addCollaborator } from "@/redux/features/documentSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { useRef, useEffect, useMemo, useState } from "react";
 import CloseIcon from '../../../../public/svgs/close.svg';
-import AvatarIcon from '../../../../public/svgs/avatar.svg';
 import Image from "next/image";
 import { addCoworker, setSelectedCoworkers, setTargetSharingEmail } from "@/redux/features/shareDocumentSlice";
 import axios from "axios";

@@ -5,7 +5,7 @@ import CommonButton from './CommonButton';
 interface modalProps {
     isModalOpen: boolean,
     setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>,
-    setIsAgree: React.Dispatch<React.SetStateAction<boolean>>,
+    setIsAgree: (agree: boolean) => void,
     category: string,
 }
 
@@ -124,7 +124,10 @@ export default function PINoticeModal({ isModalOpen, setIsModalOpen, setIsAgree,
                             hover: 'hover:bg-gray-100'
                         }}
                         label="거부"
-                        onClick={() => setIsModalOpen(false)} />
+                        onClick={() => {
+                            setIsModalOpen(false)
+                            setIsAgree(false)
+                        }} />
                 </div>
             </div>
         </Modal>

@@ -39,6 +39,7 @@ export default function MenuBar({ editor }: { editor: Editor }) {
     const dispatch = useAppDispatch();
 
     const editorPermission = useAppSelector(state => state.editorPermission);
+    const selectedDocument = useAppSelector(state => state.selectedDocument);
 
     const [fontSize, setFontSize] = useState<number>(16);
     const [headingLevel, setHeadingLevel] = useState<string>('16');
@@ -130,7 +131,7 @@ export default function MenuBar({ editor }: { editor: Editor }) {
 
                     // 이미지 파일일 경우
                     if (file.type.startsWith('image/')) {
-                        uploadNewImage(editor, file, src, dispatch);
+                        uploadNewImage(editor, file, src, selectedDocument.id, dispatch);
                     }
                     else {
                         // 이미지가 아닌 일반 파일일 경우

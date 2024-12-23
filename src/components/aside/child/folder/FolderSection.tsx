@@ -57,13 +57,12 @@ export default function FolderSection({ isCollapsed }: FolderSectionProps) {
                             <AddInputModal
                                 isModalOpen={addingFolder}
                                 setIsModalOpen={setAddingFolder}
-                                title='새 폴더 만들기'
                                 value={newFolderTitle}
                                 setValue={setNewFolderTitle}
                                 submitFunction={() => addNewFolder(newFolderTitle, setIsFolderInvalidInfo)}
+                                category='folder'
                                 isInvalidInfo={isFolderInvalidInfo}
-                                setIsInvalidInfo={setIsFolderInvalidInfo}
-                                placeholder="새 폴더의 이름을 입력해주세요" />
+                                setIsInvalidInfo={setIsFolderInvalidInfo} />
                         </>
                 }
             </div> :

@@ -1,15 +1,10 @@
 import Modal from 'react-modal';
-import ModalHeader from './ModalHeader';
-import CommonInput from '../input/CommonInput';
 import SubmitButton from '../button/SubmitButton';
 import CommonButton from '../button/CommonButton';
-import { ModalProps } from '@/types/modalProps';
 import useGetUserData from '../hooks/useGetUserData';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { setFailedAlert } from '@/redux/features/alertSlice';
 import ErrorIcon from '../../../public/svgs/wifi-error.svg';
-import InvalidAccess from '../invalid-access/InvalidAccess';
-import HorizontalDivider from '../editor/child/divider/HorizontalDivider';
 import Link from 'next/link';
 import { setWorkingSpinner } from '@/redux/features/placeholderSlice';
 

@@ -5,8 +5,8 @@ import { useMemo, useState } from "react";
 import GoogleLoginButton from "../button/GoogleLoginButton";
 import SubmitButton from "../button/SubmitButton";
 import FormInput from "../input/FormInput";
-import AuthTop from "./AuthTop";
-import DivideBar from "./DivideBar";
+import AuthTop from "./child/AuthTop";
+import DivideBar from "./child/DivideBar";
 import PINoticeModal from "../button/PINoticeModal";
 import { createUserWithEmailAndPassword, sendEmailVerification, updateProfile } from "firebase/auth";
 import { auth } from "../../firebase/firebasedb";
@@ -15,7 +15,8 @@ import { FirebaseError } from "firebase-admin";
 import Link from "next/link";
 import { useAppDispatch } from "@/redux/hooks";
 import { setWorkingSpinner } from "@/redux/features/placeholderSlice";
-import axios from "axios";
+import { showWarningAlert } from "@/redux/features/alertSlice";
+import PIAgreeCheckbox from "../input/PIAgreeCheckbox";
 
 export const emailRegex = /^[A-Za-z0-9_\.\-]+@[A-Za-z0-9\-]+\.[A-Za-z]{2,}$/;
 export const pwdRegex = /^(?=.*[!@#$%^&*(),.?":{}|<>]).{6,}$/;
@@ -36,7 +37,6 @@ export default function SignUp() {
         isInvalid: false,
         msg: '',
     });
-
     const [passwordInvalid, setPasswordInvalid] = useState({
         isInvalid: false,
         msg: '비밀번호는 6자 이상, 최소 한 개의 특수문자를 포함해야 합니다',
@@ -51,7 +51,7 @@ export default function SignUp() {
     const [emailVerifyModal, setEmailVerifyModal] = useState(false);
 
     // 개인정보 처리방침 동의 토글
-    const checkPICheckBox = () => {
+    const toggleCheckbox = () => {
         setFormData((prevState) => ({
             ...prevState,
             isAgreeForPersonalInfo: !prevState.isAgreeForPersonalInfo,
@@ -183,8 +183,6 @@ export default function SignUp() {
             // 이메일을 전송한 후,
             await sendEmailVerification(user);
 
-            await axios.post('/api/auth/user-initial-data', { user });
-
             // 이메일 인증 여부를 확인하는 모달을 띄움
             setEmailVerifyModal(true);
         }
@@ -196,9 +194,7 @@ export default function SignUp() {
                     isInvalid: true,
                 });
             }
-            else {
-                throw error;
-            }
+            dispatch(showWarningAlert('회원가입에 실패했습니다.'));
         }
         finally {
             dispatch(setWorkingSpinner(false));
@@ -263,21 +259,11 @@ export default function SignUp() {
                 <GoogleLoginButton />
                 {/* 하단 라벨 */}
                 <div className='flex justify-between items-center text-sm w-full'>
-                    <div className="flex flex-row gap-1.5">
-                        <input
-                            type="checkbox"
-                            className="cursor-pointer"
-                            onChange={checkPICheckBox}
-                            checked={formData.isAgreeForPersonalInfo} />
-                        <div>
-                            <button
-                                onClick={() => setIsPIModalOpen(true)}
-                                className={`underline 
-                                ${isVibrate && 'vibrate'} 
-                                ${(formData.isSubmitted && !formData.isAgreeForPersonalInfo) && 'text-red-500'}`}>개인정보 처리방침</button>
-                            에 동의합니다.
-                        </div>
-                    </div>
+                    <PIAgreeCheckbox
+                        formData={formData}
+                        onChange={toggleCheckbox}
+                        isVibrate={isVibrate}
+                        setIsPIModalOpen={setIsPIModalOpen} />
                     <div className='flex flex-row gap-1.5'>
                         <div>이미 계정이 있으신가요?</div>
                         <Link
@@ -290,9 +276,9 @@ export default function SignUp() {
                 <PINoticeModal
                     isModalOpen={isPIModalOpen}
                     setIsModalOpen={setIsPIModalOpen}
-                    setIsAgree={() => setFormData((prevState) => ({
+                    setIsAgree={(agree) => setFormData((prevState) => ({
                         ...prevState,
-                        isAgreeForPersonalInfo: true,
+                        isAgreeForPersonalInfo: agree,
                     }))}
                     category="회원가입" />
                 <EmailVerifyModal

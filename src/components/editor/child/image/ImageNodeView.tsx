@@ -28,6 +28,7 @@ const NodeView = (resizableImgProps: ResizableImageNodeViewRendererProps) => {
   const crop = useAppSelector(state => state.crop);
   const [cropMode, setCropMode] = useState(false);
 
+  const selectedDocument = useAppSelector(state => state.selectedDocument);
   const openFullModal = useAppSelector(state => state.openFullModal);
   const webPublished = useAppSelector(state => state.webPublished);
   const editorPermission = useAppSelector(state => state.editorPermission);
@@ -111,13 +112,13 @@ const NodeView = (resizableImgProps: ResizableImageNodeViewRendererProps) => {
             // 자른 이미지를 스토리지에 업로드하고 URL 가져오기
             const storage = getStorage();
             const newImageId = uuidv4();
-            const imageRef = ref(storage, `images/${newImageId}`);
+            const imageRef = ref(storage, `images/${selectedDocument.id}/${newImageId}`);
 
             await uploadBytes(imageRef, blob);
             const url = await getDownloadURL(imageRef);
 
             // 원본 이미지 삭제
-            const oldImageRef = ref(storage, `images/${resizableImgProps.node.attrs.id}`);
+            const oldImageRef = ref(storage, `images/${selectedDocument.id}/${resizableImgProps.node.attrs.id}`);
             await deleteObject(oldImageRef).catch(() => { }); // 에러 무시
 
             // editor 내부에서 이미지 자르기 적용

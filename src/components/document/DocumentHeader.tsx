@@ -69,7 +69,8 @@ export default function DocumentHeader({ title, description }: DocumentHeaderPro
                         textSize: 'text-sm',
                         textColor: 'text-white',
                         bgColor: 'bg-black',
-                        hover: 'hover:bg-zinc-800'
+                        hover: 'hover:bg-zinc-800',
+                        borderColor: 'border-black',
                     }}
                     label="새 폴더"
                     onClick={() => openModal('folder')} />
@@ -78,15 +79,14 @@ export default function DocumentHeader({ title, description }: DocumentHeaderPro
                         <AddInputModal
                             isModalOpen={isModalOpen}
                             setIsModalOpen={setIsModalOpen}
-                            title={modalProps[modalType].title}
                             value={inputValue}
                             setValue={setInputValue}
                             submitFunction={modalType === 'document' ?
                                 () => addDocToFolder(inputValue, folders[0], setIsInvalidInfo) :
                                 () => addNewFolder(inputValue, setIsInvalidInfo)}
+                            category={modalType}
                             isInvalidInfo={isInvalidInfo}
-                            setIsInvalidInfo={setIsInvalidInfo}
-                            placeholder={modalProps[modalType].placeholder} />
+                            setIsInvalidInfo={setIsInvalidInfo} />
                     )
                 }
             </div>

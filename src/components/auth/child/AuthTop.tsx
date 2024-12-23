@@ -1,4 +1,4 @@
-import Favicon from '../../../public/svgs/favicon.svg';
+import Favicon from '../../../../public/svgs/favicon.svg';
 
 type AuthTop = {
     title: string;

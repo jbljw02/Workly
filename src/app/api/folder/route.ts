@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { doc, getDoc, orderBy, setDoc, updateDoc, writeBatch } from "firebase/firestore";
 import firestore from "../../../firebase/firestore";
-import { DocumentProps } from "@/redux/features/documentSlice";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { query, where, getDocs } from "firebase/firestore";
 
@@ -52,7 +51,6 @@ export async function GET(req: NextRequest) {
 
         return NextResponse.json(folders, { status: 200 });
     } catch (error) {
-        console.log("error: ", error);
         return NextResponse.json({ error: "폴더 정보 요청 실패" }, { status: 500 });
     }
 }
@@ -68,9 +66,7 @@ export async function PUT(req: NextRequest) {
         const folderDocRef = doc(firestore, 'folders', folderId);
         const folderDocSnap = await getDoc(folderDocRef);
 
-        if (!folderDocSnap.exists()) {
-            return NextResponse.json({ error: "폴더가 존재하지 않습니다" }, { status: 404 });
-        }
+        if (!folderDocSnap.exists()) return NextResponse.json({ error: "폴더가 존재하지 않습니다" }, { status: 404 });
 
         await updateDoc(folderDocRef, {
             name: newFolderName,

@@ -34,6 +34,7 @@ const selectedDocumentState: DocumentProps = {
         email: '',
         displayName: '',
         photoURL: '',
+        uid: '',
     },
     folderId: '',
     folderName: '',

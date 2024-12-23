@@ -8,6 +8,7 @@ type StyleProps = {
     textColor: string;
     bgColor: string;
     hover: string;
+    borderColor?: string;
 };
 
 type SubmitButtonProps = {
@@ -18,7 +19,7 @@ type SubmitButtonProps = {
 };
 
 export default function SubmitButton({ style, label, value, onClick }: SubmitButtonProps) {
-    const { width, height, textSize, textColor, bgColor, hover } = style;
+    const { width, height, textSize, textColor, bgColor, hover, borderColor } = style;
     const workingSpinner = useAppSelector(state => state.workingSpinner);
     return (
         <button
@@ -26,7 +27,7 @@ export default function SubmitButton({ style, label, value, onClick }: SubmitBut
             onClick={value ? onClick : undefined}
             disabled={!value || workingSpinner}
             // 입력값이 존재할 때만 버튼 활성화
-            className={`${width} ${height} ${textSize} ${textColor} ${bgColor}
+            className={`${width} ${height} ${textSize} ${textColor} ${bgColor} ${borderColor}
             ${value ? hover : 'border-gray-300 bg-gray-300 cursor-not-allowed'} 
             rounded-lg border transform transition-all duration-200 whitespace-nowrap`}>
             {!workingSpinner && label}

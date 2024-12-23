@@ -22,7 +22,6 @@ export default function Aside() {
 
     const addDocToFolder = useAddDocument();
     const folders = useAppSelector(state => state.folders);
-    const documents = useAppSelector(state => state.documents);
 
     const expandedWidth = 240; // 넓은 상태의 너비
     const collapsedWidth = 70; // 좁은 상태의 너비

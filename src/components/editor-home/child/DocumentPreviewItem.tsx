@@ -6,7 +6,6 @@ import Image from "next/image";
 import Link from 'next/link';
 import GroupIcon from '../../../../public/svgs/group.svg';
 import WebIcon from '../../../../public/svgs/web.svg';
-import HoverTooltip from "@/components/tooltip/HoverTooltip";
 import { useAppSelector } from "@/redux/hooks";
 import ShortcutsOnIcon from '../../../../public/svgs/shortcuts-on.svg';
 

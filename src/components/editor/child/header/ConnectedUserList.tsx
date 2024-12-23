@@ -16,12 +16,14 @@ function ConnectedUserItem({ user, index }: ConnectedUserItemProps) {
             key={user.id}
             className={`flex items-center justify-center relative ${index !== 0 ? '-ml-1' : ''}`}>
             <HoverTooltip label={user.name}>
-                <Image
-                    src={user.photoURL}
-                    alt={user.name}
-                    width={24}
-                    height={24}
-                    className="rounded-full" />
+                <span className="w-[24px] h-[24px] overflow-hidden rounded-full flex-shrink-0">
+                    <Image
+                        src={user.photoURL}
+                        alt={user.name}
+                        width={24}
+                        height={24}
+                        className="rounded-full object-cover w-[24px] h-[24px]" />
+                </span>
             </HoverTooltip>
         </div>
     );

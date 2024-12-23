@@ -6,7 +6,7 @@ import { useRef, useEffect } from "react";
 import { Provider } from "react-redux";
 import EmailVerifyCheck from '@/components/global/EmailVerifyCheck';
 import { AppProgressBar as ProgressBar } from 'next-nprogress-bar';
-import Modal from 'react-modal';
+import GlobalAlert from '@/components/global/GlobalAlert';
 
 export default function RootLayout({
   children,
@@ -26,6 +26,7 @@ export default function RootLayout({
       <body className="min-w-full min-h-screen">
         <Provider store={storeRef.current}>
           <EmailVerifyCheck />
+          <GlobalAlert />
           {children}
           <ProgressBar
             height="2.5px"

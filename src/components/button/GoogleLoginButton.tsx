@@ -46,13 +46,14 @@ export default function GoogleLoginButton() {
             await axios.post('/api/auth/email-token', { token });
 
             // 사용자의 초기 정보를 설정
-            await axios.post('/api/auth/user-initial-data', { user });
+            await axios.post('/api/auth/user', { user });
 
-            if (user.displayName && user.email && user.photoURL) {
+            if (user.displayName && user.email && user.photoURL && user.uid) {
                 dispatch(setUser({
                     displayName: user.displayName,
                     email: user.email,
                     photoURL: user.photoURL,
+                    uid: user.uid,
                 }))
             }
 

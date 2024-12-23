@@ -27,6 +27,8 @@ export default function ImageMenuBar({ nodeViewRef, cropStart, resizableImgProps
     const dispatch = useAppDispatch();
     const editor = resizableImgProps.editor;
 
+    const selectedDocument = useAppSelector(state => state.selectedDocument);
+
     const [alignment, setAlignment] = useState<'flex-start' | 'center' | 'flex-end'>('flex-start');
 
     const alignmentSetUp = (justifyContent: 'flex-start' | 'center' | 'flex-end') => {
@@ -42,7 +44,7 @@ export default function ImageMenuBar({ nodeViewRef, cropStart, resizableImgProps
             editor.chain().focus().deleteSelection().run();
 
             const storage = getStorage();
-            const imageRef = ref(storage, `images/${id}`);
+            const imageRef = ref(storage, `images/${selectedDocument.id}/${id}`);
             await deleteObject(imageRef);
         } catch (error) {
             dispatch(showWarningAlert('이미지를 삭제하지 못했습니다.'));
