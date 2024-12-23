@@ -132,8 +132,6 @@ export default function ContactForm() {
         }));
     }
 
-    console.log('pimodal', isPIModalOpen);
-
     return (
         <form
             onSubmit={formSubmit}

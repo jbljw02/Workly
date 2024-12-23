@@ -4,8 +4,8 @@ import { useState } from 'react';
 import SubmitButton from '@/components/button/SubmitButton';
 import GoogleLoginButton from '@/components/button/GoogleLoginButton';
 import HeaderButton from '@/components/header/HeaderButton';
-import DivideBar from './DivideBar';
-import AuthTop from './AuthTop';
+import DivideBar from './child/DivideBar';
+import AuthTop from './child/AuthTop';
 import FormInput from '../input/FormInput';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../firebase/firebasedb';
@@ -155,7 +155,9 @@ export default function Login() {
                     </div>
                     <div className='flex flex-row gap-1.5'>
                         <div>비밀번호를 잊으셨나요?</div>
-                        <button className='text-blue-600 underline'>찾기</button>
+                        <Link
+                            href="/reset-password"
+                            className='text-blue-600 underline'>찾기</Link>
                     </div>
                 </div>
                 <EmailVerifyModal
