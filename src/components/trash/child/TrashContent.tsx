@@ -1,61 +1,33 @@
 import CategoryButton from "@/components/button/CategoryButton";
 import CommonInput from "@/components/input/CommonInput";
 import { showWarningAlert } from "@/redux/features/alertSlice";
-import { setDocumentsTrash, setFoldersTrash } from "@/redux/features/trashSlice";
+import { setDocumentsTrash, setFoldersTrash, setIsDeletingModalOpen } from "@/redux/features/trashSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import axios from "axios";
-import { useRef, useState, useCallback, useEffect } from "react";
+import { useRef, useState, useCallback, useEffect, Dispatch, SetStateAction } from "react";
 import { SearchCategory } from "../Trash";
 import TrashList from "./TrashList";
 import { setTrashLoading } from "@/redux/features/placeholderSlice";
+import { useClickOutside } from "@/components/hooks/useClickOutside";
 
-export default function TrashContent() {
-    const dispatch = useAppDispatch();
+type TrashContentProps = {
+    parentRef: React.RefObject<HTMLDivElement>;
+    setIsTrashOpen: Dispatch<SetStateAction<boolean>>;
+}
 
-    const user = useAppSelector(state => state.user);
+export default function TrashContent({ parentRef, setIsTrashOpen }: TrashContentProps) {
+    const trashRef = useRef<HTMLDivElement>(null);
+
+    const isDeletingModalOpen = useAppSelector(state => state.isDeletingModalOpen);
 
     const [inputValue, setInputValue] = useState('');
     const [searchCategory, setSearchCategory] = useState<SearchCategory>('문서');
 
-    // 휴지통에 있는 문서들을 가져옴
-    const getTrashDocuments = useCallback(async () => {
-        if (user.email) {
-            try {
-                dispatch(setTrashLoading(true));
-                
-                const response = await axios.get('/api/trash/document', {
-                    params: { email: user.email }
-                })
-                dispatch(setDocumentsTrash(response.data));
-            } catch (error) {
-                dispatch(showWarningAlert('휴지통의 정보를 불러오는 데에 실패했습니다.'));
-            } finally {
-                dispatch(setTrashLoading(false));
-            }
-        }
-    }, [user.email]);
-
-    // 휴지통에 있는 폴더들을 가져옴
-    const getTrashFolders = useCallback(async () => {
-        if (user.email) {
-            try {
-                const response = await axios.get('/api/trash/folder', {
-                    params: { email: user.email }
-                })
-                dispatch(setFoldersTrash(response.data));
-            } catch (error) {
-                dispatch(showWarningAlert('휴지통의 정보를 불러오는 데에 실패했습니다.'));
-            }
-        }
-    }, [user.email]);
-
-    useEffect(() => {
-        getTrashDocuments();
-        getTrashFolders();
-    }, [getTrashDocuments, getTrashFolders]);
+    useClickOutside(trashRef, () => setIsTrashOpen(false), parentRef, isDeletingModalOpen);
 
     return (
         <div
+            ref={trashRef}
             className='flex flex-col absolute z-20 w-[380px] h-[450px] left-full bottom-6 -ml-10 py-4 gap-2 bg-white rounded-lg shadow-[0px_4px_10px_rgba(0,0,0,0.25)] border border-neutral-200'>
             <div className="font-semibold px-4 ml-0.5">휴지통</div>
             <div className="px-4">

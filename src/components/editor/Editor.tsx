@@ -1,7 +1,7 @@
 'use client';
 
-import { useEditor, EditorContent, ReactNodeViewRenderer, JSONContent, Extension } from '@tiptap/react'
-import React, { CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useEditor, EditorContent } from '@tiptap/react'
+import React, { useEffect, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import 'tiptap-extension-resizable-image/styles.css';
 import '@/styles/editor.css';
@@ -21,7 +21,6 @@ import EditorTitleInput from './child/EditorTitleInput';
 import EditorHeaderSkeleton from '../placeholder/skeleton/editor/EditorHeaderSkeleton';
 import EditorContentSkeleton from '../placeholder/skeleton/editor/EditorContentSkeleton';
 import { usePathname } from 'next/navigation';
-import { setConnection, setDocSynced } from '@/redux/features/connectionSlice';
 
 export default function Editor({ docId }: { docId: string }) {
   const dispatch = useAppDispatch();
@@ -67,7 +66,7 @@ export default function Editor({ docId }: { docId: string }) {
     if (currentDocument) {
       dispatch(setSelectedDocument(currentDocument));
     }
-  }, [folders, documents]);
+  }, [documents]);
 
   // 에디터의 내용이 변경될 때마다 state와의 일관성을 유지
   useEffect(() => {

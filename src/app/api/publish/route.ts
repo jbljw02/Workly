@@ -19,7 +19,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
 
         // 스토리지 문서 내용 가져오기
         const storage = getStorage();
-        const draftContentRef = ref(storage, `documents/drafts/${docId}/content.json`);
+        const draftContentRef = ref(storage, `documents/${docId}/drafts/content.json`);
         const draftResponse = await fetch(docSnap.data().contentUrl);
         const draftContent = await draftResponse.json();
 
@@ -29,7 +29,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
         }
 
         // 문서 내용을 가져와 스토리지에 업로드
-        const publishedContentRef = ref(storage, `documents/published/${docId}/content.json`);
+        const publishedContentRef = ref(storage, `documents/${docId}/published/content.json`);
         await uploadString(publishedContentRef, JSON.stringify(draftContent));
 
         await updateDoc(docRef, {
@@ -56,7 +56,7 @@ export async function DELETE(req: NextRequest, res: NextResponse) {
         if (!docSnap.exists()) return NextResponse.json({ error: "문서를 찾을 수 없음" }, { status: 404 });
 
         const storage = getStorage();
-        const contentRef = ref(storage, `documents/published/${docId}/content.json`);
+        const contentRef = ref(storage, `documents/${docId}/published/content.json`);
 
         await deleteObject(contentRef);
 

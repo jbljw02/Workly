@@ -2,7 +2,6 @@ import { useAppSelector } from "@/redux/hooks";
 import { SearchCategory } from "../Trash";
 import TrashItem from "./TrashItem";
 import { useMemo } from "react";
-import EmptyTrashIcon from '../../../../public/svgs/empty-trash.svg';
 import React from "react";
 import HoverListSkeleton from "@/components/placeholder/skeleton/HoverListSkeleton";
 import EmptyList from "@/components/placeholder/EmptyList";

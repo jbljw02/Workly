@@ -9,7 +9,7 @@ import { Folder } from "@/redux/features/folderSlice";
 import axios from "axios";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { showCompleteAlert, showWarningAlert } from "@/redux/features/alertSlice";
-import { setDocumentsTrash, setFoldersTrash } from "@/redux/features/trashSlice";
+import { setDocumentsTrash, setFoldersTrash, setIsDeletingModalOpen } from "@/redux/features/trashSlice";
 import useDeleteTrash from "../hooks/useDeleteTrash";
 import useOverlayLock from "../hooks/useOverlayLock";
 import { useEffect } from "react";
@@ -21,7 +21,6 @@ type DeleteCheckModalProps = ModalProps & {
 
 export default function DeleteCheckModal({ isModalOpen, setIsModalOpen, searchCategory, item }: DeleteCheckModalProps) {
     const dispatch = useAppDispatch();
-    console.log('item: ', item);
 
     const { deleteTrashDocument, deleteTrashFolder } = useDeleteTrash();
 
@@ -40,11 +39,6 @@ export default function DeleteCheckModal({ isModalOpen, setIsModalOpen, searchCa
 
             setIsModalOpen(false);
 
-            // tiptap cloud 서버에서 문서 삭제
-            await axios.delete('/api/tiptap-document', {
-                params: { docName: document.id }
-            });
-
             // 파이어베이스에서 문서 삭제
             await axios.delete('/api/trash/document', {
                 params: {
@@ -54,8 +48,12 @@ export default function DeleteCheckModal({ isModalOpen, setIsModalOpen, searchCa
             });
 
             dispatch(showCompleteAlert('해당 문서는 영구적으로 삭제되었습니다.'));
+
+            // tiptap cloud 서버에서 문서 삭제
+            await axios.delete('/api/tiptap-document', {
+                params: { docName: document.id }
+            });
         } catch (error) {
-            console.log(error);
             dispatch(showWarningAlert('삭제에 실패했습니다.'));
 
             // 삭제 실패 시 롤백
@@ -66,7 +64,6 @@ export default function DeleteCheckModal({ isModalOpen, setIsModalOpen, searchCa
 
     // 폴더를 영구 삭제
     const deleteFolderPermanently = async (folder: Folder) => {
-        console.log("folder: ", folder);
         const prevDocumentsTrash = [...documentsTrash];
         const prevFoldersTrash = [...foldersTrash];
 
@@ -75,15 +72,6 @@ export default function DeleteCheckModal({ isModalOpen, setIsModalOpen, searchCa
             deleteTrashFolder(folder);
 
             setIsModalOpen(false);
-
-            // 폴더 내 모든 문서를 클라우드에서 삭제(병렬 처리)
-            await Promise.all(
-                folder.documentIds.map(id =>
-                    axios.delete('/api/tiptap-document', {
-                        params: { docName: id }
-                    })
-                )
-            );
 
             // 파이어베이스에서 폴더 삭제
             await axios.delete('/api/trash/folder', {
@@ -94,6 +82,15 @@ export default function DeleteCheckModal({ isModalOpen, setIsModalOpen, searchCa
             });
 
             dispatch(showCompleteAlert('해당 폴더는 영구적으로 삭제되었습니다.'));
+
+            // 폴더 내 모든 문서를 클라우드에서 삭제(병렬 처리)
+            await Promise.all(
+                folder.documentIds.map(id =>
+                    axios.delete('/api/tiptap-document', {
+                        params: { docName: id }
+                    })
+                )
+            );
         } catch (error) {
             dispatch(showWarningAlert('삭제에 실패했습니다.'));
 
@@ -173,12 +170,13 @@ export default function DeleteCheckModal({ isModalOpen, setIsModalOpen, searchCa
                 <div className='flex justify-end text-sm gap-3.5 px-6 pb-6'>
                     <CommonButton
                         style={{
-                            width: 'w-16',
+                            width: 'w-14',
                             height: 'h-[38px]',
-                            textSize: 'text-white',
-                            textColor: 'text-gray-500',
+                            textSize: 'text-sm',
+                            textColor: 'text-white',
                             bgColor: 'bg-red-500',
                             hover: 'hover:bg-red-600',
+                            borderColor: 'border-red-500',
                         }}
                         label='삭제'
                         onClick={() => deleteItemPermanently(item)} />

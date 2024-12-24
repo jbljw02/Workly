@@ -135,7 +135,7 @@ export default function MenuBar({ editor }: { editor: Editor }) {
                     }
                     else {
                         // 이미지가 아닌 일반 파일일 경우
-                        uploadNewFile(editor, file, cursorPos, dispatch);
+                        uploadNewFile(editor, file, selectedDocument.id, cursorPos, dispatch);
                     }
                 };
 

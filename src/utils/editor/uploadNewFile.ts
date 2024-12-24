@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { AppDispatch } from "@/redux/store";
 import { FileNodeAttrs } from "../../../lib/fileNode";
 
-const uploadNewFile = async (editor: Editor, file: File, pos: number, dispatch: AppDispatch) => {
+const uploadNewFile = async (editor: Editor, file: File, docId: string, pos: number, dispatch: AppDispatch) => {
     const fileAttrs: FileNodeAttrs = {
         id: uuidv4(),
         href: '',
@@ -22,7 +22,7 @@ const uploadNewFile = async (editor: Editor, file: File, pos: number, dispatch: 
         }).focus().run();
 
         const storage = getStorage();
-        const fileRef = ref(storage, `files/${fileAttrs.id}`);
+        const fileRef = ref(storage, `documents/${docId}/files/${fileAttrs.id}`);
 
         await uploadBytes(fileRef, file); // 파일 객체 자체를 업로드
         const url = await getDownloadURL(fileRef); // 업로드한 파일 객체의 주소 가져오기

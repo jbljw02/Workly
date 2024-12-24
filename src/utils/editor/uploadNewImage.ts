@@ -28,7 +28,7 @@ const uploadNewImage = async (editor: Editor, file: File, src: string, docId: st
 
         // 스토리지에 이미지 업로드
         const storage = getStorage();
-        const imageRef = ref(storage, `images/${imageId}`);
+        const imageRef = ref(storage, `documents/${docId}/images/${imageId}`);
 
         await uploadBytes(imageRef, file);
         const url = await getDownloadURL(imageRef);

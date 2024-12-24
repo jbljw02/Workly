@@ -62,12 +62,24 @@ export const foldersTrashSlice = createSlice({
     }
 })
 
+export const isDeletingModalOpenSlice = createSlice({
+    name: 'isDeletingModalOpen',
+    initialState: false,
+    reducers: {
+        setIsDeletingModalOpen: (state, action) => {
+            return action.payload;
+        }
+    }
+})
+
 export const { addDocumentsToTrash, deleteDocumentsFromTrash, setDocumentsTrash, deleteAllDocumentsTrashOfFolder } = documentsTrashSlice.actions;
 export const { addFoldersToTrash, deleteFoldersFromTrash, setFoldersTrash, addDocumentToFolderTrash, removeDocumentFromFolderTrash } = foldersTrashSlice.actions;
+export const { setIsDeletingModalOpen } = isDeletingModalOpenSlice.actions;
 
 const reducers = {
     documentsTrash: documentsTrashSlice.reducer,
     foldersTrash: foldersTrashSlice.reducer,
+    isDeletingModalOpen: isDeletingModalOpenSlice.reducer,
 }
 
 export default reducers;

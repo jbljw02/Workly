@@ -40,6 +40,7 @@ const combinedReducer = combineReducers({
     editorPermission: shareDocumentReducers.editorPermission,
     documentsTrash: trashReducers.documentsTrash,
     foldersTrash: trashReducers.foldersTrash,
+    isDeletingModalOpen: trashReducers.isDeletingModalOpen,
     webPublished: webPublishedReducers.webPublished,
     selectedNode: selectedNodeReducers.selectedNode,
     workingSpinner: placeholderReducers.workingSpinner,

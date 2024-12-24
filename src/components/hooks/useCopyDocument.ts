@@ -40,8 +40,6 @@ export default function useCopyDocument() {
 
             dispatch(showCompleteAlert(`${copiedDocument.folderName}에 ${selectedDocument.title || '제목 없는 문서'} 사본이 생성되었습니다.`));
         } catch (error) {
-            console.error(error);
-
             // 문서 복사 실패 시 롤백
             dispatch(setDocuments(prevDocuments));
             dispatch(setFolders(prevFolders));

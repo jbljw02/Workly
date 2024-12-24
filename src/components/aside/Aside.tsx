@@ -3,7 +3,6 @@
 import { useState, useRef } from "react";
 import SidebarItem from "./child/SidebarItem";
 import SearchInput from "./child/search/SearchInputButton";
-import TrashIcon from '../../../public/svgs/trash.svg';
 import HomeIcon from '../../../public/svgs/home.svg';
 import DocumentIcon from '../../../public/svgs/document.svg';
 import { useAppSelector } from "@/redux/hooks";
@@ -21,7 +20,13 @@ export default function Aside() {
     const router = useRouter();
 
     const addDocToFolder = useAddDocument();
+    
     const folders = useAppSelector(state => state.folders);
+
+    const documentsTrash = useAppSelector(state => state.documentsTrash);
+    const foldersTrash = useAppSelector(state => state.foldersTrash);
+    console.log('documentsTrash', documentsTrash);
+    console.log('foldersTrash', foldersTrash);
 
     const expandedWidth = 240; // 넓은 상태의 너비
     const collapsedWidth = 70; // 좁은 상태의 너비

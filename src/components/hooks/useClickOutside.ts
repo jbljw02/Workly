@@ -4,14 +4,23 @@ import { useEffect, RefObject } from "react";
 export function useClickOutside(
     ref: RefObject<HTMLDivElement>,
     callback: () => void,
-    excludedRef?: RefObject<HTMLElement>
+    excludedRef?: RefObject<HTMLElement>,
+    excludedState?: boolean,
 ) {
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
-            // ref 바깥을 클릭했고 excludedRef를 클릭한 것이 아닐 때
-            if (ref.current &&
-                !ref.current.contains(event.target as Node) &&
-                !(excludedRef?.current && excludedRef.current.contains(event.target as Node))) {
+            // excludedState가 true이면 실행 X
+            if (excludedState) {
+                return;
+            }
+
+            // excludedRef가 있고 클릭한 요소가 excludedRef 안에 있으면 실행 X
+            if (excludedRef?.current && excludedRef.current.contains(event.target as Node)) {
+                return;
+            }
+
+            // ref 바깥을 클릭했을 때 callback 실행
+            if (ref.current && !ref.current.contains(event.target as Node)) {
                 callback();
             }
         };
@@ -21,5 +30,5 @@ export function useClickOutside(
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
-    }, [ref, callback, excludedRef]);
+    }, [ref, callback, excludedRef, excludedState]);
 }

@@ -1,7 +1,7 @@
 import { collection, getDocs, query, where, orderBy, getDoc, doc, writeBatch } from "firebase/firestore";
 import { NextRequest, NextResponse } from "next/server";
 import firestore from "../../../../firebase/firestore";
-import { getStorage, ref, deleteObject } from "firebase/storage";
+import { getStorage, ref, deleteObject, listAll } from "firebase/storage";
 
 // 휴지통에 있는 폴더 복원 - POST
 export async function POST(req: NextRequest) {
@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
         }
 
         const trashFolderData = trashFolderSnap.data();
-        
+
         // 배치 작업 시작
         const batch = writeBatch(firestore);
 
@@ -97,9 +97,7 @@ export async function DELETE(req: NextRequest) {
         const trashFolderDocRef = doc(firestore, 'trash-folders', folderId);
         const trashFolderDocSnap = await getDoc(trashFolderDocRef);
 
-        if (!trashFolderDocSnap.exists()) {
-            return NextResponse.json({ error: "폴더를 찾을 수 없음" }, { status: 404 });
-        }
+        if (!trashFolderDocSnap.exists()) return NextResponse.json({ error: "폴더를 찾을 수 없음" }, { status: 404 });
 
         const trashFolderData = trashFolderDocSnap.data();
 
@@ -121,19 +119,31 @@ export async function DELETE(req: NextRequest) {
         for (const docId of documentIds) {
             const docRef = doc(firestore, 'trash-documents', docId);
             const docSnap = await getDoc(docRef);
+            if (!docSnap.exists()) return NextResponse.json({ error: "문서를 찾을 수 없음" }, { status: 404 });
 
-            if (docSnap.exists()) {
-                // Storage에서 문서 내용 삭제
-                const contentRef = ref(storage, `documents/${docId}/content.json`);
-                try {
-                    await deleteObject(contentRef);
-                } catch (error) {
-                    console.warn(`스토리지 파일 삭제 실패(문서 ID: ${docId}):`, error);
-                }
+            const documentFolderRef = ref(storage, `documents/${docId}`);
+            
+            try {
+                // 해당 경로의 모든 파일과 하위 폴더 목록을 가져옴
+                const listResult = await listAll(documentFolderRef);
 
-                // Firestore에서 문서 삭제
-                batch.delete(docRef);
+                // 모든 파일 삭제
+                const deletePromises = listResult.items.map(item => deleteObject(item));
+
+                // 하위 폴더의 모든 파일 삭제
+                const subFolderDeletePromises = listResult.prefixes.map(async (folderRef) => {
+                    const subListResult = await listAll(folderRef);
+                    return Promise.all(subListResult.items.map(item => deleteObject(item)));
+                });
+
+                // 모든 삭제 작업 완료 대기
+                await Promise.all([...deletePromises, ...subFolderDeletePromises]);
+            } catch (error) {
+                console.warn(`스토리지 파일 삭제 실패(문서 ID: ${docId}):`, error);
             }
+
+            // Firestore에서 문서 삭제
+            batch.delete(docRef);
         }
 
         // 배치 작업 실행

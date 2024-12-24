@@ -1,7 +1,7 @@
 import FolderIcon from '../../../../../public/svgs/folder.svg';
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import {  Folder, renameFolders, setFolders } from "@/redux/features/folderSlice";
+import { Folder, renameFolders } from "@/redux/features/folderSlice";
 import axios from 'axios';
 import ArrowIcon from '../../../../../public/svgs/right-arrow.svg';
 import EditIcon from '../../../../../public/svgs/editor/pencil-edit.svg';
@@ -11,15 +11,14 @@ import { deleteFolders } from '@/redux/features/folderSlice';
 import PlusIcon from '../../../../../public/svgs/plus.svg';
 import DocumentSection from './DocumentSection';
 import EditInput from './EditInput';
-import { addDocuments, deleteAllDocumentsOfFolder, DocumentProps } from '@/redux/features/documentSlice';
+import { deleteAllDocumentsOfFolder } from '@/redux/features/documentSlice';
 import AddInputModal from '@/components/modal/AddInputModal';
 import HoverTooltip from '@/components/tooltip/HoverTooltip';
 import { showCompleteAlert, showWarningAlert } from '@/redux/features/alertSlice';
 import useAddDocument from '@/components/hooks/useAddDocument';
-import { addDocumentsToTrash, addFoldersToTrash, setDocumentsTrash } from '@/redux/features/trashSlice';
+import { addDocumentsToTrash, addFoldersToTrash } from '@/redux/features/trashSlice';
 import useUndoState from '@/components/hooks/useUndoState';
 import { usePathname } from 'next/navigation';
-import { Router } from 'next/router';
 import { useRouter } from 'next-nprogress-bar';
 
 type FolderItemProps = {
@@ -71,8 +70,6 @@ export default function FolderItem({ folder }: FolderItemProps) {
                         newFolderName: folderTitle
                     });
             } catch (error) {
-                console.error(error);
-
                 // 변경에 실패할 경우 이전 상태로 롤백
                 setFolderTitle(prevFolder.name);
                 dispatch(renameFolders({ folderId: prevFolder.id, newName: prevFolder.name }));
@@ -112,10 +109,8 @@ export default function FolderItem({ folder }: FolderItemProps) {
 
             dispatch(showCompleteAlert(`${folder.name}의 삭제를 완료했습니다.`));
         } catch (error) {
-            console.error(error);
             // 삭제에 실패하면 롤백
             undoState();
-
             dispatch(showWarningAlert(`${folder.name}의 삭제에 실패했습니다.`));
         }
     }

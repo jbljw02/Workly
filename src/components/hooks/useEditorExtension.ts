@@ -1,5 +1,5 @@
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { useCallback, useEffect, useMemo, useState, useRef } from "react";
+import { useEffect, useMemo } from "react";
 import * as Y from 'yjs'
 import { TiptapCollabProvider } from "@hocuspocus/provider";
 import StarterKit from '@tiptap/starter-kit'
@@ -28,10 +28,7 @@ import Blockquote from "@tiptap/extension-blockquote";
 import Strike from "@tiptap/extension-strike";
 import CustomTextMark from "../../../lib/textMark";
 import { ConnectedUser, setConnectedUsers, setConnection, setDocSynced } from "@/redux/features/connectionSlice";
-import GlobalDragHandle from 'tiptap-extension-global-drag-handle'
 import DragHandle from '@tiptap-pro/extension-drag-handle'
-import { Node as ProsemirrorNode } from 'prosemirror-model';
-import { setSelectedNode } from "@/redux/features/selectedNodeSlice";
 import { EnsureLastParagraph } from "../../../lib/ensureLastParagraph";
 import uploadNewImage from "@/utils/editor/uploadNewImage";
 import uploadNewFile from "@/utils/editor/uploadNewFile";
@@ -229,7 +226,7 @@ export default function useEditorExtension({ docId }: useEditorExtensionProps) {
                         if (file.type.startsWith('image/')) {
                             uploadNewImage(currentEditor, file, src, docId, dispatch)
                         } else {
-                            uploadNewFile(currentEditor, file, pos, dispatch)
+                            uploadNewFile(currentEditor, file, docId, pos, dispatch)
                         }
                     }
                     fileReader.readAsDataURL(file)

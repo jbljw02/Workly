@@ -2,7 +2,7 @@ import { Collaborator } from "@/redux/features/documentSlice";
 import { collection, doc, getDoc, getDocs, writeBatch } from "firebase/firestore";
 import { NextRequest, NextResponse } from "next/server";
 import firestore from "../../../../firebase/firestore";
-import { deleteObject, getStorage, ref } from "firebase/storage";
+import { deleteObject, getStorage, ref, listAll } from "firebase/storage";
 
 // 휴지통에 있는 사용자의 문서 복원 - CREATE
 export async function POST(req: NextRequest) {
@@ -122,7 +122,6 @@ export async function GET(req: NextRequest) {
         return NextResponse.json(filteredDocuments, { status: 200 });
 
     } catch (error) {
-        console.log(error);
         return NextResponse.json({ error: "문서 정보 요청 실패" }, { status: 500 });
     }
 }
@@ -140,71 +139,29 @@ export async function DELETE(req: NextRequest) {
 
         const trashDocRef = doc(firestore, 'trash-documents', docId);
         const trashDocSnap = await getDoc(trashDocRef);
-        if (!trashDocSnap.exists()) {
-            return NextResponse.json({ error: "문서를 찾을 수 없음" }, { status: 404 });
-        }
+        if (!trashDocSnap.exists()) return NextResponse.json({ error: "문서를 찾을 수 없음" }, { status: 404 });
 
-        const trashData = trashDocSnap.data();
-
-        // 스토리지에 있는 문서 내용 삭제
         const storage = getStorage();
-        const draftContentRef = ref(storage, `documents/drafts/${docId}/content.json`);
-        const publishedContentRef = ref(storage, `documents/published/${docId}/content.json`);
+        const documentFolderRef = ref(storage, `documents/${docId}`);
 
-        // 문서 내용에서 이미지 URL 추출
-        const imageUrls: string[] = [];
-        const fileUrls: string[] = [];
+        try {
+            // 해당 경로의 모든 파일과 하위 폴더 목록을 가져옴
+            const listResult = await listAll(documentFolderRef);
 
-        // 문서의 내용 배열을 순회하면서 이미지 및 파일의 src 추출
-        if (trashData.contentUrl) {
-            try {
-                // contentUrl을 통해 스토리지에 저장된 문서 내용 가져오기
-                const response = await fetch(trashData.contentUrl);
-                if (response.ok) {
-                    const docContent = await response.json();
+            // 모든 파일 삭제
+            const deletePromises = listResult.items.map(item => deleteObject(item));
 
-                    if (docContent?.content) {
-                        docContent.content.forEach((block: any) => {
-                            if (block.type === 'imageComponent' && block.attrs.id) {
-                                imageUrls.push(`images/${block.attrs.id}`);
-                            }
-                            if (block.type === 'file' && block.attrs.id) {
-                                fileUrls.push(`files/${block.attrs.id}`);
-                            }
-                        });
-                    }
-                }
-            } catch (error) {
-                console.error('문서 내용 처리 중 오류:', error);
-            }
+            // 하위 폴더의 모든 파일 삭제
+            const subFolderDeletePromises = listResult.prefixes.map(async (folderRef) => {
+                const subListResult = await listAll(folderRef);
+                return Promise.all(subListResult.items.map(item => deleteObject(item)));
+            });
+
+            // 모든 삭제 작업 완료 대기
+            await Promise.all([...deletePromises, ...subFolderDeletePromises]);
+        } catch (error) {
+            console.error("스토리지 파일 삭제 중 오류:", error);
         }
-
-        const storageDeletePromises = [
-            // 문서 내용 삭제
-            deleteObject(draftContentRef).catch(error => {
-                console.warn('스토리지 파일 삭제 실패: ', error);
-            }),
-            publishedContentRef && deleteObject(publishedContentRef).catch(error => {
-                console.warn('스토리지 파일 삭제 실패: ', error);
-            }),
-
-            // 이미지 삭제
-            ...imageUrls.map(path =>
-                deleteObject(ref(storage, path)).catch(error => {
-                    console.warn('이미지 삭제 실패:', error, path);
-                })
-            ),
-
-            // 파일 삭제
-            ...fileUrls.map(path =>
-                deleteObject(ref(storage, path)).catch(error => {
-                    console.warn('파일 삭제 실패:', error, path);
-                })
-            )
-        ];
-
-        // 모든 스토리지 삭제 작업을 병렬로 실행
-        await Promise.allSettled(storageDeletePromises);
 
         // 휴지통의 폴더 참조 가져오기
         const trashFolderRef = doc(firestore, 'trash-folders', folderId);
@@ -228,7 +185,7 @@ export async function DELETE(req: NextRequest) {
         // 배치 작업 실행
         await batch.commit();
 
-        return NextResponse.json({ success: "문서와 삭제 성공" }, { status: 200 });
+        return NextResponse.json({ success: "문서와 관련 파일 삭제 성공" }, { status: 200 });
     } catch (error) {
         return NextResponse.json({ error: "문서 삭제 실패" }, { status: 500 });
     }

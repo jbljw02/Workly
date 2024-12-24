@@ -1,10 +1,10 @@
 import { usePathname } from 'next/navigation';
 import axios from 'axios';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
-import { deleteDocuments, DocumentProps, setDocuments } from '@/redux/features/documentSlice';
+import { deleteDocuments, DocumentProps } from '@/redux/features/documentSlice';
 import { showCompleteAlert, showWarningAlert } from '@/redux/features/alertSlice';
-import { addDocumentsToTrash, addDocumentToFolderTrash, setDocumentsTrash, setFoldersTrash } from '@/redux/features/trashSlice';
-import { removeDocumentFromFolder, setFolders } from '@/redux/features/folderSlice';
+import { addDocumentsToTrash, addDocumentToFolderTrash } from '@/redux/features/trashSlice';
+import { removeDocumentFromFolder } from '@/redux/features/folderSlice';
 import useUndoState from './useUndoState';
 import { useRouter } from 'next-nprogress-bar';
 import { setDeleting } from '@/redux/features/placeholderSlice';
