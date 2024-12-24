@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
 
         // 스토리지에 문서 내용 생성
         const storage = getStorage();
-        const contentRef = ref(storage, `documents/drafts/${document.id}/content.json`);
+        const contentRef = ref(storage, `documents/${document.id}/drafts/content.json`);
         const emptyContent = JSON.stringify(document.docContent); // 빈 문서 내용
         await uploadString(contentRef, emptyContent);
         const contentUrl = await getDownloadURL(contentRef);
@@ -125,7 +125,7 @@ export async function PUT(req: NextRequest) {
         // 문서 내용 변경을 요청할 경우에만 스토리지 업데이트
         if (newDocContent !== undefined) {
             const storage = getStorage();
-            const contentRef = ref(storage, `documents/drafts/${docId}/content.json`);
+            const contentRef = ref(storage, `documents/${docId}/drafts/content.json`);
             await uploadString(contentRef, JSON.stringify(newDocContent));
         }
 
@@ -185,7 +185,7 @@ export async function DELETE(req: NextRequest) {
 
         // 스토리지 문서 내용 가져오기
         const storage = getStorage();
-        const contentRef = ref(storage, `documents/drafts/${docId}/content.json`);
+        const contentRef = ref(storage, `documents/${docId}/drafts/content.json`);
         const response = await fetch(docData.contentUrl);
         const content = await response.json();
 

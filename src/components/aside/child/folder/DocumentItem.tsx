@@ -1,11 +1,11 @@
 import DocumentIcon from '../../../../../public/svgs/document.svg';
-import { useRef, useState } from "react";
+import { useState } from "react";
 import GroupHoverItem from "../GroupHoverItem";
 import EditIcon from '../../../../../public/svgs/editor/pencil-edit.svg';
 import DeleteIcon from '../../../../../public/svgs/trash.svg';
-import { DocumentProps, renameDocuments, setDocuments } from "@/redux/features/documentSlice";
+import { DocumentProps, renameDocuments } from "@/redux/features/documentSlice";
 import EditInput from "./EditInput";
-import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { useAppDispatch } from "@/redux/hooks";
 import axios from 'axios';
 import HoverTooltip from '@/components/tooltip/HoverTooltip';
 import useDeleteDocument from '@/components/hooks/useDeleteDocument';

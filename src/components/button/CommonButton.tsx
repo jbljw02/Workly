@@ -15,7 +15,7 @@ type CommonButtonProps = {
     disabled?: boolean;
 };
 
-export default function CommonButton({ style, label, onClick, disabled }: CommonButtonProps) {
+export default function CommonButton({ style, label, onClick, disabled = false }: CommonButtonProps) {
     const { width, height, textSize, textColor, bgColor, hover, borderColor } = style;
     return (
         <button

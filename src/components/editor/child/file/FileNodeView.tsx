@@ -43,6 +43,7 @@ export default function FileNodeView({ editor, node, }: FileNodeViewProps) {
     const fileNode = useAppSelector(state => state.fileNode);
     const webPublished = useAppSelector(state => state.webPublished);
     const editorPermission = useAppSelector(state => state.editorPermission);
+    const selectedDocument = useAppSelector(state => state.selectedDocument);
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [menuListOpen, setMenuListOpen] = useState(false);
@@ -132,7 +133,7 @@ export default function FileNodeView({ editor, node, }: FileNodeViewProps) {
         });
 
         const storage = getStorage();
-        const fileRef = ref(storage, `files/${id}`);
+        const fileRef = ref(storage, `documents/${selectedDocument.id}/files/${id}`);
         await deleteObject(fileRef);
         if (isFound) {
             dispatch(tr); // 트랜잭션을 적용

@@ -64,6 +64,14 @@ export const documentSlice = createSlice({
                 state[index] = { ...state[index], ...updatedData };
             }
         },
+        // 부모 폴더명을 변경
+        updateParentFolderName: (state, action) => {
+            const { folderId, newFolderName } = action.payload;
+            const document = state.find(doc => doc.folderId === folderId);
+            if (document) {
+                document.folderName = newFolderName;
+            }
+        },
         deleteDocuments: (state, action) => {
             return state.filter(doc => doc.id !== action.payload);
         },

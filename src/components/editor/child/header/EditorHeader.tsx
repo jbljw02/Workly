@@ -1,7 +1,6 @@
 import MenuIcon from '../../../../../public/svgs/editor/menu-horizontal.svg'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import {  useEffect, useMemo, useRef, useState } from 'react'
 import MenuList from '../../../menu/MenuList'
-import { MenuItemProps } from '../../../menu/MenuItem'
 import LockIcon from '../../../../../public/svgs/editor/lock.svg'
 import UnLockIcon from '../../../../../public/svgs/editor/un-lock.svg'
 import { Editor } from '@tiptap/react'

@@ -1,6 +1,6 @@
 import { setCrop } from "@/redux/features/editorImageSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { RefObject, useEffect, useState } from "react";
+import { RefObject } from "react";
 import ReactCrop from "react-image-crop";
 import { ResizableImageNodeViewRendererProps } from "tiptap-extension-resizable-image";
 import "react-image-crop/dist/ReactCrop.css";

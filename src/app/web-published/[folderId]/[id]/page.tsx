@@ -33,7 +33,7 @@ export default async function PublishedPage({ params }: {
 
     // 게시된 문서 내용 가져오기
     const storage = getStorage();
-    const contentRef = ref(storage, `documents/published/${params.id}/content.json`);
+    const contentRef = ref(storage, `documents/${params.id}/published/content.json`);
     const contentUrl = await getDownloadURL(contentRef);
 
     const response = await fetch(contentUrl);
