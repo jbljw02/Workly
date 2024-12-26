@@ -21,17 +21,21 @@ export async function POST(req: NextRequest) {
         } else {
             puppeteer = require('puppeteer-core');
             chromium = require('@sparticuz/chromium');
-            await chromium.initialize();
         }
 
         const browser = await puppeteer.launch(
             isLocal
                 ? { headless: 'new' }
                 : {
-                    args: chromium.args,
+                    // Chromium 브라우저 실행에 필요한 설정
+                    args: [...chromium.args, '--hide-scrollbars', '--disable-web-security'],
                     defaultViewport: chromium.defaultViewport,
-                    executablePath: await chromium.executablePath(),
-                    headless: chromium.headless
+                    // Chromium 실행 파일 경로 설정
+                    executablePath: await chromium.executablePath({
+                        cachePath: '/tmp/chromium', // 캐시 저장 경로
+                    }),
+                    // 헤드리스 모드 설정(GUI 없이 실행)
+                    headless: chromium.headless,
                 }
         );
 
