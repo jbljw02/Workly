@@ -6,14 +6,9 @@ export default function useVisitDocument({ docId }: { docId: string }) {
     useEffect(() => {
         const visitDocument = async () => {
             if (!docId) return;
-
-            try {
-                await axios.patch('/api/document', {
-                    docId: docId,
-                });
-            } catch (error) {
-                console.error(error);
-            }
+            await axios.patch('/api/document', {
+                docId: docId,
+            });
         };
 
         visitDocument();

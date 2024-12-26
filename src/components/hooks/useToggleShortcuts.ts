@@ -18,7 +18,6 @@ export default function useToggleShortcuts() {
                 }
             )
         } catch (error) {
-            console.log(error);
             // 요청에 실패했을 경우 롤백
             dispatch(toggleShortcut({ docId: document.id, email: user.email }));
             dispatch(showWarningAlert('즐겨찾기 상태 변경에 실패했습니다.'))

@@ -76,8 +76,6 @@ export default function AuthorityDropdown({
 
                     dispatch(showCompleteAlert('멤버를 제거했습니다.'));
                 } catch (error) {
-                    console.error(error);
-
                     // 요청에 실패할 경우 기존 상태로 롤백
                     dispatch(setCoworkerList(prevCoworkerList));
                     dispatch(addCollaborator({ docId: selectedDoc.id, collaborators: [prevCoworkerList] }));
@@ -103,7 +101,6 @@ export default function AuthorityDropdown({
                         newAuthority: authority
                     });
                 } catch (error) {
-                    console.error(error);
                     // 요청에 실패할 경우 기존 상태로 롤백
                     dispatch(updateCoworkerAuthority({ email: targetUser.email, newAuthority: prevAuthority }));
                     dispatch(updateCollaboratorAuthority({ docId: selectedDoc.id, email: targetUser.email, newAuthority: prevAuthority }));

@@ -64,7 +64,6 @@ export default function useDeleteDocument() {
             // 문서의 상세 페이지일 경우
             dispatch(showCompleteAlert(`${document.title || '제목 없는 문서'}의 삭제를 완료했습니다.`));
         } catch (error) {
-            console.log('error: ', error);
             // 삭제에 실패하면 롤백
             undoState();
             dispatch(showWarningAlert(`${document.title || '제목 없는 문서'}의 삭제에 실패했습니다.`))

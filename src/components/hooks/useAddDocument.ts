@@ -68,8 +68,6 @@ export default function useAddDocument() {
 
             return false;
         } catch (error) {
-            console.error(error);
-
             setInvalidInfo ?
                 setInvalidInfo(({
                     msg: '문서 추가에 실패했습니다.',

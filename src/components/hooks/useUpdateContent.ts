@@ -20,7 +20,6 @@ export default function useUpdateContent() {
                     newDocName: latestDoc.title,
                 });
             } catch (error) {
-                console.error(error);
                 dispatch(showWarningAlert('변경사항 저장에 실패하였습니다.'));
             }
         }, 1000),
@@ -30,7 +29,6 @@ export default function useUpdateContent() {
     const updateContent = async (latestDoc: DocumentProps) => {
         if (!latestDoc) return;
 
-        console.log('업로드: ', latestDoc.docContent);
         await axios.put('/api/document', {
             docId: latestDoc.id,
             newDocName: latestDoc.title,
