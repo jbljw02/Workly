@@ -17,7 +17,7 @@ import Collaboration from '@tiptap/extension-collaboration'
 import CollaborationCursor from '@tiptap/extension-collaboration-cursor'
 import FileHandler from '@tiptap-pro/extension-file-handler'
 import ImageNodeView from '@/components/editor/child/image/ImageNodeView'
-import { setLinkTooltip } from '@/redux/features/linkSlice'
+import { LinkTooltip, setLinkTooltip } from '@/redux/features/linkSlice'
 import { FontSize } from "../../../lib/fontSize";
 import { FontFamily } from "../../../lib/fontFamily";
 import LinkNode from "../../../lib/linkNode";
@@ -73,6 +73,7 @@ export default function useEditorExtension({ docId }: useEditorExtensionProps) {
 
     const user = useAppSelector(state => state.user);
     const selectedDocument = useAppSelector(state => state.selectedDocument);
+    const documents = useAppSelector(state => state.documents);
 
     // 사용자의 커서 색상을 지정
     const userColor = useMemo(() => colors[Math.floor(Math.random() * colors.length)], []);
@@ -92,14 +93,12 @@ export default function useEditorExtension({ docId }: useEditorExtensionProps) {
         document: doc,
         onConnect: () => dispatch(setConnection(true)),
         onDisconnect: (error) => {
-            console.log("연결 끊김", error);
             dispatch(setConnection(false));
             dispatch(setDocSynced(false));
 
             // 연결이 끊어진 후 3초 후에 재연결 시도
             setTimeout(() => {
                 if (provider) {
-                    console.log("재연결 시도 중...");
                     provider.connect();
                 }
             }, 3000);
@@ -210,7 +209,7 @@ export default function useEditorExtension({ docId }: useEditorExtensionProps) {
             openOnClick: true,
             autolink: true,
             defaultProtocol: 'https',
-            setLinkTooltip: (payload: any) => dispatch(setLinkTooltip(payload)),
+            setLinkTooltip: (payload: Partial<LinkTooltip>) => dispatch(setLinkTooltip(payload)),
         }),
         Dropcursor,
         CustomTextMark,
@@ -237,7 +236,7 @@ export default function useEditorExtension({ docId }: useEditorExtensionProps) {
             placeholder: ({ node, editor }) => {
                 const { from, to } = editor.state.selection
                 const isSelected = from === to && editor.state.selection.$from.parent === node
-                return node.type.name === 'paragraph' && isSelected ? "명령어를 사용하려면 '/' 키를 누르세요." : ''
+                return node.type.name === 'paragraph' && isSelected ? "어떤 내용을 작성할까요?" : ''
             },
             showOnlyCurrent: false,
         }),

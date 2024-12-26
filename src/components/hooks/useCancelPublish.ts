@@ -20,7 +20,6 @@ export default function useCancelPublish() {
             dispatch(canclePublishContent({ docId }));
             dispatch(showCompleteAlert('게시된 문서를 삭제했습니다.'));
         } catch (error) {
-            console.log(error);
             dispatch(showWarningAlert('게시된 문서를 삭제하지 못했습니다.'))
         } finally {
             Nprogress.done();

@@ -6,6 +6,7 @@ export type LinkTooltip = {
     text: string,
     position: { top: number, left: number },
     visible: boolean,
+    documentName: string | null,
 }
 
 const linkTooltipState = {
@@ -14,13 +15,14 @@ const linkTooltipState = {
     text: '',
     position: { top: 0, left: 0 },
     visible: false,
+    documentName: null,
 }
 
 export const linkTooltipSlice = createSlice({
     name: 'linkTooltip',
     initialState: linkTooltipState,
     reducers: {
-        setLinkTooltip: (state, action: PayloadAction<Partial<LinkTooltip>>) => {
+        setLinkTooltip: (state, action) => {
             return { ...state, ...action.payload };
         },
     },

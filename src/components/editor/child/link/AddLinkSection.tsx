@@ -1,11 +1,10 @@
 import { Editor } from "@tiptap/react";
 import WorldIcon from '../../../../../public/svgs/editor/world.svg';
-import FolderIcon from '../../../../../public/svgs/folder.svg';
 import { useEffect, useRef, useState } from "react";
 import { useClickOutside } from "@/components/hooks/useClickOutside";
 import { v4 as uuidv4 } from 'uuid';
-import { LinkAttributes } from "../../../../../lib/linkNode";
-import { useAppSelector } from "@/redux/hooks";
+import React from "react";
+import LinkTargetDocumentList from "./LinkTargetDocumentList";
 
 export type SelectionPosition = {
     top: number;
@@ -20,28 +19,10 @@ export type AddLinkSectionProps = {
     linkRef: React.RefObject<HTMLDivElement>;
 }
 
-type FolderItem = {
-    onClick?: () => void;
-    label: string;
-}
-
-// 하단 폴더들의 개별 요소
-function FolderItem({ onClick, label }: FolderItem) {
-    return (
-        <div
-            className="flex flex-row flex-grow w-full px-2 py-1 rounded-sm hover:bg-neutral-100 cursor-pointer"
-            onClick={onClick}>
-            <FolderIcon width="14" />
-            <div className="flex-grow ml-2">{label}</div>
-        </div>
-    );
-}
-
 export default function AddLinkSection({ editor, position, setIsOpen, isOpen, linkRef }: AddLinkSectionProps) {
     const inputRef = useRef<HTMLInputElement>(null);
-    
+
     const [link, setLink] = useState<string>('');
-    const folders = useAppSelector(state => state.folders);
 
     // 컴포넌트가 열리면 input으로 포커스하고 드래그된 텍스트를 표시
     useEffect(() => {
@@ -127,19 +108,10 @@ export default function AddLinkSection({ editor, position, setIsOpen, isOpen, li
                     autoFocus />
             </div>
             {/* 폴더들을 정렬해주는 영역 */}
-            <div className="ml-1 mt-4 w-full text-[13px]">
-                <div className="mb-1 w-full font-bold">내 폴더</div>
-                <div className="w-full -ml-1">
-                    {
-                        folders.map(folder => (
-                            <FolderItem
-                                key={folder.id}
-                                label={folder.name}
-                                onClick={() => console.log('폴더 클릭')} />
-                        ))
-                    }
-                </div>
-            </div>
+            <LinkTargetDocumentList
+                editor={editor}
+                setIsOpen={setIsOpen}
+                searchedValue={link} />
         </div>
     )
 }

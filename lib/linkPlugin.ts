@@ -1,5 +1,4 @@
 import { Plugin, PluginKey } from 'prosemirror-state';
-import { Extension } from '@tiptap/core';
 import { LinkTooltip } from '@/redux/features/linkSlice';
 
 // 링크 위에 마우스를 올렸을 때
@@ -10,25 +9,37 @@ export const LinkHoverPlugin = (setLinkTooltip: (payload: Partial<LinkTooltip>) 
             const mouseMove = (event: MouseEvent) => {
                 // 현재 마우스가 있는 곳(a 태그가 될 수도, 다른 태그가 될 수도)
                 const target = event.target as HTMLElement;
-                
-                let id = target.id || ''; 
-                let href = target.getAttribute('href') || ''; 
+
+                let id = target.id || '';
+                let href = target.getAttribute('href') || '';
                 let text = target.textContent || '';
                 let visible = false;
                 let position = { top: 0, left: 0 };
-                
+                let documentName = '';
+
                 // 타겟이 a태그일 경우
                 if (target.nodeName === 'A') {
                     id = target.getAttribute('id') || '';
                     href = target.getAttribute('href') || '';
                     text = target.textContent || '';
+                    documentName = target.getAttribute('document-name') || '';
+
                     // 태그의 위치를 구해서 position에 할당
                     const rect = target.getBoundingClientRect();
                     position = {
                         top: rect.top + window.scrollY,
                         left: rect.left + window.scrollX,
                     };
-                    visible = true; // 툴팁이 보이도록 
+                    visible = true;
+
+                    setLinkTooltip({
+                        id,
+                        href,
+                        text,
+                        position,
+                        visible: true,
+                        documentName,
+                    });
                 }
 
                 // 툴팁의 정보를 가져옴
@@ -50,6 +61,7 @@ export const LinkHoverPlugin = (setLinkTooltip: (payload: Partial<LinkTooltip>) 
                         text,
                         position,
                         visible: true,
+                        documentName,
                     });
                 }
             };
