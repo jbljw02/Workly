@@ -13,31 +13,25 @@ export async function POST(req: NextRequest) {
         const editorStyles = fs.readFileSync(cssFilePath, 'utf-8');
 
         const isLocal = process.env.NODE_ENV === 'development';
-        let puppeteer;
-        let chromium;
+        let browser;
 
         if (isLocal) {
-            puppeteer = require('puppeteer');
+            const puppeteer = require('puppeteer');
+            browser = await puppeteer.launch({
+                headless: 'new'
+            });
         } else {
-            puppeteer = require('puppeteer-core');
-            chromium = require('@sparticuz/chromium');
-        }
+            const puppeteer = require('puppeteer-core');
+            const chromium = require('@sparticuz/chromium');
 
-        const browser = await puppeteer.launch(
-            isLocal
-                ? { headless: 'new' }
-                : {
-                    // Chromium 브라우저 실행에 필요한 설정
-                    args: [...chromium.args, '--hide-scrollbars', '--disable-web-security'],
-                    defaultViewport: chromium.defaultViewport,
-                    // Chromium 실행 파일 경로 설정
-                    executablePath: await chromium.executablePath({
-                        cachePath: '/tmp/chromium', // 캐시 저장 경로
-                    }),
-                    // 헤드리스 모드 설정(GUI 없이 실행)
-                    headless: chromium.headless,
-                }
-        );
+            browser = await puppeteer.launch({
+                args: chromium.args,
+                defaultViewport: chromium.defaultViewport,
+                executablePath: await chromium.executablePath(),
+                headless: true,
+                ignoreHTTPSErrors: true
+            });
+        }
 
         const page = await browser.newPage();
 
