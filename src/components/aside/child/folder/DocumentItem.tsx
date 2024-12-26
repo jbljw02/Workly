@@ -9,13 +9,15 @@ import { useAppDispatch } from "@/redux/hooks";
 import axios from 'axios';
 import HoverTooltip from '@/components/tooltip/HoverTooltip';
 import useDeleteDocument from '@/components/hooks/useDeleteDocument';
+import { showWarningAlert } from '@/redux/features/alertSlice';
 
 type DocumentItemProps = {
     document: DocumentProps;
     onClick?: () => void;
+    paddingLeft?: string;
 }
 
-export default function DocumentItem({ document, onClick }: DocumentItemProps) {
+export default function DocumentItem({ document, onClick, paddingLeft }: DocumentItemProps) {
     const dispatch = useAppDispatch();
     const deleteDoc = useDeleteDocument();
 
@@ -37,7 +39,7 @@ export default function DocumentItem({ document, onClick }: DocumentItemProps) {
                         newDocName: docTitle,
                     });
             } catch (error) {
-                console.error(error);
+                dispatch(showWarningAlert('문서명 수정에 실패했습니다.'));
 
                 // 요청 실패 시 롤백
                 setDocTitle(prevDoc.title);
@@ -52,7 +54,7 @@ export default function DocumentItem({ document, onClick }: DocumentItemProps) {
     return (
         <div
             onClick={onClick}
-            className="flex flex-row justify-between items-center pl-3 pr-1 w-full h-[30px] text-sm rounded cursor-pointer hover:bg-gray-100 group">
+            className={`flex flex-row justify-between items-center ${paddingLeft} pr-1 w-full h-[30px] text-sm rounded cursor-pointer hover:bg-gray-100 group`}>
             {/* 아이콘과 문서명 */}
             <div className="flex flex-row gap-2 text-zinc-600 overflow-hidden">
                 <div className="flex flex-shrink-0">

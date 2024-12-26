@@ -3,6 +3,7 @@ import { Plugin, PluginKey } from 'prosemirror-state';
 import { linkClickPlugin, LinkHoverPlugin } from './linkPlugin';
 import { LinkTooltip } from '@/redux/features/linkSlice';
 import { RawCommands } from '@tiptap/react';
+import { DocumentProps } from '@/redux/features/documentSlice';
 
 export interface LinkAttributes {
     href: string;
@@ -12,7 +13,16 @@ export interface LinkAttributes {
     class?: string | null;
 }
 
-const LinkNode = Mark.create({
+export interface LinkOptions {
+    openOnClick: boolean;
+    autolink: boolean;
+    defaultProtocol: string;
+    HTMLAttributes: Record<string, any>;
+    setLinkTooltip: (payload: Partial<LinkTooltip>) => void;
+    documents: DocumentProps[];
+}
+
+const LinkNode = Mark.create<LinkOptions>({
     name: 'link',
 
     addOptions() {
@@ -21,6 +31,8 @@ const LinkNode = Mark.create({
             autolink: true,
             defaultProtocol: 'https',
             HTMLAttributes: {},
+            setLinkTooltip: () => { },
+            documents: [],
         };
     },
 
@@ -33,6 +45,9 @@ const LinkNode = Mark.create({
                 default: '_blank',
             },
             id: {
+                default: null,
+            },
+            'document-name': {
                 default: null,
             },
         };
@@ -70,13 +85,10 @@ const LinkNode = Mark.create({
         } as Partial<RawCommands>;
     },
 
-
     addProseMirrorPlugins() {
-        const setLinkTooltip = this.options.setLinkTooltip as (payload: Partial<LinkTooltip>) => void;
-
         return [
             linkClickPlugin,
-            LinkHoverPlugin(setLinkTooltip),
+            LinkHoverPlugin(this.options.setLinkTooltip),
         ];
     },
 });

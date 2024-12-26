@@ -23,11 +23,6 @@ export default function Aside() {
     
     const folders = useAppSelector(state => state.folders);
 
-    const documentsTrash = useAppSelector(state => state.documentsTrash);
-    const foldersTrash = useAppSelector(state => state.foldersTrash);
-    console.log('documentsTrash', documentsTrash);
-    console.log('foldersTrash', foldersTrash);
-
     const expandedWidth = 240; // 넓은 상태의 너비
     const collapsedWidth = 70; // 좁은 상태의 너비
     const toggleWidthThreshold = 150; // 너비 변경을 위한 임계값

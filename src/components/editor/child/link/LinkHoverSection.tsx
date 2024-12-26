@@ -6,7 +6,6 @@ import WorldIcon from '../../../../../public/svgs/editor/world.svg';
 import EditIcon from '../../../../../public/svgs/editor/pencil-edit.svg';
 import DeleteIcon from '../../../../../public/svgs/trash.svg';
 import HoverTooltip from '../../../tooltip/HoverTooltip';
-import ToolbarButton from '../../../button/ToolbarButton';
 import LabelButton from '@/components/button/LabelButton';
 import { LinkSectionProps } from '@/types/linkSectionProps';
 
@@ -33,11 +32,11 @@ export default function LinkHoverSection({ editor, setIsEditing }: LinkSectionPr
                 <input
                     ref={inputRef}
                     className="bg-transparent border-none outline-none box-border text-sm ml-2 text-ellipsis max-w-[150px]"
-                    value={linkTooltip.href}
+                    value={linkTooltip.documentName ? linkTooltip.documentName : linkTooltip.href}
                     readOnly />
                 <InputControlSpan
                     ref={spanRef}
-                    label={linkTooltip.href} />
+                    label={linkTooltip.documentName ? linkTooltip.documentName : linkTooltip.href} />
             </div>
             {/* 편집 및 삭제 아이콘 */}
             <div className='flex flex-row items-center justify-end ml-1'>

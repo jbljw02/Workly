@@ -7,8 +7,8 @@ export async function POST(req: NextRequest) {
     try {
         const { content, title } = await req.json();
 
-        if(!content) return NextResponse.json({error: '문서 내용이 제공되지 않음'}, {status: 400});
-        if(!title) return NextResponse.json({error: '문서명이 제공되지 않음'}, {status: 400});
+        if (!content) return NextResponse.json({ error: '문서 내용이 제공되지 않음' }, { status: 400 });
+        if (!title) return NextResponse.json({ error: '문서명이 제공되지 않음' }, { status: 400 });
 
         // CSS 파일 경로 설정하고 읽기
         const cssFilePath = path.join(process.cwd(), 'src/styles/pdfStyle.css');
@@ -47,6 +47,7 @@ export async function POST(req: NextRequest) {
             },
         });
     } catch (error) {
+        console.error("PDF 생성 실패: ", error);
         return NextResponse.json({ message: 'PDF 생성에 실패' }, { status: 500 });
     }
 }

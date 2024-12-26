@@ -9,7 +9,6 @@ export default function useDownloadPDF() {
 
     // 에디터 내용을 PDF로 변환하고 다운로드하는 함수
     const downloadPDF = async (content: string, docTitle: string) => {
-        console.log('시작')
         try {
             Nprogress.start();
             

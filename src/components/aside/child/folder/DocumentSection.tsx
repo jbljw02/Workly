@@ -1,9 +1,8 @@
 import { Folder } from "@/redux/features/folderSlice"
 import DocumentIcon from '../../../../../public/svgs/document.svg';
 import DocumentItem from "./DocumentItem";
-import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { useEffect, useMemo, useState } from "react";
-import Link from "next/link";
+import { useAppSelector } from "@/redux/hooks";
+import { useMemo } from "react";
 import { useRouter } from "next-nprogress-bar";
 import React from "react";
 
@@ -30,7 +29,8 @@ export default function DocumentSection({ folder }: DocumentSectionProps) {
                             <React.Fragment key={doc.id}>
                                 <DocumentItem
                                     document={doc}
-                                    onClick={() => router.push(`/editor/${folder.id}/${doc.id}`)} />
+                                    onClick={() => router.push(`/editor/${folder.id}/${doc.id}`)}
+                                    paddingLeft="pl-3" />
                             </React.Fragment>
 
                         )

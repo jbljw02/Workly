@@ -17,6 +17,8 @@ export default function LinkEditSection({ editor, isEditing, setIsEditing }: Lin
     const dispatch = useAppDispatch();
 
     const linkTooltip = useAppSelector(state => state.linkTooltip);
+    const documents = useAppSelector(state => state.documents);
+
     const [newLink, setNewLink] = useState(linkTooltip.href);
     const [newText, setNewText] = useState(linkTooltip.text);
     const sectionRef = useRef<HTMLDivElement>(null);
@@ -29,6 +31,16 @@ export default function LinkEditSection({ editor, isEditing, setIsEditing }: Lin
         // 링크 URL에 프로토콜이 없을 경우 추가
         if (!/^https?:\/\//i.test(href)) {
             href = `https://${href}`;
+        }
+
+        // URL에서 마지막 두 개의 UUID 패턴을 찾음
+        const uuidPattern = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi;
+        const matches = href.match(uuidPattern);
+        let documentName = '';
+
+        if (matches && matches.length >= 2) {
+            const documentId = matches[1]; // 두 번째 UUID가 문서 ID
+            documentName = documents.find(doc => doc.id === documentId)?.title || '';
         }
 
         // 링크를 가진 노드 탐색 및 수정
@@ -51,17 +63,18 @@ export default function LinkEditSection({ editor, isEditing, setIsEditing }: Lin
                     state.schema.marks.link.create({
                         href,
                         id: linkTooltip.id,
+                        'document-name': documentName
                     })
                 );
 
                 editorDispatch(tr);
-
                 setIsEditing(false);
 
                 dispatch(setLinkTooltip({
                     ...linkTooltip,
                     href: href,
                     text: newText,
+                    documentName,
                     visible: false
                 }));
 
