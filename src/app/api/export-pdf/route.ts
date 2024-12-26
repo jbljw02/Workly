@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import puppeteer from 'puppeteer';
 import path from 'path';
 import fs from 'fs';
+
 
 export async function POST(req: NextRequest) {
     try {
@@ -10,12 +10,31 @@ export async function POST(req: NextRequest) {
         if (!content) return NextResponse.json({ error: '문서 내용이 제공되지 않음' }, { status: 400 });
         if (!title) return NextResponse.json({ error: '문서명이 제공되지 않음' }, { status: 400 });
 
-        // CSS 파일 경로 설정하고 읽기
         const cssFilePath = path.join(process.cwd(), 'src/styles/pdfStyle.css');
         const editorStyles = fs.readFileSync(cssFilePath, 'utf-8');
 
-        // Puppeteer를 이용해 가상 브라우저를 실행하고 새 페이지를 염
-        const browser = await puppeteer.launch();
+        // 환경에 따라 다른 puppeteer 설정을 사용
+        const isLocal = process.env.NEXT_PUBLIC_API_URL === 'http://localhost:3000';
+        let puppeteer;
+        let chromium;
+
+        if (isLocal) {
+            puppeteer = require('puppeteer');
+        } else {
+            puppeteer = require('puppeteer-core');
+            chromium = require('@sparticuz/chromium');
+        }
+
+        const browser = await puppeteer.launch(
+            isLocal ?
+                { headless: 'new' } :
+                {
+                    args: chromium.args,
+                    defaultViewport: chromium.defaultViewport,
+                    executablePath: await chromium.executablePath(),
+                    headless: chromium.headless,
+                }
+        );
         const page = await browser.newPage();
 
         // 페이지 내용 설정 및 스타일 적용

@@ -56,8 +56,6 @@ export default function TrashItem({ searchCategory, item }: TrashItemProps) {
 
             dispatch(showCompleteAlert('해당 문서는 복원되었습니다.'));
         } catch (error) {
-            console.log(error);
-
             // 요청 실패 시 롤백
             undoState();
             dispatch(showWarningAlert('복원에 실패했습니다.'));

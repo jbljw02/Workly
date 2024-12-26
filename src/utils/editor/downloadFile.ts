@@ -23,7 +23,6 @@ const downloadFile = async (href: string, download: string, dispatch: AppDispatc
         document.body.removeChild(link);
         window.URL.revokeObjectURL(blobUrl);
     } catch (error) {
-        console.error('파일 다운로드 중 오류 발생:', error);
         dispatch(showWarningAlert('파일 다운로드에 실패했습니다.'));
     } finally {
         Nprogress.done();

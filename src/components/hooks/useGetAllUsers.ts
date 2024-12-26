@@ -8,12 +8,8 @@ export default function useGetAllUsers() {
 
     useEffect(() => {
         const getAllUsers = async () => {
-            try {
-                const response = await axios.get('/api/users');
-                dispatch(setAllUsers(response.data as UserProps[]));
-            } catch (error) {
-                console.error('전체 사용자 가져오기 오류: ', error);
-            }
+            const response = await axios.get('/api/users');
+            dispatch(setAllUsers(response.data as UserProps[]));
         };
         getAllUsers();
     }, []);

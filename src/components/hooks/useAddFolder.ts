@@ -47,7 +47,6 @@ export default function useAddFolder() {
 
             return false;
         } catch (error) {
-            console.error("폴더 추가 실패: ", error);
             setIsFolderInvalidInfo(({
                 msg: '폴더 추가에 실패했습니다.',
                 isInvalid: true,

@@ -33,7 +33,6 @@ export default function usePublishDocument() {
             dispatch(publishContent({ docId: selectedDoc.id, user: user }));
             dispatch(showCompleteAlert('문서 게시에 성공했습니다.'));
         } catch (error) {
-            console.log(error);
             dispatch(showWarningAlert('문서 게시에 실패했습니다.'));
         } finally {
             Nprogress.done();

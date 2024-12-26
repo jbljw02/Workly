@@ -11,7 +11,7 @@ export default function useDownloadPDF() {
     const downloadPDF = async (content: string, docTitle: string) => {
         try {
             Nprogress.start();
-            
+
             // 에디터에서 가져온 HTML을 임시 div에 파싱
             const container = document.createElement('div');
             container.innerHTML = content;
@@ -70,7 +70,6 @@ export default function useDownloadPDF() {
             URL.revokeObjectURL(url);
             document.body.removeChild(a);
         } catch (error) {
-            console.error('PDF 다운로드 중 오류 발생:', error);
             dispatch(showWarningAlert('파일을 다운로드 하는 데 실패했습니다.'));
         } finally {
             Nprogress.done();

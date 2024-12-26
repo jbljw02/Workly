@@ -2,7 +2,6 @@ import { showCompleteAlert, showWarningAlert } from "@/redux/features/alertSlice
 import { AppDispatch } from "@/redux/store";
 
 const copyURL = (url: string, dispatch: AppDispatch) => {
-  console.log('url', url);
   navigator.clipboard.writeText(url)
     .then(() => {
       dispatch(showCompleteAlert('링크가 복사되었습니다.'));
