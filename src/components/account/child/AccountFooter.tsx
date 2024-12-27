@@ -38,7 +38,7 @@ export default function AccountFooter() {
                         hover: 'hover:border-gray-500'
                     }}
                     label="로그아웃"
-                    onClick={() => logout(router, dispatch)} />
+                    onClick={() => logout(dispatch)} />
             </div>
         </>
     )

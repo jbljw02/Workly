@@ -36,7 +36,7 @@ export default function UserMenuList({ menuListOpen, setListOpen }: UserMenuList
             Icon: LogoutIcon,
             IconWidth: "15",
             label: "로그아웃",
-            onClick: () => logout(router, dispatch),
+            onClick: () => logout(dispatch),
             horizonLine: true,
         },
     ];

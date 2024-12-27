@@ -36,7 +36,7 @@ export default function WithdrawlModal({ isModalOpen, setIsModalOpen }: ModalPro
             setIsModalOpen(false);
 
             // 로그아웃 처리
-            await logout(router, dispatch);
+            await logout(dispatch);
         } catch (error) {
             dispatch(showWarningAlert('회원 탈퇴에 실패했습니다.'));
         } finally {
