@@ -27,10 +27,6 @@ export default function Login() {
         isSubmitted: false, // 제출 됐는지 여부
     });
 
-    const [isEmailInvalidInfo, setIsEmailInvalidInfo] = useState({
-        isInvalid: false,
-        msg: null,
-    })
     const [isInvalidInfo, setIsInvalidInfo] = useState({
         isInvalid: false,
         msg: '이메일 혹은 비밀번호가 일치하지 않습니다',
@@ -92,10 +88,6 @@ export default function Login() {
                     ...prevState,
                     isInvalid: true,
                 }))
-                setIsEmailInvalidInfo((prevState) => ({
-                    ...prevState,
-                    isInvalid: true,
-                }))
             }
         }
         finally {
@@ -120,7 +112,10 @@ export default function Login() {
                         value={formData.email}
                         setValue={formChange}
                         placeholder='이메일 주소'
-                        isInvalidInfo={isEmailInvalidInfo}
+                        isInvalidInfo={{
+                            isInvalid: isInvalidInfo.isInvalid,
+                            msg: null,
+                        }}
                         autoFocus={true} />
                     <FormInput
                         type="password"
