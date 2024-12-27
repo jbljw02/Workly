@@ -1,6 +1,6 @@
 import ReactDOMServer from 'react-dom/server';
 import PdfFileNode from '@/components/editor/child/file/PdfFileNode';
-import { useAppDispatch, useAppSelector } from '@/redux/hooks';
+import { useAppDispatch } from '@/redux/hooks';
 import { showWarningAlert } from '@/redux/features/alertSlice';
 import Nprogress from 'nprogress';
 
