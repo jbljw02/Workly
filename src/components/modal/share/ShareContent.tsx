@@ -27,6 +27,8 @@ export default function ShareContent({ selectedDoc }: ShareContentProps) {
     const [isKeyboardNav, setIsKeyboardNav] = useState<boolean>(false); // 키보드 네비게이션 모드 여부
     const [isDropdownEnabled, setIsDropdownEnabled] = useState<boolean>(false); // 드롭다운 메뉴 활성화 여부
 
+    // console.log('selectedDoc.collaborators: ', selectedDoc.collaborators);
+
     // 검색 결과가 협업자, 모든 사용자에도 없을 경우 보여줄 프로필
     const unknownUser: Collaborator = useMemo(() => ({
         displayName: targetSharingEmail,

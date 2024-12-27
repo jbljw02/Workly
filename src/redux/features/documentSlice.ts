@@ -104,7 +104,8 @@ export const documentSlice = createSlice({
         addCollaborator: (state, action) => {
             const { docId, collaborators } = action.payload;
             const document = state.find(doc => doc.id === docId);
-            if (document) {
+            // 중복되지 않은 협업자만 추가
+            if (document && !document.collaborators.find(collab => collab.email === collaborators[0].email)) {
                 document.collaborators.push(...collaborators);
             }
         },

@@ -1,4 +1,3 @@
-import CommonInput from "@/components/input/CommonInput";
 import SubmitButton from "@/components/button/SubmitButton";
 import { DocumentProps, addCollaborator } from "@/redux/features/documentSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
@@ -22,6 +21,8 @@ export default function ShareForm({ selectedDoc }: ShareFormProps) {
     const targetSharingEmail = useAppSelector(state => state.targetSharingEmail);
     const coworkerList = useAppSelector(state => state.coworkerList);
     const editorPermission = useAppSelector(state => state.editorPermission);
+
+    console.log('selectedDoc.collaborators: ', selectedDoc.collaborators);
 
     const [isSubmitting, setIsSubmitting] = useState(false); // 현재 폼을 제출중인지
 
@@ -60,6 +61,8 @@ export default function ShareForm({ selectedDoc }: ShareFormProps) {
 
             // 추가중인 협업자들을 순회하면서 한 명씩 state에 push
             selectedCoworkers.forEach(coworker => dispatch(addCoworker(coworker)));
+
+            console.log('selectedCoworkers: ', selectedCoworkers);
 
             dispatch(addCollaborator({ docId: newDoc.id, collaborators: selectedCoworkers }));
             dispatch(showCompleteAlert('선택된 사용자들을 멤버로 초대했습니다.'));
