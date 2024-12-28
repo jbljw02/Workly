@@ -2,7 +2,7 @@ import UserProfile from '@/components/aside/child/user/UserProfile';
 import { Collaborator } from '@/redux/features/documentSlice';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
-import AuthorityButton, { AuthorityCategory } from './AuthorityButton';
+import AuthorityButton from './AuthorityButton';
 import ShareForm from './ShareForm';
 import { setCoworkerList, setSearchedCoworkers, setSelectedCoworkers, setTargetSharingEmail } from '@/redux/features/shareDocumentSlice';
 import { emailRegex } from '@/components/auth/SignUp';
@@ -17,7 +17,8 @@ export default function ShareContent({ selectedDoc }: ShareContentProps) {
 
     const user = useAppSelector(state => state.user);
     const allUsers = useAppSelector(state => state.allUsers); // 모든 사용자
-    const coworkerList = useAppSelector(state => state.coworkerList); // 현재 문서의 협업자들
+    const documents = useAppSelector(state => state.documents); // 모든 문서
+    const coworkerList = useAppSelector(state => state.coworkerList); // 전체 문서의 협업자들
     const selectedCoworkers = useAppSelector(state => state.selectedCoworkers); // 선택된 협업자들
     const targetSharingEmail = useAppSelector(state => state.targetSharingEmail); // 공유할 사용자의 이메일
     const searchedCoworkers = useAppSelector(state => state.searchedCoworkers); // 검색된 협업자들
@@ -27,6 +28,22 @@ export default function ShareContent({ selectedDoc }: ShareContentProps) {
     const [isKeyboardNav, setIsKeyboardNav] = useState<boolean>(false); // 키보드 네비게이션 모드 여부
     const [isDropdownEnabled, setIsDropdownEnabled] = useState<boolean>(false); // 드롭다운 메뉴 활성화 여부
 
+    useEffect(() => {
+        // 모든 문서의 협업자들을 하나의 배열로 합치기
+        const allCollaborators = documents.reduce((acc: Collaborator[], doc) => {
+            // 각 문서의 협업자들을 순회하면서 중복되지 않은 협업자만 추가
+            doc.collaborators.forEach(collaborator => {
+                if (!acc.some(existingCollaborator => existingCollaborator.email === collaborator.email)) {
+                    acc.push(collaborator);
+                }
+            });
+            return acc;
+        }, []);
+
+        // 중복 제거된 협업자 목록을 coworkerList에 저장
+        dispatch(setCoworkerList(allCollaborators));
+    }, []);
+
     // 검색 결과가 협업자, 모든 사용자에도 없을 경우 보여줄 프로필
     const unknownUser: Collaborator = useMemo(() => ({
         displayName: targetSharingEmail,
@@ -35,6 +52,21 @@ export default function ShareContent({ selectedDoc }: ShareContentProps) {
         authority: '전체 허용',
         uid: '',
     }), [targetSharingEmail]);
+
+    // 협업자 목록에서 '부분' 일치하는 사용자 검색
+    const coworkersMatched = useMemo(() => {
+        return coworkerList.filter(coworker => {
+            // 이미 협업 중인 사용자는 제외
+            const isAlreadyCollaborator = selectedDoc.collaborators.some(
+                collaborator => collaborator.email === coworker.email
+            );
+            if (isAlreadyCollaborator) return false;
+
+            // 도메인 앞부분만 추출해서 검색
+            const [localPart] = coworker.email.split('@');
+            return localPart.toLowerCase().includes(targetSharingEmail.trim().toLowerCase());
+        });
+    }, [coworkerList, targetSharingEmail, selectedDoc.collaborators]);
 
     // 협업자를 선택하는 함수
     const coworkerSelect = (coworker: Collaborator) => {
@@ -71,12 +103,6 @@ export default function ShareContent({ selectedDoc }: ShareContentProps) {
             dispatch(setSearchedCoworkers(matchedCoworker));
             return;
         }
-
-        // 협업자 목록에서 '부분' 일치하는 사용자 검색
-        const coworkersMatched = coworkerList.filter(coworker => {
-            const [localPart] = coworker.email.split('@'); // 도메인 앞부분만 추출해서 검색
-            return localPart.toLowerCase().includes(targetSharingEmail.trim().toLowerCase());
-        });
 
         // 검색된 협업자가 있다면 해당 사용자의 프로필을 보여주고,
         // 없다면 임시 프로필을 보여줌
@@ -121,7 +147,7 @@ export default function ShareContent({ selectedDoc }: ShareContentProps) {
 
     // 검색된 협업자가 존재하는지에 따라 선택된 항목과 키보드 네비게이션 모드 설정
     useEffect(() => {
-        if (emailRegex.test(targetSharingEmail) && searchedCoworkers.length > 0) {
+        if (emailRegex.test(targetSharingEmail) || coworkersMatched.length > 0) {
             setSelectedIndex(0); // 첫번째 협업자 선택
             setIsKeyboardNav(true);
 
@@ -170,13 +196,13 @@ export default function ShareContent({ selectedDoc }: ShareContentProps) {
                                     onMouseLeave={coworkerMouseLeave}>
                                     <UserProfile
                                         user={coworker}
-                                        isAlreadyCoworker={coworkerList.some(user => user.email === coworker.email)} />
+                                        isAlreadyCoworker={selectedDoc.collaborators.some(user => user.email === coworker.email)} />
                                     <AuthorityButton
                                         targetUser={coworker}
                                         isClickEnabled={isDropdownEnabled}
                                         initialAuthority={coworker.email === selectedDoc.author.email ? '관리자' : coworker.authority}
                                         selectedDoc={selectedDoc}
-                                        isMember={coworkerList.some(user => user.email === coworker.email)} />
+                                        isMember={selectedDoc.collaborators.some(user => user.email === coworker.email)} />
                                 </button>
                             ))
                         }

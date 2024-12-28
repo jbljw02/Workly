@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef } from "react";
 import { useClickOutside } from "@/components/hooks/useClickOutside";
 import { addCollaborator, Collaborator, deleteCollaborator, DocumentProps, updateCollaboratorAuthority, updateDocuments } from "@/redux/features/documentSlice";
 import { deleteCoworker, setCoworkerList, updateCoworkerAuthority, updateSearchedCoworkerAuthority } from "@/redux/features/shareDocumentSlice";
@@ -6,7 +6,6 @@ import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import axios from "axios";
 import { AuthorityCategory } from "./AuthorityButton";
 import { showCompleteAlert, showWarningAlert } from "@/redux/features/alertSlice";
-import useOverlayLock from "@/components/hooks/useOverlayLock";
 
 type AuthorityDropdownProps = {
     dropdownPosition: { top: number, left: number };

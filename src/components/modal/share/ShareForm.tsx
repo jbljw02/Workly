@@ -1,4 +1,3 @@
-import CommonInput from "@/components/input/CommonInput";
 import SubmitButton from "@/components/button/SubmitButton";
 import { DocumentProps, addCollaborator } from "@/redux/features/documentSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
@@ -20,24 +19,18 @@ export default function ShareForm({ selectedDoc }: ShareFormProps) {
 
     const selectedCoworkers = useAppSelector(state => state.selectedCoworkers);
     const targetSharingEmail = useAppSelector(state => state.targetSharingEmail);
-    const coworkerList = useAppSelector(state => state.coworkerList);
     const editorPermission = useAppSelector(state => state.editorPermission);
-
-    const [isSubmitting, setIsSubmitting] = useState(false); // 현재 폼을 제출중인지
 
     // 이미 추가된 협업자들을 필터링
     const alreadyExistCoworkers = useMemo(() => selectedCoworkers.filter(selectedCoworker =>
-        coworkerList.some(coworker => coworker.email === selectedCoworker.email)),
-        [selectedCoworkers, coworkerList]);
+        selectedDoc.collaborators.some(coworker => coworker.email === selectedCoworker.email)),
+        [selectedCoworkers, selectedDoc.collaborators]);
 
     // 선택된 협업자들을 문서에 추가
     const inviteUser = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        if (isSubmitting) return; // 이미 제출 중이면 함수 실행 중단
-
         try {
-            setIsSubmitting(true); // 제출 시작
             dispatch(setWorkingSpinner(true));
 
             // 추가중인 협업자를 문서에 추가
@@ -68,7 +61,6 @@ export default function ShareForm({ selectedDoc }: ShareFormProps) {
         } catch (error) {
             dispatch(showWarningAlert('선택된 사용자들을 멤버로 초대하는 데 실패했습니다.'));
         } finally {
-            setIsSubmitting(false); // 제출 종료
             dispatch(setWorkingSpinner(false));
         }
     }

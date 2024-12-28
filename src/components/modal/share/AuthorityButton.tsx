@@ -71,13 +71,13 @@ export default function AuthorityButton({
         // 사용자가 멤버인 경우에만 실행
         if (isMember) {
             // 현재 작업중인 협업자를 찾음
-            const updatedCoworker = coworkerList.find(coworker => coworker.email === targetUser.email);
+            const updatedCoworker = selectedDoc.collaborators.find(coworker => coworker.email === targetUser.email);
             if (updatedCoworker) {
                 // 해당 협업자의 권한으로 현재 권한을 업데이트
                 setCurrentAuthority(updatedCoworker.authority as AuthorityCategory);
             }
         }
-    }, [coworkerList]);
+    }, [selectedDoc.collaborators]);
 
     // 드롭다운을 토글
     const toggleDropdown = (e: React.MouseEvent) => {
