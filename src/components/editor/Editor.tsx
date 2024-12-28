@@ -131,7 +131,7 @@ export default function Editor({ docId }: { docId: string }) {
       {/* 에디터의 헤더 */}
       {
         selectedDocument.id && docSynced ?
-          <div className="sticky top-0 bg-white z-10">
+          <div className="sticky top-0 bg-white z-10 min-w-max">
             <EditorHeader
               editor={editor} />
             <MenuBar editor={editor} />
