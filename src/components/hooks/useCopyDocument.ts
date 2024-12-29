@@ -26,12 +26,6 @@ export default function useCopyDocument() {
             // 문서 ID를 폴더에 추가
             dispatch(addDocumentToFolder({ folderId: copiedDocument.folderId, docId: copiedDocument.id }));
 
-            // tiptap cloud에 문서 복사
-            await axios.post('/api/tiptap-document', {
-                docName: copiedDocument.id,
-                docContent: copiedDocument.docContent
-            });
-
             // 파이어베이스에 문서 복사
             await axios.post('/api/document', {
                 folderId: copiedDocument.folderId,
@@ -39,6 +33,12 @@ export default function useCopyDocument() {
             });
 
             dispatch(showCompleteAlert(`${copiedDocument.folderName}에 ${selectedDocument.title || '제목 없는 문서'} 사본이 생성되었습니다.`));
+
+            // tiptap cloud에 문서 복사
+            await axios.post('/api/tiptap-document', {
+                docName: copiedDocument.id,
+                docContent: copiedDocument.docContent
+            });
         } catch (error) {
             // 문서 복사 실패 시 롤백
             dispatch(setDocuments(prevDocuments));

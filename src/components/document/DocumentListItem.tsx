@@ -4,13 +4,8 @@ import formatTimeDiff from "@/utils/formatTimeDiff";
 import MenuIcon from '../../../public/svgs/editor/menu-vertical.svg'
 import ShareDocumentIcon from '../../../public/svgs/shared-document.svg'
 import { DocumentProps } from "@/redux/features/documentSlice";
-import { MenuItemProps } from "../menu/MenuItem";
 import useCopyDocument from "../hooks/useCopyDocument";
-import { useMemo, useRef, useState } from "react";
-import MoveIcon from '../../../public/svgs/editor/move-folder.svg'
-import CopyIcon from '../../../public/svgs/editor/copy.svg'
-import DeleteIcon from '../../../public/svgs/trash.svg'
-import LinkCopyIcon from '../../../public/svgs/editor/link.svg'
+import { useRef, useState } from "react";
 import useDeleteDocument from "../hooks/useDeleteDocument";
 import MenuList from "../menu/MenuList";
 import HoverTooltip from "../tooltip/HoverTooltip";
@@ -23,12 +18,10 @@ import { useAppSelector, useAppDispatch } from "@/redux/hooks";
 import useToggleShortcuts from "../hooks/useToggleShortcuts";
 import { useClickOutside } from "../hooks/useClickOutside";
 import { generateHTML } from "@tiptap/react";
-import extensions from "@/components/hooks/useEditorExtension";
 import usePublishedExtension from "../hooks/usePublishedExtension";
 import useDownloadPDF from "../hooks/useDownloadPDF";
 import useCancelPublish from "../hooks/useCancelPublish";
 import usePublishDocument from "../hooks/usePublishDocument";
-import WebIcon from '../../../public/svgs/web.svg'
 import useCheckPermission from "../hooks/useCheckPermission";
 import useDocumentMenu from "../hooks/useMenuItem";
 import { useRouter } from "next-nprogress-bar";
@@ -141,17 +134,19 @@ export default function DocumentListItem({ document, isShared, isPublished }: Do
                     </div>
                     <div className="flex flex-row items-center justify-end">
                         {/* 즐겨찾기 아이콘 */}
-                        <HoverTooltip label="즐겨찾기">
-                            <LabelButton
-                                Icon={
-                                    document.shortcutsUsers.includes(user.email) ?
-                                        ShortcutsOnIcon :
-                                        ShortcutsOffIcon
-                                }
-                                iconWidth={19}
-                                onClick={(e) => clickShortcut(e, document)}
-                                hover="hover:bg-gray-200" />
-                        </HoverTooltip>
+                        <div>
+                            <HoverTooltip label="즐겨찾기">
+                                <LabelButton
+                                    Icon={
+                                        document.shortcutsUsers.includes(user.email) ?
+                                            ShortcutsOnIcon :
+                                            ShortcutsOffIcon
+                                    }
+                                    iconWidth={19}
+                                    onClick={(e) => clickShortcut(e, document)}
+                                    hover="hover:bg-gray-200" />
+                            </HoverTooltip>
+                        </div>
                         {/* 메뉴의 옵션 */}
                         <div ref={optionRef}>
                             <HoverTooltip label="옵션">

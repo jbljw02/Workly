@@ -1,12 +1,11 @@
 import CautionIcon from '../../../public/svgs/caution.svg'
 import CloseIcon from '../../../public/svgs/editor/close.svg'
-import { useEffect, useRef, useState } from "react";
-import { useClickOutside } from "../hooks/useClickOutside";
+import { useEffect, useState } from "react";
 import { NoticeModalProps } from '@/types/noticeModalProps';
 
 export default function WarningAlert({ isModalOpen, setIsModalOpen, label }: NoticeModalProps) {
     const [animation, setAnimation] = useState<string>('slide-up');
-    
+
     useEffect(() => {
         if (isModalOpen) {
             setAnimation('slide-up');
@@ -16,15 +15,15 @@ export default function WarningAlert({ isModalOpen, setIsModalOpen, label }: Not
 
             return () => clearTimeout(timer);
         }
-    }, [isModalOpen]);
-    
+    }, [isModalOpen, label]);
+
     const closeTooltip = () => {
         setAnimation('slide-down');
         setTimeout(() => setIsModalOpen(false), 500);
     };
-    
+
     if (!isModalOpen) return null;
-    
+
     return (
         <div
             className={`${animation} z-[503] fixed bottom-7 right-7 min-w-80 w-auto flex items-center p-4 rounded-lg text-yellow-900 bg-yellow-100 border border-yellow-200`}>

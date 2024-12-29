@@ -26,7 +26,7 @@ export default function HeaderTitle() {
                 {
                     !webPublished && (
                         <>
-                            <div className='text-sm rounded-sm'>{folders.find(folder => folder.id === selectedDocument.folderId)?.name}</div>
+                            <div className='text-sm rounded-sm'>{selectedDocument.folderName || '알 수 없는 폴더'}</div>
                             <div className='text-sm font-light mx-1'>{'/'}</div>
                         </>
                     )

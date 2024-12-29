@@ -231,13 +231,13 @@ export default function FileNodeView({ editor, node, }: FileNodeViewProps) {
                                     setIsEditing={setIsEditing} /> :
                                 <div className='ml-1'>{name}</div>
                         }
-                        <div className='ml-3 text-sm text-neutral-500'>{formatSize(size)}</div>
+                        <div className='ml-3 mr-4 text-sm text-neutral-500'>{formatSize(size)}</div>
                         {
                             // 게시된 문서를 확인중이라면 리스트 확인 불가
                             !webPublished && (
                                 <div
                                     onClick={fileMenuClick}
-                                    className={`ml-4 -mr-0.5 hover:bg-gray-300 p-1 rounded-sm 
+                                    className={`-mr-0.5 hover:bg-gray-300 p-1 rounded-sm 
                                     ${menuListOpen ? 'bg-gray-200' : ''}`}>
                                     {
                                         <MenuIcon width="18" />

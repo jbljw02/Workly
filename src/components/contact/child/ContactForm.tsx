@@ -144,7 +144,8 @@ export default function ContactForm() {
                     name="name"
                     value={formData.name}
                     setValue={formChange}
-                    placeholder="홍길동" />
+                    placeholder="홍길동"
+                    autoFocus={true} />
             </div>
             <div className="space-y-1">
                 <InputLabel label="이메일" isRequired={true} />
@@ -200,7 +201,7 @@ export default function ContactForm() {
                     bgColor: 'bg-blue-500',
                     hover: 'hover:bg-blue-700'
                 }}
-                label="변경하기"
+                label="전송하기"
                 value={formData.name && formData.email && formData.message} />
         </form>
     )

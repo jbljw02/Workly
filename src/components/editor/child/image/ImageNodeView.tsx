@@ -241,7 +241,6 @@ const NodeView = (resizableImgProps: ResizableImageNodeViewRendererProps) => {
       {
         (
           !cropMode &&
-          !webPublished &&
           (editorPermission === '전체 허용' || editorPermission === '쓰기 허용')) && (
           <ImageMenuBar
             nodeViewRef={nodeViewRef}

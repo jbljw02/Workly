@@ -1,14 +1,11 @@
 import LabelButton from "../button/LabelButton";
 import SortIcon from '../../../public/svgs/sort.svg'
 import { useRef, useState } from "react";
-import DocumentSortSection, { SortRule } from "./DocumentSortSection";
+import DocumentSortSection from "./DocumentSortSection";
 import { useClickOutside } from "../hooks/useClickOutside";
-import { useAppSelector } from "@/redux/hooks";
 
 export default function DocumentListHeader() {
     const [isSortOpen, setIsSortOpen] = useState(false);
-    const sortRule = useAppSelector(state => state.sortRule);
-
     const sortRef = useRef<HTMLDivElement>(null);
 
     useClickOutside(sortRef, () => setIsSortOpen(false));

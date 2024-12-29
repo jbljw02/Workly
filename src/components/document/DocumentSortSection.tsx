@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import CheckIcon from '../../../public/svgs/check.svg';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { setSortRule } from '@/redux/features/documentSlice';
@@ -8,12 +7,12 @@ type DocumentSortSectionProps = {
     setIsSortOpen: (isOpen: boolean) => void;
 }
 
-export type SortRule = '생성된 날짜' | '제목' | '최근 열람일';  
+export type SortRule = '생성된 날짜' | '제목' | '최근 열람일';
 
 export default function DocumentSortSection({ isSortOpen, setIsSortOpen }: DocumentSortSectionProps) {
     const dispatch = useAppDispatch();
-    
-    const sortRuleList = ['생성된 날짜', '제목', '최근 열람일'];
+
+    const sortRuleList = ['최근 열람일', '생성된 날짜', '제목'];
     const sortRule = useAppSelector(state => state.sortRule);
 
     const itemClick = (rule: SortRule) => {

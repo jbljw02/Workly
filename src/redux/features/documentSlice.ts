@@ -86,6 +86,13 @@ export const documentSlice = createSlice({
                 state[index].title = newTitle;
             }
         },
+        renameParentFolderName: (state, action) => {
+            const { folderId, newFolderName } = action.payload;
+            const document = state.find(doc => doc.folderId === folderId);
+            if (document) {
+                document.folderName = newFolderName;
+            }
+        },
         setDocuments: (state, action) => {
             return action.payload;
         },
@@ -169,7 +176,7 @@ export const selectedDocumentSlice = createSlice({
 
 export const sortRuleSlice = createSlice({
     name: 'sortRule',
-    initialState: '생성된 날짜',
+    initialState: '최근 열람일',
     reducers: {
         setSortRule: (state, action) => {
             return action.payload;
@@ -177,7 +184,7 @@ export const sortRuleSlice = createSlice({
     }
 })
 
-export const { addDocuments, updateDocuments, renameDocuments, deleteAllDocumentsOfFolder, updateCollaboratorAuthority, addCollaborator, deleteCollaborator, setDocuments, deleteDocuments, toggleShortcut, publishContent, canclePublishContent } = documentSlice.actions;
+export const { addDocuments, updateDocuments, renameDocuments, deleteAllDocumentsOfFolder, updateCollaboratorAuthority, addCollaborator, deleteCollaborator, setDocuments, deleteDocuments, toggleShortcut, publishContent, canclePublishContent, renameParentFolderName } = documentSlice.actions;
 export const { setSelectedDocument, updateSelectedDocContent } = selectedDocumentSlice.actions;
 export const { setSortRule } = sortRuleSlice.actions;
 
