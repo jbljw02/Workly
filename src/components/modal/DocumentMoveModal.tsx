@@ -75,9 +75,9 @@ export default function DocumentMoveModal({ isModalOpen, setIsModalOpen, selecte
                         document: selectedDoc
                     });
 
-                dispatch(showCompleteAlert('문서를 성공적으로 옮겼습니다.'))
+                dispatch(showCompleteAlert('문서를 성공적으로 이동했습니다.'))
             } catch (error) {
-                dispatch(showWarningAlert('문서를 옮기는 데에 실패했습니다.'))
+                dispatch(showWarningAlert('문서를 이동하는 데에 실패했습니다.'))
             } 
         }
     }

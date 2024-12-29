@@ -1,6 +1,5 @@
 import CloseIcon from '../../../public/svgs/editor/close.svg'
-import { useEffect, useRef, useState } from "react";
-import { useClickOutside } from "../hooks/useClickOutside";
+import { useEffect, useState } from "react";
 import CompleteIcon from '../../../public/svgs/complete.svg';
 import { NoticeModalProps } from '@/types/noticeModalProps';
 
@@ -10,14 +9,13 @@ export default function CompleteAlert({ isModalOpen, setIsModalOpen, label }: No
     useEffect(() => {
         if (isModalOpen) {
             setAnimation('slide-up');
-            // 창을 열고 3초 뒤에 닫음
             const timer = setTimeout(() => {
                 closeTooltip();
             }, 3000);
 
             return () => clearTimeout(timer);
         }
-    }, [isModalOpen]);
+    }, [isModalOpen, label]);
 
     const closeTooltip = () => {
         // 애니메이션과 닫기를 동시에 하면 애니메이션을 볼 수 없으니,
@@ -29,8 +27,7 @@ export default function CompleteAlert({ isModalOpen, setIsModalOpen, label }: No
     if (!isModalOpen) return null;
 
     return (
-        <div
-            className={`${animation} z-[503] fixed bottom-7 right-7 min-w-80 w-auto flex items-center p-4 rounded-lg text-white bg-gray-900 border border-gray-900`}>
+        <div className={`${animation} z-[503] fixed bottom-7 right-7 min-w-80 w-auto flex items-center p-4 rounded-lg text-white bg-gray-900 border border-gray-900`}>
             <CompleteIcon width="20" className="mr-3 text-white" />
             <div className="flex-grow text-sm font-medium">{label}</div>
             <button
