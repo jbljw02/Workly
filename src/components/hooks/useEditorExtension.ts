@@ -112,6 +112,7 @@ export default function useEditorExtension({ docId }: useEditorExtensionProps) {
             const users: ConnectedUser[] = [];
             provider.awareness?.getStates().forEach((state: any) => {
                 const user = state.user;
+                console.log('user', user)
                 // 이미 연결된 사용자가 아니라면 접속자 목록에 추가
                 if (user && !users.some(u => u.id === user.id)) {
                     users.push({
@@ -130,6 +131,8 @@ export default function useEditorExtension({ docId }: useEditorExtensionProps) {
                 if (b.id === selectedDocument.author.email) return 1; // b가 작성자인 경우 제일 뒤에 위치(b를 a보다 앞에 배치)
                 return a.connectedAt - b.connectedAt; // 접속 시간순으로 정렬
             });
+
+            console.log('sortedUsers', sortedUsers)
 
             dispatch(setConnectedUsers(sortedUsers));
         };

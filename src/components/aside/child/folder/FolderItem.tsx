@@ -11,7 +11,7 @@ import { deleteFolders } from '@/redux/features/folderSlice';
 import PlusIcon from '../../../../../public/svgs/plus.svg';
 import DocumentSection from './DocumentSection';
 import EditInput from './EditInput';
-import { deleteAllDocumentsOfFolder } from '@/redux/features/documentSlice';
+import { deleteAllDocumentsOfFolder, renameParentFolderName } from '@/redux/features/documentSlice';
 import AddInputModal from '@/components/modal/AddInputModal';
 import HoverTooltip from '@/components/tooltip/HoverTooltip';
 import { showCompleteAlert, showWarningAlert } from '@/redux/features/alertSlice';
@@ -61,6 +61,7 @@ export default function FolderItem({ folder }: FolderItemProps) {
 
             try {
                 dispatch(renameFolders({ folderId: folder.id, newName: folderTitle }));
+                dispatch(renameParentFolderName({ folderId: folder.id, newFolderName: folderTitle }));
                 setIsEditing(false);
 
                 await axios.put('/api/folder',
@@ -73,6 +74,7 @@ export default function FolderItem({ folder }: FolderItemProps) {
                 // 변경에 실패할 경우 이전 상태로 롤백
                 setFolderTitle(prevFolder.name);
                 dispatch(renameFolders({ folderId: prevFolder.id, newName: prevFolder.name }));
+                dispatch(renameParentFolderName({ folderId: prevFolder.id, newFolderName: prevFolder.name }));
             }
         }
         // ESC 키가 클릭될 시, 작업을 종료
