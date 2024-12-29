@@ -20,7 +20,7 @@ pre {
 
 .content-title {
     font-size: 40px;
-    font-weight: bold;
+    font-weight: 800;
 }
 
 h1,
@@ -80,10 +80,15 @@ img {
     max-width: 100%;
     height: auto;
     object-fit: contain;
+    margin: 4px 0;
 }
 
 blockquote {
     border-left: 3px solid #e1e1e0;
     margin: 1rem 0;
     padding-left: 0.7rem;
+}
+
+a {
+    color: #000000;
 }

@@ -12,9 +12,28 @@ export default function PdfFileNode({ fileTitle, fileUrl }: PdfFileNodeProps) {
             download={fileTitle}
             target="_blank"
             rel="noopener noreferrer"
-            className='flex items-center gap-1'>
-            <FileInfoIcon width="20" style={{ verticalAlign: 'middle' }} />
-            <div style={{ display: 'inline' }}>{fileTitle}</div>
+            style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '8px',
+                border: '1px solid #e2e8f0',
+                borderRadius: '4px',
+                backgroundColor: '#f3f4f6',
+                textDecoration: 'none',
+                color: 'inherit',
+            }}>
+            <FileInfoIcon
+                width="20"
+                style={{ verticalAlign: 'middle' }} />
+            <span
+                style={{
+                    display: 'inline',
+                    verticalAlign: 'middle',
+                    paddingTop: '2px'
+                }}>
+                {fileTitle}
+            </span>
         </a>
     );
 }

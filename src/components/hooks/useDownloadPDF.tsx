@@ -17,16 +17,18 @@ export default function useDownloadPDF() {
             container.innerHTML = content;
 
             // 모든 파일 노드를 찾음
-            const fileNodes = container.querySelectorAll('[data-file]');
+            const fileNodes = container.querySelectorAll('[mimetype]');
 
             fileNodes.forEach((node) => {
                 // 파일명을 가져오고, 링크를 생성할 URL을 가져옴
-                const filename = node.getAttribute('title') || '알 수 없는 파일';
+                const filename = node.getAttribute('name') || '알 수 없는 파일';
                 const fileUrl = node.getAttribute('href') || '';
 
                 // 컴포넌트를 HTML로 변환
                 const pdfFileNodeHtml = ReactDOMServer.renderToString(
-                    <PdfFileNode fileTitle={filename} fileUrl={fileUrl} />
+                    <div style={{ margin: '16px 0' }}>
+                        <PdfFileNode fileTitle={filename} fileUrl={fileUrl} />
+                    </div>
                 );
 
                 // 파일 노드를 새로운 HTML로 교체
