@@ -5,7 +5,7 @@ const tiptapCloudSecret = process.env.NEXT_PUBLIC_TIPTAP_CLOUD_SECRET;
 
 const getTiptapDocument = async (docName: string) => {
     try {
-        const response = await axios.get(`${wsUrl}/api/documents/${docName}?format=yjs`, {
+        const response = await axios.get(`${wsUrl}/api/documents/${docName}?format=json`, {
           headers: {
             Authorization: tiptapCloudSecret,
             },
