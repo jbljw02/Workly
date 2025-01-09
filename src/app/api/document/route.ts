@@ -5,6 +5,7 @@ import { Collaborator } from "@/redux/features/documentSlice";
 import { getDownloadURL, getStorage, ref, uploadString } from "firebase/storage";
 import convertTimestamp from "@/utils/convertTimestamp";
 import axios from 'axios';
+import createTiptapDocument from "@/utils/createTiptapDocument";
 
 const wsUrl = process.env.NEXT_PUBLIC_WEBSOCKET_URL;
 const tiptapCloudSecret = process.env.NEXT_PUBLIC_TIPTAP_CLOUD_SECRET;
@@ -12,7 +13,7 @@ const tiptapCloudSecret = process.env.NEXT_PUBLIC_TIPTAP_CLOUD_SECRET;
 // 사용자의 문서를 추가 - CREATE
 export async function POST(req: NextRequest) {
     try {
-        const { folderId, document } = await req.json();
+        const { folderId, document, autoCreate } = await req.json();
 
         if (!folderId) return NextResponse.json({ error: "폴더 ID가 제공되지 않음" }, { status: 400 });
         if (!document) return NextResponse.json({ error: "문서 정보가 제공되지 않음" }, { status: 400 });
@@ -51,6 +52,11 @@ export async function POST(req: NextRequest) {
             documentIds: [...(folderData.documentIds || []), document.id],
             readedAt: serverTimestamp() // 폴더의 readedAt도 업데이트
         });
+
+        // 즉시 페이지로 라우팅하지 않는 경우 클라우드에 문서 추가 요청 전송
+        if (!autoCreate) {
+            await createTiptapDocument(document.id, document.docContent);
+        }
 
         // 배치 작업 실행
         await batch.commit();

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import axios from 'axios';
+import createTiptapDocument from '@/utils/createTiptapDocument';
 
 const wsUrl = process.env.NEXT_PUBLIC_WEBSOCKET_URL;
 const tiptapCloudSecret = process.env.NEXT_PUBLIC_TIPTAP_CLOUD_SECRET;
@@ -11,30 +12,7 @@ export async function POST(req: NextRequest) {
   if (!docName) return NextResponse.json({ error: '문서 이름이 필요합니다.' }, { status: 400 });
 
   try {
-    // 빈 문서의 기본 구조 정의
-    const emptyDocument = {
-      type: 'doc',
-      content: [
-        {
-          type: 'paragraph',
-          attrs: { textAlign: 'left' }
-        }
-      ]
-    };
-
-    // docContent가 null이면 빈 문서 구조 사용
-    const documentContent = docContent || emptyDocument;
-
-    const response = await axios.post(
-      `${wsUrl}/api/documents/${encodeURIComponent(docName)}?format=json`,
-      documentContent,
-      {
-        headers: {
-          'Authorization': tiptapCloudSecret,
-          'Content-Type': 'application/json'
-        },
-      }
-    );
+    const response = await createTiptapDocument(docName, docContent);
 
     if (response.status === 204) {
       return new NextResponse(null, { status: 204 });

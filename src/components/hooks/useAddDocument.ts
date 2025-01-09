@@ -36,21 +36,13 @@ export default function useAddDocument() {
         }
 
         try {
-            // 모달을 통해 추가할 때만 tiptap cloud 서버에 미리 요청
-            // 라우팅을 통해 추가할 때는 문서를 생성하면 자동으로 생성됨
-            if (setInvalidInfo) {
-                // tiptap cloud 서버에 문서 생성
-                // await axios.post('/api/tiptap-document',
-                //     {
-                //         docName: newDocument.id,
-                //     });
-            }
-
             // 파이어베이스에 문서 추가
             await axios.post('/api/document',
                 {
                     folderId: folder.id,
-                    document: newDocument
+                    document: newDocument,
+                    // 즉시 페이지로 라우팅하지 않는 경우 클라우드에 문서 추가 요청 전송
+                    autoCreate: setInvalidInfo ? false : true,
                 });
 
             // 전체 문서 배열에 추가
