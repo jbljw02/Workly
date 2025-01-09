@@ -1,5 +1,5 @@
 import axios from "axios";
-import { auth } from "../firebase/firebasedb";
+import { auth } from "../../firebase/firebasedb";
 
 const getEmailToken = async () => {
     const user = auth.currentUser;

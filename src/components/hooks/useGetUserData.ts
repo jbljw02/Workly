@@ -17,6 +17,8 @@ export default function useGetUserData() {
     // 사용자의 전체 문서 요청
     const getUserDocument = async () => {
         try {
+            dispatch(setDocumentLoading(true));
+
             const response = await axios.get('/api/document', {
                 params: { email: user.email }
             });
@@ -32,6 +34,7 @@ export default function useGetUserData() {
     const getUserFolder = async () => {
         try {
             dispatch(setFolderLoading(true));
+
             const response = await axios.get('/api/folder', {
                 params: { email: user.email },
             });
@@ -44,18 +47,17 @@ export default function useGetUserData() {
     }
 
     const getUserData = async () => {
-        if (user.email && !isDeleting) {
-            try {
-                await getUserDocument();
-                await getUserFolder();
-            } catch (error) {
-                dispatch(showWarningAlert('사용자의 데이터를 불러오는 데 실패했습니다.'))
-                dispatch(setFailedAlert(true));
-                throw error;
-            } finally {
-                dispatch(setDocumentLoading(false));
-                dispatch(setFolderLoading(false));
-            }
+        if (!user.email || isDeleting) {
+            return;
+        }
+
+        try {
+            await getUserDocument();
+            await getUserFolder();
+        } catch (error) {
+            console.log(error);
+            dispatch(showWarningAlert('사용자의 데이터를 불러오는 데 실패했습니다.'))
+            dispatch(setFailedAlert(true));
         }
     }
 

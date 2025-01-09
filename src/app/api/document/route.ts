@@ -4,6 +4,10 @@ import { doc, getDoc, updateDoc, collection, addDoc, writeBatch, query, where, g
 import { Collaborator } from "@/redux/features/documentSlice";
 import { getDownloadURL, getStorage, ref, uploadString } from "firebase/storage";
 import convertTimestamp from "@/utils/convertTimestamp";
+import axios from 'axios';
+
+const wsUrl = process.env.NEXT_PUBLIC_WEBSOCKET_URL;
+const tiptapCloudSecret = process.env.NEXT_PUBLIC_TIPTAP_CLOUD_SECRET;
 
 // 사용자의 문서를 추가 - CREATE
 export async function POST(req: NextRequest) {
@@ -65,45 +69,72 @@ export async function GET(req: NextRequest) {
 
         if (!email) return NextResponse.json({ error: "이메일이 제공되지 않음" }, { status: 400 });
 
-        // documents 컬렉션에서 모든 문서 가져오기
+        // 각 문서의 메타데이터 조회
         const documentsSnapshot = await getDocs(collection(firestore, 'documents'));
 
-        // 모든 문서를 추출
-        const documents = await Promise.all(documentsSnapshot.docs.map(async doc => {
+        // 사용자의 문서만 필터링
+        const userDocuments = documentsSnapshot.docs.filter(doc => {
             const data = doc.data();
-
-            return {
-                id: doc.id,
-                title: data.title,
-                docContent: await fetch(data.contentUrl).then(res => res.json()) || null,
-                createdAt: convertTimestamp(data.createdAt),
-                readedAt: convertTimestamp(data.readedAt),
-                author: data.author,
-                folderId: data.folderId,
-                folderName: data.folderName,
-                collaborators: data.collaborators || [],
-                shortcutsUsers: data.shortcutsUsers || [],
-                isPublished: data.isPublished,
-                publishedUser: data.publishedUser,
-                publishedDate: data.publishedDate ? convertTimestamp(data.publishedDate) : undefined,
-            };
-        }));
-
-        // 변환된 문서 데이터를 필터링
-        const filteredDocuments = documents.filter(doc => {
-            // 현재 사용자가 작성자인지 확인
-            const isAuthor = doc.author.email === email;
-
-            // 현재 사용자가 협업자인지 확인
-            const isCollaborator = doc.collaborators.length > 0 &&
-                doc.collaborators.some((collaborator: Collaborator) => collaborator.email === email);
-
-            // 작성자이거나 협업자인 경우 해당 문서 반환
+            const isAuthor = data.author.email === email;
+            const isCollaborator = data.collaborators.length > 0 &&
+                data.collaborators.some((collaborator: Collaborator) => collaborator.email === email);
             return isAuthor || isCollaborator;
         });
 
-        return NextResponse.json(filteredDocuments, { status: 200 });
+        // 문서 내용 조회 함수
+        const getDocumentContent = async (docId: string, contentUrl: string) => {
+            // 1차: Tiptap Cloud에서 조회 시도
+            try {
+                const response = await axios.get(`${wsUrl}/api/documents/${docId}`, {
+                    headers: { 'Authorization': tiptapCloudSecret },
+                    timeout: 5000 // 5초가 지나면 요청을 중단하고 에러를 발생
+                });
+                return response.data;
+            } catch (error) {
+                // 2차: 실패 시 Storage에서 조회
+                try {
+                    const response = await fetch(contentUrl);
+                    if (!response.ok) throw new Error('Storage 조회 실패');
+                    return await response.json();
+                } catch (storageError) {
+                    throw new Error('문서 내용 조회 실패');
+                }
+            }
+        };
+
+        // 필터링된 문서들의 내용 조회
+        const documents = await Promise.all(userDocuments.map(async doc => {
+            const data = doc.data();
+
+            try {
+                const docContent = await getDocumentContent(doc.id, data.contentUrl);
+
+                return {
+                    id: doc.id,
+                    title: data.title,
+                    docContent: docContent,
+                    createdAt: convertTimestamp(data.createdAt),
+                    readedAt: convertTimestamp(data.readedAt),
+                    author: data.author,
+                    folderId: data.folderId,
+                    folderName: data.folderName,
+                    collaborators: data.collaborators || [],
+                    shortcutsUsers: data.shortcutsUsers || [],
+                    isPublished: data.isPublished,
+                    publishedUser: data.publishedUser,
+                    publishedDate: data.publishedDate ? convertTimestamp(data.publishedDate) : undefined,
+                };
+            } catch (error) {
+                return null; // 개별 문서 조회 실패 시에도 전체 요청은 계속 진행
+            }
+        }));
+
+        // null 값(조회 실패한 문서) 필터링
+        const validDocuments = documents.filter(doc => doc !== null);
+
+        return NextResponse.json(validDocuments, { status: 200 });
     } catch (error) {
+        console.error("문서 정보 요청 실패", error);
         return NextResponse.json({ error: "문서 정보 요청 실패" }, { status: 500 });
     }
 }

@@ -9,13 +9,13 @@ import AuthTop from './child/AuthTop';
 import FormInput from '../input/FormInput';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../firebase/firebasedb';
-import getEmailToken from '@/utils/getEmailToken';
 import { FirebaseError } from 'firebase/app';
 import EmailVerifyModal from '../modal/EmailVerifyModal';
 import Link from 'next/link';
 import { useRouter } from 'next-nprogress-bar';
 import { useAppDispatch } from '@/redux/hooks';
 import { setWorkingSpinner } from '@/redux/features/placeholderSlice';
+import getEmailToken from '@/utils/auth/getEmailToken';
 
 export default function Login() {
     const router = useRouter();

@@ -1,13 +1,13 @@
 import MenuItem, { MenuItemProps } from "@/components/menu/MenuItem";
 import UserIcon from '../../../../../public/svgs/user.svg';
 import LogoutIcon from '../../../../../public/svgs/logout.svg';
-import logout from "@/utils/logout";
 import HorizontalDivider from "@/components/editor/child/divider/HorizontalDivider";
 import UserProfile from "./UserProfile";
 import ContactIcon from '../../../../../public/svgs/contact.svg';
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { useRouter } from "next-nprogress-bar";
 import React from "react";
+import logout from "@/utils/auth/logout";
 
 type UserMenuList = {
     menuListOpen: boolean;
