@@ -1,15 +1,15 @@
-# 문서 작성 및 실시간 협업 서비스 'Workly'
-> Workly는 문서를 작성하고 다른 사용자와 실시간으로 동시 편집을 할 수 있는 서비스입니다. <br>
-> 시장에 존재하는 많은 문서 협업 플랫폼들이 처음 접하는 사용자에겐 너무 다루기 어렵고, 높은 러닝 커브를 가지고 있습니다. Workly는 이 불편함으로부터 시작되었습니다. <br>
+# 실시간 문서 공동 작업 플랫폼 'Workly'
+> Workly는 실시간 문서 공동 작업 플랫폼입니다. <br>
+> 시중에 존재하는 많은 협업 도구들이 처음 접하는 사용자에겐 너무 다루기 어렵고, 높은 러닝 커브를 가지고 있습니다. Workly는 이 불편함으로부터 시작되었습니다. <br>
 > 본 서비스는 누구나 쉽게 사용할 수 있는 문서 협업 플랫폼을 지향합니다. <br>
-- 배포 URL: https://workly.kr
+- 배포 URL: https://www.workly.kr
 
 <br>
 
 ## 1. 프로젝트 개요
 
 ### 개발 기간
-> 2024.06.30 - 2024.12.02
+> 2024.06.30 - 진행중
 
 ### 인원 구성
 > 이진우(1인)
@@ -18,7 +18,7 @@
 
 |Environment|Frontend|Backend|Database|Deployment|API|
 |:---:|:---:|:---:|:---:|:---:|:---:|
-|![Git](https://img.shields.io/badge/git-%23F05033.svg?style=for-the-badge&logo=git&logoColor=white) ![Visual Studio Code](https://img.shields.io/badge/Visual%20Studio%20Code-0078d7.svg?style=for-the-badge&logo=visual-studio-code&logoColor=white)|![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white) ![Next JS](https://img.shields.io/badge/Next-black?style=for-the-badge&logo=next.js&logoColor=white) ![Redux](https://img.shields.io/badge/redux-%23593d88.svg?style=for-the-badge&logo=redux&logoColor=white)|![Next JS](https://img.shields.io/badge/Next-black?style=for-the-badge&logo=next.js&logoColor=white)|![Firebase](https://img.shields.io/badge/firebase-a08021?style=for-the-badge&logo=firebase&logoColor=ffcd34)|![Vercel](https://img.shields.io/badge/vercel-%23000000.svg?style=for-the-badge&logo=vercel&logoColor=white)|<img width="92" alt="tiptap" src="https://github.com/user-attachments/assets/1d336249-768a-4b6f-b133-88ef2bffd43d" />|
+|![Git](https://img.shields.io/badge/git-%23F05033.svg?style=for-the-badge&logo=git&logoColor=white) ![Visual Studio Code](https://img.shields.io/badge/Visual%20Studio%20Code-0078d7.svg?style=for-the-badge&logo=visual-studio-code&logoColor=white)|![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white) ![Next JS](https://img.shields.io/badge/Next-black?style=for-the-badge&logo=next.js&logoColor=white) ![TailwindCSS](https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white) ![Redux](https://img.shields.io/badge/redux-%23593d88.svg?style=for-the-badge&logo=redux&logoColor=white) |![Next JS](https://img.shields.io/badge/Next-black?style=for-the-badge&logo=next.js&logoColor=white)|![Firebase](https://img.shields.io/badge/firebase-a08021?style=for-the-badge&logo=firebase&logoColor=ffcd34)|![Vercel](https://img.shields.io/badge/vercel-%23000000.svg?style=for-the-badge&logo=vercel&logoColor=white)|<img width="105" alt="tiptap" src="https://github.com/user-attachments/assets/1d336249-768a-4b6f-b133-88ef2bffd43d" />|
 
 <br>
 
@@ -123,14 +123,14 @@
 |:---:|
 |![문서 게시](https://github.com/user-attachments/assets/c218fe2d-267f-4c55-bb5b-17ee41d7c152)|
 
-### 10) 문서 옵션 작업
+### 10) 문서 작업 메뉴
 - 문서를 다른 폴더로 옮길 수 있습니다.
 - 문서의 사본을 만들 수 있습니다.
 - 문서의 URL을 복사할 수 있습니다.
 - 문서를 PDF 형식으로 다운로드 할 수 있습니다.
 - 문서를 휴지통으로 이동시킬 수 있습니다.
 
-|문서 옵션 작업|
+|문서 작업 메뉴|
 |:---:|
 |![문서 옵션 작업](https://github.com/user-attachments/assets/53f56ef2-eeeb-4462-b13c-c0ab7e76b8b0)|
 
