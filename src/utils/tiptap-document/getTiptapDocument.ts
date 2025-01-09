@@ -6,11 +6,11 @@ const tiptapCloudSecret = process.env.NEXT_PUBLIC_TIPTAP_CLOUD_SECRET;
 const getTiptapDocument = async (docName: string) => {
     try {
         const response = await axios.get(`${wsUrl}/api/documents/${docName}?format=json`, {
-          headers: {
-            Authorization: tiptapCloudSecret,
+            headers: {
+                'Authorization': tiptapCloudSecret,
+                'Content-Type': 'application/json'
             },
-            responseType: 'json',
-            timeout: 5000,
+            timeout: 5000
         });
 
         console.log('response', response.data);
