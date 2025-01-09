@@ -9,6 +9,7 @@ export async function middleware(req: NextRequest) {
         try {
             const verifyUrl = `${req.nextUrl.origin}/api/auth/verify-token`;
 
+            // 라우팅을 통해 JWT 검증 요청
             const verifyResponse = await fetch(verifyUrl, {
                 method: 'POST',
                 headers: {
