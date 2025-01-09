@@ -24,7 +24,6 @@ export default function useGetUserData() {
     const user = useAppSelector(state => state.user);
     const isDeleting = useAppSelector(state => state.loading.isDeleting);
 
-
     // 사용자의 전체 문서 요청
     const getUserDocument = async () => {
         try {
@@ -33,6 +32,8 @@ export default function useGetUserData() {
             const response = await axios.get('/api/document', {
                 params: { email: user.email }
             });
+
+            console.log('response', response.data);
             dispatch(setDocuments(response.data));
         } catch (error) {
             throw error;
@@ -61,12 +62,11 @@ export default function useGetUserData() {
         if (!user.email || isDeleting || !shouldRefresh) {
             return;
         }
-        console.log('getUserData');
+
         try {
             await getUserDocument();
             await getUserFolder();
         } catch (error) {
-            console.log(error);
             dispatch(showWarningAlert('사용자의 데이터를 불러오는 데 실패했습니다.'))
             dispatch(setFailedAlert(true));
         }

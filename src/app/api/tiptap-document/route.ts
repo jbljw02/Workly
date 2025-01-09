@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import axios from 'axios';
-import createTiptapDocument from '@/utils/createTiptapDocument';
+import createTiptapDocument from '@/utils/tiptap-document/createTiptapDocument';
+import getTiptapDocument from '@/utils/tiptap-document/getTiptapDocument';
 
 const wsUrl = process.env.NEXT_PUBLIC_WEBSOCKET_URL;
 const tiptapCloudSecret = process.env.NEXT_PUBLIC_TIPTAP_CLOUD_SECRET;
@@ -32,15 +33,12 @@ export async function GET(req: NextRequest, res: NextResponse) {
   const { searchParams } = req.nextUrl;
   const docName = searchParams.get('docName');
 
-  try {
-    const response = await axios.get(`${wsUrl}/api/documents/${docName}?format=yjs`, {
-      headers: {
-        Authorization: tiptapCloudSecret,
-      },
-      responseType: 'json',
-    });
+  if(!docName) return NextResponse.json({ error: '문서 이름이 존재 X' }, { status: 400 });
 
-    return NextResponse.json(response.data, { status: 200 });
+  try {
+    const docContent = await getTiptapDocument(docName);
+
+    return NextResponse.json(docContent, { status: 200 });
   } catch (error) {
     return NextResponse.json({ error: 'tiptap cloud 문서 내용 가져오기 실패' }, { status: 500 });
   }

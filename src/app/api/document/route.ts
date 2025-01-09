@@ -4,11 +4,8 @@ import { doc, getDoc, updateDoc, collection, addDoc, writeBatch, query, where, g
 import { Collaborator } from "@/redux/features/documentSlice";
 import { getDownloadURL, getStorage, ref, uploadString } from "firebase/storage";
 import convertTimestamp from "@/utils/convertTimestamp";
-import axios from 'axios';
-import createTiptapDocument from "@/utils/createTiptapDocument";
-
-const wsUrl = process.env.NEXT_PUBLIC_WEBSOCKET_URL;
-const tiptapCloudSecret = process.env.NEXT_PUBLIC_TIPTAP_CLOUD_SECRET;
+import createTiptapDocument from "@/utils/tiptap-document/createTiptapDocument";
+import getTiptapDocument from "@/utils/tiptap-document/getTiptapDocument";
 
 // 사용자의 문서를 추가 - CREATE
 export async function POST(req: NextRequest) {
@@ -91,11 +88,8 @@ export async function GET(req: NextRequest) {
         const getDocumentContent = async (docId: string, contentUrl: string) => {
             // 1차: Tiptap Cloud에서 조회 시도
             try {
-                const response = await axios.get(`${wsUrl}/api/documents/${docId}`, {
-                    headers: { 'Authorization': tiptapCloudSecret },
-                    timeout: 5000 // 5초가 지나면 요청을 중단하고 에러를 발생
-                });
-                return response.data;
+                const docContent = await getTiptapDocument(docId);
+                return docContent;
             } catch (error) {
                 // 2차: 실패 시 Storage에서 조회
                 try {

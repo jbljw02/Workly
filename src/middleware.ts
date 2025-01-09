@@ -7,8 +7,10 @@ export async function middleware(req: NextRequest) {
     // 로그인 상태에서 홈, 로그인, 회원가입 페이지 접근 시 리다이렉션
     if (token) {
         try {
+            const verifyUrl = `${req.nextUrl.origin}/api/auth/verify-token`;
+
             // 라우팅을 통해 JWT 검증 요청
-            const verifyResponse = await fetch(new URL('/api/auth/verify-token', req.url), {
+            const verifyResponse = await fetch(verifyUrl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
