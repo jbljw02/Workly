@@ -33,7 +33,6 @@ export default function useGetUserData() {
                 params: { email: user.email }
             });
 
-            console.log('response', response.data);
             dispatch(setDocuments(response.data));
         } catch (error) {
             throw error;

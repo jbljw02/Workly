@@ -33,7 +33,7 @@ export async function GET(req: NextRequest, res: NextResponse) {
   const { searchParams } = req.nextUrl;
   const docName = searchParams.get('docName');
 
-  if(!docName) return NextResponse.json({ error: '문서 이름이 필요합니다.' }, { status: 400 });
+  if(!docName) return NextResponse.json({ error: '문서 이름이 존재 X' }, { status: 400 });
 
   try {
     const docContent = await getTiptapDocument(docName);
