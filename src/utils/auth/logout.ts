@@ -1,6 +1,6 @@
 import axios from "axios";
 import { signOut } from "firebase/auth";
-import { auth } from "../firebase/firebasedb";
+import { auth } from "../../firebase/firebasedb";
 import { AppDispatch } from "@/redux/store";
 import { showWarningAlert } from "@/redux/features/alertSlice";
 import NProgress from 'nprogress';

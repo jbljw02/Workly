@@ -3,9 +3,9 @@ import { useAppDispatch, useAppSelector } from "@/redux/hooks"
 import { onAuthStateChanged } from "firebase/auth";
 import { useEffect } from "react";
 import { auth } from "../../firebase/firebasedb";
-import getEmailToken from "@/utils/getEmailToken";
-import logout from "@/utils/logout";
 import { useRouter } from "next-nprogress-bar";
+import getEmailToken from "@/utils/auth/getEmailToken";
+import logout from "@/utils/auth/logout";
 
 export default function EmailVerifyCheck() {
     const dispatch = useAppDispatch();

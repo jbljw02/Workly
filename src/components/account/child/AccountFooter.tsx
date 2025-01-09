@@ -1,9 +1,9 @@
 import { useAppDispatch } from "@/redux/hooks";
 import { useRouter } from "next-nprogress-bar";
 import CommonButton from "@/components/button/CommonButton";
-import logout from "@/utils/logout";
 import { useState } from "react";
 import WithdrawlModal from "@/components/modal/WithdrawlModal";
+import logout from "@/utils/auth/logout";
 
 export default function AccountFooter() {
     const dispatch = useAppDispatch();

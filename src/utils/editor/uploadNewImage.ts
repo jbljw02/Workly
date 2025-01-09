@@ -22,7 +22,6 @@ const uploadNewImage = async (editor: Editor, file: File, src: string, docId: st
         textAlign: 'left',
     };
 
-    
     try {
         (editor.commands.setResizableImage as SetResizableImageProps)(imageAttrs);
 

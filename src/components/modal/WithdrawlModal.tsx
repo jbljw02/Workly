@@ -6,12 +6,11 @@ import CommonButton from "../button/CommonButton";
 import { showWarningAlert, showCompleteAlert } from "@/redux/features/alertSlice";
 import { setWorkingSpinner } from "@/redux/features/placeholderSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import logout from "@/utils/logout";
-import axios from "axios";
 import { getAuth } from "firebase/auth";
 import { useRouter } from "next-nprogress-bar";
 import { useEffect } from "react";
 import SubmitButton from "../button/SubmitButton";
+import logout from "@/utils/auth/logout";
 
 export default function WithdrawlModal({ isModalOpen, setIsModalOpen }: ModalProps) {
     const dispatch = useAppDispatch();
