@@ -95,7 +95,6 @@ export async function GET(req: NextRequest) {
                     headers: { 'Authorization': tiptapCloudSecret },
                     timeout: 5000 // 5초가 지나면 요청을 중단하고 에러를 발생
                 });
-                console.log('response', response);
                 return response.data;
             } catch (error) {
                 // 2차: 실패 시 Storage에서 조회
