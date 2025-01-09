@@ -29,7 +29,7 @@ const createTiptapDocument = async (docName: string, docContent: any) => {
         }
     );
 
-    return response.data;
+    return response;
 }
 
 export default createTiptapDocument;

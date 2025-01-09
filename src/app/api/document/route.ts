@@ -114,6 +114,7 @@ export async function GET(req: NextRequest) {
 
             try {
                 const docContent = await getDocumentContent(doc.id, data.contentUrl);
+                console.log('docContent', docContent);
 
                 return {
                     id: doc.id,
@@ -135,12 +136,8 @@ export async function GET(req: NextRequest) {
             }
         }));
 
-        console.log('documents', documents);
-
         // null 값(조회 실패한 문서) 필터링
         const validDocuments = documents.filter(doc => doc !== null);
-
-        console.log('validDocuments', validDocuments);
 
         return NextResponse.json(validDocuments, { status: 200 });
     } catch (error) {
