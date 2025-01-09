@@ -13,7 +13,7 @@ const getTiptapDocument = async (docName: string) => {
             timeout: 5000
         });
 
-        console.log('response', response.data);
+        console.log('response', response);
 
         return response.data;
     } catch (error) {
