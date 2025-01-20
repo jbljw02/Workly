@@ -160,7 +160,7 @@ export async function DELETE(req: NextRequest) {
             // 모든 삭제 작업 완료 대기
             await Promise.all([...deletePromises, ...subFolderDeletePromises]);
         } catch (error) {
-            console.error("스토리지 파일 삭제 중 오류:", error);
+            return NextResponse.json({ error: "문서 삭제 실패" }, { status: 500 });
         }
 
         // 휴지통의 폴더 참조 가져오기

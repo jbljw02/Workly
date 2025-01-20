@@ -1,8 +1,7 @@
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
-import router from 'next/router';
 import GoogleIcon from '../../../public/svgs/google.svg';
 import { auth } from '../../firebase/firebasedb';
-import { useAppDispatch, useAppSelector } from '@/redux/hooks';
+import { useAppDispatch } from '@/redux/hooks';
 import { setUser } from '@/redux/features/userSlice';
 import axios from 'axios';
 import { showWarningAlert } from '@/redux/features/alertSlice';

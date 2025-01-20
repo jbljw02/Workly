@@ -134,7 +134,6 @@ export async function GET(req: NextRequest) {
 
         return NextResponse.json(validDocuments, { status: 200 });
     } catch (error) {
-        console.error("문서 정보 요청 실패", error);
         return NextResponse.json({ error: "문서 정보 요청 실패" }, { status: 500 });
     }
 }
@@ -164,7 +163,6 @@ export async function PUT(req: NextRequest) {
 
         return NextResponse.json({ success: "문서 수정 성공" }, { status: 200 });
     } catch (error) {
-        console.error(error);
         return NextResponse.json({ error: "문서 수정 실패" }, { status: 500 });
     }
 }
@@ -187,7 +185,6 @@ export async function PATCH(req: NextRequest) {
 
         return NextResponse.json({ success: "열람 시간 업데이트 성공" }, { status: 200 });
     } catch (error) {
-        console.error(error);
         return NextResponse.json({ error: "열람 시간 업데이트 실패" }, { status: 500 });
     }
 }
