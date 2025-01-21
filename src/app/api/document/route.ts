@@ -86,17 +86,17 @@ export async function GET(req: NextRequest) {
 
         // 문서 내용 조회 함수
         const getDocumentContent = async (docId: string, contentUrl: string) => {
-            // 1차: Tiptap Cloud에서 조회 시도
             try {
-                const docContent = await getTiptapDocument(docId);
-                return docContent;
+                // 1차: Storage에서 조회 시도
+                const response = await fetch(contentUrl);
+                if (!response.ok) throw new Error('Storage 조회 실패');
+                return await response.json();
             } catch (error) {
-                // 2차: 실패 시 Storage에서 조회
+                // 2차: 실패 시 Tiptap Cloud에서 조회 시도
                 try {
-                    const response = await fetch(contentUrl);
-                    if (!response.ok) throw new Error('Storage 조회 실패');
-                    return await response.json();
-                } catch (storageError) {
+                    const docContent = await getTiptapDocument(docId);
+                    return docContent;
+                } catch (documentError) {
                     throw new Error('문서 내용 조회 실패');
                 }
             }
