@@ -12,12 +12,8 @@ export default function useLeavePage(onLeavePage: () => void | Promise<void>) {
     const selectedDocument = useAppSelector(state => state.selectedDocument);
 
     const leavePage = useCallback(async () => {
-        try {
-            if (selectedDocument && selectedDocument.id && selectedDocument.docContent) {
-                await onLeavePage();
-            }
-        } catch (error) {
-            console.error('페이지를 떠나는 도중 에러 발생: ', error)
+        if (selectedDocument && selectedDocument.id && selectedDocument.docContent) {
+            await onLeavePage();
         }
     }, [onLeavePage]);
 
@@ -40,7 +36,7 @@ export default function useLeavePage(onLeavePage: () => void | Promise<void>) {
         }
 
         const originalPush = router.push // 기존 route.push 함수를 저장
-        
+
         // route.push 함수를 새로운 함수로 덮어씀
         // 페이지를 떠나기 전에 leavePage 함수를 호출을 완료
         router.push = async (href, options) => {

@@ -8,15 +8,6 @@ import { useAppSelector } from '@/redux/hooks';
 export default function EditorHome() {
     const user = useAppSelector(state => state.user);
 
-    // const test = async () => {
-    //     const response = await axios.get('/api/test');
-    //     console.log(response.data.executionTime);
-    // }
-
-    // useEffect(() => {
-    //     test();
-    // }, []);
-
     return (
         <div className="flex flex-col w-full h-full overflow-y-auto">
             {/* 홈의 헤더 */}

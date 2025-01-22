@@ -48,11 +48,6 @@ export default function DeleteCheckModal({ isModalOpen, setIsModalOpen, searchCa
             });
 
             dispatch(showCompleteAlert('해당 문서는 영구적으로 삭제되었습니다.'));
-
-            // tiptap cloud 서버에서 문서 삭제
-            await axios.delete('/api/tiptap-document', {
-                params: { docName: document.id }
-            });
         } catch (error) {
             dispatch(showWarningAlert('삭제에 실패했습니다.'));
 
@@ -73,7 +68,7 @@ export default function DeleteCheckModal({ isModalOpen, setIsModalOpen, searchCa
 
             setIsModalOpen(false);
 
-            // 파이어베이스에서 폴더 삭제
+            // 파이어베이스에서 폴더와 관련 문서 삭제
             await axios.delete('/api/trash/folder', {
                 params: {
                     email: user.email,
@@ -82,15 +77,6 @@ export default function DeleteCheckModal({ isModalOpen, setIsModalOpen, searchCa
             });
 
             dispatch(showCompleteAlert('해당 폴더는 영구적으로 삭제되었습니다.'));
-
-            // 폴더 내 모든 문서를 클라우드에서 삭제(병렬 처리)
-            await Promise.all(
-                folder.documentIds.map(id =>
-                    axios.delete('/api/tiptap-document', {
-                        params: { docName: id }
-                    })
-                )
-            );
         } catch (error) {
             dispatch(showWarningAlert('삭제에 실패했습니다.'));
 

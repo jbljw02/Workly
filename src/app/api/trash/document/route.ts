@@ -3,6 +3,8 @@ import { collection, doc, getDoc, getDocs, writeBatch } from "firebase/firestore
 import { NextRequest, NextResponse } from "next/server";
 import firestore from "../../../../firebase/firestore";
 import { deleteObject, getStorage, ref, listAll } from "firebase/storage";
+import deleteTiptapDocument from '@/utils/tiptap-document/deleteTiptapDocument';
+import axios from "axios";
 
 // 휴지통에 있는 사용자의 문서 복원 - CREATE
 export async function POST(req: NextRequest) {
@@ -137,6 +139,16 @@ export async function DELETE(req: NextRequest) {
         if (!docId) return NextResponse.json({ error: "문서 ID가 제공되지 않음" }, { status: 400 });
         if (!folderId) return NextResponse.json({ error: "폴더 ID가 제공되지 않음" }, { status: 400 });
 
+        // Tiptap Cloud에서 문서 삭제
+        try {
+            await deleteTiptapDocument(docId);
+        } catch (error) {
+            // 404 에러는 무시(이미 삭제된 경우)
+            if (!axios.isAxiosError(error) || error.response?.status !== 404) {
+                throw error;
+            }
+        }
+
         const trashDocRef = doc(firestore, 'trash-documents', docId);
         const trashDocSnap = await getDoc(trashDocRef);
         if (!trashDocSnap.exists()) return NextResponse.json({ error: "문서를 찾을 수 없음" }, { status: 404 });
@@ -160,7 +172,7 @@ export async function DELETE(req: NextRequest) {
             // 모든 삭제 작업 완료 대기
             await Promise.all([...deletePromises, ...subFolderDeletePromises]);
         } catch (error) {
-            console.error("스토리지 파일 삭제 중 오류:", error);
+            return NextResponse.json({ error: "문서 삭제 실패" }, { status: 500 });
         }
 
         // 휴지통의 폴더 참조 가져오기
