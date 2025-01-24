@@ -19,10 +19,14 @@ const REFRESH_PATHS = [
 export default function useGetUserData() {
     const dispatch = useAppDispatch();
     const pathname = usePathname();
-    const shouldRefresh = REFRESH_PATHS.includes(pathname);
-
     const user = useAppSelector(state => state.user);
     const isDeleting = useAppSelector(state => state.loading.isDeleting);
+    const documents = useAppSelector(state => state.documents);
+    const folders = useAppSelector(state => state.folders);
+
+    // 즉시 문서 편집 페이지로 접속했을 상황을 고려해, 문서 혹은 폴더 데이터가 비어있는 경우 새로고침
+    const shouldRefresh = pathname.startsWith('/editor') &&
+        (REFRESH_PATHS.includes(pathname) || documents.length === 0 || folders.length === 0);
 
     // 사용자의 전체 문서 요청
     const getUserDocument = async () => {
