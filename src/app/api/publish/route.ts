@@ -24,9 +24,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
         const draftContent = await draftResponse.json();
 
         // 문서 게시 전에, 미처 내용이 저장되지 못했을 상황을 대비해서 저장
-        if (!draftContent) {
-            await uploadString(draftContentRef, JSON.stringify(docContent));
-        }
+        if (!draftContent) await uploadString(draftContentRef, JSON.stringify(docContent));
 
         // 문서 내용을 가져와 스토리지에 업로드
         const publishedContentRef = ref(storage, `documents/${docId}/published/content.json`);

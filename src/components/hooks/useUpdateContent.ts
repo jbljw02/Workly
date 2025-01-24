@@ -28,7 +28,7 @@ export default function useUpdateContent() {
     // 즉시 업데이트 요청
     const updateContent = async (latestDoc: DocumentProps) => {
         if (!latestDoc) return;
-
+        
         await axios.put('/api/document', {
             docId: latestDoc.id,
             newDocName: latestDoc.title,

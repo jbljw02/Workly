@@ -21,6 +21,7 @@ export type DocumentProps = {
     isPublished?: boolean;
     publishedUser?: UserProps;
     publishedDate?: { seconds: number, nanoseconds: number };
+    savePath?: 'firestore' | 'firebase-storage';
 }
 
 const DocumentsState: DocumentProps[] = [];

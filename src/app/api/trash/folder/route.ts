@@ -4,6 +4,7 @@ import firestore from "../../../../firebase/firestore";
 import { getStorage, ref, deleteObject, listAll } from "firebase/storage";
 import deleteTiptapDocument from '@/utils/tiptap-document/deleteTiptapDocument';
 import axios from "axios";
+import deleteStorageFile from "@/utils/deleteStorageFile";
 
 // 휴지통에 있는 폴더 복원 - POST
 export async function POST(req: NextRequest) {
@@ -137,26 +138,7 @@ export async function DELETE(req: NextRequest) {
             const docSnap = await getDoc(docRef);
             if (!docSnap.exists()) return NextResponse.json({ error: "문서를 찾을 수 없음" }, { status: 404 });
 
-            const documentFolderRef = ref(storage, `documents/${docId}`);
-
-            try {
-                // 해당 경로의 모든 파일과 하위 폴더 목록을 가져옴
-                const listResult = await listAll(documentFolderRef);
-
-                // 모든 파일 삭제
-                const deletePromises = listResult.items.map(item => deleteObject(item));
-
-                // 하위 폴더의 모든 파일 삭제
-                const subFolderDeletePromises = listResult.prefixes.map(async (folderRef) => {
-                    const subListResult = await listAll(folderRef);
-                    return Promise.all(subListResult.items.map(item => deleteObject(item)));
-                });
-
-                // 모든 삭제 작업 완료 대기
-                await Promise.all([...deletePromises, ...subFolderDeletePromises]);
-            } catch (error) {
-                console.warn(`스토리지 파일 삭제 실패(문서 ID: ${docId}):`, error);
-            }
+            await deleteStorageFile(docId);
 
             // Firestore에서 문서 삭제
             batch.delete(docRef);

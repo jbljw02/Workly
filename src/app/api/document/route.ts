@@ -1,11 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import firestore from "../../../firebase/firestore";
-import { doc, getDoc, updateDoc, collection, addDoc, writeBatch, query, where, getDocs, orderBy, serverTimestamp, setDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc, collection, writeBatch, getDocs, serverTimestamp } from "firebase/firestore";
 import { Collaborator } from "@/redux/features/documentSlice";
-import { getDownloadURL, getStorage, ref, uploadString } from "firebase/storage";
 import convertTimestamp from "@/utils/convertTimestamp";
 import createTiptapDocument from "@/utils/tiptap-document/createTiptapDocument";
-import getTiptapDocument from "@/utils/tiptap-document/getTiptapDocument";
+import checkDocumentSize from "@/utils/checkDocumentSize";
+import saveToStorage from "@/utils/saveToStorage";
+import getDocumentContent from "@/utils/getDocumentContent";
+
+// Firestore의 문서 크기 제한은 1MB
+// 안전 마진을 위해 900KB로 설정
+const MAX_FIRESTORE_SIZE = 900000;
 
 // 사용자의 문서를 추가 - CREATE
 export async function POST(req: NextRequest) {
@@ -15,47 +20,36 @@ export async function POST(req: NextRequest) {
         if (!folderId) return NextResponse.json({ error: "폴더 ID가 제공되지 않음" }, { status: 400 });
         if (!document) return NextResponse.json({ error: "문서 정보가 제공되지 않음" }, { status: 400 });
 
-        // 폴더 참조 가져오기
         const folderDocRef = doc(firestore, 'folders', folderId);
         const folderDocSnap = await getDoc(folderDocRef);
 
         if (!folderDocSnap.exists()) return NextResponse.json({ error: "폴더를 찾을 수 없음" }, { status: 404 });
 
         const folderData = folderDocSnap.data();
-
-        // 배치 작업 시작 - 여러 작업을 하나의 트랜잭션으로 묶어 처리
-        // 원자성: 모든 작업이 성공하지 못하면 작업은 실패
         const batch = writeBatch(firestore);
 
-        // 스토리지에 문서 내용 생성
-        const storage = getStorage();
-        const contentRef = ref(storage, `documents/${document.id}/drafts/content.json`);
-        const emptyContent = JSON.stringify(document.docContent); // 빈 문서 내용
-        await uploadString(contentRef, emptyContent);
-        const contentUrl = await getDownloadURL(contentRef);
-
-        // documents 컬렉션에 새 문서 추가
         const newDocRef = doc(firestore, 'documents', document.id);
+
+        // 문서 생성 시에는 빈 문서이므로 Firestore에 즉시 저장
         const newDocument = {
             ...document,
-            contentUrl: contentUrl, // 문서 내용에 대한 참조
+            docContent: document.docContent,
+            savePath: 'firestore',
             createdAt: serverTimestamp(),
             readedAt: serverTimestamp(),
-        };
+        }
+
         batch.set(newDocRef, newDocument);
 
-        // 폴더에 문서 업데이트(documentIds에 새 문서 ID 추가)
         batch.update(folderDocRef, {
             documentIds: [...(folderData.documentIds || []), document.id],
-            readedAt: serverTimestamp() // 폴더의 readedAt도 업데이트
+            readedAt: serverTimestamp()
         });
 
-        // 즉시 페이지로 라우팅하지 않는 경우 클라우드에 문서 추가 요청 전송
         if (!autoCreate) {
             await createTiptapDocument(document.id, document.docContent);
         }
 
-        // 배치 작업 실행
         await batch.commit();
 
         return NextResponse.json({ success: "문서 추가 성공" }, { status: 200 });
@@ -72,7 +66,7 @@ export async function GET(req: NextRequest) {
 
         if (!email) return NextResponse.json({ error: "이메일이 제공되지 않음" }, { status: 400 });
 
-        // 각 문서의 메타데이터 조회
+        // 모든 문서 가져오기
         const documentsSnapshot = await getDocs(collection(firestore, 'documents'));
 
         // 사용자의 문서만 필터링
@@ -84,31 +78,11 @@ export async function GET(req: NextRequest) {
             return isAuthor || isCollaborator;
         });
 
-        // 문서 내용 조회 함수
-        const getDocumentContent = async (docId: string, contentUrl: string) => {
-            try {
-                // 1차: Storage에서 조회 시도
-                const response = await fetch(contentUrl);
-                if (!response.ok) throw new Error('Storage 조회 실패');
-                return await response.json();
-            } catch (error) {
-                // 2차: 실패 시 Tiptap Cloud에서 조회 시도
-                try {
-                    const docContent = await getTiptapDocument(docId);
-                    return docContent;
-                } catch (documentError) {
-                    throw new Error('문서 내용 조회 실패');
-                }
-            }
-        };
-
-        // 필터링된 문서들의 내용 조회
         const documents = await Promise.all(userDocuments.map(async doc => {
             const data = doc.data();
 
             try {
-                const docContent = await getDocumentContent(doc.id, data.contentUrl);
-
+                const docContent = await getDocumentContent(doc.id, data);
                 return {
                     id: doc.id,
                     title: data.title,
@@ -123,9 +97,10 @@ export async function GET(req: NextRequest) {
                     isPublished: data.isPublished,
                     publishedUser: data.publishedUser,
                     publishedDate: data.publishedDate ? convertTimestamp(data.publishedDate) : undefined,
+                    savePath: data.savePath,
                 };
             } catch (error) {
-                return null; // 개별 문서 조회 실패 시에도 전체 요청은 계속 진행
+                return null;
             }
         }));
 
@@ -146,19 +121,41 @@ export async function PUT(req: NextRequest) {
         if (!docId) return NextResponse.json({ error: "문서 아이디가 제공되지 않음" }, { status: 400 });
 
         const docRef = doc(firestore, 'documents', docId);
+        const docSnap = await getDoc(docRef);
+        if (!docSnap.exists()) return NextResponse.json({ error: "문서를 찾을 수 없음" }, { status: 404 });
 
-        const updateData = {
+        let updateData: any = {
             readedAt: serverTimestamp(),
             ...(newDocName !== undefined && { title: newDocName })
         };
 
-        // 문서 내용 변경을 요청할 경우에만 스토리지 업데이트
         if (newDocContent !== undefined) {
-            const storage = getStorage();
-            const contentRef = ref(storage, `documents/${docId}/drafts/content.json`);
-            await uploadString(contentRef, JSON.stringify(newDocContent));
-        }
+            // 문서 크기 체크
+            const contentSize = checkDocumentSize(newDocContent);
 
+            // 문서 크기가 900KB를 초과하면 Storage에 저장
+            if (contentSize > MAX_FIRESTORE_SIZE) {
+                // Storage로 이동
+                const contentUrl = await saveToStorage(docId, newDocContent);
+                updateData = {
+                    ...updateData,
+                    // 스토리지에 문서 내용이 저장되므로 내용을 삭제하고 경로 저장
+                    docContent: null,
+                    contentUrl: contentUrl,
+                    savePath: 'firebase-storage'
+                };
+            }
+            else {
+                // Firestore에 직접 저장
+                updateData = {
+                    ...updateData,
+                    // 문서 내용을 직접 저장
+                    docContent: newDocContent,
+                    contentUrl: null,
+                    savePath: 'firestore'
+                };
+            }
+        }
         await updateDoc(docRef, updateData);
 
         return NextResponse.json({ success: "문서 수정 성공" }, { status: 200 });
@@ -211,15 +208,11 @@ export async function DELETE(req: NextRequest) {
 
         const folderData = folderSnap.data();
 
-        // 스토리지 문서 내용 가져오기
-        const storage = getStorage();
-        const contentRef = ref(storage, `documents/${docId}/drafts/content.json`);
-        const response = await fetch(docData.contentUrl);
-        const content = await response.json();
-
-        // 삭제되기 전에, 미처 내용이 저장되지 못했을 상황을 대비해서 저장
-        if (!content) {
-            await uploadString(contentRef, JSON.stringify(docContent));
+        // 삭제되기 전에 미처 내용이 저장되지 못했을 상황을 대비해서 저장
+        if (!docData.docContent) {
+            await updateDoc(docRef, {
+                docContent: docContent,
+            });
         }
 
         // 배치 작업 시작
