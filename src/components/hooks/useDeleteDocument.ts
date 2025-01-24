@@ -50,8 +50,6 @@ export default function useDeleteDocument() {
                 }
             }
 
-            console.log('docContent', document.docContent);
-
             // 파이어베이스의 문서 삭제
             await axios.delete('/api/document', {
                 data: {

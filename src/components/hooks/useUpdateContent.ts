@@ -4,6 +4,8 @@ import axios from "axios";
 import { DocumentProps } from "@/redux/features/documentSlice";
 import { showWarningAlert } from "@/redux/features/alertSlice";
 import { useAppDispatch } from "@/redux/hooks";
+import { doc, getDoc } from "firebase/firestore";
+import firestore from "@/firebase/firestore";
 
 export default function useUpdateContent() {
     const dispatch = useAppDispatch();
@@ -12,7 +14,9 @@ export default function useUpdateContent() {
     // 디바운싱을 이용하여 과도한 요청 방지
     const debouncedUpdateRequest = useCallback(
         debounce(async (latestDoc: DocumentProps) => {
-            if (!latestDoc) return;
+            const docRef = doc(firestore, 'documents', latestDoc.id);
+            const docSnap = await getDoc(docRef);
+            if (!docSnap.exists() || !latestDoc.docContent) return;
 
             try {
                 await axios.put('/api/document', {
@@ -27,8 +31,10 @@ export default function useUpdateContent() {
 
     // 즉시 업데이트 요청
     const updateContent = async (latestDoc: DocumentProps) => {
-        if (!latestDoc) return;
-        
+        const docRef = doc(firestore, 'documents', latestDoc.id);
+        const docSnap = await getDoc(docRef);
+        if (!docSnap.exists() || !latestDoc.docContent) return;
+
         await axios.put('/api/document', {
             docId: latestDoc.id,
             newDocName: latestDoc.title,
