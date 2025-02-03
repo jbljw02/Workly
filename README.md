@@ -31,7 +31,13 @@
 ![흐름도 - 문서 저장](https://github.com/user-attachments/assets/bc38adcd-4d7a-47f9-a3d7-a24c7d2620f5)
 
 ### 2) 문서 접근 제어
-![흐름도 - 문서 접근](https://github.com/user-attachments/assets/a0632694-7309-44a3-9143-ce6e108700b0)
+![흐름도 - 문서 접근](https://github.com/user-attachments/assets/ba37f5af-2b00-4742-b5ed-4fcd96e600a1)
+
+### 3) 문서 조회: 주 저장소의 장애 상황을 대비한 이중화 구조
+![흐름도 - 문서 조회](https://github.com/user-attachments/assets/631ddb2c-869e-4ff9-9e68-3933fd26b557)
+
+### 4) 문서 내용 저장: 주 저장소의 용량 제한을 고려한 하이브리드 구조
+![흐름도 - 문서 저장](https://github.com/user-attachments/assets/f0da602a-1608-4aca-b578-5ce5835f4f00)
 
 <br>
 
