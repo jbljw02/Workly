@@ -10,7 +10,7 @@ import getDocumentContent from "@/utils/getDocumentContent";
 
 // Firestore의 문서 크기 제한은 1MB
 // 안전 마진을 위해 900KB로 설정
-export const MAX_FIRESTORE_SIZE = 900000;
+const MAX_FIRESTORE_SIZE = 900000;
 
 // 사용자의 문서를 추가 - CREATE
 export async function POST(req: NextRequest) {
