@@ -1,15 +1,13 @@
 'use client';
 
-import { DocumentProps, setSelectedDocument } from "@/redux/features/documentSlice";
-import useEditorExtension from "../hooks/useEditorExtension";
+import {  setSelectedDocument } from "@/redux/features/documentSlice";
 import { EditorContent, JSONContent, useEditor } from "@tiptap/react";
 import EditorHeader from "../editor/child/header/EditorHeader";
 import EditorTitleInput from "../editor/child/EditorTitleInput";
-import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { use, useEffect, useState } from "react";
+import { useAppDispatch } from "@/redux/hooks";
+import { useEffect } from "react";
 import { setWebPublished } from "@/redux/features/webPublishedSlice";
 import convertTimestamp from "@/utils/convertTimestamp";
-import { Timestamp } from "firebase/firestore";
 import usePublishedExtension from "../hooks/usePublishedExtension";
 
 type PublishedDocumentProps = {
