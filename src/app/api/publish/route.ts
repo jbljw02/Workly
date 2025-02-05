@@ -2,6 +2,7 @@ import { doc, getDoc, serverTimestamp, updateDoc } from '@firebase/firestore';
 import { NextRequest, NextResponse } from 'next/server';
 import firestore from '@/firebase/firestore';
 import { deleteObject, getStorage, ref, uploadString } from 'firebase/storage';
+import getDocumentContent from '@/utils/getDocumentContent';
 
 // 문서를 게시 - CREATE
 export async function POST(req: NextRequest, res: NextResponse) {
@@ -17,18 +18,15 @@ export async function POST(req: NextRequest, res: NextResponse) {
         const docSnap = await getDoc(docRef);
         if (!docSnap.exists()) return NextResponse.json({ error: "문서를 찾을 수 없음" }, { status: 404 });
 
-        // 스토리지 문서 내용 가져오기
-        const storage = getStorage();
-        const draftContentRef = ref(storage, `documents/${docId}/drafts/content.json`);
-        const draftResponse = await fetch(docSnap.data().contentUrl);
-        const draftContent = await draftResponse.json();
+        const docData = docSnap.data();
+        const draftContent = await getDocumentContent(docId, docData);
 
-        // 문서 게시 전에, 미처 내용이 저장되지 못했을 상황을 대비해서 저장
-        if (!draftContent) await uploadString(draftContentRef, JSON.stringify(docContent));
+        const storage = getStorage();
 
         // 문서 내용을 가져와 스토리지에 업로드
         const publishedContentRef = ref(storage, `documents/${docId}/published/content.json`);
-        await uploadString(publishedContentRef, JSON.stringify(draftContent));
+        // 문서 내용이 아직 업로드되지 않았다면 파라미터로 받은 내용으로 업로드
+        await uploadString(publishedContentRef, JSON.stringify(draftContent ? draftContent : docContent));
 
         await updateDoc(docRef, {
             isPublished: true,
