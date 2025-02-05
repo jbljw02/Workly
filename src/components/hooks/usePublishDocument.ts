@@ -18,6 +18,11 @@ export default function usePublishDocument() {
                 dispatch(showWarningAlert('이미 게시된 문서입니다.'));
                 return;
             }
+            if (!selectedDoc.title) {
+                dispatch(showWarningAlert('문서 게시 전 제목을 입력해주세요.'));
+                return;
+            }
+
             Nprogress.start();
             dispatch(setWorkingSpinner(true));
 
