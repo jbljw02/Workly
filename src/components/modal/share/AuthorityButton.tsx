@@ -1,10 +1,9 @@
 import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import ArrowIcon from '../../../../public/svgs/down-arrow.svg';
-import { useAppDispatch, useAppSelector } from '@/redux/hooks';
-import { Collaborator, DocumentProps } from '@/redux/features/documentSlice';
+import { useAppSelector } from '@/redux/hooks';
+import { Collaborator, DocumentProps } from '@/types/document.type';
 import AuthorityDropdown from './AuthorityDropdown';
-import { setSelectedCoworkers } from '@/redux/features/shareDocumentSlice';
 
 export type AuthorityCategory = '전체 허용' | '쓰기 허용' | '읽기 허용' | '관리자' | '멤버 제거';
 

@@ -1,7 +1,7 @@
 import CloseIcon from '../../../public/svgs/editor/close.svg'
 import { useEffect, useState } from "react";
 import CompleteIcon from '../../../public/svgs/complete.svg';
-import { NoticeModalProps } from '@/types/noticeModalProps';
+import { NoticeModalProps } from '@/types/modalProps.type';
 
 export default function CompleteAlert({ isModalOpen, setIsModalOpen, label }: NoticeModalProps) {
     const [animation, setAnimation] = useState<string>('slide-up');

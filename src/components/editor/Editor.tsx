@@ -9,18 +9,19 @@ import '@/styles/imageNode.css';
 import EditorHeader from './child/header/EditorHeader'
 import DragHandle from '@tiptap-pro/extension-drag-handle-react'
 import MenuIcon from '../../../public/svgs/editor/menu-vertical.svg'
-import { DocumentProps, renameDocuments, setSelectedDocument, updateDocuments, updateSelectedDocContent } from '@/redux/features/documentSlice'
+import { renameDocuments, setSelectedDocument, updateDocuments } from '@/redux/features/document/documentSlice'
 import formatTimeDiff from '@/utils/formatTimeDiff'
 import MenuBar from './child/header/MenuBar'
-import useEditorExtension from '../hooks/useEditorExtension';
-import useVisitDocument from '../hooks/useVisitDocument';
-import useDocumentRealTime from '../hooks/useDocumentRealTime';
-import useUpdateContent from '../hooks/useUpdateContent';
-import useLeavePage from '../hooks/useLeavePage';
+import useEditorExtension from '@/hooks/editor/useEditorExtension';
+import useVisitDocument from '@/hooks/document/useVisitDocument';
+import useDocumentRealTime from '@/hooks/editor/useDocumentRealTime';
+import useUpdateContent from '@/hooks/editor/useUpdateContent';
+import useLeavePage from '@/hooks/editor/useLeavePage';
 import EditorTitleInput from './child/EditorTitleInput';
 import EditorHeaderSkeleton from '../placeholder/skeleton/editor/EditorHeaderSkeleton';
 import EditorContentSkeleton from '../placeholder/skeleton/editor/EditorContentSkeleton';
 import { usePathname } from 'next/navigation';
+import { DocumentProps } from '@/types/document.type';
 
 export default function Editor({ docId }: { docId: string }) {
   const dispatch = useAppDispatch();

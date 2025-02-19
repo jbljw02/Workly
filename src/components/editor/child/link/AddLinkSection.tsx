@@ -1,10 +1,10 @@
 import { Editor } from "@tiptap/react";
 import WorldIcon from '../../../../../public/svgs/editor/world.svg';
 import { useEffect, useRef, useState } from "react";
-import { useClickOutside } from "@/components/hooks/useClickOutside";
 import { v4 as uuidv4 } from 'uuid';
 import React from "react";
 import LinkTargetDocumentList from "./LinkTargetDocumentList";
+import { useClickOutside } from "@/hooks/common/useClickOutside";
 
 export type SelectionPosition = {
     top: number;

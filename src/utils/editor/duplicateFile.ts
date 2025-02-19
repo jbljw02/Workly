@@ -1,9 +1,9 @@
 import { Editor } from "@tiptap/react";
 import { v4 as uuidv4 } from 'uuid';
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { showWarningAlert } from "@/redux/features/alertSlice";
+import { showWarningAlert } from "@/redux/features/common/alertSlice";
 import { AppDispatch } from "@/redux/store";
-import { FileNodeAttrs } from "../../../lib/fileNode";
+import { FileNodeAttrs } from "../../lib/fileNode";
 
 const duplicateFile = async (editor: Editor, fileNode: FileNodeAttrs, dispatch: AppDispatch) => {
     const newId = uuidv4();

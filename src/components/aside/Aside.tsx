@@ -9,7 +9,7 @@ import { useAppSelector } from "@/redux/hooks";
 import FolderSection from "./child/folder/FolderSection";
 import UserSection from "./child/user/UserSection";
 import GroupIcon from '../../../public/svgs/group.svg';
-import useAddDocument from "../hooks/useAddDocument";
+import useAddDocument from "@/hooks/document/useAddDocument";
 import Trash from "../trash/Trash";
 import ShortcutIcon from '../../../public/svgs/shortcuts-off.svg';
 import WebIcon from '../../../public/svgs/web.svg';
@@ -20,7 +20,7 @@ export default function Aside() {
     const router = useRouter();
 
     const addDocToFolder = useAddDocument();
-    
+
     const folders = useAppSelector(state => state.folders);
 
     const expandedWidth = 240; // 넓은 상태의 너비

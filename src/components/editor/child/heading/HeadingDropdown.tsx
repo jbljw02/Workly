@@ -4,7 +4,7 @@ import { useRef, useState } from "react";
 import TriangleDownIcon from '../../../../../public/svgs/editor/triangle-down.svg'
 import TriangleRightIcon from '../../../../../public/svgs/editor/triangle-right.svg'
 import TriangleUpIcon from '../../../../../public/svgs/editor/triangle-up.svg'
-import { useClickOutside } from "@/components/hooks/useClickOutside";
+import { useClickOutside } from "@/hooks/common/useClickOutside";
 import HoverTooltip from "../../../tooltip/HoverTooltip";
 
 type Option = {

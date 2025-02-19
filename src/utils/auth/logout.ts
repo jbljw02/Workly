@@ -2,7 +2,7 @@ import axios from "axios";
 import { signOut } from "firebase/auth";
 import { auth } from "../../firebase/firebasedb";
 import { AppDispatch } from "@/redux/store";
-import { showWarningAlert } from "@/redux/features/alertSlice";
+import { showWarningAlert } from "@/redux/features/common/alertSlice";
 import NProgress from 'nprogress';
 
 const logout = async (dispatch: AppDispatch) => {
@@ -13,7 +13,7 @@ const logout = async (dispatch: AppDispatch) => {
         ]);
 
         NProgress.start();
-        
+
         // 절대 경로 사용
         window.location.href = '/';
     } catch (error) {

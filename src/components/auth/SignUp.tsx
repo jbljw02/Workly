@@ -7,15 +7,15 @@ import SubmitButton from "../button/SubmitButton";
 import FormInput from "../input/FormInput";
 import AuthTop from "./child/AuthTop";
 import DivideBar from "./child/DivideBar";
-import PINoticeModal from "../button/PINoticeModal";
+import PINoticeModal from "../modal/PINoticeModal";
 import { createUserWithEmailAndPassword, sendEmailVerification, updateProfile } from "firebase/auth";
 import { auth } from "../../firebase/firebasedb";
 import EmailVerifyModal from "../modal/EmailVerifyModal";
 import { FirebaseError } from "firebase-admin";
 import Link from "next/link";
 import { useAppDispatch } from "@/redux/hooks";
-import { setWorkingSpinner } from "@/redux/features/placeholderSlice";
-import { showWarningAlert } from "@/redux/features/alertSlice";
+import { setWorkingSpinner } from "@/redux/features/common/placeholderSlice";
+import { showWarningAlert } from "@/redux/features/common/alertSlice";
 import PIAgreeCheckbox from "../input/PIAgreeCheckbox";
 
 export const emailRegex = /^[A-Za-z0-9_\.\-]+@[A-Za-z0-9\-]+\.[A-Za-z]{2,}$/;

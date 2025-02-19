@@ -1,21 +1,21 @@
 import { AnyAction, combineReducers, configureStore } from '@reduxjs/toolkit';
 import { HYDRATE } from "next-redux-wrapper";
-import userReducers from './features/userSlice';
-import scaleReducers from './features/scaleSlice';
-import editorImageReducers from './features/editorImageSlice';
-import fileReducers from './features/fileSlice';
-import linkReducers from './features/linkSlice';
-import selectionReducers from './features/selectionSlice';
-import textColorReducers from './features/textColorSlice';
-import documentReducers from './features/documentSlice';
-import folderReducers from './features/folderSlice';
-import alertReducers from './features/alertSlice';
-import shareDocumentReducers from './features/shareDocumentSlice';
-import trashReducers from './features/trashSlice';
-import webPublishedReducers from './features/webPublishedSlice';
-import selectedNodeReducers from './features/selectedNodeSlice';
-import placeholderReducers from './features/placeholderSlice';
-import connectionReducers from './features/connectionSlice';
+import userReducers from './features/user/userSlice';
+import scaleReducers from './features/editor/scaleSlice';
+import editorImageReducers from './features/editor/editorImageSlice';
+import fileReducers from './features/editor/fileSlice';
+import linkReducers from './features/editor/linkSlice';
+import selectionReducers from './features/editor/selectionSlice';
+import textColorReducers from './features/editor/textColorSlice';
+import folderReducers from './features/folder/folderSlice';
+import alertReducers from './features/common/alertSlice';
+import trashReducers from './features/trash/trashSlice';
+import selectedNodeReducers from './features/editor/selectedNodeSlice';
+import placeholderReducers from './features/common/placeholderSlice';
+import connectionReducers from './features/editor/connectionSlice';
+import documentReducers from './features/document/documentSlice';
+import shareDocumentReducers from './features/document/shareDocumentSlice';
+import webPublishedReducers from './features/document/webPublishedSlice';
 
 const combinedReducer = combineReducers({
     user: userReducers.user,

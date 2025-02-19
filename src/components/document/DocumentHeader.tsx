@@ -3,8 +3,8 @@
 import { useState } from "react";
 import CommonButton from "../button/CommonButton";
 import AddInputModal from "../modal/AddInputModal";
-import useAddDocument from "../hooks/useAddDocument";
-import useAddFolder from "../hooks/useAddFolder";
+import useAddDocument from "@/hooks/document/useAddDocument";
+import useAddFolder from "@/hooks/folder/useAddFolder";
 import { useAppSelector } from "@/redux/hooks";
 
 type DocumentHeaderProps = {

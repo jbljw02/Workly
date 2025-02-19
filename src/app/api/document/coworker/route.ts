@@ -1,7 +1,7 @@
 import { doc, getDoc, updateDoc, arrayUnion } from "firebase/firestore";
 import firestore from "../../../../firebase/firestore";
 import { NextRequest, NextResponse } from "next/server";
-import { Collaborator } from "@/redux/features/documentSlice";
+import { Collaborator } from "@/types/document.type";
 import { getDownloadURL, getStorage, ref } from "firebase/storage";
 
 // 문서에 협업자 추가하기 - CREATE

@@ -1,4 +1,4 @@
-import { RefObject, useRef, useState } from "react";
+import { RefObject, useState } from "react";
 import BarDivider from "../divider/VerticalDivider";
 import HoverTooltip from "../../../tooltip/HoverTooltip";
 import ToolbarButton from "../../../button/ToolbarButton";
@@ -10,8 +10,8 @@ import TrashIcon from '../../../../../public/svgs/trash.svg';
 import FullIcon from '../../../../../public/svgs/editor/full-screen.svg';
 import { ResizableImageNodeViewRendererProps } from "tiptap-extension-resizable-image";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { setOpenFullModal } from "@/redux/features/editorImageSlice";
-import { showWarningAlert } from "@/redux/features/alertSlice";
+import { setOpenFullModal } from "@/redux/features/editor/editorImageSlice";
+import { showWarningAlert } from "@/redux/features/common/alertSlice";
 import { deleteObject, getStorage, ref } from "firebase/storage";
 import ImageFullModal from "./ImageFullModal";
 

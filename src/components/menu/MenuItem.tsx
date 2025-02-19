@@ -1,5 +1,3 @@
-import { useAppSelector } from "@/redux/hooks";
-
 export type MenuItemProps = {
     Icon: React.ElementType;
     IconWidth: string;

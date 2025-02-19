@@ -1,17 +1,17 @@
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { ModalProps } from "@/types/modalProps";
 import Modal from 'react-modal';
 import CommonInput from "../input/CommonInput";
 import { useEffect, useState } from "react";
 import FolderIcon from '../../../public/svgs/folder.svg';
-import CloseIcon from '../../../public/svgs/close.svg';
-import { addDocumentToFolder, Folder, removeDocumentFromFolder } from "@/redux/features/folderSlice";
+import { addDocumentToFolder, removeDocumentFromFolder } from "@/redux/features/folder/folderSlice";
 import axios from 'axios';
-import { DocumentProps, updateDocuments } from "@/redux/features/documentSlice";
 import ModalHeader from "./ModalHeader";
-import { showCompleteAlert, showWarningAlert } from "@/redux/features/alertSlice";
-import { WorkingDocModalProps } from "@/types/workingDocModalProps";
-import useOverlayLock from "../hooks/useOverlayLock";
+import { showCompleteAlert, showWarningAlert } from "@/redux/features/common/alertSlice";
+import { Folder } from "@/types/folder.type";
+import { DocumentProps } from "@/types/document.type";
+import useOverlayLock from "@/hooks/common/useOverlayLock";
+import { WorkingDocModalProps } from "@/types/modalProps.type";
+import { updateDocuments } from "@/redux/features/document/documentSlice";
 
 export default function DocumentMoveModal({ isModalOpen, setIsModalOpen, selectedDoc }: WorkingDocModalProps) {
     const dispatch = useAppDispatch();
@@ -68,7 +68,7 @@ export default function DocumentMoveModal({ isModalOpen, setIsModalOpen, selecte
                 dispatch(addDocumentToFolder({ folderId: targetFolder.id, docId: newDoc.id }));
 
                 setIsModalOpen(false);
-                
+
                 await axios.put('/api/document/move',
                     {
                         folderId: targetFolder.id,
@@ -78,7 +78,7 @@ export default function DocumentMoveModal({ isModalOpen, setIsModalOpen, selecte
                 dispatch(showCompleteAlert('문서를 성공적으로 이동했습니다.'))
             } catch (error) {
                 dispatch(showWarningAlert('문서를 이동하는 데에 실패했습니다.'))
-            } 
+            }
         }
     }
 

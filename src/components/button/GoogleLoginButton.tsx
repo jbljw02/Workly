@@ -2,9 +2,9 @@ import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import GoogleIcon from '../../../public/svgs/google.svg';
 import { auth } from '../../firebase/firebasedb';
 import { useAppDispatch } from '@/redux/hooks';
-import { setUser } from '@/redux/features/userSlice';
+import { setUser } from '@/redux/features/user/userSlice';
 import axios from 'axios';
-import { showWarningAlert } from '@/redux/features/alertSlice';
+import { showWarningAlert } from '@/redux/features/common/alertSlice';
 import { useRouter } from 'next-nprogress-bar';
 import NProgress from 'nprogress';
 

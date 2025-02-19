@@ -1,10 +1,10 @@
-import { Folder } from "@/redux/features/folderSlice"
 import DocumentIcon from '../../../../../public/svgs/document.svg';
 import DocumentItem from "./DocumentItem";
 import { useAppSelector } from "@/redux/hooks";
 import { useMemo } from "react";
 import { useRouter } from "next-nprogress-bar";
 import React from "react";
+import { Folder } from "@/types/folder.type";
 
 type DocumentSectionProps = {
     folder: Folder,

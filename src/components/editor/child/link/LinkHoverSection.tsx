@@ -7,7 +7,7 @@ import EditIcon from '../../../../../public/svgs/editor/pencil-edit.svg';
 import DeleteIcon from '../../../../../public/svgs/trash.svg';
 import HoverTooltip from '../../../tooltip/HoverTooltip';
 import LabelButton from '@/components/button/LabelButton';
-import { LinkSectionProps } from '@/types/linkSectionProps';
+import { LinkSectionProps } from './types/linkSectionProps.type';
 
 export default function LinkHoverSection({ editor, setIsEditing }: LinkSectionProps) {
     const dispatch = useAppDispatch();

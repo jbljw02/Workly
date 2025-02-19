@@ -2,7 +2,7 @@
 
 import '@/styles/global.css'
 import { makeStore, AppStore } from "@/redux/store";
-import { useRef, useEffect } from "react";
+import { useRef } from "react";
 import { Provider } from "react-redux";
 import EmailVerifyCheck from '@/components/global/EmailVerifyCheck';
 import { AppProgressBar as ProgressBar } from 'next-nprogress-bar';

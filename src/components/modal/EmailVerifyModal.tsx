@@ -1,19 +1,19 @@
 'use client';
 
-import { ModalProps } from '@/types/modalProps';
 import { useState } from 'react';
 import Modal from 'react-modal';
 import CommonButton from '../button/CommonButton';
 import { auth } from '../../firebase/firebasedb';
 import { useAppDispatch } from '@/redux/hooks';
 import axios from 'axios';
-import { setUser } from '@/redux/features/userSlice';
+import { setUser } from '@/redux/features/user/userSlice';
 import { sendEmailVerification, updateProfile } from '@firebase/auth';
 import { getDownloadURL, getStorage, ref } from 'firebase/storage';
 import { useRouter } from 'next-nprogress-bar';
-import { showWarningAlert } from '@/redux/features/alertSlice';
+import { showWarningAlert } from '@/redux/features/common/alertSlice';
 import NProgress from 'nprogress';
 import SubmitButton from '../button/SubmitButton';
+import { ModalProps } from '@/types/modalProps.type';
 
 export default function EmailVerifyModal({ isModalOpen, setIsModalOpen }: ModalProps) {
     const dispatch = useAppDispatch();

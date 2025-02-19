@@ -1,5 +1,5 @@
 import PdfFileNode from "@/components/editor/child/file/PdfFileNode";
-import { DocumentProps } from "@/redux/features/documentSlice"
+import { DocumentProps } from "@/types/document.type";
 import formatTimeDiff from "@/utils/formatTimeDiff";
 import { JSONContent } from "@tiptap/react";
 import Image from "next/image";

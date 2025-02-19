@@ -3,7 +3,7 @@ import AlignLeftIcon from '../../../../../public/svgs/editor/align-left.svg'
 import AlignRightIcon from '../../../../../public/svgs/editor/align-right.svg'
 import AlignCenterIcon from '../../../../../public/svgs/editor/align-center.svg'
 import { Editor } from '@tiptap/react'
-import { useClickOutside } from "@/components/hooks/useClickOutside";
+import { useClickOutside } from "@/hooks/common/useClickOutside";
 
 type AlignDropdown = {
     editor: Editor;

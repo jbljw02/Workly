@@ -1,4 +1,4 @@
-import { hideCompleteAlert, hideWarningAlert } from "@/redux/features/alertSlice";
+import { hideCompleteAlert, hideWarningAlert } from "@/redux/features/common/alertSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import CompleteAlert from "../alert/CompleteAlert";
 import WarningAlert from "../alert/WarningAlert";

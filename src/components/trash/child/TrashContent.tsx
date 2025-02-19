@@ -1,14 +1,10 @@
 import CategoryButton from "@/components/button/CategoryButton";
 import CommonInput from "@/components/input/CommonInput";
-import { showWarningAlert } from "@/redux/features/alertSlice";
-import { setDocumentsTrash, setFoldersTrash, setIsDeletingModalOpen } from "@/redux/features/trashSlice";
-import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import axios from "axios";
-import { useRef, useState, useCallback, useEffect, Dispatch, SetStateAction } from "react";
+import { useAppSelector } from "@/redux/hooks";
+import { useRef, useState, Dispatch, SetStateAction } from "react";
 import { SearchCategory } from "../Trash";
 import TrashList from "./TrashList";
-import { setTrashLoading } from "@/redux/features/placeholderSlice";
-import { useClickOutside } from "@/components/hooks/useClickOutside";
+import { useClickOutside } from "@/hooks/common/useClickOutside";
 
 type TrashContentProps = {
     parentRef: React.RefObject<HTMLDivElement>;

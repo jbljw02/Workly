@@ -1,10 +1,10 @@
 import { emailRegex } from "@/components/auth/SignUp";
-import PINoticeModal from "@/components/button/PINoticeModal";
+import PINoticeModal from "@/components/modal/PINoticeModal";
 import SubmitButton from "@/components/button/SubmitButton";
 import FormInput from "@/components/input/FormInput";
 import PIAgreeCheckbox from "@/components/input/PIAgreeCheckbox";
-import { showCompleteAlert, showWarningAlert } from "@/redux/features/alertSlice";
-import { setWorkingSpinner } from "@/redux/features/placeholderSlice";
+import { showCompleteAlert, showWarningAlert } from "@/redux/features/common/alertSlice";
+import { setWorkingSpinner } from "@/redux/features/common/placeholderSlice";
 import { useAppDispatch } from "@/redux/hooks";
 import axios from "axios";
 import { useState } from "react";
@@ -95,7 +95,7 @@ export default function ContactForm() {
                 msg: '유효하지 않은 이메일입니다',
                 isInvalid: true,
             });
-            
+
             return;
         }
 

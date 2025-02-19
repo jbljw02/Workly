@@ -1,20 +1,18 @@
-import { ModalProps } from "@/types/modalProps";
 import Modal from "react-modal";
 import ModalHeader from "./ModalHeader";
 import WarningIcon from '../../../public/svgs/warning.svg';
 import CommonButton from "../button/CommonButton";
-import { showWarningAlert, showCompleteAlert } from "@/redux/features/alertSlice";
-import { setWorkingSpinner } from "@/redux/features/placeholderSlice";
-import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { showWarningAlert } from "@/redux/features/common/alertSlice";
+import { setWorkingSpinner } from "@/redux/features/common/placeholderSlice";
+import { useAppDispatch } from "@/redux/hooks";
 import { getAuth } from "firebase/auth";
-import { useRouter } from "next-nprogress-bar";
 import { useEffect } from "react";
 import SubmitButton from "../button/SubmitButton";
 import logout from "@/utils/auth/logout";
+import { ModalProps } from "@/types/modalProps.type";
 
 export default function WithdrawlModal({ isModalOpen, setIsModalOpen }: ModalProps) {
     const dispatch = useAppDispatch();
-    const router = useRouter();
 
     // 회원 탈퇴 처리
     const deleteAccount = async () => {

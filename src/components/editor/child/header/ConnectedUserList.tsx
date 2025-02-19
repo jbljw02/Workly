@@ -3,7 +3,7 @@ import GreenCircleIcon from '../../../../../public/svgs/green-circle.svg';
 import Image from "next/image";
 import HoverTooltip from "../../../tooltip/HoverTooltip";
 import React from "react";
-import { ConnectedUser } from "@/redux/features/connectionSlice";
+import { ConnectedUser } from "@/types/user.type";
 
 type ConnectedUserItemProps = {
     user: ConnectedUser;

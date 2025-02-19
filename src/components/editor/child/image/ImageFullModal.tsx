@@ -1,5 +1,5 @@
 import FileFullModal from "@/components/modal/FileFullModal";
-import { setOpenFullModal } from "@/redux/features/editorImageSlice";
+import { setOpenFullModal } from "@/redux/features/editor/editorImageSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { ResizableImageNodeViewRendererProps } from "tiptap-extension-resizable-image";
 

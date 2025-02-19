@@ -3,9 +3,9 @@ import FolderIcon from '../../../../../public/svgs/folder.svg';
 import PlusIcon from '../../../../../public/svgs/add-folder.svg';
 import { useState } from "react";
 import AddInputModal from "@/components/modal/AddInputModal";
-import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { useAppSelector } from "@/redux/hooks";
 import FolderItem from "./FolderItem";
-import useAddFolder from "@/components/hooks/useAddFolder";
+import useAddFolder from "@/hooks/folder/useAddFolder";
 import AsideContentSkeleton from "@/components/placeholder/skeleton/AsideContentSkeleton";
 
 type FolderSectionProps = {

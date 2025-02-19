@@ -1,18 +1,18 @@
-import { ModalProps } from "@/types/modalProps";
 import Modal from 'react-modal';
 import ModalHeader from "./ModalHeader";
 import { SearchCategory } from "../trash/Trash";
 import WarningIcon from '../../../public/svgs/warning.svg';
 import CommonButton from "../button/CommonButton";
-import { DocumentProps } from "@/redux/features/documentSlice";
-import { Folder } from "@/redux/features/folderSlice";
+import { DocumentProps } from "@/types/document.type";
+import { Folder } from "@/types/folder.type";
 import axios from "axios";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { showCompleteAlert, showWarningAlert } from "@/redux/features/alertSlice";
-import { setDocumentsTrash, setFoldersTrash, setIsDeletingModalOpen } from "@/redux/features/trashSlice";
-import useDeleteTrash from "../hooks/useDeleteTrash";
-import useOverlayLock from "../hooks/useOverlayLock";
+import { showCompleteAlert, showWarningAlert } from "@/redux/features/common/alertSlice";
+import { setDocumentsTrash, setFoldersTrash } from "@/redux/features/trash/trashSlice";
+import useDeleteTrash from "@/hooks/document/useDeleteTrash";
+import useOverlayLock from "@/hooks/common/useOverlayLock";
 import { useEffect } from "react";
+import { ModalProps } from '../../types/modalProps.type';
 
 type DeleteCheckModalProps = ModalProps & {
     searchCategory: SearchCategory;

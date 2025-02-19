@@ -1,4 +1,4 @@
-import { showCompleteAlert, showWarningAlert } from "@/redux/features/alertSlice";
+import { showCompleteAlert, showWarningAlert } from "@/redux/features/common/alertSlice";
 import { AppDispatch } from "@/redux/store";
 
 const copyURL = (url: string, dispatch: AppDispatch) => {

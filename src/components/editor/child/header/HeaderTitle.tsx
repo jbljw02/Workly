@@ -1,19 +1,13 @@
-import { setSelectedDocument } from "@/redux/features/documentSlice";
-import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { useAppSelector } from "@/redux/hooks";
 import { usePathname } from "next/navigation";
-import { useEffect } from "react";
 import PaperIcon from '../../../../../public/svgs/editor/paper.svg'
 
 export default function HeaderTitle() {
-    const dispatch = useAppDispatch();
-
     const pathname = usePathname();
     const pathParts = pathname.split('/');
     const folderId = pathParts[2]; // '/editor/[folderId]/[documentId]'일 때 folderId는 2번째 인덱스
     const documentId = pathParts[3]; // documentId는 3번째 인덱스
 
-    const folders = useAppSelector(state => state.folders);
-    const documents = useAppSelector(state => state.documents);
     const selectedDocument = useAppSelector(state => state.selectedDocument);
     const webPublished = useAppSelector(state => state.webPublished);
 

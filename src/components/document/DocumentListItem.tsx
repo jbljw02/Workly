@@ -3,11 +3,11 @@
 import formatTimeDiff from "@/utils/formatTimeDiff";
 import MenuIcon from '../../../public/svgs/editor/menu-vertical.svg'
 import ShareDocumentIcon from '../../../public/svgs/shared-document.svg'
-import { DocumentProps } from "@/redux/features/documentSlice";
-import useCopyDocument from "../hooks/useCopyDocument";
+import { DocumentProps } from "@/types/document.type";
+import useCopyDocument from "@/hooks/document/useCopyDocument";
 import { useRef, useState } from "react";
-import useDeleteDocument from "../hooks/useDeleteDocument";
-import MenuList from "../menu/MenuList";
+import useDeleteDocument from "@/hooks/document/useDeleteDocument";
+import MenuList from "@/components/menu/MenuList";
 import HoverTooltip from "../tooltip/HoverTooltip";
 import LabelButton from "../button/LabelButton";
 import DocumentMoveModal from "../modal/DocumentMoveModal";
@@ -15,17 +15,17 @@ import ShareDocumentModal from "../modal/share/ShareDocumentModal";
 import ShortcutsOffIcon from '../../../public/svgs/shortcuts-off.svg';
 import ShortcutsOnIcon from '../../../public/svgs/shortcuts-on.svg';
 import { useAppSelector, useAppDispatch } from "@/redux/hooks";
-import useToggleShortcuts from "../hooks/useToggleShortcuts";
-import { useClickOutside } from "../hooks/useClickOutside";
+import useToggleShortcuts from "@/hooks/document/useToggleShortcuts";
+import { useClickOutside } from "@/hooks/common/useClickOutside";
 import { generateHTML } from "@tiptap/react";
-import usePublishedExtension from "../hooks/usePublishedExtension";
-import useDownloadPDF from "../hooks/useDownloadPDF";
-import useCancelPublish from "../hooks/useCancelPublish";
-import usePublishDocument from "../hooks/usePublishDocument";
-import useCheckPermission from "../hooks/useCheckPermission";
-import useDocumentMenu from "../hooks/useMenuItem";
+import usePublishedExtension from "@/hooks/editor/usePublishedExtension";
+import useCheckPermission from "@/hooks/editor/useCheckPermission";
 import { useRouter } from "next-nprogress-bar";
 import copyURL from "@/utils/editor/copyURL";
+import useCancelPublish from "@/hooks/document/useCancelPublish";
+import useDownloadPDF from "@/hooks/document/useDownloadPDF";
+import useDocumentMenu from "@/hooks/document/useMenuItem";
+import usePublishDocument from "@/hooks/document/usePublishDocument";
 
 type DocumentListItemProps = {
     document: DocumentProps;

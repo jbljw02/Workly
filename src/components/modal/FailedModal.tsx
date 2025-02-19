@@ -1,12 +1,12 @@
 import Modal from 'react-modal';
 import SubmitButton from '../button/SubmitButton';
 import CommonButton from '../button/CommonButton';
-import useGetUserData from '../hooks/useGetUserData';
+import useGetUserData from '@/hooks/user/useGetUserData';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
-import { setFailedAlert } from '@/redux/features/alertSlice';
+import { setFailedAlert } from '@/redux/features/common/alertSlice';
 import ErrorIcon from '../../../public/svgs/wifi-error.svg';
 import Link from 'next/link';
-import { setWorkingSpinner } from '@/redux/features/placeholderSlice';
+import { setWorkingSpinner } from '@/redux/features/common/placeholderSlice';
 
 export default function FailedModal() {
     const dispatch = useAppDispatch();

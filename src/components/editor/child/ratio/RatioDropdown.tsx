@@ -1,10 +1,9 @@
-import { useClickOutside } from "@/components/hooks/useClickOutside";
+import { useClickOutside } from "@/hooks/common/useClickOutside";
 import { useRef, useState } from "react";
 import TriangleDownIcon from '../../../../public/svgs/editor/triangle-down.svg'
-import TriangleRightIcon from '../../../../public/svgs/editor/triangle-right.svg'
 import TriangleUpIcon from '../../../../public/svgs/editor/triangle-up.svg'
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { setEditorScale } from "@/redux/features/scaleSlice";
+import { setEditorScale } from "@/redux/features/editor/scaleSlice";
 import HoverTooltip from "../../../tooltip/HoverTooltip";
 
 export default function RatioDropdown() {

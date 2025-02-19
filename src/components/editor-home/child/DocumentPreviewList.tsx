@@ -5,7 +5,7 @@ import { useMemo, useState } from "react";
 import CategoryButton from "@/components/button/CategoryButton";
 import React from "react";
 import AddInputModal from "@/components/modal/AddInputModal";
-import useAddDocument from "@/components/hooks/useAddDocument";
+import useAddDocument from "@/hooks/document/useAddDocument";
 import DocumentPreviewSkeleton from "@/components/placeholder/skeleton/DocumentPreviewSkeleton";
 
 export default function DocumentPreviewList() {
