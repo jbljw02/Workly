@@ -2,10 +2,10 @@ import { useAppSelector, useAppDispatch } from "@/redux/hooks";
 import Image from "next/image";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { getAuth, updateProfile } from "firebase/auth";
-import { setUser } from "@/redux/features/userSlice";
+import { setUser } from "@/redux/features/user/userSlice";
 import { useState } from "react";
 import LoadingSpinner from "@/components/placeholder/LoadingSpinner";
-import { showWarningAlert } from "@/redux/features/alertSlice";
+import { showWarningAlert } from "@/redux/features/common/alertSlice";
 
 export default function ProfileSection() {
     const user = useAppSelector(state => state.user);

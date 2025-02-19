@@ -8,8 +8,8 @@ import { emailRegex } from "./SignUp";
 import { sendPasswordResetEmail } from "firebase/auth";
 import { auth } from "@/firebase/firebasedb";
 import { useAppDispatch } from "@/redux/hooks";
-import { showCompleteAlert, showWarningAlert } from "@/redux/features/alertSlice";
-import { setWorkingSpinner } from "@/redux/features/placeholderSlice";
+import { showCompleteAlert, showWarningAlert } from "@/redux/features/common/alertSlice";
+import { setWorkingSpinner } from "@/redux/features/common/placeholderSlice";
 import { useRouter } from "next-nprogress-bar";
 
 export default function ResetPassword() {

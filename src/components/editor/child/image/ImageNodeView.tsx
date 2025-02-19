@@ -1,19 +1,18 @@
-import { mergeAttributes, NodeViewWrapper, ReactNodeViewRenderer } from '@tiptap/react';
+import { NodeViewWrapper, ReactNodeViewRenderer } from '@tiptap/react';
 import { ResizableImage, ResizableImageComponent, ResizableImageNodeViewRendererProps } from 'tiptap-extension-resizable-image';
 import { useEffect, useRef, useState } from 'react';
 import 'react-image-crop/dist/ReactCrop.css';
-import { useClickOutside } from '@/components/hooks/useClickOutside';
+import { useClickOutside } from '@/hooks/common/useClickOutside';
 import ImageMenuBar from './ImageMenuBar';
 import ImageCropper from './ImageCropper';
 import ImageCropBar from './ImageCropBar';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
-import { setCrop, setImageDimension, setOpenFullModal } from '@/redux/features/editorImageSlice';
-import { showWarningAlert } from '@/redux/features/alertSlice';
-import ImageFullModal from './ImageFullModal';
-import useCheckSelected from '@/components/hooks/useCheckSelected';
-import { SetResizableImageProps } from '../../../../../lib/ImageNode';
+import { setCrop, setOpenFullModal } from '@/redux/features/editor/editorImageSlice';
+import { showWarningAlert } from '@/redux/features/common/alertSlice';
+import useCheckSelected from '@/hooks/editor/useCheckSelected';
+import { SetResizableImageProps } from '../../../../lib/ImageNode';
 import LoadingSpinner from '@/components/placeholder/LoadingSpinner';
-import { setWorkingSpinner } from '@/redux/features/placeholderSlice';
+import { setWorkingSpinner } from '@/redux/features/common/placeholderSlice';
 import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
 import { v4 as uuidv4 } from 'uuid';
 

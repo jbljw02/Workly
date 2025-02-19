@@ -1,4 +1,4 @@
-import { LinkTooltip, setLinkTooltip } from "@/redux/features/linkSlice";
+import { LinkTooltip, setLinkTooltip } from "@/redux/features/editor/linkSlice";
 import { Editor } from "@tiptap/react";
 import { AppDispatch } from "@/redux/store";
 

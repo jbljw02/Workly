@@ -1,13 +1,14 @@
 import SubmitButton from "@/components/button/SubmitButton";
-import { DocumentProps, addCollaborator } from "@/redux/features/documentSlice";
+import { DocumentProps } from "@/types/document.type";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { useRef, useEffect, useMemo, useState } from "react";
 import CloseIcon from '../../../../public/svgs/close.svg';
 import Image from "next/image";
-import { addCoworker, setSelectedCoworkers, setTargetSharingEmail } from "@/redux/features/shareDocumentSlice";
 import axios from "axios";
-import { showCompleteAlert, showWarningAlert } from "@/redux/features/alertSlice";
-import { setWorkingSpinner } from "@/redux/features/placeholderSlice";
+import { showCompleteAlert, showWarningAlert } from "@/redux/features/common/alertSlice";
+import { setWorkingSpinner } from "@/redux/features/common/placeholderSlice";
+import { addCollaborator } from "@/redux/features/document/documentSlice";
+import { addCoworker, setSelectedCoworkers, setTargetSharingEmail } from "@/redux/features/document/shareDocumentSlice";
 
 type ShareFormProps = {
     selectedDoc: DocumentProps;

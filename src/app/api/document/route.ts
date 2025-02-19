@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import firestore from "../../../firebase/firestore";
 import { doc, getDoc, updateDoc, collection, writeBatch, getDocs, serverTimestamp } from "firebase/firestore";
-import { Collaborator } from "@/redux/features/documentSlice";
+import { Collaborator } from "@/types/document.type";
 import convertTimestamp from "@/utils/convertTimestamp";
 import createTiptapDocument from "@/utils/tiptap-document/createTiptapDocument";
 import checkDocumentSize from "@/utils/checkDocumentSize";

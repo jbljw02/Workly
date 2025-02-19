@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { doc, getDoc, orderBy, setDoc, updateDoc, writeBatch } from "firebase/firestore";
 import firestore from "../../../firebase/firestore";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { collection, serverTimestamp } from "firebase/firestore";
 import { query, where, getDocs } from "firebase/firestore";
 
 // 사용자의 DB에 폴더를 추가 - CREATE

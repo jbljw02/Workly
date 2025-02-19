@@ -1,4 +1,4 @@
-import { setCrop } from "@/redux/features/editorImageSlice";
+import { setCrop } from "@/redux/features/editor/editorImageSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { RefObject } from "react";
 import ReactCrop from "react-image-crop";

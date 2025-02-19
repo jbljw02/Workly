@@ -6,9 +6,7 @@ import { doc, getDoc } from "firebase/firestore";
 import firestore from '@/firebase/firestore';
 import { Metadata } from "next";
 import { getDocumentMetadata } from "@/utils/getDocumentMetadata";
-import { Collaborator, DocumentProps } from "@/redux/features/documentSlice";
-
-const baseUrl = process.env.NEXT_PUBLIC_API_URL;
+import { Collaborator, DocumentProps } from "@/types/document.type";
 
 // 예약 함수 - 메타데이터를 생성
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {

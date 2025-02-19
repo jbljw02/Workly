@@ -1,5 +1,5 @@
-import { addDocuments, DocumentProps } from "@/redux/features/documentSlice";
-import { addDocumentToFolder, addFolders, Folder } from "@/redux/features/folderSlice";
+import { addDocuments } from "@/redux/features/document/documentSlice";
+import { addDocumentToFolder, addFolders } from "@/redux/features/folder/folderSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import DocumentIcon from '../../../../public/svgs/shared-document.svg';
 import RestoreIcon from '../../../../public/svgs/restore.svg';
@@ -9,11 +9,13 @@ import LabelButton from "@/components/button/LabelButton";
 import { SearchCategory } from "../Trash";
 import TrashFolderIcon from '../../../../public/svgs/trash-folder.svg';
 import axios from "axios";
-import { showCompleteAlert, showWarningAlert } from "@/redux/features/alertSlice";
+import { showCompleteAlert, showWarningAlert } from "@/redux/features/common/alertSlice";
 import DeleteCheckModal from "@/components/modal/DeleteCheckModal";
-import useUndoState from "@/components/hooks/useUndoState";
-import useDeleteTrash from "@/components/hooks/useDeleteTrash";
-import { setIsDeletingModalOpen } from "@/redux/features/trashSlice";
+import useUndoState from "@/hooks/common/useUndoState";
+import useDeleteTrash from "@/hooks/document/useDeleteTrash";
+import { setIsDeletingModalOpen } from "@/redux/features/trash/trashSlice";
+import { DocumentProps } from "@/types/document.type";
+import { Folder } from "@/types/folder.type";
 
 type TrashItemProps = {
     searchCategory: SearchCategory;

@@ -1,4 +1,4 @@
-import { showWarningAlert } from '@/redux/features/alertSlice';
+import { showWarningAlert } from '@/redux/features/common/alertSlice';
 import { AppDispatch } from '@/redux/store';
 import Nprogress from 'nprogress';
 

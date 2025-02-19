@@ -1,4 +1,4 @@
-import { UserProps } from "@/redux/features/userSlice";
+import { UserProps } from "@/types/user.type";
 import Image from "next/image";
 
 type UserProfileProps = {

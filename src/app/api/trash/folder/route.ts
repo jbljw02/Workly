@@ -1,7 +1,7 @@
 import { collection, getDocs, query, where, orderBy, getDoc, doc, writeBatch } from "firebase/firestore";
 import { NextRequest, NextResponse } from "next/server";
 import firestore from "../../../../firebase/firestore";
-import { getStorage, ref, deleteObject, listAll } from "firebase/storage";
+import { getStorage } from "firebase/storage";
 import deleteTiptapDocument from '@/utils/tiptap-document/deleteTiptapDocument';
 import axios from "axios";
 import deleteStorageFile from "@/utils/deleteStorageFile";

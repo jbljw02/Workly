@@ -1,6 +1,6 @@
 import CheckIcon from '../../../public/svgs/check.svg';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
-import { setSortRule } from '@/redux/features/documentSlice';
+import { setSortRule } from '@/redux/features/document/documentSlice';
 
 type DocumentSortSectionProps = {
     isSortOpen: boolean;

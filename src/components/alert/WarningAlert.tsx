@@ -1,7 +1,7 @@
 import CautionIcon from '../../../public/svgs/caution.svg'
 import CloseIcon from '../../../public/svgs/editor/close.svg'
 import { useEffect, useState } from "react";
-import { NoticeModalProps } from '@/types/noticeModalProps';
+import { NoticeModalProps } from '@/types/modalProps.type';
 
 export default function WarningAlert({ isModalOpen, setIsModalOpen, label }: NoticeModalProps) {
     const [animation, setAnimation] = useState<string>('slide-up');

@@ -1,6 +1,14 @@
-import { SidebarItemProps } from "@/types/sidebarProps";
 import PlusIcon from '../../../../public/svgs/plus.svg';
 import GroupHoverItem from "./GroupHoverItem";
+
+type SidebarItemProps = {
+    Icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+    IconWidth: string;
+    label: string;
+    isCollapsed?: boolean;
+    onClick?: () => void;
+    addClick?: () => void;
+}
 
 export default function SidebarItem({
     Icon,

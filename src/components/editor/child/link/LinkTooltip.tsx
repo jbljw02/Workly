@@ -1,11 +1,8 @@
-import { useAppSelector, useAppDispatch } from '@/redux/hooks';
+import { useAppSelector } from '@/redux/hooks';
 import { useEffect, useRef, useState } from 'react';
 import { Editor } from '@tiptap/react';
 import LinkEditSection from './LinkEditSection';
 import { SelectionPosition } from './AddLinkSection';
-import { useClickOutside } from '@/components/hooks/useClickOutside';
-import deleteLink from '@/utils/editor/deleteLink';
-import IconButton from '@/components/button/LabelButton';
 import LinkHoverSection from './LinkHoverSection';
 
 export default function LinkTooltip({ editor }: { editor: Editor }) {

@@ -1,17 +1,15 @@
-import { LinkTooltip, setLinkTooltip } from "@/redux/features/linkSlice";
+import { LinkTooltip, setLinkTooltip } from "@/redux/features/editor/linkSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { Editor, Mark } from "@tiptap/react";
-import React, { useEffect, useRef, useState } from "react";
-import { SelectionPosition } from "./AddLinkSection";
-import { LinkAttributes } from "../../../../../lib/linkNode";
-import { useClickOutside } from "@/components/hooks/useClickOutside";
+import { Editor } from "@tiptap/react";
+import React, { useRef, useState } from "react";
+import { useClickOutside } from "@/hooks/common/useClickOutside";
 import SaveIcon from '../../../../../public/svgs/editor/save.svg'
 import DeleteIcon from '../../../../../public/svgs/trash.svg'
 import deleteLink from "@/utils/editor/deleteLink";
 import { AppDispatch } from "@/redux/store";
 import LinkInput from "@/components/input/LinkInput";
 import LabelButton from "@/components/button/LabelButton";
-import { LinkSectionProps } from "@/types/linkSectionProps";
+import { LinkSectionProps } from "./types/linkSectionProps.type";
 
 export default function LinkEditSection({ editor, isEditing, setIsEditing }: LinkSectionProps) {
     const dispatch = useAppDispatch();

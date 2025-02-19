@@ -1,4 +1,4 @@
-import { InputProps } from "@/types/commonInputProps";
+import { InputProps } from "@/types/inputProps.type";
 import { useEffect, useRef } from "react"
 
 interface FormInputProps extends InputProps {
@@ -33,7 +33,7 @@ export default function FormInput({
                     className='border-none text-[15px] outline-none bg-transparent w-full'
                     value={value}
                     onChange={setValue}
-                    placeholder={placeholder}/>
+                    placeholder={placeholder} />
             </div>
             {
                 isInvalidInfo?.isInvalid &&

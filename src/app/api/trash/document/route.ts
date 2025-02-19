@@ -1,8 +1,7 @@
-import { Collaborator } from "@/redux/features/documentSlice";
+import { Collaborator } from "@/types/document.type";
 import { collection, doc, getDoc, getDocs, writeBatch } from "firebase/firestore";
 import { NextRequest, NextResponse } from "next/server";
 import firestore from "../../../../firebase/firestore";
-import { deleteObject, getStorage, ref, listAll } from "firebase/storage";
 import deleteTiptapDocument from '@/utils/tiptap-document/deleteTiptapDocument';
 import axios from "axios";
 import getDocumentContent from "@/utils/getDocumentContent";

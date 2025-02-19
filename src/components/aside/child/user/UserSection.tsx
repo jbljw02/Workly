@@ -1,6 +1,6 @@
 import { useAppSelector } from "@/redux/hooks";
 import { useRef, useState } from "react";
-import { useClickOutside } from "@/components/hooks/useClickOutside";
+import { useClickOutside } from "@/hooks/common/useClickOutside";
 import UserMenuList from "./UserMenuList";
 import UserProfile from "./UserProfile";
 import UserProfileSkeleton from "@/components/placeholder/skeleton/UserProfileSkeleton";

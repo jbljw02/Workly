@@ -1,10 +1,10 @@
 import Modal from 'react-modal';
-import { ModalProps } from '@/types/modalProps';
 import { useRef, ReactNode } from 'react';
-import { useClickOutside } from '../hooks/useClickOutside';
+import { useClickOutside } from '@/hooks/common/useClickOutside';
 import DownloadIcon from '../../../public/svgs/editor/download.svg';
 import CloseIcon from '../../../public/svgs/editor/close.svg';
-import useOverlayLock from '../hooks/useOverlayLock';
+import useOverlayLock from '@/hooks/common/useOverlayLock';
+import { ModalProps } from '@/types/modalProps.type';
 
 interface FileFullModal extends ModalProps {
     children: ReactNode;
@@ -47,7 +47,7 @@ export default function FileFullModal({
                     right: 0,
                     bottom: 0,
                     backgroundColor: 'rgba(0, 0, 0, 0.65)',
-                    zIndex: 500, 
+                    zIndex: 500,
                 },
                 content: {
                     display: 'flex',

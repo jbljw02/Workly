@@ -1,6 +1,5 @@
 import CommonInput from "@/components/input/CommonInput";
-import { useAppSelector } from "@/redux/hooks";
-import { Dispatch, SetStateAction, useMemo, useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import SearchedDocumentList from "./SearchedDocumentList";
 
 type SearchContentProps = {

@@ -1,12 +1,12 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef } from 'react';
 import { Editor } from '@tiptap/react';
 import ToolbarButton from '../../../button/ToolbarButton';
 import FontColorIcon from '../../../../../public/svgs/editor/font-color.svg';
 import HoverTooltip from '../../../tooltip/HoverTooltip';
 import { SketchPicker, ColorResult } from 'react-color';
-import { useClickOutside } from '@/components/hooks/useClickOutside';
+import { useClickOutside } from '@/hooks/common/useClickOutside';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
-import { setOpenColorPicker, setTextColor } from '@/redux/features/textColorSlice';
+import { setOpenColorPicker, setTextColor } from '@/redux/features/editor/textColorSlice';
 
 type ColorPickerProps = {
     editor: Editor;

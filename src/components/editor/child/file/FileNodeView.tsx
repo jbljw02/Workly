@@ -1,11 +1,11 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Editor, NodeViewWrapper, NodeViewProps } from '@tiptap/react';
+import React, { useMemo, useRef, useState } from 'react';
+import { Editor, NodeViewWrapper } from '@tiptap/react';
 import FileInfoIcon from '../../../../../public/svgs/editor/file-info.svg';
 import FileFullModal from '@/components/modal/FileFullModal';
 import FileBlockIcon from '../../../../../public/svgs/editor/file-block.svg';
 import MenuIcon from '../../../../../public/svgs/editor/menu-vertical.svg';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
-import { FileNode, setFileNode } from '@/redux/features/fileSlice';
+import { setFileNode } from '@/redux/features/editor/fileSlice';
 import FileEditInput from './FileEditInput';
 import EditIcon from '../../../../../public/svgs/editor/edit.svg'
 import LinkCopyIcon from '../../../../../public/svgs/editor/link.svg'
@@ -13,16 +13,12 @@ import DownloadIcon from '../../../../../public/svgs/editor/download.svg'
 import CopyIcon from '../../../../../public/svgs/editor/copy.svg'
 import DeleteIcon from '../../../../../public/svgs/trash.svg'
 import MenuList from '../../../menu/MenuList';
-import { v4 as uuidv4 } from 'uuid';
 import { MenuItemProps } from '../../../menu/MenuItem';
-import { useClickOutside } from '@/components/hooks/useClickOutside';
-import { FileNodeAttrs } from '../../../../../lib/fileNode';
-import { NodeSelection } from 'prosemirror-state';
-import useCheckSelected from '@/components/hooks/useCheckSelected';
+import { useClickOutside } from '@/hooks/common/useClickOutside';
+import { FileNodeAttrs } from '../../../../lib/fileNode';
+import useCheckSelected from '@/hooks/editor/useCheckSelected';
 import LoadingSpinner from '@/components/placeholder/LoadingSpinner';
 import { getStorage, ref, deleteObject } from 'firebase/storage';
-import Nprogress from 'nprogress';
-import { showWarningAlert } from '@/redux/features/alertSlice';
 import downloadFile from '@/utils/editor/downloadFile';
 import duplicateFile from '@/utils/editor/duplicateFile';
 import copyURL from '@/utils/editor/copyURL';

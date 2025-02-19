@@ -1,5 +1,5 @@
-import { InputProps } from "@/types/commonInputProps";
 import { useEffect, useRef } from "react"
+import { InputProps } from "../../types/inputProps.type";
 
 type StyleProps = {
     px: string;

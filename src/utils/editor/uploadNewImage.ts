@@ -1,7 +1,7 @@
-import { showWarningAlert } from "@/redux/features/alertSlice";
+import { showWarningAlert } from "@/redux/features/common/alertSlice";
 import { Editor } from "@tiptap/react";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { SetResizableImageProps } from "../../../lib/ImageNode";
+import { SetResizableImageProps } from "../../lib/ImageNode";
 import { AppDispatch } from "@/redux/store";
 import { v4 as uuidv4 } from 'uuid';
 import getDimensions from "./getDimensions";

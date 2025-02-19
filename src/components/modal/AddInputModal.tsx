@@ -1,13 +1,13 @@
-import { ModalProps } from '@/types/modalProps';
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import Modal from 'react-modal';
 import CommonInput from '../input/CommonInput';
 import SubmitButton from '../button/SubmitButton';
 import CommonButton from '../button/CommonButton';
 import ModalHeader from './ModalHeader';
-import useOverlayLock from '../hooks/useOverlayLock';
+import useOverlayLock from '@/hooks/common/useOverlayLock';
 import { useAppDispatch } from '@/redux/hooks';
-import { setWorkingSpinner } from '@/redux/features/placeholderSlice';
+import { setWorkingSpinner } from '@/redux/features/common/placeholderSlice';
+import { ModalProps } from '../../types/modalProps.type';
 
 export interface AddInputModal extends ModalProps {
     value: string;

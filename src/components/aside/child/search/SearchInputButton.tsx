@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import SearchIcon from '../../../../../public/svgs/search.svg';
-import { useClickOutside } from '@/components/hooks/useClickOutside';
+import { useClickOutside } from '@/hooks/common/useClickOutside';
 import SearchContent from './SearchContent';
 
 export default function SearchInput({ isCollapsed }: { isCollapsed: boolean }) {

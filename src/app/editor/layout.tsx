@@ -1,7 +1,7 @@
 'use client';
 
-import useGetUserData from "@/components/hooks/useGetUserData";
-import useGetAllUsers from "@/components/hooks/useGetAllUsers";
+import useGetUserData from "@/hooks/user/useGetUserData";
+import useGetAllUsers from "@/hooks/user/useGetAllUsers";
 import Aside from "@/components/aside/Aside";
 import '@/styles/scrollbar.css';
 import FailedModal from "@/components/modal/FailedModal";

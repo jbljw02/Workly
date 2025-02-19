@@ -1,9 +1,9 @@
-import { showWarningAlert } from "@/redux/features/alertSlice";
+import { showWarningAlert } from "@/redux/features/common/alertSlice";
 import { Editor } from "@tiptap/react";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { v4 as uuidv4 } from 'uuid';
 import { AppDispatch } from "@/redux/store";
-import { FileNodeAttrs } from "../../../lib/fileNode";
+import { FileNodeAttrs } from "../../lib/fileNode";
 
 const uploadNewFile = async (editor: Editor, file: File, docId: string, pos: number, dispatch: AppDispatch) => {
     const fileAttrs: FileNodeAttrs = {

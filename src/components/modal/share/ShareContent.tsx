@@ -1,12 +1,11 @@
 import UserProfile from '@/components/aside/child/user/UserProfile';
-import { Collaborator } from '@/redux/features/documentSlice';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import AuthorityButton from './AuthorityButton';
 import ShareForm from './ShareForm';
-import { setCoworkerList, setSearchedCoworkers, setSelectedCoworkers, setTargetSharingEmail } from '@/redux/features/shareDocumentSlice';
 import { emailRegex } from '@/components/auth/SignUp';
-import { DocumentProps } from '@/redux/features/documentSlice';
+import { Collaborator, DocumentProps } from '@/types/document.type';
+import { setCoworkerList, setTargetSharingEmail, setSelectedCoworkers, setSearchedCoworkers } from '@/redux/features/document/shareDocumentSlice';
 
 type ShareContentProps = {
     selectedDoc: DocumentProps;

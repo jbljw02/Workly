@@ -3,7 +3,7 @@ import { useAppSelector } from "@/redux/hooks";
 import { v4 as uuidv4 } from 'uuid';
 import DocumentItem from "@/components/aside/child/folder/DocumentItem";
 import { Editor } from "@tiptap/react";
-import { DocumentProps } from "@/redux/features/documentSlice";
+import { DocumentProps } from "@/types/document.type";
 
 type LinkTargetDocumentListProps = {
     editor: Editor;

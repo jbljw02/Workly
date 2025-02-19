@@ -1,8 +1,8 @@
 import SubmitButton from "@/components/button/SubmitButton";
 import FormInput from "@/components/input/FormInput";
-import { showCompleteAlert, showWarningAlert } from "@/redux/features/alertSlice";
-import { setWorkingSpinner } from "@/redux/features/placeholderSlice";
-import { setUser } from "@/redux/features/userSlice";
+import { showCompleteAlert, showWarningAlert } from "@/redux/features/common/alertSlice";
+import { setWorkingSpinner } from "@/redux/features/common/placeholderSlice";
+import { setUser } from "@/redux/features/user/userSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { getAuth, updateProfile } from "firebase/auth";
 import { useState, useEffect } from "react";

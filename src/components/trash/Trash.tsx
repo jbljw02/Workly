@@ -2,9 +2,9 @@ import { useEffect, useRef, useState } from "react";
 import SidebarItem from "../aside/child/SidebarItem";
 import TrashIcon from '../../../public/svgs/trash.svg';
 import TrashContent from "./child/TrashContent";
-import { showWarningAlert } from "@/redux/features/alertSlice";
-import { setTrashLoading } from "@/redux/features/placeholderSlice";
-import { setDocumentsTrash, setFoldersTrash } from "@/redux/features/trashSlice";
+import { showWarningAlert } from "@/redux/features/common/alertSlice";
+import { setTrashLoading } from "@/redux/features/common/placeholderSlice";
+import { setDocumentsTrash, setFoldersTrash } from "@/redux/features/trash/trashSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import axios from "axios";
 
@@ -12,7 +12,7 @@ export type SearchCategory = '폴더' | '문서';
 
 export default function Trash({ isCollapsed }: { isCollapsed: boolean }) {
     const dispatch = useAppDispatch();
-    
+
     const user = useAppSelector(state => state.user);
     const sidebarRef = useRef<HTMLDivElement>(null);
 

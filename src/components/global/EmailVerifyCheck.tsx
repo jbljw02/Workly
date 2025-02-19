@@ -1,15 +1,13 @@
-import { clearUser, setUser } from "@/redux/features/userSlice";
-import { useAppDispatch, useAppSelector } from "@/redux/hooks"
+import { clearUser, setUser } from "@/redux/features/user/userSlice";
+import { useAppDispatch } from "@/redux/hooks"
 import { onAuthStateChanged } from "firebase/auth";
 import { useEffect } from "react";
 import { auth } from "../../firebase/firebasedb";
-import { useRouter } from "next-nprogress-bar";
 import getEmailToken from "@/utils/auth/getEmailToken";
 import logout from "@/utils/auth/logout";
 
 export default function EmailVerifyCheck() {
     const dispatch = useAppDispatch();
-    const router = useRouter();
 
     // 사용자의 로그인 상태가 변경될 때마다 실행
     useEffect(() => {

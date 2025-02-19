@@ -1,8 +1,8 @@
-import LabelButton from "../button/LabelButton";
+import LabelButton from "@/components/button/LabelButton";
 import SortIcon from '../../../public/svgs/sort.svg'
 import { useRef, useState } from "react";
 import DocumentSortSection from "./DocumentSortSection";
-import { useClickOutside } from "../hooks/useClickOutside";
+import { useClickOutside } from "@/hooks/common/useClickOutside";
 
 export default function DocumentListHeader() {
     const [isSortOpen, setIsSortOpen] = useState(false);

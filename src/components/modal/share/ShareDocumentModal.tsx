@@ -1,18 +1,17 @@
 import { useState } from 'react';
 import Modal from 'react-modal';
-import CommonInput from '../../input/CommonInput';
 import CommonButton from '../../button/CommonButton';
 import ModalHeader from '../ModalHeader';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import PublishContent from './PublishContent';
 import ShareContent from './ShareContent';
-import { setTargetSharingEmail } from '@/redux/features/shareDocumentSlice';
-import { WorkingDocModalProps } from '@/types/workingDocModalProps';
-import useCancelPublish from '@/components/hooks/useCancelPublish';
-import usePublishDocument from '@/components/hooks/usePublishDocument';
-import useOverlayLock from '@/components/hooks/useOverlayLock';
 import SubmitButton from '@/components/button/SubmitButton';
 import copyURL from '@/utils/editor/copyURL';
+import useCancelPublish from '@/hooks/document/useCancelPublish';
+import useOverlayLock from '@/hooks/common/useOverlayLock';
+import usePublishDocument from '@/hooks/document/usePublishDocument';
+import { setTargetSharingEmail } from '@/redux/features/document/shareDocumentSlice';
+import { WorkingDocModalProps } from '@/types/modalProps.type';
 
 const baseURL = process.env.NEXT_PUBLIC_API_URL;
 

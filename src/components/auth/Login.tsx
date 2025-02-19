@@ -14,7 +14,7 @@ import EmailVerifyModal from '../modal/EmailVerifyModal';
 import Link from 'next/link';
 import { useRouter } from 'next-nprogress-bar';
 import { useAppDispatch } from '@/redux/hooks';
-import { setWorkingSpinner } from '@/redux/features/placeholderSlice';
+import { setWorkingSpinner } from '@/redux/features/common/placeholderSlice';
 import getEmailToken from '@/utils/auth/getEmailToken';
 
 export default function Login() {
