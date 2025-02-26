@@ -4,7 +4,7 @@ export async function middleware(req: NextRequest) {
     const token = req.cookies.get('authToken')?.value;
     const { pathname } = req.nextUrl;
 
-    // 로그인 상태에서 홈, 로그인, 회원가입 페이지 접근 시 리다이렉션
+    // 기존 인증 토큰 처리 로직
     if (token) {
         try {
             const verifyUrl = `${req.nextUrl.origin}/api/auth/verify-token`;

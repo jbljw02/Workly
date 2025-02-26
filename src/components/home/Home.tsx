@@ -6,6 +6,7 @@ import HeroSection from './child/HeroSection';
 import FeaturesSection from './child/FeaturesSection';
 import UseCaseSection from './child/UseCaseSection';
 import CTASection from './child/CTASection';
+import DemoAlert from '../demo/DemoAlert';
 
 export default function Home() {
     return (
@@ -22,6 +23,7 @@ export default function Home() {
             {/* CTA(Call To Action) 영역 */}
             <CTASection />
             <Footer />
+            <DemoAlert />
         </div>
     )
 }

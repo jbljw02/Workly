@@ -11,4 +11,13 @@ export type UserProps = {
     displayName: string;
     photoURL: string;
     uid: string;
+    isDemo?: boolean;
+};
+
+export type JWTToken = {
+    uid: string;
+    email: string;
+    displayName: string;
+    isDemo: boolean;
+    exp: number;
 };

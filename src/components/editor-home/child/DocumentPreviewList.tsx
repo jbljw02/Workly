@@ -40,6 +40,9 @@ export default function DocumentPreviewList() {
         return sorted;
     }, [documents, sortCategory]);
 
+    console.log('filteredDocuments', filteredDocuments);
+    console.log('isDocumentLoading', isDocumentLoading);
+
     return (
         <div className="flex flex-col gap-3 px-12 w-full">
             <div className="text-xl font-semibold pl-0.5">문서</div>
