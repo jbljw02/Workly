@@ -10,7 +10,7 @@ import EditorHeader from './child/header/EditorHeader'
 import DragHandle from '@tiptap-pro/extension-drag-handle-react'
 import MenuIcon from '../../../public/svgs/editor/menu-vertical.svg'
 import { renameDocuments, setSelectedDocument, updateDocuments } from '@/redux/features/document/documentSlice'
-import formatTimeDiff from '@/utils/formatTimeDiff'
+import formatTimeDiff from '@/utils/format/formatTimeDiff'
 import MenuBar from './child/header/MenuBar'
 import useEditorExtension from '@/hooks/editor/useEditorExtension';
 import useVisitDocument from '@/hooks/document/useVisitDocument';

@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import firestore from '@/firebase/firestore';
-import convertTimestamp from '@/utils/convertTimestamp';
+import convertTimestamp from '@/utils/format/convertTimestamp';
 import { useRouter } from 'next-nprogress-bar';
 import { updateDocuments } from '@/redux/features/document/documentSlice';
 import { UserProps } from '@/types/user.type';

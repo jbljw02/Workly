@@ -2,11 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import firestore from "../../../firebase/firestore";
 import { doc, getDoc, updateDoc, collection, writeBatch, getDocs, serverTimestamp } from "firebase/firestore";
 import { Collaborator } from "@/types/document.type";
-import convertTimestamp from "@/utils/convertTimestamp";
+import convertTimestamp from "@/utils/format/convertTimestamp";
 import createTiptapDocument from "@/utils/tiptap-document/createTiptapDocument";
-import checkDocumentSize from "@/utils/checkDocumentSize";
-import saveToStorage from "@/utils/saveToStorage";
-import getDocumentContent from "@/utils/getDocumentContent";
+import checkDocumentSize from "@/utils/document/checkDocumentSize";
+import saveToStorage from "@/utils/document/saveToStorage";
+import getDocumentContent from "@/utils/document/getDocumentContent";
 
 // Firestore의 문서 크기 제한은 1MB
 // 안전 마진을 위해 900KB로 설정

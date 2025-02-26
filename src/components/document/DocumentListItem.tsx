@@ -1,6 +1,6 @@
 'use client';
 
-import formatTimeDiff from "@/utils/formatTimeDiff";
+import formatTimeDiff from "@/utils/format/formatTimeDiff";
 import MenuIcon from '../../../public/svgs/editor/menu-vertical.svg'
 import ShareDocumentIcon from '../../../public/svgs/shared-document.svg'
 import { DocumentProps } from "@/types/document.type";

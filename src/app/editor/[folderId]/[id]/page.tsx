@@ -5,7 +5,7 @@ import admin from "@/firebase/firebaseAdmin";
 import { doc, getDoc } from "firebase/firestore";
 import firestore from '@/firebase/firestore';
 import { Metadata } from "next";
-import { getDocumentMetadata } from "@/utils/getDocumentMetadata";
+import { getDocumentMetadata } from "@/utils/document/getDocumentMetadata";
 import { Collaborator, DocumentProps } from "@/types/document.type";
 
 // 예약 함수 - 메타데이터를 생성

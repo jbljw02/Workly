@@ -1,6 +1,6 @@
 import PdfFileNode from "@/components/editor/child/file/PdfFileNode";
 import { DocumentProps } from "@/types/document.type";
-import formatTimeDiff from "@/utils/formatTimeDiff";
+import formatTimeDiff from "@/utils/format/formatTimeDiff";
 import { JSONContent } from "@tiptap/react";
 import Image from "next/image";
 import Link from 'next/link';

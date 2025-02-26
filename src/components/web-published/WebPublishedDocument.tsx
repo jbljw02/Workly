@@ -7,7 +7,7 @@ import EditorTitleInput from "../editor/child/EditorTitleInput";
 import { useAppDispatch } from "@/redux/hooks";
 import { useEffect } from "react";
 import { setWebPublished } from "@/redux/features/document/webPublishedSlice";
-import convertTimestamp from "@/utils/convertTimestamp";
+import convertTimestamp from "@/utils/format/convertTimestamp";
 import usePublishedExtension from "@/hooks/editor/usePublishedExtension";
 
 type PublishedDocumentProps = {
