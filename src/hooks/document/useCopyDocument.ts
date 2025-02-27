@@ -36,13 +36,6 @@ export default function useCopyDocument() {
                     folderId: copiedDocument.folderId,
                     document: copiedDocument
                 });
-
-
-                // tiptap cloud에 문서 복사
-                await axios.post('/api/tiptap-document', {
-                    docName: copiedDocument.id,
-                    docContent: copiedDocument.docContent
-                });
             }
 
             dispatch(showCompleteAlert(`${copiedDocument.folderName}에 ${selectedDocument.title || '제목 없는 문서'} 사본이 생성되었습니다.`));

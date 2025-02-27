@@ -30,7 +30,7 @@ export default function DemoNotice() {
                 <div className="mb-6 text-center space-y-4">
                     <div className="flex flex-col items-center gap-2">
                         <span className="font-semibold text-neutral-800">
-                            현재 체험판을 이용중입니다
+                            현재 체험 모드로 이용중입니다
                         </span>
                         <span className="text-sm text-neutral-500">
                             서비스 특성상 일부 기능이 제한될 수 있습니다

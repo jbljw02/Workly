@@ -127,11 +127,11 @@ export default function MenuBar({ editor }: { editor: Editor }) {
 
                     // 이미지 파일일 경우
                     if (file.type.startsWith('image/')) {
-                        uploadNewImage(editor, file, src, selectedDocument.id);
+                        uploadNewImage(editor, file, src);
                     }
                     else {
                         // 이미지가 아닌 일반 파일일 경우
-                        uploadNewFile(editor, file, selectedDocument.id, cursorPos);
+                        uploadNewFile(editor, file, cursorPos);
                     }
                 };
 

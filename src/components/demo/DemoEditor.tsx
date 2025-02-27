@@ -1,7 +1,7 @@
 'use client';
 
 import { useEditor, EditorContent } from '@tiptap/react';
-import React, { useEffect, useLayoutEffect, useState } from 'react';
+import React, { useLayoutEffect, useState } from 'react';
 import DragHandle from '@tiptap-pro/extension-drag-handle-react';
 import MenuIcon from '../../../public/svgs/editor/menu-vertical.svg';
 import EditorHeader from '../editor/child/header/EditorHeader';

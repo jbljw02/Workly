@@ -45,11 +45,11 @@ export default function DemoAlert() {
                 ${animation === 'slide-up' ? 'translate-y-0' : 'translate-y-[200%]'}`}>
             <div className="bg-white rounded-xl p-6 w-[400px] shadow-lg">
                 <div className="mb-6 text-center">
-                    <h2 className="text-2xl font-bold mb-3">서비스 체험하기</h2>
+                    <h2 className="text-2xl font-bold mb-3">Workly 체험하기</h2>
                     <p className="text-gray-600">
                         회원가입 없이 Workly를 체험해보세요.
                         <br />
-                        체험판에서는 이용기록이 남지 않습니다.
+                        체험 모드에서는 이용기록이 남지 않습니다.
                     </p>
                 </div>
                 <div className="flex flex-row gap-3">
