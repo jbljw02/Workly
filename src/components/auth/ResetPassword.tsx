@@ -122,7 +122,7 @@ export default function ResetPassword() {
                             textSize: 'text-base',
                             textColor: 'text-white',
                             bgColor: 'bg-blue-500',
-                            hover: 'hover:bg-blue-700'
+                            hover: 'hover:bg-blue-600'
                         }}
                         label="비밀번호 재설정"
                         value={formData.email} />

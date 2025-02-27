@@ -1,9 +1,7 @@
 import CommonButton from '../button/CommonButton';
 import { useState, useEffect } from 'react';
-import { useRouter } from "next-nprogress-bar";
 import demoLogout from '@/utils/auth/demoLogout';
 import CautionIcon from '../../../public/svgs/caution-triangle.svg';
-import { useAppDispatch } from '@/redux/hooks';
 
 export default function DemoNotice() {
     const [animation, setAnimation] = useState('');
@@ -63,7 +61,7 @@ export default function DemoNotice() {
                             textSize: 'text-sm',
                             textColor: 'text-gray-700',
                             bgColor: 'bg-white',
-                            hover: 'hover:bg-gray-50',
+                            hover: 'hover:bg-gray-100',
                             borderColor: 'border-gray-300'
                         }}
                         label="그만두기"

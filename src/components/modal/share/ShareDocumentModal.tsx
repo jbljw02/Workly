@@ -101,7 +101,7 @@ export default function ShareDocumentModal({ isModalOpen, setIsModalOpen, select
                                     textSize: 'text-sm',
                                     textColor: 'text-white',
                                     bgColor: 'bg-blue-500',
-                                    hover: 'hover:bg-blue-700',
+                                    hover: 'hover:bg-blue-600',
                                 }}
                                 label="링크 복사"
                                 onClick={() => copyURL(`${baseURL}/editor/${selectedDoc.folderId}/${selectedDoc.id}`, dispatch)}
@@ -115,7 +115,7 @@ export default function ShareDocumentModal({ isModalOpen, setIsModalOpen, select
                                     textSize: 'text-sm',
                                     textColor: 'text-white',
                                     bgColor: 'bg-blue-500',
-                                    hover: 'hover:bg-blue-700',
+                                    hover: 'hover:bg-blue-600',
                                 }}
                                 label={`${selectedDoc.isPublished ? '게시 취소' : '게시'}`}
                                 onClick={() => selectedDoc.isPublished ?
