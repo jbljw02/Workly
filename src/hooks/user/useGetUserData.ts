@@ -49,7 +49,6 @@ export default function useGetUserData() {
     const getUserFolder = async () => {
         try {
             dispatch(setFolderLoading(true));
-
             const response = await axios.get('/api/folder', {
                 params: { email: user.email },
             });
@@ -62,9 +61,7 @@ export default function useGetUserData() {
     }
 
     const getUserData = async () => {
-        if (!user.email || isDeleting || !shouldRefresh) {
-            return;
-        }
+        if (!user.email || isDeleting || !shouldRefresh) return;
 
         try {
             await getUserDocument();

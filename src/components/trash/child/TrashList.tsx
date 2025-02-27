@@ -32,7 +32,7 @@ export default function TrashList({ searchedInput, searchCategory }: TrashListPr
                             trashList.map(document => (
                                 <React.Fragment key={document.id}>
                                     <TrashItem
-                                        item={document}
+                                        trashItem={document}
                                         searchCategory={searchCategory} />
                                 </React.Fragment>
                             )) :

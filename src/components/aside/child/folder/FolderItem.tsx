@@ -8,19 +8,15 @@ import ArrowIcon from '../../../../../public/svgs/right-arrow.svg';
 import EditIcon from '../../../../../public/svgs/editor/pencil-edit.svg';
 import DeleteIcon from '../../../../../public/svgs/trash.svg';
 import GroupHoverItem from '../GroupHoverItem';
-import { deleteFolders } from '@/redux/features/folder/folderSlice';
 import PlusIcon from '../../../../../public/svgs/plus.svg';
 import DocumentSection from './DocumentSection';
 import EditInput from './EditInput';
-import { deleteAllDocumentsOfFolder, renameParentFolderName } from '@/redux/features/document/documentSlice';
+import { renameParentFolderName } from '@/redux/features/document/documentSlice';
 import AddInputModal from '@/components/modal/AddInputModal';
 import HoverTooltip from '@/components/tooltip/HoverTooltip';
-import { showCompleteAlert, showWarningAlert } from '@/redux/features/common/alertSlice';
 import useAddDocument from '@/hooks/document/useAddDocument';
-import { addDocumentsToTrash, addFoldersToTrash } from '@/redux/features/trash/trashSlice';
-import useUndoState from '@/hooks/common/useUndoState';
-import { usePathname } from 'next/navigation';
-import { useRouter } from 'next-nprogress-bar';
+import useDeleteFolder from '@/hooks/folder/useDeleteFolder';
+import useCheckDemo from '@/hooks/demo/useCheckDemo';
 
 type FolderItemProps = {
     folder: Folder;
@@ -28,18 +24,12 @@ type FolderItemProps = {
 
 export default function FolderItem({ folder }: FolderItemProps) {
     const dispatch = useAppDispatch();
-    const router = useRouter();
 
-    const undoState = useUndoState();
     const addDocToFolder = useAddDocument();
+    const { deleteFolder } = useDeleteFolder(folder);
+    const checkDemo = useCheckDemo();
 
     const user = useAppSelector(state => state.user);
-    const documents = useAppSelector(state => state.documents);
-
-    const pathname = usePathname();
-    const pathParts = pathname.split('/');
-    const folderId = pathParts[2]; // '/editor/[folderId]/[documentId]'일 때 folderId는 2번째 인덱스
-    const documentId = pathParts[3]; // documentId는 3번째 인덱스
 
     const [isHovered, setIsHovered] = useState(false);
     const [isEditing, setIsEditing] = useState(false); // 폴더명 수정중
@@ -65,12 +55,14 @@ export default function FolderItem({ folder }: FolderItemProps) {
                 dispatch(renameParentFolderName({ folderId: folder.id, newFolderName: folderTitle }));
                 setIsEditing(false);
 
-                await axios.put('/api/folder',
-                    {
-                        email: user.email,
-                        folderId: folder.id,
-                        newFolderName: folderTitle
-                    });
+                if (!checkDemo()) {
+                    await axios.put('/api/folder',
+                        {
+                            email: user.email,
+                            folderId: folder.id,
+                            newFolderName: folderTitle
+                        });
+                }
             } catch (error) {
                 // 변경에 실패할 경우 이전 상태로 롤백
                 setFolderTitle(prevFolder.name);
@@ -81,40 +73,6 @@ export default function FolderItem({ folder }: FolderItemProps) {
         // ESC 키가 클릭될 시, 작업을 종료
         if (e.key === 'Escape') {
             setIsEditing(false);
-        }
-    }
-
-    // 폴더 삭제 요청
-    const deleteFolder = async () => {
-        // 폴더 내의 문서들
-        const documentsOfFolder = documents.filter(doc => folder.documentIds.includes(doc.id));
-
-        try {
-            // 폴더와 폴더 내의 모든 문서를 삭제
-            dispatch(deleteFolders(folder.id));
-            dispatch(deleteAllDocumentsOfFolder(folder.id));
-
-            // 삭제된 폴더와 문서들을 휴지통에 추가
-            dispatch(addFoldersToTrash(folder));
-            dispatch(addDocumentsToTrash(documentsOfFolder));
-
-            if (documentsOfFolder.some(doc => doc.id === documentId)) {
-                router.push('/editor/home');
-            }
-
-            // 폴더 삭제 요청
-            await axios.delete('/api/folder', {
-                params: {
-                    email: user.email,
-                    folderId: folder.id,
-                }
-            });
-
-            dispatch(showCompleteAlert(`${folder.name}의 삭제를 완료했습니다.`));
-        } catch (error) {
-            // 삭제에 실패하면 롤백
-            undoState();
-            dispatch(showWarningAlert(`${folder.name}의 삭제에 실패했습니다.`));
         }
     }
 

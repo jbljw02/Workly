@@ -6,6 +6,7 @@ import DeleteIcon from '../../../public/svgs/trash.svg';
 import LinkCopyIcon from '../../../public/svgs/editor/link.svg';
 import DownloadIcon from '../../../public/svgs/editor/download.svg';
 import WebIcon from '../../../public/svgs/web.svg';
+import useCheckDemo from '../demo/useCheckDemo';
 
 interface UseDocumentMenuProps {
     document: DocumentProps | null;
@@ -32,6 +33,8 @@ export default function useDocumentMenu({
     onPublish,
     onCancelPublish
 }: UseDocumentMenuProps) {
+    const checkDemo = useCheckDemo();
+    
     const menuItems = useMemo(() => {
         if (!document) return [];
 
@@ -42,12 +45,14 @@ export default function useDocumentMenu({
                 IconWidth: "16",
                 label: "링크 복사",
                 onClick: () => onCopyURL(document.folderId, document.id),
+                disabled: checkDemo(),
             },
             {
                 Icon: DownloadIcon,
                 IconWidth: "14",
                 label: "다운로드",
                 onClick: onDownload,
+                disabled: checkDemo(),
             }
         ];
 
@@ -107,6 +112,7 @@ export default function useDocumentMenu({
                     label: "게시",
                     onClick: () => onPublish(document),
                     horizonLine: true,
+                    disabled: checkDemo(),
                 },
                 {
                     Icon: DeleteIcon,
@@ -116,7 +122,7 @@ export default function useDocumentMenu({
                 }
             ];
         }
-    }, [document, editorPermission, isWebPublished]);
+    }, [document, editorPermission, isWebPublished, checkDemo]);
 
     return menuItems;
 }

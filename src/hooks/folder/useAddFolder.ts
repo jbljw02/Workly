@@ -4,9 +4,11 @@ import { SetInvalidInfo } from "@/types/invalidInfoProps.type";
 import axios from "axios";
 import { v4 as uuidv4 } from 'uuid';
 import { Folder } from "@/types/folder.type";
+import useCheckDemo from "../demo/useCheckDemo";
 
 export default function useAddFolder() {
     const dispatch = useAppDispatch();
+    const checkDemo = useCheckDemo();
 
     const folders = useAppSelector(state => state.folders);
     const user = useAppSelector(state => state.user);
@@ -35,9 +37,10 @@ export default function useAddFolder() {
         }
 
         try {
-            // 폴더 추가 요청
-            await axios.post('/api/folder',
-                { folder: addedFolder });
+            if (!checkDemo()) {
+                await axios.post('/api/folder',
+                    { folder: addedFolder });
+            }
 
             dispatch(addFolders(addedFolder));
             setIsFolderInvalidInfo({

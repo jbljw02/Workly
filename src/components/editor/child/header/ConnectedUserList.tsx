@@ -1,9 +1,11 @@
-import { useAppSelector } from "@/redux/hooks";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import GreenCircleIcon from '../../../../../public/svgs/green-circle.svg';
 import Image from "next/image";
 import HoverTooltip from "../../../tooltip/HoverTooltip";
-import React from "react";
+import React, { useEffect } from "react";
 import { ConnectedUser } from "@/types/user.type";
+import useCheckDemo from "@/hooks/demo/useCheckDemo";
+import { setDemoConnectedUsers } from "@/redux/features/editor/connectionSlice";
 
 type ConnectedUserItemProps = {
     user: ConnectedUser;
@@ -30,8 +32,25 @@ function ConnectedUserItem({ user, index }: ConnectedUserItemProps) {
 }
 
 export default function ConnectedUsers() {
+    const dispatch = useAppDispatch();
+    const checkDemo = useCheckDemo();
+
+    const user = useAppSelector(state => state.user);
     const connectedUsers = useAppSelector(state => state.connectedUsers);
     const connection = useAppSelector(state => state.connection);
+
+    // 데모 유저 연결 시 정보 설정
+    useEffect(() => {
+        if (checkDemo() && connectedUsers.length === 0) {
+            dispatch(setDemoConnectedUsers({
+                id: user.uid,
+                name: user.displayName,
+                photoURL: user.photoURL,
+                color: '#E3F4F4',
+                connectedAt: Date.now(),
+            }));
+        }
+    }, [checkDemo(), connectedUsers]);
 
     return (
         <div className="flex flex-row items-center justify-center gap-1.5 mr-1.5">

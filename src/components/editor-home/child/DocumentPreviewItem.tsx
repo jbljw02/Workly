@@ -8,6 +8,7 @@ import GroupIcon from '../../../../public/svgs/group.svg';
 import WebIcon from '../../../../public/svgs/web.svg';
 import { useAppSelector } from "@/redux/hooks";
 import ShortcutsOnIcon from '../../../../public/svgs/shortcuts-on.svg';
+import useCheckDemo from "@/hooks/demo/useCheckDemo";
 
 type DocumentPreviewItemProps = {
     document: DocumentProps;
@@ -15,7 +16,8 @@ type DocumentPreviewItemProps = {
 
 export default function DocumentPreviewItem({ document }: DocumentPreviewItemProps) {
     const user = useAppSelector(state => state.user);
-
+    const checkDemo = useCheckDemo();
+    
     // 문서 미리보기 렌더링
     const renderDocumentPreview = (docContent: JSONContent | null) => {
         return docContent?.content?.map((block, index) => {
@@ -109,7 +111,7 @@ export default function DocumentPreviewItem({ document }: DocumentPreviewItemPro
                     <hr className="my-1.5" />
                 </p>;
             }
-            // 인용굽 ㅡㄹ록
+            // 인용구 블록
             else if (block.type === 'blockquote') {
                 return (
                     <blockquote key={index} className="pl-3 border-l-3 border-gray-300 my-2">
@@ -129,7 +131,7 @@ export default function DocumentPreviewItem({ document }: DocumentPreviewItemPro
 
     return (
         <Link
-            href={`/editor/${document.folderId}/${document.id}`}
+            href={`/${checkDemo() ? 'demo' : 'editor'}/${document.folderId}/${document.id}`}
             className="flex flex-col justify-between border p-4 rounded shadow-sm w-[254px] h-96 overflow-hidden
                 cursor-pointer hover:bg-gray-100 transition-all duration-150">
             <div className="flex flex-col overflow-hidden">

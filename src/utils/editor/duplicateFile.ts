@@ -74,4 +74,5 @@ const duplicateFile = async (editor: Editor, fileNode: FileNodeAttrs, dispatch: 
         dispatch(showWarningAlert('파일 복제에 실패했습니다.'));
     }
 }
+
 export default duplicateFile;

@@ -1,5 +1,6 @@
 import { UserProps } from "@/types/user.type";
 import Image from "next/image";
+import useCheckDemo from "@/hooks/demo/useCheckDemo";
 
 type UserProfileProps = {
     user: UserProps;
@@ -7,9 +8,12 @@ type UserProfileProps = {
 }
 
 export default function UserProfile({ user }: UserProfileProps) {
+    const checkDemo = useCheckDemo();
+
     if (!user) return null;
     return (
-        <div className="flex flex-row items-center gap-3 w-full">
+        <div className={`flex flex-row items-center gap-3 w-full 
+            ${checkDemo() ? 'cursor-not-allowed' : 'cursor-pointer'}`}>
             {/* 구글 계정 회원이라면 구글 이미지를 보여줌 */}
             {/* 구글 계정 회원이 아니라면 기본 이미지를 보여줌 */}
             {/* 사용자의 협업자로 등록돼있지 않다면 유저 추가 아이콘을 보여줌 */}

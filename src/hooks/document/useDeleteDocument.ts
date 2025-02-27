@@ -9,11 +9,13 @@ import useUndoState from '../common/useUndoState';
 import { useRouter } from 'next-nprogress-bar';
 import { setDeleting } from '@/redux/features/common/placeholderSlice';
 import { DocumentProps } from '@/types/document.type';
+import useCheckDemo from '../demo/useCheckDemo';
 
 export default function useDeleteDocument() {
     const dispatch = useAppDispatch();
     const router = useRouter();
 
+    const checkDemo = useCheckDemo();
     const undoState = useUndoState();
 
     const user = useAppSelector(state => state.user);
@@ -47,19 +49,20 @@ export default function useDeleteDocument() {
             if (pathParts.length === 4) {
                 // 현재 페이지를 삭제했다면 홈으로 라우팅
                 if ((document.id).trim() === documentId.trim()) {
-                    router.push('/editor/home');
+                    router.push(`/${checkDemo() ? 'demo' : 'editor'}/home`);
                 }
             }
 
-            // 파이어베이스의 문서 삭제
-            await axios.delete('/api/document', {
-                data: {
-                    email: user.email,
-                    folderId: document.folderId,
-                    docId: document.id,
-                    docContent: document.docContent,
-                }
-            });
+            if (!checkDemo()) {
+                await axios.delete('/api/document', {
+                    data: {
+                        email: user.email,
+                        folderId: document.folderId,
+                        docId: document.id,
+                        docContent: document.docContent,
+                    }
+                });
+            }
 
             dispatch(setDeleting(false));
             // 문서의 상세 페이지일 경우

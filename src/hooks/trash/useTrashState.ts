@@ -1,9 +1,9 @@
-import { deleteAllDocumentsTrashOfFolder, deleteDocumentsFromTrash, deleteFoldersFromTrash, removeDocumentFromFolderTrash } from "@/redux/features/trash/trashSlice";
-import { useAppDispatch } from "@/redux/hooks";
-import { DocumentProps } from "@/types/document.type";
+import { deleteDocumentsFromTrash, removeDocumentFromFolderTrash, deleteFoldersFromTrash, deleteAllDocumentsTrashOfFolder } from "@/redux/features/trash/trashSlice";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { Folder } from "@/types/folder.type";
+import { DocumentProps } from "@/types/document.type";
 
-const useDeleteTrash = () => {
+export default function useTrashState() {
     const dispatch = useAppDispatch();
 
     // 휴지통에서 문서를 삭제하고 폴더에서 참조 제거
@@ -23,5 +23,3 @@ const useDeleteTrash = () => {
 
     return { deleteTrashDocument, deleteTrashFolder };
 }
-
-export default useDeleteTrash;

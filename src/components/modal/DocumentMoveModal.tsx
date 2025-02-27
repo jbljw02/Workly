@@ -1,20 +1,16 @@
-import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { useAppSelector } from "@/redux/hooks";
 import Modal from 'react-modal';
 import CommonInput from "../input/CommonInput";
 import { useEffect, useState } from "react";
 import FolderIcon from '../../../public/svgs/folder.svg';
-import { addDocumentToFolder, removeDocumentFromFolder } from "@/redux/features/folder/folderSlice";
-import axios from 'axios';
 import ModalHeader from "./ModalHeader";
-import { showCompleteAlert, showWarningAlert } from "@/redux/features/common/alertSlice";
 import { Folder } from "@/types/folder.type";
-import { DocumentProps } from "@/types/document.type";
 import useOverlayLock from "@/hooks/common/useOverlayLock";
 import { WorkingDocModalProps } from "@/types/modalProps.type";
-import { updateDocuments } from "@/redux/features/document/documentSlice";
+import { useDocumentMove } from "@/hooks/document/useMoveDocument";
 
 export default function DocumentMoveModal({ isModalOpen, setIsModalOpen, selectedDoc }: WorkingDocModalProps) {
-    const dispatch = useAppDispatch();
+    const { moveDoc } = useDocumentMove(selectedDoc, setIsModalOpen);
 
     const folders = useAppSelector(state => state.folders);
 
@@ -42,43 +38,13 @@ export default function DocumentMoveModal({ isModalOpen, setIsModalOpen, selecte
         }
     }, [targetFolder, folders]);
 
-    // 문서의 폴더를 이동
-    const moveDoc = async (targetFolder: Folder) => {
+    const handleMoveDoc = async (targetFolder: Folder) => {
+        const result = await moveDoc(targetFolder);
+
         // 현재 폴더를 클릭하면 경고
-        if (targetFolder.id === selectedDoc.folderId) {
-            setVibrateFolderId(targetFolder.id); // 진동 효과를 적용할 폴더의 ID를 설정
-            setTimeout(() => {
-                setVibrateFolderId(null);
-            }, 1000);
-        }
-        else {
-            // 나머지 값은 유지하고, 폴더 이름과 ID만 변경
-            const newDoc: DocumentProps = {
-                ...selectedDoc,
-                folderName: targetFolder.name,
-                folderId: targetFolder.id,
-            }
-
-            try {
-                // 전체 문서중에 변경할 문서의 폴더 이름을 변경
-                dispatch(updateDocuments({ docId: selectedDoc.id, ...newDoc }));
-
-                // 기존 폴더에서 문서 ID를 삭제하고, 새 폴더에 문서 ID를 추가
-                dispatch(removeDocumentFromFolder({ folderId: selectedDoc.folderId, docId: newDoc.id }));
-                dispatch(addDocumentToFolder({ folderId: targetFolder.id, docId: newDoc.id }));
-
-                setIsModalOpen(false);
-
-                await axios.put('/api/document/move',
-                    {
-                        folderId: targetFolder.id,
-                        document: selectedDoc
-                    });
-
-                dispatch(showCompleteAlert('문서를 성공적으로 이동했습니다.'))
-            } catch (error) {
-                dispatch(showWarningAlert('문서를 이동하는 데에 실패했습니다.'))
-            }
+        if (result?.isCurrentFolder) {
+            setVibrateFolderId(targetFolder.id);
+            setTimeout(() => setVibrateFolderId(null), 1000);
         }
     }
 
@@ -141,7 +107,7 @@ export default function DocumentMoveModal({ isModalOpen, setIsModalOpen, selecte
                                         return (
                                             <div
                                                 key={folder.id}
-                                                onClick={() => moveDoc(folder)}
+                                                onClick={() => handleMoveDoc(folder)}
                                                 className="flex flex-row justify-between items-center w-full pl-2 h-[30px] rounded-[4px] overflow-x-hidden cursor-pointer hover:bg-gray-100 group">
                                                 <div className={`flex flex-row items-center gap-1.5 
                                                     ${vibrateFolderId === folder.id ? 'vibrate text-red-500' : ''}`}>

@@ -36,6 +36,16 @@ export const imageDimensionSlice = createSlice({
     },
 })
 
+export const cropModeSlice = createSlice({
+    name: 'cropMode',
+    initialState: false,
+    reducers: {
+        setCropMode: (state, action) => {
+            return action.payload;
+        },
+    },
+})
+
 export const cropSlice = createSlice({
     name: 'crop',
     initialState: cropState,
@@ -59,11 +69,13 @@ export const openFullModalSlice = createSlice({
 export const { setImageDimension } = imageDimensionSlice.actions;
 export const { setCrop } = cropSlice.actions;
 export const { setOpenFullModal } = openFullModalSlice.actions;
+export const { setCropMode } = cropModeSlice.actions;
 
 const reducers = {
     imageDimension: imageDimensionSlice.reducer,
     crop: cropSlice.reducer,
     openFullModal: openFullModalSlice.reducer,
+    cropMode: cropModeSlice.reducer,
 }
 
 export default reducers;

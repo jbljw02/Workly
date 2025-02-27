@@ -1,7 +1,7 @@
 import SubmitButton from "@/components/button/SubmitButton";
 import { DocumentProps } from "@/types/document.type";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { useRef, useEffect, useMemo, useState } from "react";
+import { useRef, useEffect, useMemo } from "react";
 import CloseIcon from '../../../../public/svgs/close.svg';
 import Image from "next/image";
 import axios from "axios";
@@ -9,6 +9,7 @@ import { showCompleteAlert, showWarningAlert } from "@/redux/features/common/ale
 import { setWorkingSpinner } from "@/redux/features/common/placeholderSlice";
 import { addCollaborator } from "@/redux/features/document/documentSlice";
 import { addCoworker, setSelectedCoworkers, setTargetSharingEmail } from "@/redux/features/document/shareDocumentSlice";
+import useCheckDemo from "@/hooks/demo/useCheckDemo";
 
 type ShareFormProps = {
     selectedDoc: DocumentProps;
@@ -16,6 +17,8 @@ type ShareFormProps = {
 
 export default function ShareForm({ selectedDoc }: ShareFormProps) {
     const dispatch = useAppDispatch();
+    const checkDemo = useCheckDemo();
+
     const inputRef = useRef<HTMLInputElement | null>(null);
 
     const selectedCoworkers = useAppSelector(state => state.selectedCoworkers);
@@ -45,12 +48,14 @@ export default function ShareForm({ selectedDoc }: ShareFormProps) {
                 return;
             }
 
-            // 협업자 추가 요청
-            await axios.post('/api/document/coworker', {
-                email: newDoc.author,
-                docId: newDoc.id,
-                collaborators: selectedCoworkers,
-            });
+            if (!checkDemo()) {
+                // 협업자 추가 요청
+                await axios.post('/api/document/coworker', {
+                    email: newDoc.author,
+                    docId: newDoc.id,
+                    collaborators: selectedCoworkers,
+                });
+            }
 
             // 추가중인 협업자들을 순회하면서 한 명씩 state에 push
             selectedCoworkers.forEach(coworker => dispatch(addCoworker(coworker)));
@@ -120,7 +125,7 @@ export default function ShareForm({ selectedDoc }: ShareFormProps) {
                         onChange={(e) => dispatch(setTargetSharingEmail(e.target.value))}
                         placeholder={selectedCoworkers.length > 0 ? "" : "초대할 사용자의 이메일"}
                         autoFocus
-                        disabled={editorPermission !== '전체 허용'} />
+                        disabled={editorPermission !== '전체 허용' || checkDemo()} />
                 </div>
                 <SubmitButton
                     style={{
@@ -132,7 +137,7 @@ export default function ShareForm({ selectedDoc }: ShareFormProps) {
                         hover: 'hover:bg-blue-700',
                     }}
                     label='초대'
-                    value={selectedCoworkers.length > 0 && editorPermission === '전체 허용'}
+                    value={selectedCoworkers.length > 0 && editorPermission === '전체 허용' && !checkDemo()}
                     onClick={inviteUser} />
             </div>
             {

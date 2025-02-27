@@ -1,5 +1,5 @@
 import { ConnectedUser } from "@/types/user.type";
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 const initialConnectedUsers: ConnectedUser[] = [];
 
@@ -7,8 +7,11 @@ export const connectedUsersSlice = createSlice({
     name: 'connectedUsers',
     initialState: initialConnectedUsers,
     reducers: {
-        setConnectedUsers: (state, action) => {
+        setConnectedUsers: (state, action: PayloadAction<ConnectedUser[]>) => {
             return action.payload;
+        },
+        setDemoConnectedUsers: (state, action: PayloadAction<ConnectedUser>) => {
+            state.push(action.payload);
         },
     },
 })
@@ -33,7 +36,7 @@ export const docSyncedSlice = createSlice({
     },
 });
 
-export const { setConnectedUsers } = connectedUsersSlice.actions;
+export const { setConnectedUsers, setDemoConnectedUsers } = connectedUsersSlice.actions;
 export const { setConnection } = connectionSlice.actions;
 export const { setDocSynced } = docSyncedSlice.actions;
 

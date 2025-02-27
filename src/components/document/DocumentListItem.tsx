@@ -18,7 +18,7 @@ import { useAppSelector, useAppDispatch } from "@/redux/hooks";
 import useToggleShortcuts from "@/hooks/document/useToggleShortcuts";
 import { useClickOutside } from "@/hooks/common/useClickOutside";
 import { generateHTML } from "@tiptap/react";
-import usePublishedExtension from "@/hooks/editor/usePublishedExtension";
+import useCommonExtension from "@/hooks/editor/useCommonExtension";
 import useCheckPermission from "@/hooks/editor/useCheckPermission";
 import { useRouter } from "next-nprogress-bar";
 import copyURL from "@/utils/editor/copyURL";
@@ -26,6 +26,7 @@ import useCancelPublish from "@/hooks/document/useCancelPublish";
 import useDownloadPDF from "@/hooks/document/useDownloadPDF";
 import useDocumentMenu from "@/hooks/document/useMenuItem";
 import usePublishDocument from "@/hooks/document/usePublishDocument";
+import useCheckDemo from "@/hooks/demo/useCheckDemo";
 
 type DocumentListItemProps = {
     document: DocumentProps;
@@ -38,7 +39,8 @@ const baseURL = process.env.NEXT_PUBLIC_API_URL;
 export default function DocumentListItem({ document, isShared, isPublished }: DocumentListItemProps) {
     const dispatch = useAppDispatch();
     const router = useRouter();
-
+    const checkDemo = useCheckDemo();
+    
     const user = useAppSelector(state => state.user);
     const optionRef = useRef<HTMLDivElement>(null);
 
@@ -49,7 +51,7 @@ export default function DocumentListItem({ document, isShared, isPublished }: Do
     const cancelPublish = useCancelPublish();
     const publishDocument = usePublishDocument();
     const checkPermission = useCheckPermission();
-    const extensions = usePublishedExtension();
+    const extensions = useCommonExtension();
 
     const editorPermission = useAppSelector(state => state.editorPermission);
     const [isMoving, setIsMoving] = useState(false); // 문서를 이동중인지
@@ -92,7 +94,11 @@ export default function DocumentListItem({ document, isShared, isPublished }: Do
                 onClick={() => {
                     isPublished ?
                         window.open(`/web-published/${document.folderId}/${document.id}`, '_blank') :
-                        router.push(`/editor/${document.folderId}/${document.id}`)
+                        (
+                            checkDemo() ?
+                                router.push(`/demo/${document.folderId}/${document.id}`) :
+                                router.push(`/editor/${document.folderId}/${document.id}`)
+                        )
                 }}>
                 <div
                     className='relative flex flex-1 items-center py-5 mx-12 border-b'>

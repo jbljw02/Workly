@@ -1,8 +1,48 @@
 import { NextResponse } from 'next/server';
-import { sign } from 'jsonwebtoken';
+import { sign, verify } from 'jsonwebtoken';
 import { v4 as uuidv4 } from 'uuid';
+import { cookies } from 'next/headers';
 
 const SECRET_KEY = process.env.JWT_SECRET_KEY!;
+
+// GET - 데모 사용자 체크
+export async function GET() {
+    try {
+        const cookieStore = cookies();
+        const demoToken = cookieStore.get('demoToken');
+
+        if (!demoToken?.value) {
+            return NextResponse.json({
+                uid: null,
+                email: null,
+                displayName: null,
+                isDemo: false
+            }, { status: 200 });
+        }
+
+        // 토큰 유효성 검증 및 디코딩
+        const decoded = verify(demoToken.value, SECRET_KEY) as {
+            uid: string;
+            email: string;
+            displayName: string;
+            isDemo: boolean;
+        };
+
+        return NextResponse.json({
+            uid: decoded.uid,
+            email: decoded.email,
+            displayName: decoded.displayName,
+            isDemo: decoded.isDemo
+        }, { status: 200 });
+    } catch (error) {
+        return NextResponse.json({
+            uid: null,
+            email: null,
+            displayName: null,
+            isDemo: false
+        }, { status: 200 });
+    }
+}
 
 // CREATE - 데모 사용자 토큰 생성
 export async function POST() {
@@ -21,15 +61,19 @@ export async function POST() {
             SECRET_KEY
         );
 
-        const response = NextResponse.json({ uid: demoUid }, { status: 200 });
+        const response = NextResponse.json({
+            uid: demoUid,
+            email: 'guest@workly.kr',
+            displayName: '게스트',
+            isDemo: true,
+        }, { status: 200 });
 
         response.cookies.set({
-            name: 'authToken',
+            name: 'demoToken',
             value: token,
             secure: process.env.NODE_ENV !== 'development',
             sameSite: 'strict',
             path: '/',
-            httpOnly: true,
             maxAge: 1800, // 30분
         });
 
@@ -46,11 +90,10 @@ export async function DELETE() {
 
         // 쿠키 즉시 만료 처리
         response.cookies.set({
-            name: 'authToken',
+            name: 'demoToken',
             value: '',
             expires: new Date(0),
             path: '/',
-            httpOnly: true,
             secure: process.env.NODE_ENV !== 'development',
             sameSite: 'strict',
         });

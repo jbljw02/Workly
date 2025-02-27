@@ -23,6 +23,7 @@ const combinedReducer = combineReducers({
     editorScale: scaleReducers.editorScale,
     imageDimension: editorImageReducers.imageDimension,
     crop: editorImageReducers.crop,
+    cropMode: editorImageReducers.cropMode,
     openFullModal: editorImageReducers.openFullModal,
     fileNode: fileReducers.fileNode,
     linkTooltip: linkReducers.linkTooltip,
