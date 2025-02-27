@@ -30,9 +30,9 @@ import CustomTextMark from "../../lib/textMark";
 import { setConnectedUsers, setConnection, setDocSynced } from "@/redux/features/editor/connectionSlice";
 import DragHandle from '@tiptap-pro/extension-drag-handle'
 import { EnsureLastParagraph } from "../../lib/ensureLastParagraph";
-import uploadNewImage from "@/utils/editor/uploadNewImage";
-import uploadNewFile from "@/utils/editor/uploadNewFile";
 import { ConnectedUser } from "@/types/user.type";
+import useUploadImage from "./useUploadImage";
+import useUploadFile from "./useUploadFile";
 
 const appId = process.env.NEXT_PUBLIC_TIPTAP_APP_ID;
 
@@ -72,9 +72,11 @@ type useEditorExtensionProps = {
 export default function useEditorExtension({ docId }: useEditorExtensionProps) {
     const dispatch = useAppDispatch();
 
+    const uploadNewImage = useUploadImage();
+    const uploadNewFile = useUploadFile();
+
     const user = useAppSelector(state => state.user);
     const selectedDocument = useAppSelector(state => state.selectedDocument);
-    const documents = useAppSelector(state => state.documents);
 
     // 사용자의 커서 색상을 지정
     const userColor = useMemo(() => colors[Math.floor(Math.random() * colors.length)], []);
@@ -214,6 +216,7 @@ export default function useEditorExtension({ docId }: useEditorExtensionProps) {
         }),
         Dropcursor,
         CustomTextMark,
+        DragHandle,
         ImageNodeView,
         FileNode,
         FileHandler.configure({
@@ -224,9 +227,9 @@ export default function useEditorExtension({ docId }: useEditorExtensionProps) {
                         const src = fileReader.result as string
 
                         if (file.type.startsWith('image/')) {
-                            uploadNewImage(currentEditor, file, src, docId, dispatch)
+                            uploadNewImage(currentEditor, file, src)
                         } else {
-                            uploadNewFile(currentEditor, file, docId, pos, dispatch)
+                            uploadNewFile(currentEditor, file, pos)
                         }
                     }
                     fileReader.readAsDataURL(file)
@@ -254,13 +257,6 @@ export default function useEditorExtension({ docId }: useEditorExtensionProps) {
                 connectedAt: Date.now(),
             },
         }),
-        DragHandle.configure({
-            onNodeChange: ({ node, editor }) => {
-                if (!node) {
-                    return;
-                }
-            },
-        })
     ];
 
     return extensions;

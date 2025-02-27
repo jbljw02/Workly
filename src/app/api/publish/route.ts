@@ -2,7 +2,7 @@ import { doc, getDoc, serverTimestamp, updateDoc } from '@firebase/firestore';
 import { NextRequest, NextResponse } from 'next/server';
 import firestore from '@/firebase/firestore';
 import { deleteObject, getStorage, ref, uploadString } from 'firebase/storage';
-import getDocumentContent from '@/utils/getDocumentContent';
+import getDocumentContent from '@/utils/document/getDocumentContent';
 
 // 문서를 게시 - CREATE
 export async function POST(req: NextRequest, res: NextResponse) {

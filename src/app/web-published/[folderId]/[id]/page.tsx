@@ -3,7 +3,7 @@ import firestore from "@/firebase/firestore";
 import { doc, getDoc } from "firebase/firestore";
 import { redirect } from "next/navigation";
 import { Metadata } from "next";
-import { getDocumentMetadata } from "@/utils/getDocumentMetadata";
+import { getDocumentMetadata } from "@/utils/document/getDocumentMetadata";
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
 
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
@@ -28,7 +28,7 @@ export default async function PublishedPage({ params }: {
     if (!docSnap.exists() || !docSnap.data().isPublished) {
         return redirect('/document-not-found');
     }
-    
+
     const document = docSnap.data();
 
     // 게시된 문서 내용 가져오기
@@ -40,7 +40,7 @@ export default async function PublishedPage({ params }: {
     if (!response.ok) {
         return redirect('/document-not-found');
     }
-    
+
     const content = await response.json();
 
     return (

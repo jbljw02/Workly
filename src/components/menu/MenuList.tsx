@@ -40,7 +40,8 @@ export default function MenuList({ isOpen, menuList, setListOpen, listPositon }:
                                 onClick={(e) => {
                                     item.onClick(e);
                                     setListOpen(false);
-                                }} />
+                                }}
+                                disabled={item.disabled} />
                         </React.Fragment>
                     ))
                 }

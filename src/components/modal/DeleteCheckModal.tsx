@@ -9,82 +9,18 @@ import axios from "axios";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { showCompleteAlert, showWarningAlert } from "@/redux/features/common/alertSlice";
 import { setDocumentsTrash, setFoldersTrash } from "@/redux/features/trash/trashSlice";
-import useDeleteTrash from "@/hooks/document/useDeleteTrash";
 import useOverlayLock from "@/hooks/common/useOverlayLock";
 import { useEffect } from "react";
 import { ModalProps } from '../../types/modalProps.type';
+import useDeleteTrash from '@/hooks/trash/useDeleteTrash';
 
 type DeleteCheckModalProps = ModalProps & {
     searchCategory: SearchCategory;
-    item: DocumentProps | Folder;
+    trashItem: DocumentProps | Folder;
 }
 
-export default function DeleteCheckModal({ isModalOpen, setIsModalOpen, searchCategory, item }: DeleteCheckModalProps) {
-    const dispatch = useAppDispatch();
-
-    const { deleteTrashDocument, deleteTrashFolder } = useDeleteTrash();
-
-    const user = useAppSelector(state => state.user);
-    const documentsTrash = useAppSelector(state => state.documentsTrash);
-    const foldersTrash = useAppSelector(state => state.foldersTrash);
-
-    // 문서를 영구 삭제
-    const deleteDocumentPermanently = async (document: DocumentProps) => {
-        const prevDocumentsTrash = [...documentsTrash];
-        const prevFoldersTrash = [...foldersTrash];
-
-        try {
-            // 휴지통에서 문서를 삭제하고 폴더에서 참조 제거
-            deleteTrashDocument(document);
-
-            setIsModalOpen(false);
-
-            // 파이어베이스에서 문서 삭제
-            await axios.delete('/api/trash/document', {
-                params: {
-                    docId: document.id,
-                    folderId: document.folderId,
-                }
-            });
-
-            dispatch(showCompleteAlert('해당 문서는 영구적으로 삭제되었습니다.'));
-        } catch (error) {
-            dispatch(showWarningAlert('삭제에 실패했습니다.'));
-
-            // 삭제 실패 시 롤백
-            dispatch(setDocumentsTrash(prevDocumentsTrash));
-            dispatch(setFoldersTrash(prevFoldersTrash));
-        }
-    }
-
-    // 폴더를 영구 삭제
-    const deleteFolderPermanently = async (folder: Folder) => {
-        const prevDocumentsTrash = [...documentsTrash];
-        const prevFoldersTrash = [...foldersTrash];
-
-        try {
-            // 휴지통에서 폴더를 삭제하고 참조 중인 모든 문서 제거
-            deleteTrashFolder(folder);
-
-            setIsModalOpen(false);
-
-            // 파이어베이스에서 폴더와 관련 문서 삭제
-            await axios.delete('/api/trash/folder', {
-                params: {
-                    email: user.email,
-                    folderId: folder.id,
-                }
-            });
-
-            dispatch(showCompleteAlert('해당 폴더는 영구적으로 삭제되었습니다.'));
-        } catch (error) {
-            dispatch(showWarningAlert('삭제에 실패했습니다.'));
-
-            // 삭제 실패 시 롤백
-            dispatch(setDocumentsTrash(prevDocumentsTrash));
-            dispatch(setFoldersTrash(prevFoldersTrash));
-        }
-    }
+export default function DeleteCheckModal({ isModalOpen, setIsModalOpen, searchCategory, trashItem }: DeleteCheckModalProps) {
+    const { deleteDocumentPermanently, deleteFolderPermanently } = useDeleteTrash(setIsModalOpen);
 
     // 삭제할 아이템이 문서인지 폴더인지 확인하고 작업을 분기
     const deleteItemPermanently = (item: DocumentProps | Folder) => {
@@ -100,7 +36,7 @@ export default function DeleteCheckModal({ isModalOpen, setIsModalOpen, searchCa
     useEffect(() => {
         const keyPress = (event: KeyboardEvent) => {
             if (event.key === 'Enter') {
-                deleteItemPermanently(item);
+                deleteItemPermanently(trashItem);
             }
         };
 
@@ -111,7 +47,7 @@ export default function DeleteCheckModal({ isModalOpen, setIsModalOpen, searchCa
         return () => {
             window.removeEventListener('keydown', keyPress);
         };
-    }, [isModalOpen, item]);
+    }, [isModalOpen, trashItem]);
 
     useOverlayLock(isModalOpen);
 
@@ -165,7 +101,7 @@ export default function DeleteCheckModal({ isModalOpen, setIsModalOpen, searchCa
                             borderColor: 'border-red-500',
                         }}
                         label='삭제'
-                        onClick={() => deleteItemPermanently(item)} />
+                        onClick={() => deleteItemPermanently(trashItem)} />
                     <CommonButton
                         style={{
                             width: 'w-14',

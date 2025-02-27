@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import BoldIcon from '../../../../../public/svgs/editor/bold.svg'
 import ItalicIcon from '../../../../../public/svgs/editor/italic.svg'
 import UnderlineIcon from '../../../../../public/svgs/editor/underline.svg'
@@ -25,11 +25,14 @@ import BlockquoteIcon from '../../../../../public/svgs/editor/blockquote.svg'
 import ManageLink from '../link/ManageLink'
 import ManageAlign from '../align/ManageAlign'
 import HeadingDropdown from '../heading/HeadingDropdown'
-import uploadNewImage from '@/utils/editor/uploadNewImage'
-import uploadNewFile from '@/utils/editor/uploadNewFile'
+import useUploadImage from '@/hooks/editor/useUploadImage'
+import useUploadFile from '@/hooks/editor/useUploadFile'
 
 export default function MenuBar({ editor }: { editor: Editor }) {
     const dispatch = useAppDispatch();
+
+    const uploadNewImage = useUploadImage();
+    const uploadNewFile = useUploadFile();
 
     const editorPermission = useAppSelector(state => state.editorPermission);
     const selectedDocument = useAppSelector(state => state.selectedDocument);
@@ -124,11 +127,11 @@ export default function MenuBar({ editor }: { editor: Editor }) {
 
                     // 이미지 파일일 경우
                     if (file.type.startsWith('image/')) {
-                        uploadNewImage(editor, file, src, selectedDocument.id, dispatch);
+                        uploadNewImage(editor, file, src);
                     }
                     else {
                         // 이미지가 아닌 일반 파일일 경우
-                        uploadNewFile(editor, file, selectedDocument.id, cursorPos, dispatch);
+                        uploadNewFile(editor, file, cursorPos);
                     }
                 };
 

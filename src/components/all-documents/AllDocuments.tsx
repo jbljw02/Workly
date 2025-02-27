@@ -10,7 +10,9 @@ export default function AllDocuments() {
     const documents = useAppSelector(state => state.documents);
     const user = useAppSelector(state => state.user);
     const sortRule = useAppSelector(state => state.sortRule);
-    
+
+    const folders = useAppSelector(state => state.folders);
+
     // 사용자의 문서들을 필터링하고 정렬
     const usersDocuments = useMemo(() => {
         const filtered = documents.filter(doc => doc.author.email === user.email);

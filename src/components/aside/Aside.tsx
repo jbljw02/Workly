@@ -14,12 +14,14 @@ import Trash from "../trash/Trash";
 import ShortcutIcon from '../../../public/svgs/shortcuts-off.svg';
 import WebIcon from '../../../public/svgs/web.svg';
 import Link from "next/link";
-import { useRouter } from "next-nprogress-bar";
+import { useRouter } from "next/navigation";
+import useCheckDemo from "@/hooks/demo/useCheckDemo";
 
 export default function Aside() {
     const router = useRouter();
 
     const addDocToFolder = useAddDocument();
+    const checkDemo = useCheckDemo();
 
     const folders = useAppSelector(state => state.folders);
 
@@ -76,6 +78,14 @@ export default function Aside() {
         }
     };
 
+    const handleNavigation = (e: React.MouseEvent) => {
+        if (checkDemo()) {
+            e.preventDefault();
+            // 필요한 경우 데모 사용자용 피드백 추가
+            // 예: 알림, 툴팁 등
+        }
+    };
+
     return (
         <aside
             ref={sidebarRef}
@@ -106,7 +116,7 @@ export default function Aside() {
             <SearchInput isCollapsed={isCollapsed} />
             {/* 메뉴를 모아놓은 영역 */}
             <div className="border-b border-b-neutral-300 mb-6 mt-2 pb-5">
-                <Link href="/editor/home">
+                <Link href={`/${checkDemo() ? 'demo' : 'editor'}/home`}>
                     <SidebarItem
                         Icon={HomeIcon}
                         IconWidth="17"
@@ -118,25 +128,36 @@ export default function Aside() {
                     IconWidth="17"
                     label="문서"
                     isCollapsed={isCollapsed}
-                    onClick={() => router.push('/editor/document')}
+                    onClick={() => router.push(`/${checkDemo() ? 'demo' : 'editor'}/document`)}
                     addClick={() => {
                         addDocToFolder('', folders[0]);
                     }} />
-                <Link href="/editor/shared">
-                    <SidebarItem
-                        Icon={GroupIcon}
-                        IconWidth="18"
-                        label="공유중인 문서"
-                        isCollapsed={isCollapsed} />
-                </Link>
-                <Link href="/editor/published">
-                    <SidebarItem
-                        Icon={WebIcon}
-                        IconWidth="17"
-                        label="게시된 문서"
-                        isCollapsed={isCollapsed} />
-                </Link>
-                <Link href="/editor/shortcuts">
+                {/* 데모 사용자는 공유중인 문서와 게시된 문서 접근 제한 */}
+                <div className={`${checkDemo() ? 'cursor-not-allowed' : ''}`}>
+                    <Link
+                        href="/editor/shared"
+                        className={`${checkDemo() ? 'pointer-events-none' : ''}`}>
+                        <SidebarItem
+                            Icon={GroupIcon}
+                            IconWidth="18"
+                            label="공유중인 문서"
+                            isCollapsed={isCollapsed}
+                            disabled={checkDemo()} />
+                    </Link>
+                </div>
+                <div className={`${checkDemo() ? 'cursor-not-allowed' : ''}`}>
+                    <Link
+                        href="/editor/published"
+                        className={`${checkDemo() ? 'pointer-events-none' : ''}`}>
+                        <SidebarItem
+                            Icon={WebIcon}
+                            IconWidth="17"
+                            label="게시된 문서"
+                            isCollapsed={isCollapsed}
+                            disabled={checkDemo()} />
+                    </Link>
+                </div>
+                <Link href={`/${checkDemo() ? 'demo' : 'editor'}/shortcuts`}>
                     <SidebarItem
                         Icon={ShortcutIcon}
                         IconWidth="22"

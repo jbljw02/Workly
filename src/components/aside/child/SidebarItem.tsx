@@ -1,5 +1,6 @@
 import PlusIcon from '../../../../public/svgs/plus.svg';
 import GroupHoverItem from "./GroupHoverItem";
+import LockIcon from '../../../../public/svgs/editor/lock.svg';
 
 type SidebarItemProps = {
     Icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
@@ -8,6 +9,7 @@ type SidebarItemProps = {
     isCollapsed?: boolean;
     onClick?: () => void;
     addClick?: () => void;
+    disabled?: boolean;
 }
 
 export default function SidebarItem({
@@ -16,13 +18,20 @@ export default function SidebarItem({
     label,
     isCollapsed,
     onClick,
-    addClick }: SidebarItemProps) {
+    addClick,
+    disabled
+}: SidebarItemProps) {
     return (
         <div
-            onClick={onClick}
-            className="flex justify-between pl-2.5 pr-1.5 w-full h-9 rounded cursor-pointer hover:bg-gray-100 group">
+            onClick={!disabled ? onClick : undefined}
+            className={`flex justify-between pl-2.5 pr-1.5 w-full h-9 rounded
+                ${disabled ? 'pointer-events-none opacity-50' : 'cursor-pointer hover:bg-gray-100 group'}`}>
             <div className="flex flex-row items-center">
-                <Icon width={IconWidth} height={IconWidth} />
+                {
+                    disabled ?
+                        <LockIcon width="16" className="text-gray-400" /> :
+                        <Icon width={IconWidth} height={IconWidth} />
+                }
                 {/* 사이드바가 확장된 경우에만 텍스트 표시 */}
                 {
                     !isCollapsed && (

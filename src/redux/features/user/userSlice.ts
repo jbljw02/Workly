@@ -6,6 +6,7 @@ const UserState: UserProps = {
     displayName: '',
     photoURL: '',
     uid: '',
+    isDemo: false,
 };
 
 export const userSlice = createSlice({
@@ -23,6 +24,20 @@ export const userSlice = createSlice({
             state.displayName = '';
             state.photoURL = '';
             state.uid = '';
+        },
+        setDemoUser: (state, action) => {
+            state.email = 'guest@workly.kr';
+            state.displayName = '게스트';
+            state.photoURL = action.payload.photoURL;
+            state.uid = action.payload.uid;
+            state.isDemo = true;
+        },
+        clearDemoUser: (state) => {
+            state.email = '';
+            state.displayName = '';
+            state.photoURL = '';
+            state.uid = '';
+            state.isDemo = false;
         }
     },
 })
@@ -37,7 +52,7 @@ export const allUsers = createSlice({
     },
 })
 
-export const { setUser, clearUser } = userSlice.actions;
+export const { setUser, clearUser, setDemoUser, clearDemoUser } = userSlice.actions;
 export const { setAllUsers } = allUsers.actions;
 
 const reducers = {

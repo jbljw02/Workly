@@ -78,7 +78,7 @@ export default function EditorHeader({ editor }: EditorHeaderProps) {
             }
         },
         onDelete: deleteDoc,
-        onPublish: publishDocument,
+        onPublish: () => publishDocument(selectedDocument),
         onCancelPublish: cancelPublish
     });
 

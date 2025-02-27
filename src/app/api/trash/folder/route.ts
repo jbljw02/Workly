@@ -4,7 +4,7 @@ import firestore from "../../../../firebase/firestore";
 import { getStorage } from "firebase/storage";
 import deleteTiptapDocument from '@/utils/tiptap-document/deleteTiptapDocument';
 import axios from "axios";
-import deleteStorageFile from "@/utils/deleteStorageFile";
+import deleteStorageFile from "@/utils/document/deleteStorageFile";
 
 // 휴지통에 있는 폴더 복원 - POST
 export async function POST(req: NextRequest) {

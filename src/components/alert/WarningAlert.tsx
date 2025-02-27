@@ -1,4 +1,4 @@
-import CautionIcon from '../../../public/svgs/caution.svg'
+import CautionIcon from '../../../public/svgs/caution-circle.svg'
 import CloseIcon from '../../../public/svgs/editor/close.svg'
 import { useEffect, useState } from "react";
 import { NoticeModalProps } from '@/types/modalProps.type';

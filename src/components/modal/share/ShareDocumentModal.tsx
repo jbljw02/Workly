@@ -12,6 +12,7 @@ import useOverlayLock from '@/hooks/common/useOverlayLock';
 import usePublishDocument from '@/hooks/document/usePublishDocument';
 import { setTargetSharingEmail } from '@/redux/features/document/shareDocumentSlice';
 import { WorkingDocModalProps } from '@/types/modalProps.type';
+import useCheckDemo from '@/hooks/demo/useCheckDemo';
 
 const baseURL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -20,6 +21,7 @@ export default function ShareDocumentModal({ isModalOpen, setIsModalOpen, select
 
     const cancelPublish = useCancelPublish();
     const publishDocument = usePublishDocument();
+    const checkDemo = useCheckDemo();
 
     const editorPermission = useAppSelector(state => state.editorPermission);
 
@@ -102,7 +104,8 @@ export default function ShareDocumentModal({ isModalOpen, setIsModalOpen, select
                                     hover: 'hover:bg-blue-700',
                                 }}
                                 label="링크 복사"
-                                onClick={() => copyURL(`${baseURL}/editor/${selectedDoc.folderId}/${selectedDoc.id}`, dispatch)} />
+                                onClick={() => copyURL(`${baseURL}/editor/${selectedDoc.folderId}/${selectedDoc.id}`, dispatch)}
+                                disabled={checkDemo()} />
                         </div> :
                         <div className='flex items-center justify-center w-full text-sm p-5 border-t'>
                             <SubmitButton
@@ -118,7 +121,7 @@ export default function ShareDocumentModal({ isModalOpen, setIsModalOpen, select
                                 onClick={() => selectedDoc.isPublished ?
                                     cancelPublish(selectedDoc.id) :
                                     publishDocument(selectedDoc)}
-                                value={editorPermission === '전체 허용'} />
+                                value={editorPermission === '전체 허용' && !checkDemo()} />
                         </div>
                 }
             </div>

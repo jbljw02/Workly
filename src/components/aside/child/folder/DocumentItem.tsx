@@ -11,6 +11,7 @@ import useDeleteDocument from '@/hooks/document/useDeleteDocument';
 import { showWarningAlert } from '@/redux/features/common/alertSlice';
 import { DocumentProps } from '@/types/document.type';
 import { renameDocuments } from '@/redux/features/document/documentSlice';
+import useCheckDemo from '@/hooks/demo/useCheckDemo';
 
 type DocumentItemProps = {
     document: DocumentProps;
@@ -21,6 +22,7 @@ type DocumentItemProps = {
 export default function DocumentItem({ document, onClick, paddingLeft }: DocumentItemProps) {
     const dispatch = useAppDispatch();
     const deleteDoc = useDeleteDocument();
+    const checkDemo = useCheckDemo();
 
     const [isEditing, setIsEditing] = useState(false);
     const [docTitle, setDocTitle] = useState(document.title);
@@ -34,11 +36,13 @@ export default function DocumentItem({ document, onClick, paddingLeft }: Documen
                 dispatch(renameDocuments({ docId: document.id, newTitle: docTitle }));
                 setIsEditing(false);
 
-                await axios.put('/api/document',
-                    {
-                        docId: document.id,
-                        newDocName: docTitle,
-                    });
+                if (!checkDemo()) {
+                    await axios.put('/api/document',
+                        {
+                            docId: document.id,
+                            newDocName: docTitle,
+                        });
+                }
             } catch (error) {
                 dispatch(showWarningAlert('문서명 수정에 실패했습니다.'));
 

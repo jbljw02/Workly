@@ -1,4 +1,4 @@
-import getTiptapDocument from "./tiptap-document/getTiptapDocument";
+import getTiptapDocument from "../tiptap-document/getTiptapDocument";
 
 // 문서 내용의 경로를 확인 후 조회
 const getDocumentContent = async (docId: string, data: any) => {

@@ -4,8 +4,8 @@ import { NextRequest, NextResponse } from "next/server";
 import firestore from "../../../../firebase/firestore";
 import deleteTiptapDocument from '@/utils/tiptap-document/deleteTiptapDocument';
 import axios from "axios";
-import getDocumentContent from "@/utils/getDocumentContent";
-import deleteStorageFile from "@/utils/deleteStorageFile";
+import getDocumentContent from "@/utils/document/getDocumentContent";
+import deleteStorageFile from "@/utils/document/deleteStorageFile";
 
 // 휴지통에 있는 사용자의 문서 복원 - CREATE
 export async function POST(req: NextRequest) {

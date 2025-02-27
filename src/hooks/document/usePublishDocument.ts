@@ -4,14 +4,11 @@ import { setWorkingSpinner } from "@/redux/features/common/placeholderSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import axios from "axios";
 import Nprogress from 'nprogress';
-import useUpdateContent from '@/hooks/editor/useUpdateContent';
 import { publishContent } from "@/redux/features/document/documentSlice";
 
 export default function usePublishDocument() {
     const dispatch = useAppDispatch();
     const user = useAppSelector(state => state.user);
-
-    const { updateContent } = useUpdateContent();
 
     const publishDocument = async (selectedDoc: DocumentProps) => {
         try {
@@ -33,8 +30,6 @@ export default function usePublishDocument() {
                     user: user,
                     docContent: selectedDoc.docContent,
                 });
-
-            await updateContent(selectedDoc); // 게시되기 전에 변경사항 저장
 
             dispatch(publishContent({ docId: selectedDoc.id, user: user }));
             dispatch(showCompleteAlert('문서 게시에 성공했습니다.'));

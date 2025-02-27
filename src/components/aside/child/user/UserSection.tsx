@@ -4,8 +4,11 @@ import { useClickOutside } from "@/hooks/common/useClickOutside";
 import UserMenuList from "./UserMenuList";
 import UserProfile from "./UserProfile";
 import UserProfileSkeleton from "@/components/placeholder/skeleton/UserProfileSkeleton";
+import useCheckDemo from "@/hooks/demo/useCheckDemo";
 
 export default function UserSection() {
+    const checkDemo = useCheckDemo();
+
     const user = useAppSelector(state => state.user);
     const containerRef = useRef<HTMLDivElement>(null);
 
@@ -17,14 +20,12 @@ export default function UserSection() {
         <div
             className="mb-6 w-full overflow-hidden z-20"
             ref={containerRef}
-            onClick={() => setMenuListOpen(!menuListOpen)}>
+            onClick={() => checkDemo() ? undefined : setMenuListOpen(!menuListOpen)}>
             {
                 !user.displayName || !user.email ?
                     <UserProfileSkeleton /> :
                     <>
-                        <div className="cursor-pointer">
-                            <UserProfile user={user} />
-                        </div>
+                        <UserProfile user={user} />
                         <UserMenuList
                             menuListOpen={menuListOpen}
                             setListOpen={setMenuListOpen} />

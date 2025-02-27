@@ -20,8 +20,9 @@ import useCheckSelected from '@/hooks/editor/useCheckSelected';
 import LoadingSpinner from '@/components/placeholder/LoadingSpinner';
 import { getStorage, ref, deleteObject } from 'firebase/storage';
 import downloadFile from '@/utils/editor/downloadFile';
-import duplicateFile from '@/utils/editor/duplicateFile';
 import copyURL from '@/utils/editor/copyURL';
+import useCheckDemo from '@/hooks/demo/useCheckDemo';
+import useDuplicateFile from '@/hooks/editor/useDuplicateFile';
 
 export interface FileNodeViewProps {
     editor: Editor;
@@ -31,8 +32,11 @@ export interface FileNodeViewProps {
     isPublished?: boolean;
 }
 
-export default function FileNodeView({ editor, node, }: FileNodeViewProps) {
+export default function FileNodeView({ editor, node }: FileNodeViewProps) {
     const dispatch = useAppDispatch();
+
+    const checkDemo = useCheckDemo();
+    const duplicateFile = useDuplicateFile();
 
     const { id, href, name, mimeType, size, className } = node.attrs;
 
@@ -128,9 +132,12 @@ export default function FileNodeView({ editor, node, }: FileNodeViewProps) {
             return true; // 현재 노드가 삭제할 대상이 아닌 경우 계속 탐색
         });
 
-        const storage = getStorage();
-        const fileRef = ref(storage, `documents/${selectedDocument.id}/files/${id}`);
-        await deleteObject(fileRef);
+        if (!checkDemo()) {
+            const storage = getStorage();
+            const fileRef = ref(storage, `documents/${selectedDocument.id}/files/${id}`);
+            await deleteObject(fileRef);
+        }
+
         if (isFound) {
             dispatch(tr); // 트랜잭션을 적용
         }
@@ -144,6 +151,7 @@ export default function FileNodeView({ editor, node, }: FileNodeViewProps) {
                 IconWidth: "16",
                 label: "링크 복사",
                 onClick: () => copyURL(fileNode.href, dispatch),
+                disabled: checkDemo(),
             },
             {
                 Icon: DownloadIcon,
@@ -166,7 +174,7 @@ export default function FileNodeView({ editor, node, }: FileNodeViewProps) {
                 Icon: CopyIcon,
                 IconWidth: "14",
                 label: "복제",
-                onClick: () => duplicateFile(editor, fileNode, dispatch),
+                onClick: () => duplicateFile(editor, fileNode),
                 horizonLine: true,
             },
             {

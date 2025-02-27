@@ -5,6 +5,7 @@ import { useMemo } from "react";
 import { useRouter } from "next-nprogress-bar";
 import React from "react";
 import { Folder } from "@/types/folder.type";
+import useCheckDemo from '@/hooks/demo/useCheckDemo';
 
 type DocumentSectionProps = {
     folder: Folder,
@@ -13,6 +14,8 @@ type DocumentSectionProps = {
 export default function DocumentSection({ folder }: DocumentSectionProps) {
     const router = useRouter();
     const documents = useAppSelector(state => state.documents);
+
+    const checkDemo = useCheckDemo();
 
     // 전체 문서에서 폴더가 가지고 있는 docId와 일치하는 것들만 필터링
     const documentsInFolder = useMemo(() =>
@@ -29,7 +32,7 @@ export default function DocumentSection({ folder }: DocumentSectionProps) {
                             <React.Fragment key={doc.id}>
                                 <DocumentItem
                                     document={doc}
-                                    onClick={() => router.push(`/editor/${folder.id}/${doc.id}`)}
+                                    onClick={() => router.push(`/${checkDemo() ? 'demo' : 'editor'}/${folder.id}/${doc.id}`)}
                                     paddingLeft="pl-3" />
                             </React.Fragment>
 

@@ -7,9 +7,11 @@ import React from "react";
 import AddInputModal from "@/components/modal/AddInputModal";
 import useAddDocument from "@/hooks/document/useAddDocument";
 import DocumentPreviewSkeleton from "@/components/placeholder/skeleton/DocumentPreviewSkeleton";
+import useCheckDemo from "@/hooks/demo/useCheckDemo";
 
 export default function DocumentPreviewList() {
     const addDocToFolder = useAddDocument();
+    const checkDemo = useCheckDemo();
 
     const folders = useAppSelector(state => state.folders);
     const documents = useAppSelector(state => state.documents);
@@ -51,7 +53,8 @@ export default function DocumentPreviewList() {
                 <CategoryButton
                     label="공유중인 문서"
                     activated={sortCategory === '공유중인 문서'}
-                    onClick={() => setSortCategory('공유중인 문서')} />
+                    onClick={() => setSortCategory('공유중인 문서')}
+                    disabled={checkDemo()} />
             </div>
             {
                 // 문서 목록이 로딩중이며 표시할 문서가 없으면 정보를 받아오는 중이라는 뜻이므로 스켈레톤 출력
