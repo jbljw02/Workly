@@ -127,7 +127,7 @@ export default function AddInputModal({
                             textSize: 'text-sm',
                             textColor: 'text-white',
                             bgColor: 'bg-blue-500',
-                            hover: 'hover:bg-blue-700',
+                            hover: 'hover:bg-blue-600',
                         }}
                         label="만들기"
                         value={value} />
@@ -138,7 +138,7 @@ export default function AddInputModal({
                             textSize: 'text-sm',
                             textColor: 'text-gray-500',
                             bgColor: 'bg-transparent',
-                            hover: 'hover:border-gray-600',
+                            hover: 'hover:bg-gray-100',
                         }}
                         label='취소'
                         onClick={closeModal} />

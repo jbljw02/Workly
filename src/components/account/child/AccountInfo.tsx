@@ -100,7 +100,7 @@ export default function AccountInfo() {
                         textSize: 'text-base',
                         textColor: 'text-white',
                         bgColor: 'bg-blue-500',
-                        hover: 'hover:bg-blue-700'
+                        hover: 'hover:bg-blue-600'
                     }}
                     label="변경하기"
                     value={formData.name && formData.name !== user.displayName ? formData.name : ''} />

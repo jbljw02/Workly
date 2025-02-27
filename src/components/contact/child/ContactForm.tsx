@@ -199,7 +199,7 @@ export default function ContactForm() {
                     textSize: 'text-base',
                     textColor: 'text-white',
                     bgColor: 'bg-blue-500',
-                    hover: 'hover:bg-blue-700'
+                    hover: 'hover:bg-blue-600'
                 }}
                 label="전송하기"
                 value={formData.name && formData.email && formData.message} />

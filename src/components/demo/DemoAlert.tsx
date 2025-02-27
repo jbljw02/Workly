@@ -72,7 +72,7 @@ export default function DemoAlert() {
                             textSize: 'text-base',
                             textColor: 'text-gray-700',
                             bgColor: 'bg-white',
-                            hover: 'hover:bg-gray-50',
+                            hover: 'hover:bg-gray-100',
                             borderColor: 'border-gray-300'
                         }}
                         label="닫기"

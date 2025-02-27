@@ -134,7 +134,7 @@ export default function ShareForm({ selectedDoc }: ShareFormProps) {
                         textSize: 'text-sm',
                         textColor: 'text-white',
                         bgColor: 'bg-blue-500',
-                        hover: 'hover:bg-blue-700',
+                        hover: 'hover:bg-blue-600',
                     }}
                     label='초대'
                     value={selectedCoworkers.length > 0 && editorPermission === '전체 허용' && !checkDemo()}
