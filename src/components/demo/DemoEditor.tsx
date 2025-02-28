@@ -1,7 +1,7 @@
 'use client';
 
 import { useEditor, EditorContent } from '@tiptap/react';
-import React, { useLayoutEffect, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
 import DragHandle from '@tiptap-pro/extension-drag-handle-react';
 import MenuIcon from '../../../public/svgs/editor/menu-vertical.svg';
 import EditorHeader from '../editor/child/header/EditorHeader';
@@ -18,6 +18,7 @@ import 'tiptap-extension-resizable-image/styles.css';
 import EditorContentSkeleton from '../placeholder/skeleton/editor/EditorContentSkeleton';
 import EditorHeaderSkeleton from '../placeholder/skeleton/editor/EditorHeaderSkeleton';
 import { useRouter } from 'next-nprogress-bar';
+import useBrowserTitle from '@/hooks/editor/useBrowserTitle';
 
 export default function DemoEditor({ docId }: { docId: string }) {
     const dispatch = useAppDispatch();
@@ -60,6 +61,7 @@ export default function DemoEditor({ docId }: { docId: string }) {
         }
     }, []);
 
+    useBrowserTitle(docTitle); // 브라우저 타이틀 업데이트
     useUpdateContent(editor); // 문서 내용 업데이트
 
     if (!editor) return null;

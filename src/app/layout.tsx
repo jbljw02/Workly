@@ -1,43 +1,46 @@
-'use client'
+import { Metadata } from 'next'
+import RootLayoutClient from './RootLayoutClient'
 
-import '@/styles/global.css'
-import { makeStore, AppStore } from "@/redux/store";
-import { useRef } from "react";
-import { Provider } from "react-redux";
-import EmailVerifyCheck from '@/components/global/EmailVerifyCheck';
-import { AppProgressBar as ProgressBar } from 'next-nprogress-bar';
-import GlobalAlert from '@/components/global/GlobalAlert';
+export const metadata: Metadata = {
+  title: {
+    default: 'Workly | 실시간 문서 협업 플랫폼',
+    template: '%s'
+  },
+  description: '문서를 작성하고, 팀원들과 실시간으로 공유해보세요. 텍스트, 이미지, 파일, 모든 것이 실시간으로 공유됩니다.',
+  // Open Graph(SNS 공유 시)
+  openGraph: {
+    title: 'Workly | 실시간 문서 협업 플랫폼',
+    description: '문서를 작성하고, 팀원들과 실시간으로 공유해보세요. 텍스트, 이미지, 파일, 모든 것이 실시간으로 공유됩니다.',
+    url: 'https://www.workly.kr',
+    type: 'website',
+    locale: 'ko_KR',
+    images: [
+      {
+        url: '/pngs/og-img.png',
+        width: 1200,
+        height: 630,
+        alt: 'Workly Preview'
+      }
+    ],
+  },
+  // 검색엔진 크롤링 설정
+  robots: {
+    index: true, // 검색 결과에 포함
+    follow: true, // 링크 추적
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+}
 
+// 서버 컴포넌트인 레이아웃
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
-  const storeRef = useRef<AppStore>()
-  if (!storeRef.current) {
-    storeRef.current = makeStore();
-  }
-
-  return (
-    <html lang="en" className="w-full h-full text-[#212121]">
-      <head>
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet" />
-      </head>
-      <body className="min-w-full min-h-screen">
-        <Provider store={storeRef.current}>
-          <EmailVerifyCheck />
-          <GlobalAlert />
-          {children}
-          <ProgressBar
-            height="2.5px"
-            color="#29D"
-            options={{ showSpinner: true }} // 로딩 스피너 표시
-            startPosition={0} // 프로그레스 바 시작 위치
-            stopDelay={200} // 프로그레스 바가 완료된 후 사라지는 지연 시간(200ms)
-            disableSameURL={true} // 같은 URL로 이동할 때는 비활성화
-          />
-        </Provider>
-      </body>
-    </html>
-  );
+}) {
+  return <RootLayoutClient>{children}</RootLayoutClient>
 }

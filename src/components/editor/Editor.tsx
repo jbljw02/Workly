@@ -20,6 +20,7 @@ import EditorTitleInput from './child/EditorTitleInput';
 import EditorHeaderSkeleton from '../placeholder/skeleton/editor/EditorHeaderSkeleton';
 import EditorContentSkeleton from '../placeholder/skeleton/editor/EditorContentSkeleton';
 import { DocumentProps } from '@/types/document.type';
+import useBrowserTitle from '@/hooks/editor/useBrowserTitle';
 
 export default function Editor({ docId }: { docId: string }) {
   const dispatch = useAppDispatch();
@@ -71,7 +72,8 @@ export default function Editor({ docId }: { docId: string }) {
   useDocumentRealTime({ docId }); // 문서의 실시간 변경을 감지
   useVisitDocument({ docId }); // 페이지에 초기 방문 시에 열람일 업데이트
   useLeavePage(updateContentBeforeLeave); // 페이지를 떠날 때 업데이트
-
+  useBrowserTitle(docTitle); // 브라우저 타이틀 업데이트
+  
   if (!editor) return null;
 
   return (
