@@ -27,13 +27,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
             url: `${baseUrl}/contact`,
             lastModified: new Date(),
             changeFrequency: 'monthly' as const,
-            priority: 0.5,
+            priority: 0.8,
         },
         {
             url: `${baseUrl}/web-published/`,
             lastModified: new Date(),
             changeFrequency: 'daily' as const,
-            priority: 0.8,
+            priority: 0.7,
         }
     ]
 

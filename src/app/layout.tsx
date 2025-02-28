@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   description: '문서를 작성하고, 팀원들과 실시간으로 공유해보세요. 텍스트, 이미지, 파일, 모든 것이 실시간으로 공유됩니다.',
   // Open Graph(SNS 공유 시)
   openGraph: {
-    title: 'Workly - 실시간 문서 협업 플랫폼',
+    title: 'Workly | 실시간 문서 협업 플랫폼',
     description: '문서를 작성하고, 팀원들과 실시간으로 공유해보세요. 텍스트, 이미지, 파일, 모든 것이 실시간으로 공유됩니다.',
     url: 'https://www.workly.kr',
     type: 'website',
