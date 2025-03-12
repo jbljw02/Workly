@@ -11,7 +11,7 @@ import DragHandle from '@tiptap-pro/extension-drag-handle-react'
 import MenuIcon from '../../../public/svgs/editor/menu-vertical.svg'
 import { renameDocuments } from '@/redux/features/document/documentSlice'
 import MenuBar from './child/header/MenuBar'
-import useEditorExtension from '@/hooks/editor/useEditorExtension';
+import useEditorExtension from '@/hooks/editor/extension/useEditorExtension';
 import useVisitDocument from '@/hooks/document/useVisitDocument';
 import useDocumentRealTime from '@/hooks/editor/useDocumentRealTime';
 import useUpdateContent from '@/hooks/editor/useUpdateContent';
@@ -73,7 +73,7 @@ export default function Editor({ docId }: { docId: string }) {
   useVisitDocument({ docId }); // 페이지에 초기 방문 시에 열람일 업데이트
   useLeavePage(updateContentBeforeLeave); // 페이지를 떠날 때 업데이트
   useBrowserTitle(docTitle); // 브라우저 타이틀 업데이트
-  
+
   if (!editor) return null;
 
   return (

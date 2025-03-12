@@ -5,6 +5,16 @@ import admin from "@/firebase/firebaseAdmin";
 import { doc, getDoc } from "firebase/firestore";
 import firestore from '@/firebase/firestore';
 import { Collaborator, DocumentProps } from "@/types/document.type";
+import { getDocumentMetadata } from "@/utils/document/getDocumentMetadata";
+import { Metadata } from "next";
+
+export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
+    const metadata = await getDocumentMetadata(params.id);
+    if (!metadata) {
+        return redirect('/document-not-found');
+    }
+    return metadata;
+}
 
 export default async function EditorPage({ params }: { params: { id: string } }) {
     const { id } = params;

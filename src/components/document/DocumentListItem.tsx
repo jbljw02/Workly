@@ -18,7 +18,7 @@ import { useAppSelector, useAppDispatch } from "@/redux/hooks";
 import useToggleShortcuts from "@/hooks/document/useToggleShortcuts";
 import { useClickOutside } from "@/hooks/common/useClickOutside";
 import { generateHTML } from "@tiptap/react";
-import useCommonExtension from "@/hooks/editor/useCommonExtension";
+import useBasicExtension from "@/hooks/editor/extension/useBasicExtension";
 import useCheckPermission from "@/hooks/editor/useCheckPermission";
 import { useRouter } from "next-nprogress-bar";
 import copyURL from "@/utils/editor/copyURL";
@@ -40,7 +40,7 @@ export default function DocumentListItem({ document, isShared, isPublished }: Do
     const dispatch = useAppDispatch();
     const router = useRouter();
     const checkDemo = useCheckDemo();
-    
+
     const user = useAppSelector(state => state.user);
     const optionRef = useRef<HTMLDivElement>(null);
 
@@ -51,7 +51,7 @@ export default function DocumentListItem({ document, isShared, isPublished }: Do
     const cancelPublish = useCancelPublish();
     const publishDocument = usePublishDocument();
     const checkPermission = useCheckPermission();
-    const extensions = useCommonExtension();
+    const extensions = useBasicExtension();
 
     const editorPermission = useAppSelector(state => state.editorPermission);
     const [isMoving, setIsMoving] = useState(false); // 문서를 이동중인지

@@ -18,21 +18,21 @@ import CollaborationCursor from '@tiptap/extension-collaboration-cursor'
 import FileHandler from '@tiptap-pro/extension-file-handler'
 import ImageNodeView from '@/components/editor/child/image/ImageNodeView'
 import { LinkTooltip, setLinkTooltip } from '@/redux/features/editor/linkSlice'
-import { FontSize } from "../../lib/fontSize";
-import { FontFamily } from "../../lib/fontFamily";
-import LinkNode from "../../lib/linkNode";
-import FileNode from "../../lib/fileNode";
+import { FontSize } from "../../../lib/fontSize";
+import { FontFamily } from "../../../lib/fontFamily";
+import LinkNode from "../../../lib/linkNode";
+import FileNode from "../../../lib/fileNode";
 import { Editor } from "@tiptap/react";
 import '@/styles/editor.css'
 import Blockquote from "@tiptap/extension-blockquote";
 import Strike from "@tiptap/extension-strike";
-import CustomTextMark from "../../lib/textMark";
+import CustomTextMark from "../../../lib/textMark";
 import { setConnectedUsers, setConnection, setDocSynced } from "@/redux/features/editor/connectionSlice";
 import DragHandle from '@tiptap-pro/extension-drag-handle'
-import { EnsureLastParagraph } from "../../lib/ensureLastParagraph";
+import { EnsureLastParagraph } from "../../../lib/ensureLastParagraph";
 import { ConnectedUser } from "@/types/user.type";
-import useUploadImage from "./useUploadImage";
-import useUploadFile from "./useUploadFile";
+import useUploadImage from "../useUploadImage";
+import useUploadFile from "../useUploadFile";
 
 const appId = process.env.NEXT_PUBLIC_TIPTAP_APP_ID;
 

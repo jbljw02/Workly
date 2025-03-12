@@ -7,7 +7,7 @@ import MenuIcon from '../../../public/svgs/editor/menu-vertical.svg';
 import EditorHeader from '../editor/child/header/EditorHeader';
 import MenuBar from '../editor/child/header/MenuBar';
 import EditorTitleInput from '../editor/child/EditorTitleInput';
-import useCommonExtension from '@/hooks/editor/useCommonExtension';
+import useBasicExtension from '@/hooks/editor/extension/useBasicExtension';
 import { renameDocuments } from '@/redux/features/document/documentSlice';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { DocumentProps } from '@/types/document.type';
@@ -30,7 +30,7 @@ export default function DemoEditor({ docId }: { docId: string }) {
     const selectedDocument = useAppSelector(state => state.selectedDocument);
     const editorPermission = useAppSelector(state => state.editorPermission);
 
-    const extensions = useCommonExtension();
+    const extensions = useBasicExtension();
     const editor = useEditor({
         extensions,
         content: documents.find(doc => doc.id === docId)?.docContent,

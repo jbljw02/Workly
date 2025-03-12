@@ -21,13 +21,13 @@ import Blockquote from "@tiptap/extension-blockquote";
 import Strike from "@tiptap/extension-strike";
 import FileHandler from '@tiptap-pro/extension-file-handler'
 import { Editor } from "@tiptap/react";
-import useUploadImage from "./useUploadImage";
-import useUploadFile from "./useUploadFile";
-import { EnsureLastParagraph } from "../../lib/ensureLastParagraph";
-import CustomTextMark from "../../lib/textMark";
+import useUploadImage from "../useUploadImage";
+import useUploadFile from "../useUploadFile";
+import { EnsureLastParagraph } from "../../../lib/ensureLastParagraph";
+import CustomTextMark from "../../../lib/textMark";
 import DragHandle from '@tiptap-pro/extension-drag-handle'
 
-export default function useCommonExtension() {
+export default function useBasicExtension() {
     const dispatch = useAppDispatch();
     const uploadNewImage = useUploadImage();
     const uploadNewFile = useUploadFile();
