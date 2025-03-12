@@ -35,7 +35,6 @@ export default function MenuBar({ editor }: { editor: Editor }) {
     const uploadNewFile = useUploadFile();
 
     const editorPermission = useAppSelector(state => state.editorPermission);
-    const selectedDocument = useAppSelector(state => state.selectedDocument);
 
     const [fontSize, setFontSize] = useState<number>(16);
     const [headingLevel, setHeadingLevel] = useState<string>('16');

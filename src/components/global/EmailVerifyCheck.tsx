@@ -5,14 +5,9 @@ import { useEffect } from "react";
 import { auth } from "../../firebase/firebasedb";
 import getEmailToken from "@/utils/auth/getEmailToken";
 import logout from "@/utils/auth/logout";
-import useCheckDemo from "@/hooks/demo/useCheckDemo";
-import Cookies from 'js-cookie';
-import downloadAvatar from "@/utils/downloadAvatar";
-import { setDemoUser } from "@/redux/features/user/userSlice";
 
 export default function EmailVerifyCheck() {
     const dispatch = useAppDispatch();
-    const checkDemo = useCheckDemo();
 
     // 사용자의 로그인 상태가 변경될 때마다 실행
     useEffect(() => {
