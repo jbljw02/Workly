@@ -14,8 +14,7 @@ export default function useToggleShortcuts() {
         e.stopPropagation();
         try {
             dispatch(toggleShortcut({ docId: document.id, email: user.email }));
-            
-            if (!checkDemo) {
+            if (!checkDemo()) {
                 await axios.post('/api/document/shortcuts',
                     {
                         docId: document.id,

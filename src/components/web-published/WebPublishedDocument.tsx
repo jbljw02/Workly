@@ -8,7 +8,7 @@ import { useAppDispatch } from "@/redux/hooks";
 import { useEffect } from "react";
 import { setWebPublished } from "@/redux/features/document/webPublishedSlice";
 import convertTimestamp from "@/utils/format/convertTimestamp";
-import useCommonExtension from "@/hooks/editor/useCommonExtension";
+import useBasicExtension from "@/hooks/editor/extension/useBasicExtension";
 
 type PublishedDocumentProps = {
     document: any;
@@ -18,7 +18,7 @@ type PublishedDocumentProps = {
 export default function PublishedDocument({ document, content }: PublishedDocumentProps) {
     const dispatch = useAppDispatch();
 
-    const extension = useCommonExtension();
+    const extension = useBasicExtension();
     const editor = useEditor({
         extensions: extension,
         content: content,
