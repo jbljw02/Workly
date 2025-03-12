@@ -15,7 +15,7 @@ import NProgress from 'nprogress';
 import SubmitButton from '../button/SubmitButton';
 import { ModalProps } from '@/types/modalProps.type';
 
-export default function EmailVerifyModal({ isModalOpen, setIsModalOpen }: ModalProps) {
+export default function EmailVerifyModal({ isModalOpen }: ModalProps) {
     const dispatch = useAppDispatch();
     const router = useRouter();
     const user = auth.currentUser;

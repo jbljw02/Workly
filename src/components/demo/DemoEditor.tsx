@@ -1,14 +1,14 @@
 'use client';
 
 import { useEditor, EditorContent } from '@tiptap/react';
-import React, { useEffect, useLayoutEffect, useState } from 'react';
+import React, { useLayoutEffect, useState } from 'react';
 import DragHandle from '@tiptap-pro/extension-drag-handle-react';
 import MenuIcon from '../../../public/svgs/editor/menu-vertical.svg';
 import EditorHeader from '../editor/child/header/EditorHeader';
 import MenuBar from '../editor/child/header/MenuBar';
 import EditorTitleInput from '../editor/child/EditorTitleInput';
 import useCommonExtension from '@/hooks/editor/useCommonExtension';
-import { renameDocuments, setSelectedDocument } from '@/redux/features/document/documentSlice';
+import { renameDocuments } from '@/redux/features/document/documentSlice';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { DocumentProps } from '@/types/document.type';
 import useUpdateContent from '@/hooks/editor/useUpdateContent';

@@ -1,5 +1,5 @@
 import { deleteDocumentsFromTrash, removeDocumentFromFolderTrash, deleteFoldersFromTrash, deleteAllDocumentsTrashOfFolder } from "@/redux/features/trash/trashSlice";
-import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { useAppDispatch } from "@/redux/hooks";
 import { Folder } from "@/types/folder.type";
 import { DocumentProps } from "@/types/document.type";
 

@@ -3,7 +3,7 @@ import { addFolders, addDocumentToFolder } from "@/redux/features/folder/folderS
 import { setDemoUser } from "@/redux/features/user/userSlice";
 import { useAppDispatch } from "@/redux/hooks";
 import { Folder } from "@/types/folder.type";
-import downloadAvatar from "@/utils/downloadAvatar";
+import downloadAvatar from "@/utils/user/downloadAvatar";
 import { DocumentProps } from "@/types/document.type";
 import { v4 as uuidv4 } from 'uuid';
 import { UserProps } from "@/types/user.type";

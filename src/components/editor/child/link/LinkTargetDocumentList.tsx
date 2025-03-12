@@ -11,6 +11,8 @@ type LinkTargetDocumentListProps = {
     searchedValue: string;
 }
 
+const baseURL = process.env.NEXT_PUBLIC_API_URL;
+
 export default function LinkTargetDocumentList({ editor, setIsOpen, searchedValue }: LinkTargetDocumentListProps) {
     const documents = useAppSelector(state => state.documents);
 
@@ -20,7 +22,6 @@ export default function LinkTargetDocumentList({ editor, setIsOpen, searchedValu
     );
 
     const addLinkDocumentUrl = (document: DocumentProps) => {
-        const baseURL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
         const documentURL = `${baseURL}/editor/${document.folderId}/${document.id}`;
         const id = uuidv4();
         (editor.chain() as any).focus().extendMarkRange('link').setLink({
