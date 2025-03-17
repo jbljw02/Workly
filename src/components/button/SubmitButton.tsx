@@ -26,9 +26,8 @@ export default function SubmitButton({ style, label, value, onClick }: SubmitBut
             type="submit"
             onClick={value ? onClick : undefined}
             disabled={!value || workingSpinner}
-            // 입력값이 존재할 때만 버튼 활성화
             className={`${width} ${height} ${textSize} ${textColor} ${bgColor} ${borderColor}
-            ${value ? hover : 'border-gray-300 bg-gray-300 cursor-not-allowed'} 
+            ${value && !workingSpinner ? hover : 'border-gray-300 bg-gray-300 cursor-not-allowed'} 
             rounded-lg border transform transition-all duration-200 whitespace-nowrap`}>
             {!workingSpinner && label}
             {
