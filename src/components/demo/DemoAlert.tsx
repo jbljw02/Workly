@@ -5,6 +5,8 @@ import axios from 'axios';
 import { useRouter } from "next-nprogress-bar";
 import { showWarningAlert } from '@/redux/features/common/alertSlice';
 import useSetInitialDemoUser from '@/hooks/demo/useSetInitialDemoUser';
+import SubmitButton from '../button/SubmitButton';
+import { setWorkingSpinner } from '@/redux/features/common/placeholderSlice';
 
 export default function DemoAlert() {
     const dispatch = useAppDispatch();
@@ -22,6 +24,8 @@ export default function DemoAlert() {
     // 체험용 데모 사용자를 생성
     const createDemoUser = async () => {
         try {
+            dispatch(setWorkingSpinner(true));
+
             const response = await axios.post('/api/auth/user/demo', {
                 withCredentials: true
             });
@@ -31,6 +35,8 @@ export default function DemoAlert() {
             router.push('/demo/home');
         } catch (error) {
             dispatch(showWarningAlert('죄송합니다. 잠시 후 다시 시도해주세요.'));
+        } finally {
+            dispatch(setWorkingSpinner(false));
         }
     }
 
@@ -53,7 +59,7 @@ export default function DemoAlert() {
                     </p>
                 </div>
                 <div className="flex flex-row gap-3">
-                    <CommonButton
+                    <SubmitButton
                         style={{
                             width: 'w-full',
                             height: 'h-11',
@@ -64,6 +70,7 @@ export default function DemoAlert() {
                         }}
                         label="로그인 없이 체험해보기"
                         onClick={createDemoUser}
+                        value={true}
                     />
                     <CommonButton
                         style={{
