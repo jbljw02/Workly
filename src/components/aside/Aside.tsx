@@ -14,7 +14,7 @@ import Trash from "../trash/Trash";
 import ShortcutIcon from '../../../public/svgs/shortcuts-off.svg';
 import WebIcon from '../../../public/svgs/web.svg';
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next-nprogress-bar";
 import useCheckDemo from "@/hooks/demo/useCheckDemo";
 
 export default function Aside() {
