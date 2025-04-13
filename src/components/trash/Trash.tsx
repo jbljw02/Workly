@@ -4,8 +4,6 @@ import TrashIcon from '../../../public/svgs/trash.svg';
 import TrashContent from "./child/TrashContent";
 import useGetTrash from "@/hooks/trash/useGetTrash";
 
-export type SearchCategory = '폴더' | '문서';
-
 export default function Trash({ isCollapsed }: { isCollapsed: boolean }) {
     const sidebarRef = useRef<HTMLDivElement>(null);
     const [isTrashOpen, setIsTrashOpen] = useState(false);

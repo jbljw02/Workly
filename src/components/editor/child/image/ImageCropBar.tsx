@@ -2,17 +2,22 @@ import LoadingSpinner from "@/components/placeholder/LoadingSpinner";
 import { useAppSelector } from "@/redux/hooks";
 
 type ImageCropBar = {
+    id: string;
     cropApply: () => void;
     cropCancel: () => void;
 }
 
-export default function ImageCropBar({   cropApply, cropCancel }: ImageCropBar) {
+export default function ImageCropBar({ id, cropApply, cropCancel }: ImageCropBar) {
     const workingSpinner = useAppSelector(state => state.workingSpinner);
     const cropMode = useAppSelector(state => state.cropMode);
+
     return (
-        <div className={`flex flex-row items-center w-[84px] absolute bottom-[-48px] left-1/2 -translate-x-1/2 transform px-1 py-2 text-sm rounded-md z-20 bg-white border border-gray-200 shadow-[0px_4px_10px_rgba(0,0,0,0.25)]
-            transition-opacity duration-200 ease-in-out
-            ${cropMode ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+        <div className='flex flex-row items-center w-[84px] absolute bottom-[-50px] left-1/2 -translate-x-1/2 transform px-1 py-2 text-sm rounded-md z-20 bg-white border border-gray-200 shadow-[0px_4px_10px_rgba(0,0,0,0.25)]
+            transition-opacity duration-200 ease-in-out'
+            style={{
+                opacity: cropMode.isActive && cropMode.imageId === id ? 1 : 0,
+                pointerEvents: cropMode.isActive && cropMode.imageId === id ? 'auto' : 'none'
+            }}>
             {
                 workingSpinner ?
                     <LoadingSpinner size={20} color="#212121" /> :

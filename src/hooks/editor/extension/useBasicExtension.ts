@@ -26,11 +26,15 @@ import useUploadFile from "../useUploadFile";
 import { EnsureLastParagraph } from "../../../lib/ensureLastParagraph";
 import CustomTextMark from "../../../lib/textMark";
 import DragHandle from '@tiptap-pro/extension-drag-handle'
+import { useAppSelector } from "@/redux/hooks";
 
 export default function useBasicExtension() {
     const dispatch = useAppDispatch();
-    const uploadNewImage = useUploadImage();
-    const uploadNewFile = useUploadFile();
+    
+    const selectedDocument = useAppSelector(state => state.selectedDocument);
+
+    const uploadNewImage = useUploadImage(selectedDocument.id);
+    const uploadNewFile = useUploadFile(selectedDocument.id);
 
     const extensions = [
         StarterKit.configure({

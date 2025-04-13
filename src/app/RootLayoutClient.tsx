@@ -7,6 +7,7 @@ import { Provider } from "react-redux";
 import EmailVerifyCheck from '@/components/global/EmailVerifyCheck';
 import { AppProgressBar as ProgressBar } from 'next-nprogress-bar';
 import GlobalAlert from '@/components/global/GlobalAlert';
+import Modal from 'react-modal';
 
 export default function RootLayoutClient({
     children,
@@ -17,6 +18,7 @@ export default function RootLayoutClient({
     if (!storeRef.current) {
         storeRef.current = makeStore();
     }
+    Modal.setAppElement('body');
 
     return (
         <html lang="en" className="w-full h-full text-[#212121]">

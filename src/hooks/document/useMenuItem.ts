@@ -47,13 +47,13 @@ export default function useDocumentMenu({
                 onClick: () => onCopyURL(document.folderId, document.id),
                 disabled: checkDemo(),
             },
-            {
-                Icon: DownloadIcon,
-                IconWidth: "14",
-                label: "다운로드",
-                onClick: onDownload,
-                disabled: checkDemo(),
-            }
+            // {
+            //     Icon: DownloadIcon,
+            //     IconWidth: "14",
+            //     label: "다운로드",
+            //     onClick: onDownload,
+            //     disabled: checkDemo(),
+            // }
         ];
 
         // 모든 권한을 가지고 있을 때의 아이템

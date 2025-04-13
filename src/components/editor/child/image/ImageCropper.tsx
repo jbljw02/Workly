@@ -10,9 +10,13 @@ type ImageCropper = {
     resizableImgProps: ResizableImageNodeViewRendererProps;
 }
 
-export default function ImageCropper({ imgRef, resizableImgProps }: ImageCropper) {
+export default function ImageCropper({
+    imgRef,
+    resizableImgProps,
+}: ImageCropper) {
     const dispatch = useAppDispatch();
     const crop = useAppSelector(state => state.crop);
+
     return (
         <ReactCrop
             crop={{ ...crop, unit: 'px' }}

@@ -42,6 +42,8 @@ const combinedReducer = combineReducers({
     documentsTrash: trashReducers.documentsTrash,
     foldersTrash: trashReducers.foldersTrash,
     isDeletingModalOpen: trashReducers.isDeletingModalOpen,
+    trashSearchCategory: trashReducers.trashSearchCategory,
+    selectedTrashItem: trashReducers.selectedTrashItem,
     webPublished: webPublishedReducers.webPublished,
     selectedNode: selectedNodeReducers.selectedNode,
     workingSpinner: placeholderReducers.workingSpinner,

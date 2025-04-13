@@ -2,6 +2,8 @@ import { Folder } from "@/types/folder.type";
 import { createSlice } from "@reduxjs/toolkit";
 import { DocumentProps } from "../../../types/document.type";
 
+type TrashSearchCategory = '문서' | '폴더';
+
 const DocumentsState: DocumentProps[] = [];
 const FoldersState: Folder[] = [];
 
@@ -72,14 +74,40 @@ export const isDeletingModalOpenSlice = createSlice({
     }
 })
 
+// 휴지통 검색 카테고리
+export const trashSearchCategorySlice = createSlice({
+    name: 'trashSearchCategory',
+    initialState: '문서' as TrashSearchCategory,
+    reducers: {
+        setTrashSearchCategory: (state, action) => {
+            return action.payload;
+        }
+    }
+})
+
+// 휴지통 선택된 아이템
+export const selectedTrashItemSlice = createSlice({
+    name: 'selectedTrashItem',
+    initialState: null as DocumentProps | Folder | null,
+    reducers: {
+        setSelectedTrashItem: (state, action) => {
+            return action.payload;
+        }
+    }
+})
+
 export const { addDocumentsToTrash, deleteDocumentsFromTrash, setDocumentsTrash, deleteAllDocumentsTrashOfFolder } = documentsTrashSlice.actions;
 export const { addFoldersToTrash, deleteFoldersFromTrash, setFoldersTrash, addDocumentToFolderTrash, removeDocumentFromFolderTrash } = foldersTrashSlice.actions;
 export const { setIsDeletingModalOpen } = isDeletingModalOpenSlice.actions;
+export const { setTrashSearchCategory } = trashSearchCategorySlice.actions;
+export const { setSelectedTrashItem } = selectedTrashItemSlice.actions;
 
 const reducers = {
     documentsTrash: documentsTrashSlice.reducer,
     foldersTrash: foldersTrashSlice.reducer,
     isDeletingModalOpen: isDeletingModalOpenSlice.reducer,
+    trashSearchCategory: trashSearchCategorySlice.reducer,
+    selectedTrashItem: selectedTrashItemSlice.reducer,
 }
 
 export default reducers;

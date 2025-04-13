@@ -8,9 +8,16 @@ type Crop = {
     y: number;
 }
 
+type CropMode = {
+    isActive: boolean;
+    imageId: string | null;
+}
+
 type ImageDimension = {
     width: number,
     height: number,
+    naturalWidth: number,
+    naturalHeight: number,
 }
 
 const cropState: Crop = {
@@ -21,9 +28,16 @@ const cropState: Crop = {
     y: 0,
 }
 
+const cropModeState: CropMode = {
+    isActive: false,
+    imageId: null
+}
+
 const imageDimensionState = {
-    width: 600,
-    height: 600,
+    width: 0,
+    height: 0,
+    naturalWidth: 0,
+    naturalHeight: 0,
 }
 
 export const imageDimensionSlice = createSlice({
@@ -31,17 +45,18 @@ export const imageDimensionSlice = createSlice({
     initialState: imageDimensionState,
     reducers: {
         setImageDimension: (state, action: PayloadAction<ImageDimension>) => {
-            return action.payload;
+            return { ...state, ...action.payload };
         },
     },
 })
 
 export const cropModeSlice = createSlice({
     name: 'cropMode',
-    initialState: false,
+    initialState: cropModeState,
     reducers: {
-        setCropMode: (state, action) => {
-            return action.payload;
+        setCropMode: (state, action: PayloadAction<CropMode>) => {
+            state.isActive = action.payload.isActive;
+            state.imageId = action.payload.imageId;
         },
     },
 })

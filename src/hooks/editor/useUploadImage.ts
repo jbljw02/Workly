@@ -8,11 +8,9 @@ import useCheckDemo from "../demo/useCheckDemo";
 import uploadToStorage from "@/utils/editor/uploadToStorage";
 import uploadDemoImage from "@/utils/editor/uploadDemoFile";
 
-export default function useUploadImage() {
+export default function useUploadImage(documentId: string) {
     const dispatch = useAppDispatch();
     const checkDemo = useCheckDemo();
-
-    const selectedDocument = useAppSelector(state => state.selectedDocument);
 
     const uploadNewImage = async (editor: Editor, file: File, src: string) => {
         const dimensions = await getDimensions(src);
@@ -32,12 +30,11 @@ export default function useUploadImage() {
 
         try {
             (editor.commands.setResizableImage as SetResizableImageProps)(imageAttrs);
-
             let url = '';
             if (checkDemo()) {
                 url = await uploadDemoImage(file);
             } else {
-                url = await uploadToStorage(file, `documents/${selectedDocument.id}/images/${imageId}`);
+                url = await uploadToStorage(file, `documents/${documentId}/images/${imageId}`);
             }
 
             // 이미지 로드 확인

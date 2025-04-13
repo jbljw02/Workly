@@ -40,8 +40,11 @@ const NodeView = (resizableImgProps: ResizableImageNodeViewRendererProps) => {
 
   useClickOutside(nodeViewRef, () => {
     if (!openFullModal) {
-      if (cropMode) {
-        dispatch(setCropMode(false));
+      if (cropMode.isActive) {
+        dispatch(setCropMode({
+          isActive: false,
+          imageId: null
+        }));
       } else {
         setShowMenu(false);
       }
@@ -54,14 +57,15 @@ const NodeView = (resizableImgProps: ResizableImageNodeViewRendererProps) => {
     <NodeViewWrapper
       ref={nodeViewRef}
       as="figure"
-      className="image-component z-0"
+      className="image-component z-0 mr-7"
       data-drag-handle
       style={{ justifyContent: alignment }}
       contentEditable={false}
       draggable={true}>
       {
-        // 자르기 모드
-        cropMode ? (
+        // 자르기 모드 활성화
+        cropMode.isActive &&
+          cropMode.imageId === resizableImgProps.node.attrs.id ? (
           <ImageCropper
             imgRef={imgRef}
             resizableImgProps={resizableImgProps} />
@@ -91,7 +95,7 @@ const NodeView = (resizableImgProps: ResizableImageNodeViewRendererProps) => {
       {/* 이미지를 이용해 여러 작업을 하는 메뉴바 */}
       {/* 게시된 문서를 열람중이 아니며, 권한이 읽기 허용보다 높을 때 및 데모 모드일 때 */}
       {
-        !cropMode &&
+        !cropMode.isActive &&
         (editorPermission === '전체 허용' || editorPermission === '쓰기 허용' || checkDemo()) && (
           <ImageMenuBar
             nodeViewRef={nodeViewRef}
@@ -104,6 +108,7 @@ const NodeView = (resizableImgProps: ResizableImageNodeViewRendererProps) => {
       {
         // 자르기 모드일 때 바 표시
         <ImageCropBar
+          id={resizableImgProps.node.attrs.id}
           cropApply={cropApply}
           cropCancel={cropCancel} />
       }

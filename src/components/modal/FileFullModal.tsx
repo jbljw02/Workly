@@ -5,6 +5,8 @@ import DownloadIcon from '../../../public/svgs/editor/download.svg';
 import CloseIcon from '../../../public/svgs/editor/close.svg';
 import useOverlayLock from '@/hooks/common/useOverlayLock';
 import { ModalProps } from '@/types/modalProps.type';
+import { useAppDispatch } from '@/redux/hooks';
+import downloadFile from '@/utils/editor/downloadFile';
 
 interface FileFullModal extends ModalProps {
     children: ReactNode;
@@ -22,17 +24,9 @@ export default function FileFullModal({
     const downloadRef = useRef<HTMLDivElement>(null);
 
     useClickOutside(modalRef, () => setIsModalOpen(false), downloadRef);
-
-    const handleDownload = () => {
-        const link = document.createElement('a');
-        link.href = href;
-        link.download = download;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    };
-
     useOverlayLock(isModalOpen);
+
+    const dispatch = useAppDispatch();
 
     return (
         <Modal
@@ -68,7 +62,7 @@ export default function FileFullModal({
                 <div
                     className='flex items-center justify-center w-8 h-8 p-1 mr-1 rounded-md hover:bg-zinc-50 hover:text-black duration-150 cursor-pointer'
                     ref={downloadRef}
-                    onClick={handleDownload}>
+                    onClick={() => downloadFile(href, download, dispatch)}>
                     <DownloadIcon width="20" />
                 </div>
                 <button

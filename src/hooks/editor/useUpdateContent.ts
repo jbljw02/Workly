@@ -37,8 +37,7 @@ export default function useUpdateContent(editor: Editor | null) {
             } catch (error) {
                 dispatch(showWarningAlert('변경사항 저장에 실패하였습니다.'));
             }
-        }, 1000),
-        []);
+        }, 1000), []);
 
     // 즉시 업데이트 요청
     const updateContent = async (latestDoc: DocumentProps) => {
