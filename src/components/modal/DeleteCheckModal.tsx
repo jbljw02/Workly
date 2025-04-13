@@ -1,6 +1,5 @@
 import Modal from 'react-modal';
 import ModalHeader from "./ModalHeader";
-import { SearchCategory } from "../trash/Trash";
 import WarningIcon from '../../../public/svgs/warning.svg';
 import CommonButton from "../button/CommonButton";
 import { DocumentProps } from "@/types/document.type";
@@ -9,18 +8,17 @@ import useOverlayLock from "@/hooks/common/useOverlayLock";
 import { useEffect } from "react";
 import { ModalProps } from '../../types/modalProps.type';
 import useDeleteTrash from '@/hooks/trash/useDeleteTrash';
+import { useAppSelector } from '@/redux/hooks';
 
-type DeleteCheckModalProps = ModalProps & {
-    searchCategory: SearchCategory;
-    trashItem: DocumentProps | Folder;
-}
+export default function DeleteCheckModal({ isModalOpen, setIsModalOpen }: ModalProps) {
+    const trashSearchCategory = useAppSelector(state => state.trashSearchCategory);
+    const selectedTrashItem = useAppSelector(state => state.selectedTrashItem);
 
-export default function DeleteCheckModal({ isModalOpen, setIsModalOpen, searchCategory, trashItem }: DeleteCheckModalProps) {
     const { deleteDocumentPermanently, deleteFolderPermanently } = useDeleteTrash(setIsModalOpen);
 
     // 삭제할 아이템이 문서인지 폴더인지 확인하고 작업을 분기
     const deleteItemPermanently = (item: DocumentProps | Folder) => {
-        if (searchCategory === '문서') {
+        if (trashSearchCategory === '문서') {
             deleteDocumentPermanently(item as DocumentProps);
         }
         else {
@@ -32,7 +30,7 @@ export default function DeleteCheckModal({ isModalOpen, setIsModalOpen, searchCa
     useEffect(() => {
         const keyPress = (event: KeyboardEvent) => {
             if (event.key === 'Enter') {
-                deleteItemPermanently(trashItem);
+                deleteItemPermanently(selectedTrashItem!);
             }
         };
 
@@ -43,7 +41,7 @@ export default function DeleteCheckModal({ isModalOpen, setIsModalOpen, searchCa
         return () => {
             window.removeEventListener('keydown', keyPress);
         };
-    }, [isModalOpen, trashItem]);
+    }, [isModalOpen, selectedTrashItem]);
 
     useOverlayLock(isModalOpen);
 
@@ -75,10 +73,10 @@ export default function DeleteCheckModal({ isModalOpen, setIsModalOpen, searchCa
             <div className="flex flex-col h-full justify-between">
                 <div>
                     <ModalHeader
-                        label={<div className='font-semibold'>{searchCategory} 삭제</div>}
+                        label={<div className='font-semibold'>{trashSearchCategory} 삭제</div>}
                         closeModal={() => setIsModalOpen(false)} />
                     <div className="flex flex-col px-6 gap-4 mt-1.5">
-                        <div className="text-[15px]">해당 {searchCategory}를 정말로 삭제하시겠습니까?</div>
+                        <div className="text-[15px]">해당 {trashSearchCategory}를 정말로 삭제하시겠습니까?</div>
                         <div className="flex flex-row items-center gap-2 bg-red-100 rounded px-4 py-3">
                             <WarningIcon width="23" />
                             <div className="text-sm text-red-500">이 작업은 되돌릴 수 없으며, 영구적으로 삭제됩니다.</div>
@@ -97,7 +95,7 @@ export default function DeleteCheckModal({ isModalOpen, setIsModalOpen, searchCa
                             borderColor: 'border-red-500',
                         }}
                         label='삭제'
-                        onClick={() => deleteItemPermanently(trashItem)} />
+                        onClick={() => deleteItemPermanently(selectedTrashItem!)} />
                     <CommonButton
                         style={{
                             width: 'w-14',

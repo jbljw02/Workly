@@ -136,7 +136,7 @@ export default function DocumentPreviewItem({ document }: DocumentPreviewItemPro
                 cursor-pointer hover:bg-gray-100 transition-all duration-150">
             <div className="flex flex-col overflow-hidden">
                 {/* 문서 제목 */}
-                <div className="text-xl font-semibold py-0 pb-2">{document.title || "제목 없는 노트"}</div>
+                <div className="text-xl font-semibold py-0 pb-2">{document.title || "제목 없는 문서"}</div>
                 {/* 문서 미리보기 */}
                 <div className="text-sm text-neutral-500 overflow-hidden mb-3 [&>p]:py-[3px]">
                     {renderDocumentPreview(document.docContent)}

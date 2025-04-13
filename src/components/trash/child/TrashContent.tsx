@@ -1,10 +1,11 @@
 import CategoryButton from "@/components/button/CategoryButton";
 import CommonInput from "@/components/input/CommonInput";
-import { useAppSelector } from "@/redux/hooks";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { useRef, useState, Dispatch, SetStateAction } from "react";
-import { SearchCategory } from "../Trash";
 import TrashList from "./TrashList";
 import { useClickOutside } from "@/hooks/common/useClickOutside";
+import { setIsDeletingModalOpen, setTrashSearchCategory } from "@/redux/features/trash/trashSlice";
+import DeleteCheckModal from "@/components/modal/DeleteCheckModal";
 
 type TrashContentProps = {
     parentRef: React.RefObject<HTMLDivElement>;
@@ -12,12 +13,13 @@ type TrashContentProps = {
 }
 
 export default function TrashContent({ parentRef, setIsTrashOpen }: TrashContentProps) {
+    const dispatch = useAppDispatch();
+
     const trashRef = useRef<HTMLDivElement>(null);
 
     const isDeletingModalOpen = useAppSelector(state => state.isDeletingModalOpen);
-
+    const trashSearchCategory = useAppSelector(state => state.trashSearchCategory);
     const [inputValue, setInputValue] = useState('');
-    const [searchCategory, setSearchCategory] = useState<SearchCategory>('문서');
 
     useClickOutside(trashRef, () => setIsTrashOpen(false), parentRef, isDeletingModalOpen);
 
@@ -42,17 +44,20 @@ export default function TrashContent({ parentRef, setIsTrashOpen }: TrashContent
             <div className="flex flex-row gap-2 mt-1 px-4">
                 <CategoryButton
                     label="문서"
-                    activated={searchCategory === '문서'}
-                    onClick={() => setSearchCategory('문서')} />
+                    activated={trashSearchCategory === '문서'}
+                    onClick={() => dispatch(setTrashSearchCategory('문서'))} />
                 <CategoryButton
                     label="폴더"
-                    activated={searchCategory === '폴더'}
-                    onClick={() => setSearchCategory('폴더')} />
+                    activated={trashSearchCategory === '폴더'}
+                    onClick={() => dispatch(setTrashSearchCategory('폴더'))} />
             </div>
             {/* 휴지통에 존재하는 폴더, 문서들의 목록 */}
             <TrashList
-                searchedInput={inputValue}
-                searchCategory={searchCategory} />
+                searchedInput={inputValue} />
+            {/* 삭제 확인 모달 */}
+            <DeleteCheckModal
+                isModalOpen={isDeletingModalOpen}
+                setIsModalOpen={(value) => dispatch(setIsDeletingModalOpen(value))} />
         </div>
     )
 }
