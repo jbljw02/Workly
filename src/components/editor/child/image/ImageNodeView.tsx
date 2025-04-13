@@ -57,7 +57,7 @@ const NodeView = (resizableImgProps: ResizableImageNodeViewRendererProps) => {
     <NodeViewWrapper
       ref={nodeViewRef}
       as="figure"
-      className="image-component z-0"
+      className="image-component z-0 mr-7"
       data-drag-handle
       style={{ justifyContent: alignment }}
       contentEditable={false}
