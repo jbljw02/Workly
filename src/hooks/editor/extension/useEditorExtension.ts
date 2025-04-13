@@ -72,8 +72,8 @@ type useEditorExtensionProps = {
 export default function useEditorExtension({ docId }: useEditorExtensionProps) {
     const dispatch = useAppDispatch();
 
-    const uploadNewImage = useUploadImage();
-    const uploadNewFile = useUploadFile();
+    const uploadNewImage = useUploadImage(docId);
+    const uploadNewFile = useUploadFile(docId);
 
     const user = useAppSelector(state => state.user);
     const selectedDocument = useAppSelector(state => state.selectedDocument);

@@ -7,11 +7,9 @@ import useCheckDemo from "../demo/useCheckDemo";
 import uploadDemoFile from "@/utils/editor/uploadDemoFile";
 import uploadToStorage from "@/utils/editor/uploadToStorage";
 
-export default function useUploadFile() {
+export default function useUploadFile(documentId: string) {
     const dispatch = useAppDispatch();
     const checkDemo = useCheckDemo();
-
-    const selectedDocument = useAppSelector(state => state.selectedDocument);
 
     const uploadNewFile = async (editor: Editor, file: File, pos: number) => {
         const fileAttrs: FileNodeAttrs = {
@@ -33,7 +31,7 @@ export default function useUploadFile() {
             if(checkDemo()) {
                 url = await uploadDemoFile(file);
             } else {
-                url = await uploadToStorage(file, `documents/${selectedDocument.id}/files/${fileAttrs.id}`);
+                url = await uploadToStorage(file, `documents/${documentId}/files/${fileAttrs.id}`);
             }
     
             // 업로드 완료 후 파일 주소 변경

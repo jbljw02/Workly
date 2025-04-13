@@ -31,8 +31,10 @@ import useUploadFile from '@/hooks/editor/useUploadFile'
 export default function MenuBar({ editor }: { editor: Editor }) {
     const dispatch = useAppDispatch();
 
-    const uploadNewImage = useUploadImage();
-    const uploadNewFile = useUploadFile();
+    const selectedDocument = useAppSelector(state => state.selectedDocument);
+
+    const uploadNewImage = useUploadImage(selectedDocument.id);
+    const uploadNewFile = useUploadFile(selectedDocument.id);
 
     const editorPermission = useAppSelector(state => state.editorPermission);
 

@@ -37,14 +37,20 @@ export default function useImageCrop(
                 height: imgProps.node.attrs.height
             }));
             setShowMenu(false);
-            dispatch(setCropMode(true));
+            dispatch(setCropMode({
+                isActive: true,
+                imageId: imgProps.node.attrs.id
+            }));
         };
     }
 
     // 자르기 취소
     const cropCancel = () => {
         setShowMenu(true);
-        dispatch(setCropMode(false));
+        dispatch(setCropMode({
+            isActive: false,
+            imageId: null
+        }));
     };
 
     // 자르기 적용
@@ -130,7 +136,10 @@ export default function useImageCrop(
                         dispatch(showWarningAlert('이미지 자르기에 실패했습니다.'));
                     } finally {
                         dispatch(setWorkingSpinner(false));
-                        dispatch(setCropMode(false));
+                        dispatch(setCropMode({
+                            isActive: false,
+                            imageId: null
+                        }));
                     }
                 };
                 img.src = imgRef.current.src;
@@ -143,7 +152,10 @@ export default function useImageCrop(
     useEffect(() => {
         const keyDown = (event: KeyboardEvent) => {
             if (event.key === 'Escape') {
-                dispatch(setCropMode(false));
+                dispatch(setCropMode({
+                    isActive: false,
+                    imageId: null
+                }));
             }
         };
 
