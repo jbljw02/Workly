@@ -6,6 +6,8 @@ import axios from "axios";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 import { setDocuments } from "@/redux/features/document/documentSlice";
+import { AppDispatch } from "@/redux/store";
+import { UserProps } from "@/types/user.type";
 
 // 데이터를 새로고침할 경로 목록
 const REFRESH_PATHS = [
@@ -16,6 +18,50 @@ const REFRESH_PATHS = [
     '/editor/shortcuts'
 ];
 
+// 문서 데이터 가져오기
+const getUserDocument = async (dispatch: AppDispatch, user: UserProps) => {
+    try {
+        dispatch(setDocumentLoading(true));
+        const response = await axios.get('/api/document', {
+            params: { email: user.email }
+        });
+        dispatch(setDocuments(response.data));
+    } catch (error) {
+        throw error;
+    } finally {
+        dispatch(setDocumentLoading(false));
+    }
+};
+
+// 폴더 데이터 가져오기
+const getUserFolder = async (dispatch: AppDispatch, user: UserProps) => {
+    try {
+        dispatch(setFolderLoading(true));
+        const response = await axios.get('/api/folder', {
+            params: { email: user.email },
+        });
+        dispatch(setFolders(response.data));
+    } catch (error) {
+        throw error;
+    } finally {
+        dispatch(setFolderLoading(false));
+    }
+};
+
+// 사용자 데이터 가져오기
+export const getUserData = async (dispatch: AppDispatch, user: UserProps, isDeleting: boolean, shouldRefresh?: boolean) => {
+    if (!user.email || isDeleting || !shouldRefresh) return;
+
+    try {
+        await getUserDocument(dispatch, user);
+        await getUserFolder(dispatch, user);
+    } catch (error) {
+        dispatch(showWarningAlert('사용자의 데이터를 불러오는 데 실패했습니다.'))
+        dispatch(setFailedAlert(true));
+    }
+};
+
+// 마운트, 경로 변경 시 데이터 가져오기
 export default function useGetUserData() {
     const dispatch = useAppDispatch();
     const pathname = usePathname();
@@ -28,53 +74,7 @@ export default function useGetUserData() {
     const shouldRefresh = pathname.startsWith('/editor') &&
         (REFRESH_PATHS.includes(pathname) || documents.length === 0 || folders.length === 0);
 
-    // 사용자의 전체 문서 요청
-    const getUserDocument = async () => {
-        try {
-            dispatch(setDocumentLoading(true));
-
-            const response = await axios.get('/api/document', {
-                params: { email: user.email }
-            });
-
-            dispatch(setDocuments(response.data));
-        } catch (error) {
-            throw error;
-        } finally {
-            dispatch(setDocumentLoading(false));
-        }
-    }
-
-    // 사용자의 전체 폴더 요청
-    const getUserFolder = async () => {
-        try {
-            dispatch(setFolderLoading(true));
-            const response = await axios.get('/api/folder', {
-                params: { email: user.email },
-            });
-            dispatch(setFolders(response.data));
-        } catch (error) {
-            throw error;
-        } finally {
-            dispatch(setFolderLoading(false));
-        }
-    }
-
-    const getUserData = async () => {
-        if (!user.email || isDeleting || !shouldRefresh) return;
-
-        try {
-            await getUserDocument();
-            await getUserFolder();
-        } catch (error) {
-            dispatch(showWarningAlert('사용자의 데이터를 불러오는 데 실패했습니다.'))
-            dispatch(setFailedAlert(true));
-        }
-    }
-
     useEffect(() => {
-        getUserData();
+        getUserData(dispatch, user, isDeleting, shouldRefresh);
     }, [user.email, pathname, isDeleting]);
-
-    return getUserData;
 }

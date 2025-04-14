@@ -1,21 +1,22 @@
 import Modal from 'react-modal';
 import SubmitButton from '../button/SubmitButton';
 import CommonButton from '../button/CommonButton';
-import useGetUserData from '@/hooks/user/useGetUserData';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { setFailedAlert } from '@/redux/features/common/alertSlice';
 import ErrorIcon from '../../../public/svgs/wifi-error.svg';
 import Link from 'next/link';
 import { setWorkingSpinner } from '@/redux/features/common/placeholderSlice';
+import { getUserData } from '@/hooks/user/useGetUserData';
 
 export default function FailedModal() {
     const dispatch = useAppDispatch();
-    const getUserData = useGetUserData();
+    const user = useAppSelector(state => state.user);
+    const isDeleting = useAppSelector(state => state.loading.isDeleting);
 
     const retry = async () => {
         try {
             dispatch(setWorkingSpinner(true));
-            await getUserData();
+            await getUserData(dispatch, user, isDeleting);
 
             // 성공적으로 데이터 로드 시 실패 상태를 false로 변경
             dispatch(setFailedAlert(false));

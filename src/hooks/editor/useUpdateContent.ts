@@ -77,15 +77,15 @@ export default function useUpdateContent(editor: Editor | null) {
                 }
             };
 
-            dispatch(updateDocuments({ 
-                docId: updatedDoc.id, 
+            dispatch(updateDocuments({
+                docId: updatedDoc.id,
                 updatedData: {
                     docContent: content,
                     readedAt: {
                         seconds: Math.floor(Date.now() / 1000),
                         nanoseconds: Math.floor((Date.now() % 1000) * 1000000),
                     }
-                }, 
+                },
             }));
         };
 
