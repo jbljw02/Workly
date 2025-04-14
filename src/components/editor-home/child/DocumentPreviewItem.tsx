@@ -17,7 +17,7 @@ type DocumentPreviewItemProps = {
 export default function DocumentPreviewItem({ document }: DocumentPreviewItemProps) {
     const user = useAppSelector(state => state.user);
     const checkDemo = useCheckDemo();
-    
+
     // 문서 미리보기 렌더링
     const renderDocumentPreview = (docContent: JSONContent | null) => {
         return docContent?.content?.map((block, index) => {
