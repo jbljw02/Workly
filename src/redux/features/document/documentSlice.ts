@@ -36,7 +36,7 @@ export const documentSlice = createSlice({
         },
         updateDocuments: (state, action) => {
             // 변경할 문서의 ID를 찾고, 값을 업데이트
-            const { docId, ...updatedData } = action.payload;
+            const { docId, updatedData } = action.payload;
             const index = state.findIndex(doc => doc.id === docId);
             if (index !== -1) {
                 state[index] = { ...state[index], ...updatedData };
