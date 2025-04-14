@@ -9,7 +9,7 @@ export default function useLeavePage(onLeavePage: () => void | Promise<void>) {
     const selectedDocument = useAppSelector(state => state.selectedDocument);
 
     const leavePage = useCallback(async () => {
-        if (selectedDocument && selectedDocument.id && selectedDocument.docContent) {
+        if (selectedDocument) {
             await onLeavePage();
         }
     }, [onLeavePage]);

@@ -14,6 +14,7 @@ import { setOpenFullModal } from "@/redux/features/editor/editorImageSlice";
 import { showWarningAlert } from "@/redux/features/common/alertSlice";
 import { deleteObject, getStorage, ref } from "firebase/storage";
 import ImageFullModal from "./ImageFullModal";
+import useCheckDemo from "@/hooks/demo/useCheckDemo";
 
 type ImageMenuBarProps = {
     nodeViewRef: RefObject<HTMLDivElement>;
@@ -25,6 +26,8 @@ type ImageMenuBarProps = {
 
 export default function ImageMenuBar({ nodeViewRef, cropStart, resizableImgProps, setShowMenu, isSelected }: ImageMenuBarProps) {
     const dispatch = useAppDispatch();
+    const checkDemo = useCheckDemo();
+
     const editor = resizableImgProps.editor;
 
     const selectedDocument = useAppSelector(state => state.selectedDocument);
@@ -43,6 +46,8 @@ export default function ImageMenuBar({ nodeViewRef, cropStart, resizableImgProps
         try {
             editor.chain().focus().deleteSelection().run();
 
+            if(checkDemo()) return;
+            
             const storage = getStorage();
             const imageRef = ref(storage, `documents/${selectedDocument.id}/images/${id}`);
             await deleteObject(imageRef);
