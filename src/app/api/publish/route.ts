@@ -36,6 +36,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
 
         return NextResponse.json({ message: "문서 게시 성공" }, { status: 200 });
     } catch (error) {
+        console.log(error);
         return NextResponse.json({ error: "문서 게시 실패" }, { status: 500 });
     }
 }
